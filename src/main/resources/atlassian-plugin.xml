@@ -1,0 +1,50 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="Checkmarx language" location="english"/>
+   <!-- <resource type="i18n" userName="messages" location="/messages.properties"/>/>-->
+
+    <!-- add web resources -->
+ <!--   <web-resource key="agent-web-resources" userName="Checkmarx Agent Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        
+        <resource type="download" userName="plugin.css" location="/css/plugin.css"/>
+        <resource type="download" userName="plugin.js" location="/js/plugin.js"/>
+        <context>checkmarx-bamboo-agent</context>
+    </web-resource>-->
+
+    <!-- publish components -->
+    <taskType key="checkmarx" name="Checkmarx Agent" class="com.cx.plugin.CheckmarxTask">
+        <description>Checkmarx is a Static Source Code Analysis (SAST) solution designed for identifying,
+                    tracking and fixing technical and logical security flaws</description>
+        <configuration class="com.cx.plugin.AgentTaskConfigurator"/>
+        <resource type="freemarker" name="edit" location="/com/cx/plugin/editExampleTask.ftl"/>
+        <resource type="freemarker" name="view" location="/com/cx/plugin/viewExampleTask.ftl"/>
+        <resource type="download" name="icon" location="/images/TaskIcon.png" />
+    </taskType>
+
+<!--    <xwork key="manageEnvironmentsAdmin" name="Environment Wallboard Plugin Admin">
+        <package name="environmentWallboardPluginAdmin" extends="admin">
+            <action name="configureEnvironment" class="com.cx.plugindmin.ConfigureEnvironmentAction">
+                <result name="input" type="freemarker">/admin/configureEnvironment.ftl</result>
+                <result name="success" type="freemarker">/admin/configureEnvironment.ftl</result>
+            </action>
+            <action name="createEnvironment" class="com.cx.plugindmin.ConfigureEnvironmentAction" method="create">
+                <result name="input" type="freemarker">/com/cx/plugin/editExampleTask.ftl</result>
+                <result name="success" type="redirect-action">
+                    <param name="actionName">manageEnvironments</param>
+                </result>
+            </action>
+
+        </package>
+    </xwork>-->
+
+
+</atlassian-plugin>
