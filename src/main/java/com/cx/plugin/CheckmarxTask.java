@@ -255,7 +255,7 @@ public class CheckmarxTask implements TaskType {
         //buildLogger.addBuildLogEntry("fileExclusions: " +  Arrays.toString(fileExclusions));
         buildLogger.addBuildLogEntry("isSynchronous: " + config.isSynchronous());
         //buildLogger.addBuildLogEntry("generatePDFReport: " + generatePDFReport);
-        buildLogger.addBuildLogEntry("thresholds enabled: " + config.isEnableThresholds());
+        buildLogger.addBuildLogEntry("thresholds enabled: " + config.isThresholdsEnabled());
         if (config.isSASTThresholdEnabled()) {
             buildLogger.addBuildLogEntry("highThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
             buildLogger.addBuildLogEntry("mediumThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));

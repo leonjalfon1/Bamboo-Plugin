@@ -43,7 +43,8 @@ public class ScanConfiguration {
     private boolean isSynchronous = false;
     //    private boolean generatePDFReport;
 
-    private boolean enableThresholds = false;
+    private boolean thresholdsEnabled = false;
+
     @Nullable
     private Integer highThreshold;
     @Nullable
@@ -51,7 +52,11 @@ public class ScanConfiguration {
     @Nullable
     private Integer lowThreshold;
 
-    private boolean osaEnabled;
+    private boolean osaEnabled = false;
+
+    private Integer osaScanTimeoutInMinutes;
+
+    private boolean osaThresholdsEnabled = false;
 
     private String[] osaExclusions = new String[0];
     /**
@@ -90,15 +95,17 @@ public class ScanConfiguration {
         setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES.value()));
         setIncremental(configurationMap.get(CxParam.IS_INCREMENTAL_SCAN.value()));
         setSynchronousMode(configurationMap.get(CxParam.IS_SYNCHRONOUS.value()));//TODO value as boolean/Int
-        setEnableThresholds(configurationMap.get(CxParam.ENABLE_THRESHOLDS.value()));
+        setThresholdsEnabled(configurationMap.get(CxParam.THRESHOLDS_ENABLED.value()));
         setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD.value()));
         setMediumThreshold(configurationMap.get(CxParam.MEDIUM_THRESHOLD.value()));
         setLowThreshold(configurationMap.get(CxParam.LOW_THRESHOLD.value()));
-/*        setOsaEnabled(configurationMap.get(CxParam.OSA_ENABLED.value()));
+        setOsaEnabled(configurationMap.get(CxParam.OSA_ENABLED.value()));
         setOsaExclusions(StringUtil.split(configurationMap.get(CxParam.OSA_EXCLUSIONS.value()), ","));
+        setOsaScanTimeoutInMinutes(configurationMap.get(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value()));
+        setOsaThresholdsEnabled(configurationMap.get(CxParam.OSA_THRESHOLDS_ENABLED.value()));
         setOsaHighSeveritiesThreshold(configurationMap.get(CxParam.OSA_HIGH_THRESHOLD.value()));
         setOsaMediumSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD.value()));
-        setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD.value()));*/
+        setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD.value()));
     }
 
 
@@ -188,16 +195,16 @@ public class ScanConfiguration {
         this.isSynchronous = getBoolean(synchronousMode);
     }
 
-    public boolean isEnableThresholds() {
-        return enableThresholds;
+    public boolean isThresholdsEnabled() {
+        return thresholdsEnabled;
     }
 
-    public void setEnableThresholds(boolean enableThresholds) {
-        this.enableThresholds = enableThresholds;
+    public void setThresholdsEnabled(boolean thresholdsEnabled) {
+        this.thresholdsEnabled = thresholdsEnabled;
     }
 
-    private void setEnableThresholds(String enableThresholds) {
-        this.enableThresholds = getBoolean(enableThresholds);
+    private void setThresholdsEnabled(String enableThresholds) {
+        this.thresholdsEnabled = getBoolean(enableThresholds);
     }
 
     public Integer getHighThreshold() {
@@ -263,6 +270,30 @@ public class ScanConfiguration {
 
     private void setOsaEnabled(String osaEnabled) {
         this.osaEnabled = getBoolean(osaEnabled);
+    }
+
+    public Integer getOsaScanTimeoutInMinutes() {
+        return osaScanTimeoutInMinutes;
+    }
+
+    public void setOsaScanTimeoutInMinutes(Integer osaScanTimeoutInMinutes) {
+        this.osaScanTimeoutInMinutes = osaScanTimeoutInMinutes;
+    }
+
+    private void setOsaScanTimeoutInMinutes(String osaScanTimeoutInMinutes) {
+        this.osaScanTimeoutInMinutes = setNumberFromString(osaScanTimeoutInMinutes);
+    }
+
+    public boolean isOsaThresholdsEnabled() {
+        return osaThresholdsEnabled;
+    }
+
+    public void setOsaThresholdsEnabled(boolean osaThresholdsEnabled) {
+        this.osaThresholdsEnabled = osaThresholdsEnabled;
+    }
+
+    private void setOsaThresholdsEnabled(String enableOsaThresholds) {
+        this.osaThresholdsEnabled = getBoolean(enableOsaThresholds);
     }
 
     public String[] getOsaExclusions() {
@@ -332,7 +363,7 @@ public class ScanConfiguration {
     }
 
     public boolean isSASTThresholdEnabled() {
-        return isEnableThresholds() && (getLowThreshold() != null || getMediumThreshold() != null || getHighThreshold() != null);
+        return isThresholdsEnabled() && (getLowThreshold() != null || getMediumThreshold() != null || getHighThreshold() != null);
     }
 
     public boolean isOSAThresholdEnabled() {

@@ -81,11 +81,18 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(CxParam.OUTPUT_DIRECTORY.value(), params.getString(CxParam.OUTPUT_DIRECTORY.value()));
         config.put(CxParam.SCAN_TIMEOUT_IN_MINUTES.value(), params.getString(CxParam.SCAN_TIMEOUT_IN_MINUTES.value()));
         config.put(CxParam.IS_INCREMENTAL_SCAN.value(), params.getString(CxParam.IS_INCREMENTAL_SCAN.value()));
+        config.put(CxParam.OSA_ENABLED.value(), params.getString(CxParam.OSA_ENABLED.value()));
+        config.put(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value(), params.getString(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value()));
         config.put(CxParam.IS_SYNCHRONOUS.value(), params.getString(CxParam.IS_SYNCHRONOUS.value()));
-        config.put(CxParam.ENABLE_THRESHOLDS.value(), params.getString(CxParam.ENABLE_THRESHOLDS.value()));
+        config.put(CxParam.THRESHOLDS_ENABLED.value(), params.getString(CxParam.THRESHOLDS_ENABLED.value()));
         config.put(CxParam.HIGH_THRESHOLD.value(), params.getString(CxParam.HIGH_THRESHOLD.value()));
         config.put(CxParam.MEDIUM_THRESHOLD.value(), params.getString(CxParam.MEDIUM_THRESHOLD.value()));
         config.put(CxParam.LOW_THRESHOLD.value(), params.getString(CxParam.LOW_THRESHOLD.value()));
+        config.put(CxParam.OSA_THRESHOLDS_ENABLED.value(), params.getString(CxParam.OSA_THRESHOLDS_ENABLED.value()));
+        config.put(CxParam.OSA_HIGH_THRESHOLD.value(), params.getString(CxParam.OSA_HIGH_THRESHOLD.value()));
+        config.put(CxParam.OSA_MEDIUM_THRESHOLD.value(), params.getString(CxParam.OSA_MEDIUM_THRESHOLD.value()));
+        config.put(CxParam.OSA_LOW_THRESHOLD.value(), params.getString(CxParam.OSA_LOW_THRESHOLD.value()));
+
 
         return config;
     }
@@ -106,7 +113,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(CxParam.SCAN_TIMEOUT_IN_MINUTES.value(), DEFAULT_EMPTY);
         context.put(CxParam.IS_INCREMENTAL_SCAN.value(), DEFAULT_IS_INCREMENTAL_SCAN);
         context.put(CxParam.IS_SYNCHRONOUS.value(), DEFAULT_IS_SYNCHRONOUS);
-        context.put(CxParam.ENABLE_THRESHOLDS.value(), DEFAULT_ENABLE_THRESHOLDS);
+        context.put(CxParam.THRESHOLDS_ENABLED.value(), DEFAULT_ENABLE_THRESHOLDS);
+        context.put(CxParam.OSA_ENABLED.value(), OPTION_FALSE);
+        context.put(CxParam.OSA_THRESHOLDS_ENABLED.value(), OPTION_FALSE);
+
       //  context.put("testConnection", new TestConnection());
     }
 
@@ -159,11 +169,17 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(CxParam.OUTPUT_DIRECTORY.value(), taskDefinition.getConfiguration().get(CxParam.OUTPUT_DIRECTORY.value()));
         context.put(CxParam.SCAN_TIMEOUT_IN_MINUTES.value(), taskDefinition.getConfiguration().get(CxParam.SCAN_TIMEOUT_IN_MINUTES.value()));
         context.put(CxParam.IS_INCREMENTAL_SCAN.value(), taskDefinition.getConfiguration().get(CxParam.IS_INCREMENTAL_SCAN.value()));
+        context.put(CxParam.OSA_ENABLED.value(), taskDefinition.getConfiguration().get(CxParam.OSA_ENABLED.value()));
+        context.put(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value(), taskDefinition.getConfiguration().get(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value()));
         context.put(CxParam.IS_SYNCHRONOUS.value(), taskDefinition.getConfiguration().get(CxParam.IS_SYNCHRONOUS.value()));
-        context.put(CxParam.ENABLE_THRESHOLDS.value(), taskDefinition.getConfiguration().get(CxParam.ENABLE_THRESHOLDS.value()));
+        context.put(CxParam.THRESHOLDS_ENABLED.value(), taskDefinition.getConfiguration().get(CxParam.THRESHOLDS_ENABLED.value()));
         context.put(CxParam.HIGH_THRESHOLD.value(), taskDefinition.getConfiguration().get(CxParam.HIGH_THRESHOLD.value()));
         context.put(CxParam.MEDIUM_THRESHOLD.value(), taskDefinition.getConfiguration().get(CxParam.MEDIUM_THRESHOLD.value()));
         context.put(CxParam.LOW_THRESHOLD.value(), taskDefinition.getConfiguration().get(CxParam.LOW_THRESHOLD.value()));
+        context.put(CxParam.OSA_THRESHOLDS_ENABLED.value(), taskDefinition.getConfiguration().get(CxParam.OSA_THRESHOLDS_ENABLED.value()));
+        context.put(CxParam.OSA_HIGH_THRESHOLD.value(), taskDefinition.getConfiguration().get(CxParam.OSA_HIGH_THRESHOLD.value()));
+        context.put(CxParam.OSA_MEDIUM_THRESHOLD.value(), taskDefinition.getConfiguration().get(CxParam.OSA_MEDIUM_THRESHOLD.value()));
+        context.put(CxParam.OSA_LOW_THRESHOLD.value(), taskDefinition.getConfiguration().get(CxParam.OSA_LOW_THRESHOLD.value()));
     }
 
     @Override
