@@ -6,6 +6,12 @@ import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
 import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
+import com.cx.client.rest.CxRestClient;
+import com.cx.client.rest.CxRestClient;
+import com.cx.client.rest.dto.CreateOSAScanResponse;
+import com.cx.client.rest.dto.OSAScanStatus;
+import com.cx.client.rest.dto.OSAScanStatusEnum;
+import com.cx.client.rest.dto.OSASummaryResults;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +34,7 @@ public class CxClientServiceImpl implements CxClientService {
     private static final Logger log = LoggerFactory.getLogger(CxClientServiceImpl.class);
     private String sessionId;
     private CxSDKWebServiceSoap client;
-    //private CxRestClient restClient;
+    private CxRestClient restClient;
 
     private String username;
     private String password;
@@ -75,7 +81,7 @@ public class CxClientServiceImpl implements CxClientService {
 
     public void disableSSLCertificateVerification() {
         CxPluginHelper.disableSSLCertificateVerification();
-       // restClient.disableCertificateValidation();
+        // restClient.disableCertificateValidation();
     }
 
     public void loginToServer() throws CxClientException {
@@ -355,7 +361,7 @@ public class CxClientServiceImpl implements CxClientService {
         }
     }
 
-/*    public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException {
+    public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException {
         restClient.login();
         return restClient.createOSAScan(projectId, zipFile);
     }
@@ -417,15 +423,15 @@ public class CxClientServiceImpl implements CxClientService {
 
     public OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException {
         return restClient.getOSAScanSummaryResults(projectId);
-    }*/
+    }
 
-/*    public String retrieveOSAScanHtmlResults(long projectId) throws CxClientException {
+    public String retrieveOSAScanHtmlResults(long projectId) throws CxClientException {
         return restClient.getOSAScanHtmlResults(projectId);
     }
 
     public byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException {
         return restClient.getOSAScanPDFResults(projectId);
-    }*/
+    }
 
     public static int getWaitForScanToFinishRetry() {
         return waitForScanToFinishRetry;
@@ -448,8 +454,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
 
-
-    public List<Preset> getPresetList(){
+    public List<Preset> getPresetList() {
         List<Preset> presets = new ArrayList<Preset>();
         CxWSResponsePresetList presetList = client.getPresetList(sessionId);
         if (!presetList.isIsSuccesfull()) {
@@ -460,9 +465,9 @@ public class CxClientServiceImpl implements CxClientService {
         return presets;
     }
 
-    public ArrayOfGroup getAssociatedGroupsList(){
+    public ArrayOfGroup getAssociatedGroupsList() {
         ArrayOfGroup group = new ArrayOfGroup();
-                CxWSResponseGroupList associatedGroupsList = client.getAssociatedGroupsList(sessionId);
+        CxWSResponseGroupList associatedGroupsList = client.getAssociatedGroupsList(sessionId);
         if (!associatedGroupsList.isIsSuccesfull()) {
             log.warn("fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
             return group;

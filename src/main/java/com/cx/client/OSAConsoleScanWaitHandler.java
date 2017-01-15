@@ -1,4 +1,3 @@
-/*
 package com.cx.client;
 
 import com.cx.client.exception.CxClientException;
@@ -8,11 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-*/
-/**
- * Created by: Dorg.
+ /* Created by: Dorg.
  * Date: 28/09/2016.
- *//*
+ * */
 
 public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus> {
 
@@ -58,4 +55,3 @@ public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus>
         this.scanTimeoutInMin = scanTimeoutInMin;
     }
 }
-*/

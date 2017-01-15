@@ -18,8 +18,9 @@
 
 <div class="field-group">
 [@ui.bambooSection title='Checkmarx Server' ]
+[/@ui.bambooSection]
     <div class="center">
-        [@ww.checkbox labelKey="useDefaultCardentials.label" name="useDefaultCardentials" toggle='true' /]
+    [@ww.checkbox labelKey="useDefaultCardentials.label" name="useDefaultCardentials" toggle='true' /]
         [@ui.bambooSection dependsOn='useDefaultCardentials' showOn='false']
         [@ww.textfield labelKey="url.label" name="url" required='true'/]
         [@ww.textfield labelKey="userName.label" name="userName" required='true'/]
@@ -30,7 +31,6 @@
         [@ww.select labelKey="preset.label" name="preset" list="presetList" listKey="id" listValue="name" multiple="false" required="true" cssClass="long-field"/]
         [@ww.select labelKey="teamPath.label" name="teamPath" list="teamPathList" listKey="id" listValue="name" multiple="false" required="true" cssClass="long-field"/]
     </div>
-[/@ui.bambooSection]
 </div>
 
 

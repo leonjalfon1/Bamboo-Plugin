@@ -8,6 +8,9 @@ import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
 import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
+import com.cx.client.rest.dto.CreateOSAScanResponse;
+import com.cx.client.rest.dto.OSAScanStatus;
+import com.cx.client.rest.dto.OSASummaryResults;
 /*
 import com.cx.client.rest.dto.OSASummaryResults;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
@@ -45,15 +48,15 @@ public interface CxClientService {
 
     ScanResults retrieveScanResults(long projectId) throws CxClientException;
 
-/*    CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException;
+    CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException;
 
     OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException;
 
-    OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException;*/
+    OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException;
 
-  /*  String retrieveOSAScanHtmlResults(long projectId) throws CxClientException;
+    String retrieveOSAScanHtmlResults(long projectId) throws CxClientException;
 
-    byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException;*/
+    byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException;
 
     byte[] getScanReport(long scanId, ReportType reportType) throws CxClientException;
 

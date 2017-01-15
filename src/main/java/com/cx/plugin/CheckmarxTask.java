@@ -16,6 +16,8 @@ import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
 //import com.cx.client.rest.dto.CreateOSAScanResponse;
 //import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.client.rest.dto.CreateOSAScanResponse;
+import com.cx.client.rest.dto.OSASummaryResults;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxParam;
 import com.cx.plugin.dto.ScanConfiguration;
@@ -57,7 +59,7 @@ public class CheckmarxTask implements TaskType {
         configurationMap = taskContext.getConfigurationMap();
         workDirectory = taskContext.getWorkingDirectory().getPath(); //     getRootDirectory()
         ScanResults scanResults = null;
-       // OSASummaryResults osaSummaryResults = null;
+        OSASummaryResults osaSummaryResults = null;
         boolean failed = false;
 
         Exception osaCreateException = null;
@@ -80,8 +82,8 @@ public class CheckmarxTask implements TaskType {
             //prepare sources (zip it)  and send it to scan
             CreateScanResponse createScanResponse = createScan();
 
-           // CreateOSAScanResponse osaScan = null;
-          /*  if (config.isOsaEnabled()) {
+            CreateOSAScanResponse osaScan = null;
+            if (config.isOsaEnabled()) {
                 try {
                     buildLogger.addBuildLogEntry("creating OSA scan");
                     buildLogger.addBuildLogEntry("zipping dependencies");
@@ -94,11 +96,11 @@ public class CheckmarxTask implements TaskType {
                     osaCreateException = e;
                 }
             }
-*/
+
             if (!config.isSynchronous()) {
-               /* if (osaCreateException != null) {
+                if (osaCreateException != null) {
                     throw osaCreateException;
-                }*/
+                }
                 buildLogger.addBuildLogEntry("Running in Asynchronous Mode. Not Waiting for Scan to Finish");
                 return taskResultBuilder.success().build();//TODO- change the return value
             }
@@ -118,7 +120,7 @@ public class CheckmarxTask implements TaskType {
                 scanWaitException = e;
             }
 
-     /*       if (config.isOsaEnabled()) {
+            if (config.isOsaEnabled()) {
 
                 if (osaCreateException != null) {
                     throw osaCreateException;
@@ -131,7 +133,7 @@ public class CheckmarxTask implements TaskType {
                 osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());
                 printOSAResultsToConsole(osaSummaryResults);
 
-               *//* String now = DateFormatUtils.format(new Date(), "dd_MM_yyyy-HH_mm_ss");
+               /* String now = DateFormatUtils.format(new Date(), "dd_MM_yyyy-HH_mm_ss");
                 if (osaGeneratePDFReport) {
                     byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(createScanResponse.getProjectId());
                     String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
@@ -144,12 +146,12 @@ public class CheckmarxTask implements TaskType {
                     String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
                     FileUtils.writeStringToFile(new File(outputDirectory, htmlFileName), osaHtml, Charset.defaultCharset());
                     buildLogger.addBuildLogEntry("OSA HTML Report Can Be Found in: " + outputDirectory + "\\" + htmlFileName);
-                }*//*
+                }*/
 
             }
             if (scanWaitException != null) {
                 throw scanWaitException;
-            }*/
+            }
 
 
         } catch (CxClientException e) {
@@ -283,7 +285,7 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
     }
 
-  /*  private void printOSAResultsToConsole(OSASummaryResults osaSummaryResults) {
+    private void printOSAResultsToConsole(OSASummaryResults osaSummaryResults) {
         buildLogger.addBuildLogEntry("----------------------------Checkmarx Scan Results(CxOSA):-------------------------------");
         buildLogger.addBuildLogEntry("");
         buildLogger.addBuildLogEntry("------------------------");
@@ -304,7 +306,7 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("");
         buildLogger.addBuildLogEntry("OSA Scan Results Can Be Found at: " + projectStateLink.replace("Summary", "OSA"));
         buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
-    }*/
+    }
 
     private boolean assertVulnerabilities(ScanResults scanResults) throws TaskException { //TODO ask dor regards the taskException (without exception but with build.unSuccess())
 

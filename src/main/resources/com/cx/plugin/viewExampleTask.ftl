@@ -18,8 +18,9 @@
 
 <div class="field-group">
 [@ui.bambooSection title='Checkmarx Server' ]
+[/@ui.bambooSection]
     <div class="center">
-        [@ww.checkbox labelKey="useDefaultCardentials.label" name="useDefaultCardentials" toggle='true' /]
+    [@ww.checkbox labelKey="useDefaultCardentials.label" name="useDefaultCardentials" toggle='true' /]
         [@ui.bambooSection dependsOn='useDefaultCardentials' showOn='false']
         [@ww.textfield labelKey="url.label" name="url" required='true'/]
         [@ww.textfield labelKey="userName.label" name="userName" required='true'/]
@@ -30,7 +31,6 @@
         [@ww.select labelKey="preset.label" name="preset" list="presetList" listKey="id" listValue="name" multiple="false" required="true" cssClass="long-field"/]
         [@ww.select labelKey="teamPath.label" name="teamPath" list="teamPathList" listKey="id" listValue="name" multiple="false" required="true" cssClass="long-field"/]
     </div>
-[/@ui.bambooSection]
 </div>
 
 
@@ -71,21 +71,21 @@
     [@ui.bambooSection title='Control Checkmarx Scan']
         [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" toggle='true' /]
         [@ui.bambooSection dependsOn='isSynchronous' showOn='true']
-            [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" toggle='true' /]
-            [@ui.bambooSection dependsOn='thresholdsEnabled' showOn='true']
-                [@ww.textfield labelKey="highThreshold.label" name="highThreshold" required='false'/]
-                [@ww.textfield labelKey="mediumThreshold.label" name="mediumThreshold" required='false'/]
-                [@ww.textfield labelKey="lowThreshold.label" name="lowThreshold" required='false'/]
-            [/@ui.bambooSection]
-            [@ui.bambooSection dependsOn='osaEnabled' showOn='true']
-                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled" toggle='true' /]
-                [@ui.bambooSection dependsOn='osaThresholdsEnabled' showOn='true']
-                    [@ww.textfield labelKey="osaHighThreshold.label" name="osaHighThreshold" required='false'/]
-                    [@ww.textfield labelKey="osaMediumThreshold.label" name="osaMediumThreshold" required='false'/]
-                    [@ww.textfield labelKey="osaLowThreshold.label" name="osaLowThreshold" required='false'/]
-                [/@ui.bambooSection]
+        [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" toggle='true' /]
+        [@ui.bambooSection dependsOn='thresholdsEnabled' showOn='true']
+            [@ww.textfield labelKey="highThreshold.label" name="highThreshold" required='false'/]
+            [@ww.textfield labelKey="mediumThreshold.label" name="mediumThreshold" required='false'/]
+            [@ww.textfield labelKey="lowThreshold.label" name="lowThreshold" required='false'/]
+        [/@ui.bambooSection]
+        [@ui.bambooSection dependsOn='osaEnabled' showOn='true']
+            [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled" toggle='true' /]
+            [@ui.bambooSection dependsOn='osaThresholdsEnabled' showOn='true']
+                [@ww.textfield labelKey="osaHighThreshold.label" name="osaHighThreshold" required='false'/]
+                [@ww.textfield labelKey="osaMediumThreshold.label" name="osaMediumThreshold" required='false'/]
+                [@ww.textfield labelKey="osaLowThreshold.label" name="osaLowThreshold" required='false'/]
             [/@ui.bambooSection]
         [/@ui.bambooSection]
+    [/@ui.bambooSection]
     [/@ui.bambooSection]
     </div>
 </div>
