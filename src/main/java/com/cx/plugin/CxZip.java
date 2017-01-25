@@ -6,21 +6,20 @@ import java.io.OutputStream;
 import java.io.File;
 
 import com.cx.plugin.dto.CxAbortException;
-import com.cx.plugin.dto.ZipListener;
-import com.cx.plugin.dto.Zipper;
 import org.apache.commons.io.FileUtils;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
 
 import org.apache.commons.lang.StringUtils;
 
-
+import com.checkmarx.components.zipper.Zipper;
+import com.checkmarx.components.zipper.ZipListener;
 /**
  * CxZip encapsulates the workspace folder zipping
  */
 
 public class CxZip {
-    private static final long MAXZIPSIZEBYTES = 209715200;
+    private static final long MAX_ZIP_SIZE_BYTES = 209715200;
     private int numOfZippedFiles = 0;
 
     public File ZipWorkspaceFolder(final String baseDir, final String filterPattern, final BuildLogger buildLogger)
@@ -42,9 +41,9 @@ public class CxZip {
 
         File folder = new File(baseDir);
         try {
-            new Zipper().zip(folder, filterPattern, fileOutputStream, MAXZIPSIZEBYTES, zipListener);
+            new Zipper().zip(folder, filterPattern, fileOutputStream, MAX_ZIP_SIZE_BYTES, zipListener);
         } catch (Zipper.MaxZipSizeReached e) {
-            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(MAXZIPSIZEBYTES));
+            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(MAX_ZIP_SIZE_BYTES));
         } catch (Zipper.NoFilesToZip e) {
             throw new IOException("No files to zip");
         }
@@ -63,9 +62,9 @@ public class CxZip {
 
         File folder = new File(baseDir);
         try {
-            new Zipper().zip(folder, filterPattern, fileOutputStream, MAXZIPSIZEBYTES, null);
+            new Zipper().zip(folder, filterPattern, fileOutputStream, MAX_ZIP_SIZE_BYTES, null);
         } catch (Zipper.MaxZipSizeReached e) {
-            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(MAXZIPSIZEBYTES));
+            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(MAX_ZIP_SIZE_BYTES));
         } catch (Zipper.NoFilesToZip e) {
             throw new IOException("No files to zip");
         }

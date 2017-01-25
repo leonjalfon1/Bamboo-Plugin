@@ -5,7 +5,8 @@ package com.cx.plugin.dto;/**
 public enum CxParam {
     USER_NAME("userName"),
     PASSWORD("password"),
-    URL("url"),
+    SERVER_URL("serverUrl"),
+    DEFAULT_URL ("http://localhost"), //TODO-DOR is that the right place?
     PROJECT_NAME("projectName"),
     TEAM_PATH("teamPath"),
     PRESET("preset"),
@@ -22,18 +23,20 @@ public enum CxParam {
     OSA_ENABLED("osaEnabled"),
     OSA_SCAN_TIMEOUT_IN_MINUTES("osaScanTimeoutInMinutes"),
     OSA_THRESHOLDS_ENABLED("osaThresholdsEnabled"),
-    OSA_EXCLUSIONS("osaExclusions"),
     OSA_HIGH_THRESHOLD("osaHighThreshold"),
     OSA_MEDIUM_THRESHOLD("osaMediumThreshold"),
     OSA_LOW_THRESHOLD("osaLowSThreshold"),
-    OSA_GENERATE_PDF_REPORT("osaGeneratePDFReport"),
-    OSA_GENERATE_HTML_REPORT("osaGenerateHTMLReport"),
     OUTPUT_DIRECTORY("outputDirectory"),
     CX_PROJECT_NAME("myProject"),
     NO_SESSION("noSession"),
     PRESET_LIST("presetList"),
     TEAM_PATH_LIST("teamPathList"),
-    FILTER_PATTERN("filterPatterns");
+    FILTER_PATTERN("filterPatterns"),
+    DEFAULT_CREDENTIALS("defaultCredentials"),
+    DEFAULT_CXSAST("defaultCxSast"),
+    DEFAULT_SCAN_CONTROL("defaultScanControl"),
+    CONFIGURATION_MODE_TYPES("configurationModeTypes"),
+    ADMINISTRATION_CONFIGURATION("administrationConfiguration");
 
 
     //TODO

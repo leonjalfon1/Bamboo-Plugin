@@ -6,23 +6,20 @@ package com.cx.plugin;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
+import com.atlassian.bamboo.security.EncryptionException;
+import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
 import com.cx.client.*;
-import com.cx.client.dto.ClientOrigin;
-import com.cx.client.dto.CreateScanResponse;
-import com.cx.client.dto.LocalScanConfiguration;
-import com.cx.client.dto.ScanResults;
+import com.cx.client.dto.*;
 import com.cx.client.exception.CxClientException;
-//import com.cx.client.rest.dto.CreateOSAScanResponse;
-//import com.cx.client.rest.dto.OSASummaryResults;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSASummaryResults;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxParam;
 import com.cx.plugin.dto.ScanConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -30,7 +27,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 public class CheckmarxTask implements TaskType {
@@ -47,6 +47,9 @@ public class CheckmarxTask implements TaskType {
     private BuildLogger buildLogger;
     private ConfigurationMap configurationMap;
     private BuildContext buildContext;
+
+    public static final String PDF_REPORT_NAME = "CxReport";
+    public static final String OSA_REPORT_NAME = "OSA_Report";
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
@@ -72,27 +75,29 @@ public class CheckmarxTask implements TaskType {
             printConfiguration(config);
 
             //initialize cx client
-            buildLogger.addBuildLogEntry("Initializing Cx Client");
-            cxClientService = new CxClientServiceImpl(url, config.getUsername(), config.getPassword());
+            buildLogger.addBuildLogEntry("Initializing Cx client");
+
+
+            cxClientService = new CxClientServiceImpl(url, config.getUsername(), decrypt(config.getPassword()));
 
             //perform login to server
-            buildLogger.addBuildLogEntry("Logging In to Checkmarx Service.");
+            buildLogger.addBuildLogEntry("Logging into the Checkmarx service.");
             cxClientService.loginToServer(); //TODO- handle exception when not login
 
-            //prepare sources (zip it)  and send it to scan
+            //prepare sources (zip it) and send it to scan
             CreateScanResponse createScanResponse = createScan();
 
             CreateOSAScanResponse osaScan = null;
             if (config.isOsaEnabled()) {
                 try {
-                    buildLogger.addBuildLogEntry("creating OSA scan");
-                    buildLogger.addBuildLogEntry("zipping dependencies");
+                    buildLogger.addBuildLogEntry("Creating OSA scan");
+                    buildLogger.addBuildLogEntry("Zipping dependencies");
                     File zipForOSA = createZipForOSA();
-                    buildLogger.addBuildLogEntry("sending OSA scan request");
+                    buildLogger.addBuildLogEntry("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA); //TODO dont check the license!! where rhe async coming?
                     buildLogger.addBuildLogEntry("OSA scan created successfully");
                 } catch (Exception e) {
-                    buildLogger.addErrorLogEntry("fail to create OSA Scan: " + e.getMessage());
+                    buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
                     osaCreateException = e;
                 }
             }
@@ -101,21 +106,27 @@ public class CheckmarxTask implements TaskType {
                 if (osaCreateException != null) {
                     throw osaCreateException;
                 }
-                buildLogger.addBuildLogEntry("Running in Asynchronous Mode. Not Waiting for Scan to Finish");
+                buildLogger.addBuildLogEntry("Running in Asynchronous mode. Not waiting for scan to finish");
                 return taskResultBuilder.success().build();//TODO- change the return value
             }
 
-            //wait for SAST scan to finish
             try {
-                buildLogger.addBuildLogEntry("Waiting For Scan To Finish.");
+                //wait for SAST scan to finish
+                buildLogger.addBuildLogEntry("Waiting for CxSAST scan to finish.");
                 cxClientService.waitForScanToFinish(createScanResponse.getRunId(), checkScanTimeout(config.getScanTimeoutInMinutes()), new ConsoleScanWaitHandler());
 
-                buildLogger.addBuildLogEntry("Scan Finished. Retrieving Scan Results");
+                buildLogger.addBuildLogEntry("Scan finished. Retrieving scan results");
                 scanResults = cxClientService.retrieveScanResults(createScanResponse.getProjectId());
                 scanResultsUrl = CxPluginHelper.composeScanLink(url.toString(), scanResults);
                 printResultsToConsole(scanResults);
+
+                if (config.isGeneratePDFReport()) {
+                    createPDFReport(scanResults.getScanID());
+                }
+
+
             } catch (Exception e) {
-                buildLogger.addErrorLogEntry("fail to perform scan: " + e.getMessage());
+                buildLogger.addErrorLogEntry("Fail to perform scan: " + e.getMessage());
                 failed = true; //TODO handle exceptions or change the failed flag
                 scanWaitException = e;
             }
@@ -126,37 +137,32 @@ public class CheckmarxTask implements TaskType {
                     throw osaCreateException;
                 }
                 //wait for OSA scan to finish
-                buildLogger.addBuildLogEntry("Waiting for OSA Scan to Finish");
-                cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, new OSAConsoleScanWaitHandler());
-                buildLogger.addBuildLogEntry("OSA Scan Finished Successfully");
-                buildLogger.addBuildLogEntry("Creating OSA Reports");
+                buildLogger.addBuildLogEntry("Waiting for OSA Scan to finish");
+                cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, new OSAConsoleScanWaitHandler());//TODO -1?
+                buildLogger.addBuildLogEntry("OSA scan finished successfully");
+                buildLogger.addBuildLogEntry("Creating OSA reports");
                 osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());
                 printOSAResultsToConsole(osaSummaryResults);
 
-               /* String now = DateFormatUtils.format(new Date(), "dd_MM_yyyy-HH_mm_ss");
-                if (osaGeneratePDFReport) {
-                    byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(createScanResponse.getProjectId());
-                    String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
-                    FileUtils.writeByteArrayToFile(new File(outputDirectory, pdfFileName), osaPDF);
-                    buildLogger.addBuildLogEntry("OSA PDF Report Can Be Found in: " + outputDirectory + "\\" + pdfFileName);
-                }
-
-                if (osaGenerateHTMLReport) {
-                    String osaHtml = cxClientService.retrieveOSAScanHtmlResults(createScanResponse.getProjectId());
-                    String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
-                    FileUtils.writeStringToFile(new File(outputDirectory, htmlFileName), osaHtml, Charset.defaultCharset());
-                    buildLogger.addBuildLogEntry("OSA HTML Report Can Be Found in: " + outputDirectory + "\\" + htmlFileName);
-                }*/
-
+                //OSA PDF and HTML reports
+                SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
+                String now = ft.format(new Date());
+                byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(createScanResponse.getProjectId());
+                String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
+                FileUtils.writeByteArrayToFile(new File(workDirectory, pdfFileName), osaPDF);
+                buildLogger.addBuildLogEntry("OSA PDF report location: " + workDirectory + "\\" + pdfFileName);
+                String osaHtml = cxClientService.retrieveOSAScanHtmlResults(createScanResponse.getProjectId());
+                String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
+                FileUtils.writeStringToFile(new File(workDirectory, htmlFileName), osaHtml, Charset.defaultCharset());
+                buildLogger.addBuildLogEntry("OSA HTML report location: " + workDirectory + "\\" + htmlFileName);
             }
             if (scanWaitException != null) {
                 throw scanWaitException;
             }
 
-
         } catch (CxClientException e) {
             buildLogger.addErrorLogEntry("Caught Exception: ", e);
-            //throw new TaskException(e.getMessage());    //TODO handle exceptions or change the failed flag
+            throw new TaskException(e.getMessage());    //TODO handle exceptions or change the failed flag
 
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("Unexpected Exception:", e);
@@ -175,20 +181,20 @@ public class CheckmarxTask implements TaskType {
         CreateScanResponse createScanResponse = null;
         try {
             //prepare sources to scan (zip them)
-            buildLogger.addBuildLogEntry("Zipping Sources");
+            buildLogger.addBuildLogEntry("Zipping sources");
             zipTempFile = zipWorkspaceFolder();
 
             //send sources to scan
             byte[] zippedSources = getBytesFromZippedSources();
             LocalScanConfiguration conf = generateScanConfiguration(zippedSources);
-            createScanResponse = cxClientService.createLocalScanResolveFields(conf);
+            createScanResponse = cxClientService.createLocalScan(conf);
             projectStateLink = CxPluginHelper.composeProjectStateLink(url.toString(), createScanResponse.getProjectId());
-            buildLogger.addBuildLogEntry("Scan Created Successfully. Link to Project State: " + projectStateLink);
+            buildLogger.addBuildLogEntry("Scan created successfully. Link to project state: " + projectStateLink);
 
             zipTempFile.delete(); //TODO check for null?
             buildLogger.addBuildLogEntry("Temporary file deleted");
         } catch (Exception e) {
-            buildLogger.addErrorLogEntry("fail to create scan: " + e.getMessage());//TODO return success when still have problems
+            buildLogger.addErrorLogEntry("fail to create scan: " + e.getMessage());//TODO return success when still have problems, need to throw excepion to fail the scan
         }
         return createScanResponse;
     }
@@ -227,7 +233,7 @@ public class CheckmarxTask implements TaskType {
         return ret;
     }
 
-    protected byte[] getBytesFromZippedSources() throws MojoExecutionException {
+    protected byte[] getBytesFromZippedSources() throws TaskException {
 
         buildLogger.addBuildLogEntry("Converting Zipped Sources to Byte Array");
         byte[] zipFileByte;
@@ -236,7 +242,7 @@ public class CheckmarxTask implements TaskType {
             fileStream = new FileInputStream(zipTempFile);
             zipFileByte = IOUtils.toByteArray(fileStream);
         } catch (Exception e) {
-            throw new MojoExecutionException("Fail to Set Zipped File Into Project: " + e.getMessage(), e);//TODO EXCEPTIONS
+            throw new TaskException("Fail to Set Zipped File Into Project: " + e.getMessage(), e);//TODO EXCEPTIONS
         } finally {
             IOUtils.closeQuietly(fileStream);
         }
@@ -253,10 +259,10 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("fullTeamPath: " + config.getFullTeamPath());
         buildLogger.addBuildLogEntry("preset: " + config.getPreset());
         buildLogger.addBuildLogEntry("isIncrementalScan: " + config.isIncrementalScan());
-        //buildLogger.addBuildLogEntry("folderExclusions: " +  Arrays.toString(folderExclusions));
+        buildLogger.addBuildLogEntry("folderExclusions: " + (Arrays.toString(config.getFolderExclusions())));
         //buildLogger.addBuildLogEntry("fileExclusions: " +  Arrays.toString(fileExclusions));
         buildLogger.addBuildLogEntry("isSynchronous: " + config.isSynchronous());
-        //buildLogger.addBuildLogEntry("generatePDFReport: " + generatePDFReport);
+        buildLogger.addBuildLogEntry("generatePDFReport: " + config.isGeneratePDFReport());
         buildLogger.addBuildLogEntry("thresholds enabled: " + config.isThresholdsEnabled());
         if (config.isSASTThresholdEnabled()) {
             buildLogger.addBuildLogEntry("highThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
@@ -265,12 +271,9 @@ public class CheckmarxTask implements TaskType {
         }
         buildLogger.addBuildLogEntry("osaEnabled: " + config.isOsaEnabled());
         if (config.isOsaEnabled()) {
-            buildLogger.addBuildLogEntry("osaExclusions: " + Arrays.toString(config.getOsaExclusions()));
             buildLogger.addBuildLogEntry("osaHighSeveritiesThreshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
             buildLogger.addBuildLogEntry("osaMediumSeveritiesThreshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
-            buildLogger.addBuildLogEntry("osaLowSeveritiesThreshold: " + (config.getOsaLowThreshold() < 0 ? "[No Threshold]" : config.getOsaLowThreshold()));
-            //buildLogger.addBuildLogEntry("osaGeneratePDFReport: " + osaGeneratePDFReport);
-            // buildLogger.addBuildLogEntry("osaGenerateHTMLReport: " + osaGenerateHTMLReport);
+            buildLogger.addBuildLogEntry("osaLowSeveritiesThreshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
         }
         buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
     }
@@ -281,7 +284,7 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("Medium Severity Results: " + scanResults.getMediumSeverityResults());
         buildLogger.addBuildLogEntry("Low Severity Results: " + scanResults.getLowSeverityResults());
         buildLogger.addBuildLogEntry("Info Severity Results: " + scanResults.getInfoSeverityResults());
-        buildLogger.addBuildLogEntry("Scan Results Can Be Found at: " + scanResultsUrl);
+        buildLogger.addBuildLogEntry("Scan Results location: " + scanResultsUrl);
         buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
     }
 
@@ -291,20 +294,20 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("------------------------");
         buildLogger.addBuildLogEntry("Vulnerabilities Summary:");
         buildLogger.addBuildLogEntry("------------------------");
-        buildLogger.addBuildLogEntry("OSA High Severity Results: " + osaSummaryResults.getHighVulnerabilities());
-        buildLogger.addBuildLogEntry("OSA Medium Severity Results: " + osaSummaryResults.getMediumVulnerabilities());
-        buildLogger.addBuildLogEntry("OSA Low Severity Results: " + osaSummaryResults.getLowVulnerabilities());
+        buildLogger.addBuildLogEntry("OSA High Severity results: " + osaSummaryResults.getHighVulnerabilities());
+        buildLogger.addBuildLogEntry("OSA Medium Severity results: " + osaSummaryResults.getMediumVulnerabilities());
+        buildLogger.addBuildLogEntry("OSA Low Severity results: " + osaSummaryResults.getLowVulnerabilities());
         buildLogger.addBuildLogEntry("Vulnerability Score: " + osaSummaryResults.getVulnerabilityScore());
         buildLogger.addBuildLogEntry("");
         buildLogger.addBuildLogEntry("-----------------------");
         buildLogger.addBuildLogEntry("Libraries Scan Results:");
         buildLogger.addBuildLogEntry("-----------------------");
-        buildLogger.addBuildLogEntry("Open Source Libraries: " + osaSummaryResults.getTotalLibraries());
-        buildLogger.addBuildLogEntry("Vulnerable And Outdated: " + osaSummaryResults.getVulnerableAndOutdated());
-        buildLogger.addBuildLogEntry("Vulnerable And Updated: " + osaSummaryResults.getVulnerableAndUpdated());
-        buildLogger.addBuildLogEntry("Non Vulnerable Libraries: " + osaSummaryResults.getNonVulnerableLibraries());
+        buildLogger.addBuildLogEntry("Open-source libraries: " + osaSummaryResults.getTotalLibraries());
+        buildLogger.addBuildLogEntry("Vulnerable and outdated: " + osaSummaryResults.getVulnerableAndOutdated());
+        buildLogger.addBuildLogEntry("Vulnerable and updated: " + osaSummaryResults.getVulnerableAndUpdated());
+        buildLogger.addBuildLogEntry("Non-vulnerable libraries: " + osaSummaryResults.getNonVulnerableLibraries());
         buildLogger.addBuildLogEntry("");
-        buildLogger.addBuildLogEntry("OSA Scan Results Can Be Found at: " + projectStateLink.replace("Summary", "OSA"));
+        buildLogger.addBuildLogEntry("OSA scan results location: " + projectStateLink.replace("Summary", "OSA"));
         buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
     }
 
@@ -334,7 +337,7 @@ public class CheckmarxTask implements TaskType {
     private boolean isFail(int result, Integer threshold, StringBuilder res, String severity) {
         boolean fail = false;
         if (threshold != null && result > threshold) {
-            res.append(severity + " Severity Results are Above Threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
+            res.append(severity + " Severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
             fail = true;
         }
         return fail;
@@ -350,20 +353,35 @@ public class CheckmarxTask implements TaskType {
 
     private File createZipForOSA() throws IOException, InterruptedException { //TODO handle exceptions{
         CxFolderPattern folderPattern = new CxFolderPattern();
-        String combinedFilterPattern = folderPattern.generatePattern(this.configurationMap, this.buildLogger, CxParam.OSA_EXCLUSIONS, false);
+        String combinedFilterPattern = folderPattern.generatePattern(this.configurationMap, this.buildLogger, null, false); //TODO change the 3 param null
         CxZip cxZip = new CxZip();
         return cxZip.zipSourceCode(getWorkspace(), combinedFilterPattern);
     }
 
+    private void createPDFReport(long scanId) {
+        buildLogger.addBuildLogEntry("Generating PDF Report");
+        byte[] scanReport;
+        try {
+            scanReport = cxClientService.getScanReport(scanId, ReportType.PDF);
+            SimpleDateFormat df = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
+            String now = df.format(new Date());
+            String pdfFileName = PDF_REPORT_NAME + "_" + now + ".pdf";
+            FileUtils.writeByteArrayToFile(new File(getWorkspace(), pdfFileName), scanReport);
+            buildLogger.addBuildLogEntry("PDF report location: " + getWorkspace() + "\\" + pdfFileName);
+        } catch (Exception e) {
+            buildLogger.addErrorLogEntry("Fail to Generate PDF Report");
+        }
+    }
+    private String decrypt(String password) {
+        String encPass;
+        try {
+            encPass = new EncryptionServiceImpl().decrypt(password);
+        } catch (EncryptionException e) {
+            encPass = "";
+        }
+
+        return encPass;
+    }
+
+
 }
-
-
-
-/*
-
-    */
-/* automatically injected by Bamboo *//*
-
-    public void setCustomVariableContext(CustomVariableContext customVariableContext) {
-        this.customVariableContext = customVariableContext;
-    }*/

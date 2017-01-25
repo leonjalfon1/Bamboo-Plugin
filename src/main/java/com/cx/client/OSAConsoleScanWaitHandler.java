@@ -40,14 +40,14 @@ public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus>
         String minutesStr = (minutes < 10)?("0" + Long.toString(minutes)):(Long.toString(minutes));
         String secondsStr = (seconds < 10)?("0" + Long.toString(seconds)):(Long.toString(seconds));
 
-        log.info("Waiting for OSA Scan Results. " +
-                "Time Elapsed: " + hoursStr + ":" + minutesStr + ":" + secondsStr + ". " +
+        log.info("Waiting for OSA scan results. " +
+                "Elapsed time: " + hoursStr + ":" + minutesStr + ":" + secondsStr + ". " +
                 "Status: " + scanStatus.getStatus().uiValue());
 
     }
 
     public void onSuccess(OSAScanStatus scanStatus) {
-        log.info("OSA Scan Finished.");
+        log.info("OSA scan finished.");
     }
 
     public void onStart(long startTime, long scanTimeoutInMin) {

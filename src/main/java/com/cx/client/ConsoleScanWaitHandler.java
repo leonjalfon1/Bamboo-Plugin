@@ -39,15 +39,15 @@ public class ConsoleScanWaitHandler implements ScanWaitHandler<CxWSResponseScanS
         String minutesStr = (minutes < 10)?("0" + Long.toString(minutes)):(Long.toString(minutes));
         String secondsStr = (seconds < 10)?("0" + Long.toString(seconds)):(Long.toString(seconds));
 
-        log.info("Waiting for Results. " +
-                "Time Elapsed: " + hoursStr + ":" + minutesStr + ":" + secondsStr + ". " +
-                scanStatus.getTotalPercent() + "% Processed. " +
+        log.info("Waiting for results. " +
+                "Elapsed time: " + hoursStr + ":" + minutesStr + ":" + secondsStr + ". " +
+                scanStatus.getTotalPercent() + "% processed. " +
                 "Status: " + scanStatus.getStageName() + ".");
 
     }
 
     public void onSuccess(CxWSResponseScanStatus scanStatus) {
-        log.info("Scan Finished: " + scanStatus.getStageMessage());
+        log.info("Scan finished status: " + scanStatus.getStageMessage());
     }
 
     public void onStart(long startTime, long scanTimeoutInMin) {

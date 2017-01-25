@@ -15,7 +15,11 @@ import org.apache.commons.lang3.StringUtils;
 
 public class CxFolderPattern {
     public String generatePattern(final ConfigurationMap configurationMap, final BuildLogger buildLogger, CxParam folderExclusion, boolean useFilterPattern) throws IOException, InterruptedException {
-        final String cxExclude = configurationMap.get(folderExclusion.value()); //TODO add the ENV expansion
+
+        String cxExclude = null;
+        if (folderExclusion != null){
+            configurationMap.get(folderExclusion.value()); //TODO add the ENV expansion
+        }
         String cxPattern = "";
         if (useFilterPattern){
             cxPattern = configurationMap.get(CxParam.FILTER_PATTERN.value()) + ",";               //TODO, ask Sigal
@@ -25,7 +29,7 @@ public class CxFolderPattern {
 
     @NotNull
     private String processExcludeFolders(final String excludeFolders, final BuildLogger buildLogger) {
-        if (excludeFolders == null) {
+        if (excludeFolders == null || excludeFolders.length() == 0) {
             return "";
         }
         StringBuilder result = new StringBuilder();

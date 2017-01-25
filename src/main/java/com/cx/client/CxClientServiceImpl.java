@@ -7,7 +7,6 @@ import com.cx.client.dto.ReportType;
 import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
 import com.cx.client.rest.CxRestClient;
-import com.cx.client.rest.CxRestClient;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSAScanStatus;
 import com.cx.client.rest.dto.OSAScanStatusEnum;
@@ -58,7 +57,7 @@ public class CxClientServiceImpl implements CxClientService {
         client = ss.getCxSDKWebServiceSoap();
         BindingProvider bindingProvider = (BindingProvider) client;
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url + SDK_PATH);
-        //restClient = new CxRestClient(url.toString(), username, password);
+        restClient = new CxRestClient(url.toString(), username, password);
     }
 
 
@@ -81,7 +80,7 @@ public class CxClientServiceImpl implements CxClientService {
 
     public void disableSSLCertificateVerification() {
         CxPluginHelper.disableSSLCertificateVerification();
-        // restClient.disableCertificateValidation();
+         restClient.disableCertificateValidation();
     }
 
     public void loginToServer() throws CxClientException {
@@ -93,7 +92,7 @@ public class CxClientServiceImpl implements CxClientService {
         sessionId = res.getSessionId();
 
         if (sessionId == null) {
-            throw new CxClientException("fail to perform login: " + res.getErrorMessage());
+            throw new CxClientException("Fail to perform login: " + res.getErrorMessage());
         }
     }
 
@@ -121,14 +120,14 @@ public class CxClientServiceImpl implements CxClientService {
             srcCodeSettings.setSourceFilterLists(filter);
         }
 
-        log.info("Sending Scan Request");
+        log.info("Sending scan request");
         CxWSResponseRunID scanResponse = client.scan(sessionId, cliScanArgs);
 
         if (!scanResponse.isIsSuccesfull()) {
-            throw new CxClientException("fail to perform scan: " + scanResponse.getErrorMessage());
+            throw new CxClientException("Fail to perform scan: " + scanResponse.getErrorMessage());
         }
 
-        log.debug("create scan returned with projectId: {}, runId: {}", scanResponse.getProjectID(), scanResponse.getRunId());
+        log.debug("Create scan returned with projectId: {}, runId: {}", scanResponse.getProjectID(), scanResponse.getRunId());
 
         return new CreateScanResponse(scanResponse.getProjectID(), scanResponse.getRunId());
     }
@@ -150,10 +149,10 @@ public class CxClientServiceImpl implements CxClientService {
                 conf.setPresetId(presetId);
                 if (presetId == 0) {
                     if (conf.isFailPresetNotFound()) {
-                        throw new CxClientException("preset: [" + conf.getPreset() + "], not found");
+                        throw new CxClientException("Preset: [" + conf.getPreset() + "], not found");
                     } else {
                         conf.setPresetId(defaultPresetId);
-                        log.warn("preset [" + conf.getPreset() + "] not found. preset set to default.");
+                        log.warn("Preset [" + conf.getPreset() + "] not found. preset set to default.");
                     }
                 }
             }
@@ -168,7 +167,7 @@ public class CxClientServiceImpl implements CxClientService {
         fullTeamPath = StringUtils.defaultString(fullTeamPath).trim();
         CxWSResponseGroupList associatedGroupsList = client.getAssociatedGroupsList(sessionId);
         if (!associatedGroupsList.isIsSuccesfull()) {
-            log.warn("fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
+            log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
             return null;
         }
 
@@ -188,7 +187,7 @@ public class CxClientServiceImpl implements CxClientService {
         presetName = StringUtils.defaultString(presetName).trim();
         CxWSResponsePresetList presetList = client.getPresetList(sessionId);
         if (!presetList.isIsSuccesfull()) {
-            log.warn("fail to retrieve preset list: ", presetList.getErrorMessage());
+            log.warn("Fail to retrieve preset list: ", presetList.getErrorMessage());
             return 0;
         }
 
@@ -224,7 +223,7 @@ public class CxClientServiceImpl implements CxClientService {
             try {
                 Thread.sleep(10000); //Get status every 10 sec
             } catch (InterruptedException e) {
-                log.debug("caught exception during sleep", e);
+                log.debug("Caught exception during sleep", e);
             }
 
 
@@ -251,7 +250,7 @@ public class CxClientServiceImpl implements CxClientService {
 
                 waitHandler.onFail(scanStatus);
 
-                throw new CxClientException("scan cannot be completed. status [" + currentStatus.value() + "].");
+                throw new CxClientException("Scan cannot be completed. status [" + currentStatus.value() + "].");
             }
 
             if (CurrentStatusEnum.FINISHED.equals(currentStatus)) {
@@ -265,15 +264,15 @@ public class CxClientServiceImpl implements CxClientService {
 
         if (!CurrentStatusEnum.FINISHED.equals(currentStatus)) {
             waitHandler.onTimeout(scanStatus);
-            throw new CxClientException("scan has reached the time limit. (" + scanTimeoutInMin + " minutes).");
+            throw new CxClientException("Scan has reached the time limit. (" + scanTimeoutInMin + " minutes).");
         }
     }
 
     private int checkRetry(int retry, String errorMessage) throws CxClientException {
-        log.debug("fail to get status from scan. retrying (" + (retry - 1) + " tries left). error message: " + errorMessage);
+        log.debug("Fail to get status from scan. retrying (" + (retry - 1) + " tries left). Error message: " + errorMessage);
         retry--;
         if (retry <= 0) {
-            throw new CxClientException("fail to get status from scan. error message: " + errorMessage);
+            throw new CxClientException("Fail to get status from scan. Error message: " + errorMessage);
         }
 
         return retry;
@@ -282,7 +281,7 @@ public class CxClientServiceImpl implements CxClientService {
     public ScanResults retrieveScanResults(long projectId) throws CxClientException {
         CxWSResponseProjectScannedDisplayData scanDataResponse = client.getProjectScannedDisplayData(sessionId);
         if (!scanDataResponse.isIsSuccesfull()) {
-            throw new CxClientException("fail to get scan data: " + scanDataResponse.getErrorMessage());
+            throw new CxClientException("Fail to get scan data: " + scanDataResponse.getErrorMessage());
         }
 
         List<ProjectScannedDisplayData> scanList = scanDataResponse.getProjectScannedList().getProjectScannedDisplayData();
@@ -292,7 +291,7 @@ public class CxClientServiceImpl implements CxClientService {
             }
         }
 
-        throw new CxClientException("no scan data found for projectID [" + projectId + "]");
+        throw new CxClientException("No scan data found for projectID [" + projectId + "]");
     }
 
 
@@ -305,8 +304,8 @@ public class CxClientServiceImpl implements CxClientService {
         CxWSCreateReportResponse createScanReportResponse = client.createScanReport(sessionId, cxWSReportRequest);
 
         if (!createScanReportResponse.isIsSuccesfull()) {
-            log.warn("fail to create scan report: " + createScanReportResponse.getErrorMessage());
-            throw new CxClientException("fail to create scan report: " + createScanReportResponse.getErrorMessage());
+            log.warn("Fail to create scan report: " + createScanReportResponse.getErrorMessage());
+            throw new CxClientException("Fail to create scan report: " + createScanReportResponse.getErrorMessage());
         }
 
         long reportId = createScanReportResponse.getID();
@@ -315,8 +314,8 @@ public class CxClientServiceImpl implements CxClientService {
         CxWSResponseScanResults scanReport = client.getScanReport(sessionId, reportId);
 
         if (!scanReport.isIsSuccesfull()) {
-            log.debug("fail to create scan report: " + createScanReportResponse.getErrorMessage());
-            throw new CxClientException("fail to retrieve scan report: " + createScanReportResponse.getErrorMessage());
+            log.debug("Fail to create scan report: " + createScanReportResponse.getErrorMessage());
+            throw new CxClientException("Fail to retrieve scan report: " + createScanReportResponse.getErrorMessage());
         }
 
         return scanReport.getScanResults();
@@ -333,22 +332,22 @@ public class CxClientServiceImpl implements CxClientService {
         CxWSReportStatusResponse scanReportStatus = null;
 
         while ((System.currentTimeMillis() / 1000) <= timeToStop) {
-            log.debug("waiting for server to generate pdf report" + (timeToStop - (System.currentTimeMillis() / 1000)) + " sec left to timeout");
+            log.debug("Waiting for server to generate pdf report" + (timeToStop - (System.currentTimeMillis() / 1000)) + " sec left to timeout");
             try {
                 Thread.sleep(2000); //Get status every 2 sec
             } catch (InterruptedException e) {
-                log.debug("caught exception during sleep", e);
+                log.debug("Caught exception during sleep", e);
             }
 
             scanReportStatus = client.getScanReportStatus(sessionId, reportId);
 
 
             if (!scanReportStatus.isIsSuccesfull()) {
-                log.warn("fail to get status from scan report: " + scanReportStatus.getErrorMessage());
+                log.warn("Fail to get status from scan report: " + scanReportStatus.getErrorMessage());
             }
 
             if (scanReportStatus.isIsFailed()) {
-                throw new CxClientException("generation of scan report [id=" + reportId + "] failed");
+                throw new CxClientException("Generation of scan report [id=" + reportId + "] failed");
             }
 
             if (scanReportStatus.isIsReady()) {
@@ -357,7 +356,7 @@ public class CxClientServiceImpl implements CxClientService {
         }
 
         if (scanReportStatus == null || !scanReportStatus.isIsReady()) {
-            throw new CxClientException("generation of scan report [id=" + reportId + "] failed. timed out");
+            throw new CxClientException("Generation of scan report [id=" + reportId + "] failed. Timed out");
         }
     }
 
@@ -385,9 +384,8 @@ public class CxClientServiceImpl implements CxClientService {
             try {
                 Thread.sleep(10000); //Get status every 10 sec
             } catch (InterruptedException e) {
-                log.debug("caught exception during sleep", e);
+                log.debug("Caught exception during sleep", e);
             }
-
 
             try {
                 scanStatus = restClient.getOSAScanStatus(scanId);
@@ -469,7 +467,7 @@ public class CxClientServiceImpl implements CxClientService {
         ArrayOfGroup group = new ArrayOfGroup();
         CxWSResponseGroupList associatedGroupsList = client.getAssociatedGroupsList(sessionId);
         if (!associatedGroupsList.isIsSuccesfull()) {
-            log.warn("fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
+            log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
             return group;
         }
         group = associatedGroupsList.getGroupList();

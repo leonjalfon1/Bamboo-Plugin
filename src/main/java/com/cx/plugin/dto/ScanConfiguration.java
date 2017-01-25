@@ -1,9 +1,12 @@
 package com.cx.plugin.dto;
 
 import com.atlassian.bamboo.configuration.ConfigurationMap;
+import com.atlassian.bamboo.security.EncryptionException;
+import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import org.hsqldb.lib.StringUtil;
 
 import javax.annotation.Nullable;
+import javax.persistence.criteria.CriteriaBuilder;
 
 /**
  * Created by galn on 21/12/2016.
@@ -52,13 +55,14 @@ public class ScanConfiguration {
     @Nullable
     private Integer lowThreshold;
 
+    private boolean generatePDFReport = false;
+
     private boolean osaEnabled = false;
 
     private Integer osaScanTimeoutInMinutes;
 
     private boolean osaThresholdsEnabled = false;
 
-    private String[] osaExclusions = new String[0];
     /**
      * Configure a threshold for the CxOSA High Severity Vulnerabilities.
      * The build will fail if the sum of High Severity Vulnerabilities is larger than the threshold.
@@ -77,13 +81,16 @@ public class ScanConfiguration {
      * Leave empty to ignore threshold.
      */
     private Integer osaLowThreshold;
+
+
     //    private boolean osaGeneratePDFReport;
     //  private boolean osaGenerateHTMLReport;
 
     public ScanConfiguration(ConfigurationMap configurationMap, String projectName) {
         setUsername(configurationMap.get(CxParam.USER_NAME.value()));
-        setPassword(configurationMap.get(CxParam.PASSWORD.value()));
-        setUrl(configurationMap.get(CxParam.URL.value()));
+        String cxPass = configurationMap.get(CxParam.PASSWORD.value());
+        setPassword(cxPass);
+        setUrl(configurationMap.get(CxParam.SERVER_URL.value()));
         //this.projectName = configurationMap.value(CxParam.CX_PROJECT_NAME);
         setProjectName(this.projectName = projectName);//TODO
         setPreset(configurationMap.get(CxParam.PRESET.value()));
@@ -93,19 +100,20 @@ public class ScanConfiguration {
         //this.fileExclusions = configurationMap.get(CxParam.FILE_EXCLUSION);
         setOutputDirectory(configurationMap.get(CxParam.OUTPUT_DIRECTORY.value()));
         setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES.value()));
-        setIncremental(configurationMap.get(CxParam.IS_INCREMENTAL_SCAN.value()));
-        setSynchronousMode(configurationMap.get(CxParam.IS_SYNCHRONOUS.value()));//TODO value as boolean/Int
-        setThresholdsEnabled(configurationMap.get(CxParam.THRESHOLDS_ENABLED.value()));
+        setIncrementalScan(configurationMap.getAsBoolean(CxParam.IS_INCREMENTAL_SCAN.value()));
+        setSynchronous(configurationMap.getAsBoolean(CxParam.IS_SYNCHRONOUS.value()));//TODO value as boolean/Int
+        setThresholdsEnabled(configurationMap.getAsBoolean(CxParam.THRESHOLDS_ENABLED.value()));
         setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD.value()));
         setMediumThreshold(configurationMap.get(CxParam.MEDIUM_THRESHOLD.value()));
         setLowThreshold(configurationMap.get(CxParam.LOW_THRESHOLD.value()));
-        setOsaEnabled(configurationMap.get(CxParam.OSA_ENABLED.value()));
-        setOsaExclusions(StringUtil.split(configurationMap.get(CxParam.OSA_EXCLUSIONS.value()), ","));
+        setGeneratePDFReport(configurationMap.getAsBoolean(CxParam.GENERATE_PDF_REPORT.value()));
+
+        setOsaEnabled(configurationMap.getAsBoolean(CxParam.OSA_ENABLED.value()));
         setOsaScanTimeoutInMinutes(configurationMap.get(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value()));
-        setOsaThresholdsEnabled(configurationMap.get(CxParam.OSA_THRESHOLDS_ENABLED.value()));
+        setOsaThresholdsEnabled(configurationMap.getAsBoolean(CxParam.OSA_THRESHOLDS_ENABLED.value()));
         setOsaHighSeveritiesThreshold(configurationMap.get(CxParam.OSA_HIGH_THRESHOLD.value()));
         setOsaMediumSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD.value()));
-        setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD.value()));
+        setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_LOW_THRESHOLD.value()));
     }
 
 
@@ -162,11 +170,7 @@ public class ScanConfiguration {
         return scanTimeoutInMinutes;
     }
 
-    public void setScanTimeoutInMinutes(Integer scanTimeoutInMinutes) {
-        this.scanTimeoutInMinutes = scanTimeoutInMinutes;
-    }
-
-    private void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
+    public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
         this.scanTimeoutInMinutes = setNumberFromString(scanTimeoutInMinutes);
     }
 
@@ -178,11 +182,6 @@ public class ScanConfiguration {
         isIncrementalScan = incrementalScan;
     }
 
-    private void setIncremental(String incremental) {
-
-        this.isIncrementalScan = getBoolean(incremental);
-    }
-
     public boolean isSynchronous() {
         return isSynchronous;
     }
@@ -191,20 +190,12 @@ public class ScanConfiguration {
         isSynchronous = synchronous;
     }
 
-    private void setSynchronousMode(String synchronousMode) {
-        this.isSynchronous = getBoolean(synchronousMode);
-    }
-
     public boolean isThresholdsEnabled() {
         return thresholdsEnabled;
     }
 
     public void setThresholdsEnabled(boolean thresholdsEnabled) {
         this.thresholdsEnabled = thresholdsEnabled;
-    }
-
-    private void setThresholdsEnabled(String enableThresholds) {
-        this.thresholdsEnabled = getBoolean(enableThresholds);
     }
 
     public Integer getHighThreshold() {
@@ -230,7 +221,6 @@ public class ScanConfiguration {
     private void setMediumThreshold(String mediumSeveritiesThreshold) {
         this.mediumThreshold = setNumberFromString(mediumSeveritiesThreshold);
     }
-
     public Integer getLowThreshold() {
         return lowThreshold;
     }
@@ -259,6 +249,13 @@ public class ScanConfiguration {
         this.folderExclusions = folderExclusions;
     }
 
+    public boolean isGeneratePDFReport() {
+        return generatePDFReport;
+    }
+
+    public void setGeneratePDFReport(boolean generatePDFReport) {
+        this.generatePDFReport = generatePDFReport;
+    }
 
     public boolean isOsaEnabled() {
         return osaEnabled;
@@ -266,10 +263,6 @@ public class ScanConfiguration {
 
     public void setOsaEnabled(boolean osaEnabled) {
         this.osaEnabled = osaEnabled;
-    }
-
-    private void setOsaEnabled(String osaEnabled) {
-        this.osaEnabled = getBoolean(osaEnabled);
     }
 
     public Integer getOsaScanTimeoutInMinutes() {
@@ -292,19 +285,7 @@ public class ScanConfiguration {
         this.osaThresholdsEnabled = osaThresholdsEnabled;
     }
 
-    private void setOsaThresholdsEnabled(String enableOsaThresholds) {
-        this.osaThresholdsEnabled = getBoolean(enableOsaThresholds);
-    }
-
-    public String[] getOsaExclusions() {
-        return osaExclusions;
-    }
-
-    private void setOsaExclusions(String[] osaExclusions) {
-        this.osaExclusions = osaExclusions;
-    }
-
-    public Integer getOsaHighThreshold() {
+     public Integer getOsaHighThreshold() {
         return osaHighThreshold;
     }
 
@@ -315,7 +296,6 @@ public class ScanConfiguration {
     private void setOsaHighSeveritiesThreshold(String osaHighSeveritiesThreshold) {
         this.osaHighThreshold = setNumberFromString(osaHighSeveritiesThreshold);
     }
-
     public Integer getOsaMediumThreshold() {
         return osaMediumThreshold;
     }
@@ -327,7 +307,6 @@ public class ScanConfiguration {
     private void setOsaMediumSeveritiesThreshold(String osaMediumSeveritiesThreshold) {
         this.osaMediumThreshold = setNumberFromString(osaMediumSeveritiesThreshold);
     }
-
     public Integer getOsaLowThreshold() {
         return osaLowThreshold;
     }
@@ -338,15 +317,6 @@ public class ScanConfiguration {
 
     private void setOsaLowSeveritiesThreshold(String osaLowSeveritiesThreshold) {
         this.osaLowThreshold = setNumberFromString(osaLowSeveritiesThreshold);
-    }
-
-
-/***********    Private methods  *******************/
-    private Boolean getBoolean(String booleanValue) { //TODO change to the built in method in configuration map
-        if (booleanValue == null) {
-            booleanValue = "false";
-        }
-        return Boolean.parseBoolean(booleanValue);
     }
 
     private Integer setNumberFromString(String number) { //TODO change to the builtin method

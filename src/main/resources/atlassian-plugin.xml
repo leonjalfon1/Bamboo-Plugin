@@ -5,6 +5,9 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
+       <bundle-instructions>
+            <Import-Package>javax.ws.rs.ext.MessageBodyReader,*;resolution:=optional</Import-Package>
+        </bundle-instructions>
     </plugin-info>
 
     <!-- add our i18n resource -->
@@ -19,5 +22,20 @@
         <resource type="download" name="icon" location="/images/TaskIcon.png" />
     </taskType>
 
+    <xwork key="checkmarx-default-config-xwork" name="Checkmarx Default Configuration XWork">
+        <package name="checkmarxDefaultConfigurationPackage" extends="admin">
+            <action name="checkmarxDefaultConfiguration" class="com.cx.plugin.CxDefaultConfig">
+                <result name="input" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
+                <result name="error" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
+                <result name="success" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
+            </action>
+        </package>
+    </xwork>
+
+
+    <web-item key="checkmarx-default-config-webitem" name="Checkmarx Default Configuration WebItem" section="system.admin/plugins">
+        <label key="cxDefaultConfigWebItem.label" />
+        <link linkId="checkmarx-default-config-link">/admin/checkmarxDefaultConfiguration.action</link>
+    </web-item>
 
 </atlassian-plugin>
