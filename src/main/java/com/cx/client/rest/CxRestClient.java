@@ -4,7 +4,6 @@ import com.cx.client.exception.CxClientException;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSAScanStatus;
 import com.cx.client.rest.dto.OSASummaryResults;
-import com.cx.client.rest.util.RequestData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.filter.ClientFilter;
@@ -221,33 +220,5 @@ public class CxRestClient {
             throw new CxClientException("fail to parse json response: " + e.getMessage());
         }
         return ret;
-    }
-
-    private WebResource.Builder generateWebResource(RequestData requestData) {
-        WebResource.Builder wbr;
-        WebResource resource;
-
-        resource = client.resource(requestData.getUrl());
-        //adding OAuth authorization header to the HTTP request, if no authorization header is already present.
-        //addFilters(resource);
-        wbr = resource.getRequestBuilder();
-
-        //Set request headers
-        if (requestData.getHeaders() != null) {
-            for (String headK : requestData.getHeaders().keySet()) {
-                wbr = wbr.header(headK, requestData.getHeaders().get(headK));
-            }
-        }
-        //Set request cookie
-        if (requestData.getCookies() != null) {
-            for (NewCookie cookie : requestData.getCookies()) {
-                wbr = wbr.cookie(cookie.toCookie());
-            }
-        }
-        //Set Content type
-        if (requestData.getContentType() != null) {
-            wbr = wbr.type(requestData.getContentType());
-        }
-        return wbr;
     }
 }

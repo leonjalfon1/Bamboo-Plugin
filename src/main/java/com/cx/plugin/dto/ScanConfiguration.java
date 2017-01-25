@@ -94,7 +94,7 @@ public class ScanConfiguration {
         //this.projectName = configurationMap.value(CxParam.CX_PROJECT_NAME);
         setProjectName(this.projectName = projectName);//TODO
         setPreset(configurationMap.get(CxParam.PRESET.value()));
-        setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH.value()));
+        setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME.value()));
         setFolderExclusions(StringUtil.split(configurationMap.get(CxParam.FOLDER_EXCLUSION.value()), ","));
 
         //this.fileExclusions = configurationMap.get(CxParam.FILE_EXCLUSION);

@@ -8,8 +8,10 @@ public enum CxParam {
     SERVER_URL("serverUrl"),
     DEFAULT_URL ("http://localhost"), //TODO-DOR is that the right place?
     PROJECT_NAME("projectName"),
-    TEAM_PATH("teamPath"),
-    PRESET("preset"),
+    TEAM_PATH("teamPath"),//TODO add Id
+    TEAM_PATH_NAME("teamPathName"),
+    PRESET("preset"), //TODO add Id
+    PRESET_NAME("presetName"),
     IS_INCREMENTAL_SCAN("isIncrementalScan"),
     FOLDER_EXCLUSION("folderExclusions"),
     FILE_EXCLUSION("fileExclusions"),
