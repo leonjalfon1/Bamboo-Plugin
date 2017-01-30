@@ -22,6 +22,12 @@
         <resource type="download" name="icon" location="/images/TaskIcon.png" />
     </taskType>
 
+
+    <web-resource key="releaseCSS" name="releaseCSS">
+        <resource type="download" name="release.css" location="release.css"/>
+    </web-resource>
+
+
     <xwork key="checkmarx-default-config-xwork" name="Checkmarx Default Configuration XWork">
         <package name="checkmarxDefaultConfigurationPackage" extends="admin">
             <action name="checkmarxDefaultConfiguration" class="com.cx.plugin.CxDefaultConfig">
@@ -29,13 +35,34 @@
                 <result name="error" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
                 <result name="success" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
             </action>
+
+            <action name="testConnection" class="com.cx.plugin.CxDefaultConfig" method="updateBintray">
+                <result name="input" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
+              <!--  <result name="success" type="redirect">com/cx/plugin/cxDefaultConfig.action</result>-->
+                <result name="success" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
+            </action>
+
         </package>
     </xwork>
 
 
     <web-item key="checkmarx-default-config-webitem" name="Checkmarx Default Configuration WebItem" section="system.admin/plugins">
-        <label key="cxDefaultConfigWebItem.label" />
-        <link linkId="checkmarx-default-config-link">/admin/checkmarxDefaultConfiguration.action</link>
-    </web-item>
+    <label key="cxDefaultConfigWebItem.label" />
+    <link linkId="checkmarx-default-config-link">/admin/checkmarxDefaultConfiguration.action</link>
+</web-item>
+
+
+    <web-panel key="checkmarx-chainresult-summary" name="Checkmarx Plan Result Summary Panel" location="chainresult.summary">
+        <resource name="view" type="freemarker" location="/com/cx/plugin/cxResultSummary.ftl" />
+    </web-panel>
+
+    <web-panel key="checkmarx-chainresult-summary-right" name="Checkmarx Plan Result Summary Right Panel" location="chainresult.summary.right">
+        <resource name="view" type="freemarker" location="/com/cx/plugin/cxResultSummaryRight.ftl" />
+    </web-panel>
+
+    <web-panel key="checkmarx-jobresult-summary-right" name="Checkmarx Job Result Summary Right Panel" location="jobresult.summary.right">
+        <resource name="view" type="freemarker" location="/com/cx/plugin/cxResultSummaryRight.ftl" />
+    </web-panel>
+
 
 </atlassian-plugin>
