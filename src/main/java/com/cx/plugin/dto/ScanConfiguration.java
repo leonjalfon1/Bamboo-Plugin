@@ -33,15 +33,13 @@ public class ScanConfiguration {
 
     private String[] folderExclusions = new String[0];
 
-    /**
-     * Define an output directory for the scan results.
-     */
-    private String outputDirectory; //TODO default directory
+
     /**
      * Define a timeout (in minutes) for the scan. If the specified time has passed, the build fails.
      * Set to 0 to run the scan with no time limit.
      */
     private Integer scanTimeoutInMinutes;
+
     private boolean isIncrementalScan = false;
     private boolean isSynchronous = false;
     //    private boolean generatePDFReport;
@@ -59,7 +57,6 @@ public class ScanConfiguration {
 
     private boolean osaEnabled = false;
 
-    private Integer osaScanTimeoutInMinutes;
 
     private boolean osaThresholdsEnabled = false;
 
@@ -86,38 +83,35 @@ public class ScanConfiguration {
     //    private boolean osaGeneratePDFReport;
     //  private boolean osaGenerateHTMLReport;
 
-    public ScanConfiguration(ConfigurationMap configurationMap, String projectName) {
-        setUsername(configurationMap.get(CxParam.USER_NAME.value()));
-        String cxPass = configurationMap.get(CxParam.PASSWORD.value());
+    public ScanConfiguration(ConfigurationMap configurationMap) {
+        setUsername(configurationMap.get(CxParam.USER_NAME));
+        String cxPass = configurationMap.get(CxParam.PASSWORD);
         setPassword(cxPass);
-        setUrl(configurationMap.get(CxParam.SERVER_URL.value()));
+        setUrl(configurationMap.get(CxParam.SERVER_URL));
         //this.projectName = configurationMap.value(CxParam.CX_PROJECT_NAME);
-        setProjectName(this.projectName = projectName);//TODO
-        setPreset(configurationMap.get(CxParam.PRESET.value()));
-        setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME.value()));
-        setFolderExclusions(StringUtil.split(configurationMap.get(CxParam.FOLDER_EXCLUSION.value()), ","));
+        setProjectName(configurationMap.get(CxParam.PROJECT_NAME));//TODO
+        setPreset(configurationMap.get(CxParam.PRESET_NAME));
+        setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME));
+        setFolderExclusions(StringUtil.split(configurationMap.get(CxParam.FOLDER_EXCLUSION), ","));
 
-        //this.fileExclusions = configurationMap.get(CxParam.FILE_EXCLUSION);
-        setOutputDirectory(configurationMap.get(CxParam.OUTPUT_DIRECTORY.value()));
-        setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES.value()));
-        setIncrementalScan(configurationMap.getAsBoolean(CxParam.IS_INCREMENTAL_SCAN.value()));
-        setSynchronous(configurationMap.getAsBoolean(CxParam.IS_SYNCHRONOUS.value()));//TODO value as boolean/Int
-        setThresholdsEnabled(configurationMap.getAsBoolean(CxParam.THRESHOLDS_ENABLED.value()));
-        setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD.value()));
-        setMediumThreshold(configurationMap.get(CxParam.MEDIUM_THRESHOLD.value()));
-        setLowThreshold(configurationMap.get(CxParam.LOW_THRESHOLD.value()));
-        setGeneratePDFReport(configurationMap.getAsBoolean(CxParam.GENERATE_PDF_REPORT.value()));
+        setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
+        setIncrementalScan(configurationMap.getAsBoolean(CxParam.IS_INCREMENTAL_SCAN));
+        setSynchronous(configurationMap.getAsBoolean(CxParam.IS_SYNCHRONOUS));//TODO value as boolean/Int
+        setThresholdsEnabled(configurationMap.getAsBoolean(CxParam.THRESHOLDS_ENABLED));
+        setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD));
+        setMediumThreshold(configurationMap.get(CxParam.MEDIUM_THRESHOLD));
+        setLowThreshold(configurationMap.get(CxParam.LOW_THRESHOLD));
+        setGeneratePDFReport(configurationMap.getAsBoolean(CxParam.GENERATE_PDF_REPORT));
 
-        setOsaEnabled(configurationMap.getAsBoolean(CxParam.OSA_ENABLED.value()));
-        setOsaScanTimeoutInMinutes(configurationMap.get(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value()));
-        setOsaThresholdsEnabled(configurationMap.getAsBoolean(CxParam.OSA_THRESHOLDS_ENABLED.value()));
-        setOsaHighSeveritiesThreshold(configurationMap.get(CxParam.OSA_HIGH_THRESHOLD.value()));
-        setOsaMediumSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD.value()));
-        setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_LOW_THRESHOLD.value()));
+        setOsaEnabled(configurationMap.getAsBoolean(CxParam.OSA_ENABLED));
+        setOsaThresholdsEnabled(configurationMap.getAsBoolean(CxParam.OSA_THRESHOLDS_ENABLED));
+        setOsaHighSeveritiesThreshold(configurationMap.get(CxParam.OSA_HIGH_THRESHOLD));
+        setOsaMediumSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD));
+        setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_LOW_THRESHOLD));
     }
 
 
-/********   Setters & Getters ***********/
+    /********   Setters & Getters ***********/
     public String getUsername() {
         return username;
     }
@@ -156,14 +150,6 @@ public class ScanConfiguration {
 
     public void setPreset(String preset) {
         this.preset = preset;
-    }
-
-    public String getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    private void setOutputDirectory(String outputDirectory) {
-        this.outputDirectory = outputDirectory;
     }
 
     public Integer getScanTimeoutInMinutes() {
@@ -221,6 +207,7 @@ public class ScanConfiguration {
     private void setMediumThreshold(String mediumSeveritiesThreshold) {
         this.mediumThreshold = setNumberFromString(mediumSeveritiesThreshold);
     }
+
     public Integer getLowThreshold() {
         return lowThreshold;
     }
@@ -265,18 +252,6 @@ public class ScanConfiguration {
         this.osaEnabled = osaEnabled;
     }
 
-    public Integer getOsaScanTimeoutInMinutes() {
-        return osaScanTimeoutInMinutes;
-    }
-
-    public void setOsaScanTimeoutInMinutes(Integer osaScanTimeoutInMinutes) {
-        this.osaScanTimeoutInMinutes = osaScanTimeoutInMinutes;
-    }
-
-    private void setOsaScanTimeoutInMinutes(String osaScanTimeoutInMinutes) {
-        this.osaScanTimeoutInMinutes = setNumberFromString(osaScanTimeoutInMinutes);
-    }
-
     public boolean isOsaThresholdsEnabled() {
         return osaThresholdsEnabled;
     }
@@ -285,7 +260,7 @@ public class ScanConfiguration {
         this.osaThresholdsEnabled = osaThresholdsEnabled;
     }
 
-     public Integer getOsaHighThreshold() {
+    public Integer getOsaHighThreshold() {
         return osaHighThreshold;
     }
 
@@ -296,6 +271,7 @@ public class ScanConfiguration {
     private void setOsaHighSeveritiesThreshold(String osaHighSeveritiesThreshold) {
         this.osaHighThreshold = setNumberFromString(osaHighSeveritiesThreshold);
     }
+
     public Integer getOsaMediumThreshold() {
         return osaMediumThreshold;
     }
@@ -307,6 +283,7 @@ public class ScanConfiguration {
     private void setOsaMediumSeveritiesThreshold(String osaMediumSeveritiesThreshold) {
         this.osaMediumThreshold = setNumberFromString(osaMediumSeveritiesThreshold);
     }
+
     public Integer getOsaLowThreshold() {
         return osaLowThreshold;
     }

@@ -19,20 +19,22 @@ import com.checkmarx.v7.ArrayOfGroup;
 import com.checkmarx.v7.Group;
 import com.cx.client.CxClientService;
 import com.cx.client.CxClientServiceImpl;
-import com.cx.plugin.dto.CxObject;
 import com.cx.plugin.dto.CxParam;
-import com.google.common.collect.ImmutableMap;
+import com.cx.plugin.dto.ValueComparator;
 import org.apache.commons.lang.StringUtils;
 
+import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AgentTaskConfigurator extends AbstractTaskConfigurator {
-    protected static final String OPTION_TRUE = "true";
-    protected static final String OPTION_FALSE = "false";
+    protected final String OPTION_TRUE = "true";
+    protected final String OPTION_FALSE = "false";
+    protected final String DEFAULT_URL = "http://localhost"; //TODO-DOR is that the right place?
+    protected final String DEFAULT_PRESET = "Checkmarx Default";
+    protected long DEFAULT_PRESET_ID = 17;
+    protected final String DEFAULT_TEAM = "CxServer"; //TODO-DOR is that the right place?
+    protected String DEFAULT_TEAM_ID = "1";
 
     private static final String DEFAULT_FILTER_PATTERN = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
             "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
@@ -47,51 +49,47 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             "!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml    ";
 
 
-    private static Map<String, String> presetList;//= new HashMap<String, String>();
-    private static Map<String, String> teamPathList;// = new ArrayList<CxObject>();
+    private static Map<String, String> presetList;//= new HashMap<String, String>(); TODO ask DOr
+    private static Map<String, String> teamPathList;
+    ;
     private CxClientService cxClientService = null;
     public static final String GLOBAL_CONFIGURATION = "globalConfiguration";
     public static final String COSTUME_CONFIGURATION = "costumeConfiguration";
-    private static final Map CONFIGURATION_MODE_TYPES_MAP = ImmutableMap
-            .of(GLOBAL_CONFIGURATION, "Use Default Setting",
-                    COSTUME_CONFIGURATION, "Specific Task Setting");
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP = new HashMap<String, String>();
 
     @NotNull
     @Override
     public Map<String, String> generateTaskConfigMap(@NotNull final ActionParametersMap params, @Nullable final TaskDefinition previousTaskDefinition) {
 
         Map<String, String> config = super.generateTaskConfigMap(params, previousTaskDefinition);
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION.value());
-
+        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
 
         config = generateCredentialsFields(params, adminConfig, config);
 
-        config.put(CxParam.CX_PROJECT_NAME.value(), params.getString(CxParam.CX_PROJECT_NAME.value()));
-        config.put(CxParam.GENERATE_PDF_REPORT.value(), params.getString(CxParam.GENERATE_PDF_REPORT.value()));
-        //config.put(CxParam.OUTPUT_DIRECTORY.value(), params.getString(CxParam.OUTPUT_DIRECTORY.value()));
+        config.put(CxParam.PROJECT_NAME, params.getString(CxParam.PROJECT_NAME));
+        config.put(CxParam.GENERATE_PDF_REPORT, params.getString(CxParam.GENERATE_PDF_REPORT));
 
-        String cxPreset = params.getString(CxParam.PRESET.value());
+        String cxPreset = params.getString(CxParam.PRESET_ID);
         if (cxPreset != null && !cxPreset.equals(CxParam.NO_SESSION)) {//TODO
-            config.put(CxParam.PRESET_NAME.value(), presetList.get(cxPreset));
-            config.put(CxParam.PRESET.value(), cxPreset);
+            config.put(CxParam.PRESET_NAME, presetList.get(cxPreset));
+            config.put(CxParam.PRESET_ID, cxPreset);
         }
 
-        String cxTeam = params.getString(CxParam.TEAM_PATH.value());
+        String cxTeam = params.getString(CxParam.TEAM_PATH_ID);
         if (cxTeam != null && !cxTeam.equals(CxParam.NO_SESSION)) {//TODO
-            config.put(CxParam.TEAM_PATH_NAME.value(), teamPathList.get(cxTeam));
-            config.put(CxParam.TEAM_PATH.value(), cxTeam);
+            config.put(CxParam.TEAM_PATH_NAME, teamPathList.get(cxTeam));
+            config.put(CxParam.TEAM_PATH_ID, cxTeam);
         }
 
-        config.put(CxParam.OSA_ENABLED.value(), params.getString(CxParam.OSA_ENABLED.value()));
-        config.put(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value(), params.getString(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value()));
+        config.put(CxParam.OSA_ENABLED, params.getString(CxParam.OSA_ENABLED));
+        config.put(CxParam.IS_INCREMENTAL_SCAN, params.getString(CxParam.IS_INCREMENTAL_SCAN));
+        config.put(CxParam.IS_SYNCHRONOUS, params.getString(CxParam.IS_SYNCHRONOUS));
 
         //fill CxSAST Scan fields
-        final String useDefaultCxSASTConfig = params.getString(CxParam.DEFAULT_CXSAST.value());
-        config = generateCxSASTFields(params, adminConfig, config, useDefaultCxSASTConfig);
+        config = generateCxSASTFields(params, adminConfig, config);
 
         //fill Scan Control fields scan fields
-        final String useDefaultScanControl = params.getString(CxParam.DEFAULT_SCAN_CONTROL.value());
-        config = generateScanControlFields(params, adminConfig, config, useDefaultScanControl);
+        config = generateScanControlFields(params, adminConfig, config);
 
         return config;
     }
@@ -99,104 +97,322 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     @Override //TODO- remove all the params without a default value
     public void populateContextForCreate(@NotNull final Map<String, Object> context) {
         super.populateContextForCreate(context);
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION.value());
+        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
+        CONFIGURATION_MODE_TYPES_MAP.put(GLOBAL_CONFIGURATION, "Use Default Setting");
+        CONFIGURATION_MODE_TYPES_MAP.put(COSTUME_CONFIGURATION, "Specific Task Setting");
+        String projectName;
+        try {
+            Object plan = context.get("plan");
+            Method getName = plan.getClass().getDeclaredMethod("getName", null);
+            projectName = (String) getName.invoke(plan);
+        } catch (Exception e) {
+            projectName = "";
+        }
 
-        context.put(CxParam.DEFAULT_CREDENTIALS.value(), OPTION_TRUE);
-        // context.put(CxParam.DEFAULT_CREDENTIALS.value(), GLOBAL_CONFIGURATION);
-        context.put(CxParam.SERVER_URL.value(), CxParam.DEFAULT_URL.value());
+
+        context.put(CxParam.PROJECT_NAME, projectName);
+        context.put(CxParam.DEFAULT_CREDENTIALS, GLOBAL_CONFIGURATION);
+        context.put(CxParam.SERVER_URL, DEFAULT_URL);
         populateProjectSelectFields(null, null, context, adminConfig);
 
         context.put("configurationModeTypes", CONFIGURATION_MODE_TYPES_MAP);
 
-        context.put(CxParam.DEFAULT_CXSAST.value(), GLOBAL_CONFIGURATION);
-        context.put(CxParam.DEFAULT_CREDENTIALS.value(), OPTION_TRUE);
-        context.put(CxParam.DEFAULT_SCAN_CONTROL.value(), GLOBAL_CONFIGURATION);
-        context.put(CxParam.IS_INCREMENTAL_SCAN.value(), OPTION_FALSE);
-        context.put(CxParam.FILTER_PATTERN.value(), DEFAULT_FILTER_PATTERN);
+        context.put(CxParam.DEFAULT_CXSAST, GLOBAL_CONFIGURATION);
+        context.put(CxParam.DEFAULT_CREDENTIALS, OPTION_TRUE);
+        context.put(CxParam.DEFAULT_SCAN_CONTROL, GLOBAL_CONFIGURATION);
+        context.put(CxParam.IS_INCREMENTAL_SCAN, OPTION_FALSE);
+        context.put(CxParam.FILTER_PATTERN, DEFAULT_FILTER_PATTERN);
 
-        context.put(CxParam.IS_SYNCHRONOUS.value(), OPTION_TRUE);
-        context.put(CxParam.THRESHOLDS_ENABLED.value(), OPTION_FALSE);
-        context.put(CxParam.GENERATE_PDF_REPORT.value(), OPTION_FALSE);
-        context.put(CxParam.OSA_ENABLED.value(), OPTION_FALSE);
-        context.put(CxParam.OSA_THRESHOLDS_ENABLED.value(), OPTION_FALSE);
+        context.put(CxParam.IS_SYNCHRONOUS, OPTION_TRUE);
+        context.put(CxParam.THRESHOLDS_ENABLED, OPTION_FALSE);
+        context.put(CxParam.GENERATE_PDF_REPORT, OPTION_FALSE);
+        context.put(CxParam.OSA_ENABLED, OPTION_FALSE);
+        context.put(CxParam.OSA_THRESHOLDS_ENABLED, OPTION_FALSE);
     }
 
     @Override
     public void populateContextForEdit(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition) {
         super.populateContextForEdit(context, taskDefinition);
         Map<String, String> configMap = taskDefinition.getConfiguration();
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION.value());
+        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
 
         context.put("configurationModeTypes", CONFIGURATION_MODE_TYPES_MAP);
+        final String useDefaultCredentials = configMap.get(CxParam.DEFAULT_CXSAST);
 
-        final Boolean useDefaultCredentials = configMap.get(CxParam.DEFAULT_CREDENTIALS.value()).equals(OPTION_TRUE);
+        context.put(CxParam.DEFAULT_CREDENTIALS, useDefaultCredentials);
+        context.put(CxParam.PROJECT_NAME, configMap.get(CxParam.PROJECT_NAME));
 
-        context.put(CxParam.DEFAULT_CREDENTIALS.value(), useDefaultCredentials);
-        context.put(CxParam.CX_PROJECT_NAME.value(), configMap.get(CxParam.CX_PROJECT_NAME.value()));
+        final String preset = configMap.get(CxParam.PRESET_ID);
+        final String team = configMap.get(CxParam.TEAM_PATH_ID);
+        //context.put("testConnection", new TestConnectionAction());
 
-        final String preset = configMap.get(CxParam.PRESET.value());
-        final String team = configMap.get(CxParam.TEAM_PATH.value());
-        //context.put("testConnection", new TestConnection());
-
-        if (useDefaultCredentials) {
+        if (useDefaultCredentials.equals(COSTUME_CONFIGURATION)) {
             populateProjectSelectFields(preset, team, context, adminConfig);
         } else {
-            final String serverUrl = configMap.get(CxParam.SERVER_URL.value());
-            final String userName = configMap.get(CxParam.USER_NAME.value());
-            String password = configMap.get(CxParam.PASSWORD.value());//TODO change to changePassword
-            context.put(CxParam.SERVER_URL.value(), serverUrl);
-            context.put(CxParam.USER_NAME.value(), userName);
-            context.put(CxParam.PASSWORD.value(), password);
+            final String serverUrl = configMap.get(CxParam.SERVER_URL);
+            final String userName = configMap.get(CxParam.USER_NAME);
+            String password = configMap.get(CxParam.PASSWORD);//TODO change to changePassword
+            context.put(CxParam.SERVER_URL, serverUrl);
+            context.put(CxParam.USER_NAME, userName);
+            context.put(CxParam.PASSWORD, password);
             populateProjectSelectFields(serverUrl, userName, password, preset, team, context);
         }
 
-        final String useDefaultCxSASTConfig = configMap.get(CxParam.DEFAULT_CXSAST.value());
-        context.put(CxParam.DEFAULT_CXSAST.value(), useDefaultCxSASTConfig);
+        final String useDefaultCxSASTConfig = configMap.get(CxParam.DEFAULT_CXSAST);
+        context.put(CxParam.DEFAULT_CXSAST, useDefaultCxSASTConfig);
         if (useDefaultCxSASTConfig.equals(COSTUME_CONFIGURATION)) {
-            context.put(CxParam.IS_INCREMENTAL_SCAN.value(), configMap.get(CxParam.IS_INCREMENTAL_SCAN.value()));
-            context.put(CxParam.FOLDER_EXCLUSION.value(), configMap.get(CxParam.FOLDER_EXCLUSION.value()));
-            context.put(CxParam.FILTER_PATTERN.value(), configMap.get(CxParam.FILTER_PATTERN.value()));
-            context.put(CxParam.SCAN_TIMEOUT_IN_MINUTES.value(), configMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES.value()));
+            context.put(CxParam.IS_INCREMENTAL_SCAN, configMap.get(CxParam.IS_INCREMENTAL_SCAN));
+            context.put(CxParam.FOLDER_EXCLUSION, configMap.get(CxParam.FOLDER_EXCLUSION));
+            context.put(CxParam.FILTER_PATTERN, configMap.get(CxParam.FILTER_PATTERN));
+            context.put(CxParam.SCAN_TIMEOUT_IN_MINUTES, configMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
         }
-        context.put(CxParam.GENERATE_PDF_REPORT.value(), configMap.get(CxParam.GENERATE_PDF_REPORT.value()));
-        context.put(CxParam.OSA_ENABLED.value(), configMap.get(CxParam.OSA_ENABLED.value()));
-        context.put(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value(), configMap.get(CxParam.OSA_SCAN_TIMEOUT_IN_MINUTES.value()));
+        context.put(CxParam.GENERATE_PDF_REPORT, configMap.get(CxParam.GENERATE_PDF_REPORT));
+        context.put(CxParam.OSA_ENABLED, configMap.get(CxParam.OSA_ENABLED));
 
-        final String useDefaultScanControl = configMap.get(CxParam.DEFAULT_SCAN_CONTROL.value());
-        context.put(CxParam.DEFAULT_SCAN_CONTROL.value(), configMap.get(CxParam.DEFAULT_SCAN_CONTROL.value()));
+        final String useDefaultScanControl = configMap.get(CxParam.DEFAULT_SCAN_CONTROL);
+        context.put(CxParam.DEFAULT_SCAN_CONTROL, configMap.get(CxParam.DEFAULT_SCAN_CONTROL));
         if (useDefaultScanControl.equals(COSTUME_CONFIGURATION)) {
-            context.put(CxParam.IS_SYNCHRONOUS.value(), configMap.get(CxParam.IS_SYNCHRONOUS.value()));
-            context.put(CxParam.THRESHOLDS_ENABLED.value(), configMap.get(CxParam.THRESHOLDS_ENABLED.value()));
-            context.put(CxParam.HIGH_THRESHOLD.value(), configMap.get(CxParam.HIGH_THRESHOLD.value()));
-            context.put(CxParam.MEDIUM_THRESHOLD.value(), configMap.get(CxParam.MEDIUM_THRESHOLD.value()));
-            context.put(CxParam.LOW_THRESHOLD.value(), configMap.get(CxParam.LOW_THRESHOLD.value()));
-            context.put(CxParam.OSA_THRESHOLDS_ENABLED.value(), configMap.get(CxParam.OSA_THRESHOLDS_ENABLED.value()));
-            context.put(CxParam.OSA_HIGH_THRESHOLD.value(), configMap.get(CxParam.OSA_HIGH_THRESHOLD.value()));
-            context.put(CxParam.OSA_MEDIUM_THRESHOLD.value(), configMap.get(CxParam.OSA_MEDIUM_THRESHOLD.value()));
-            context.put(CxParam.OSA_LOW_THRESHOLD.value(), configMap.get(CxParam.OSA_LOW_THRESHOLD.value()));
+            context.put(CxParam.IS_SYNCHRONOUS, configMap.get(CxParam.IS_SYNCHRONOUS));
+            context.put(CxParam.THRESHOLDS_ENABLED, configMap.get(CxParam.THRESHOLDS_ENABLED));
+            context.put(CxParam.HIGH_THRESHOLD, configMap.get(CxParam.HIGH_THRESHOLD));
+            context.put(CxParam.MEDIUM_THRESHOLD, configMap.get(CxParam.MEDIUM_THRESHOLD));
+            context.put(CxParam.LOW_THRESHOLD, configMap.get(CxParam.LOW_THRESHOLD));
+            context.put(CxParam.OSA_THRESHOLDS_ENABLED, configMap.get(CxParam.OSA_THRESHOLDS_ENABLED));
+            context.put(CxParam.OSA_HIGH_THRESHOLD, configMap.get(CxParam.OSA_HIGH_THRESHOLD));
+            context.put(CxParam.OSA_MEDIUM_THRESHOLD, configMap.get(CxParam.OSA_MEDIUM_THRESHOLD));
+            context.put(CxParam.OSA_LOW_THRESHOLD, configMap.get(CxParam.OSA_LOW_THRESHOLD));
         }
     }
 
     private void populateProjectSelectFields(final String cxPreset, final String cxTeam, @NotNull final Map<String, Object> context, AdministrationConfiguration adminConfig) {
-        final String cxServerUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL.value());
-        final String cxUser = adminConfig.getSystemProperty(CxParam.USER_NAME.value());
-        String cxPass = adminConfig.getSystemProperty(CxParam.PASSWORD.value());
+        final String cxServerUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL);
+        final String cxUser = adminConfig.getSystemProperty(CxParam.USER_NAME);
+        String cxPass = adminConfig.getSystemProperty(CxParam.PASSWORD);
 
-        context.put(CxParam.SERVER_URL.value(), cxServerUrl);
-        context.put(CxParam.USER_NAME.value(), cxUser);
-        context.put(CxParam.PASSWORD.value(), cxPass);
+        context.put(CxParam.SERVER_URL, cxServerUrl);
+        context.put(CxParam.USER_NAME, cxUser);
+        context.put(CxParam.PASSWORD, cxPass);
 
         populateProjectSelectFields(cxServerUrl, cxUser, cxPass, cxPreset, cxTeam, context);
     }
 
+
+    //TODO change the method to get the list only when created??
+    private void populateProjectSelectFields(final String serverUrl, final String userName, final String password, String preset, String teamPath,
+                                             @NotNull final Map<String, Object> context) {
+
+        if (serverUrl != null && !StringUtils.isEmpty(serverUrl) && userName != null && !StringUtils.isEmpty(userName) && password != null && !StringUtils.isEmpty(password)) {
+            try {
+                if (TryLogin(userName, password, serverUrl)) { //TODO handle Exceptions and handle url exceptiorn
+
+                    presetList = convertPresetType(cxClientService.getPresetList());
+                    context.put(CxParam.PRESET_LIST, presetList);
+                    if (preset != null && !StringUtils.isEmpty(preset)) {
+                        context.put(CxParam.PRESET_ID, preset);
+                    } else if (!presetList.isEmpty()) {
+                        context.put(CxParam.PRESET_ID, DEFAULT_PRESET_ID);
+                    }
+
+
+                    teamPathList = convertTeamPathType(cxClientService.getAssociatedGroupsList());
+                    context.put(CxParam.TEAM_PATH_LIST, teamPathList);
+                    if (teamPath != null && !StringUtils.isEmpty(teamPath)) {
+                        context.put(CxParam.TEAM_PATH_ID, teamPath);
+                    } else if (!teamPathList.isEmpty())
+                        context.put(CxParam.TEAM_PATH_ID, DEFAULT_TEAM_ID);
+                }
+                return;
+            } catch (Exception e) {  //TODO handle the right exceptions
+                System.out.println("Exception caught: '" + e.getMessage() + "'");
+            }
+        }
+
+        final Map<String, String> noPresets = new HashMap<String, String>();//TODO
+        noPresets.put("noPreset", "Provide the correct Checkmarx server credentials to see presets list"); //TODO bind to properties
+        context.put(CxParam.PRESET_LIST, noPresets);
+
+
+        final Map<String, String> noTeams = new HashMap<String, String>();//TODO
+        noTeams.put("noTeamPath", "Provide the correct Checkmarx server credentials to see teams list"); //TODO bind to properties
+        context.put(CxParam.TEAM_PATH_LIST, noTeams);
+    }
+
+    private Map<String, String> generateCredentialsFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
+        final String useDefaultCredentials = params.getString(CxParam.DEFAULT_CREDENTIALS);
+        String cxServerUrl;
+        String cxUser;
+        String cxPass;
+
+        if (useDefaultCredentials.equals(COSTUME_CONFIGURATION)) {
+            cxServerUrl = params.getString(CxParam.SERVER_URL);
+            cxUser = params.getString(CxParam.USER_NAME);
+            cxPass = encrypt(params.getString(CxParam.PASSWORD));
+        } else {
+            cxServerUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL);
+            cxUser = adminConfig.getSystemProperty(CxParam.USER_NAME);
+            cxPass = adminConfig.getSystemProperty(CxParam.PASSWORD);
+        }
+
+        config.put(CxParam.DEFAULT_CREDENTIALS, params.getString(CxParam.DEFAULT_CREDENTIALS));
+        config.put(CxParam.SERVER_URL, cxServerUrl);
+        config.put(CxParam.USER_NAME, cxUser);
+        config.put(CxParam.PASSWORD, cxPass);
+
+        return config;
+    }
+
+    private Map<String, String> generateCxSASTFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
+
+        final String useDefaultCxSASTConfig = params.getString(CxParam.DEFAULT_CXSAST);
+        String folderExclusions;
+        String filterPattern;
+        String scanTimeout;
+
+        if (useDefaultCxSASTConfig.equals(COSTUME_CONFIGURATION)) {
+            folderExclusions = params.getString(CxParam.FOLDER_EXCLUSION);
+            filterPattern = params.getString(CxParam.FILTER_PATTERN);
+            scanTimeout = params.getString(CxParam.SCAN_TIMEOUT_IN_MINUTES);
+        } else {
+            folderExclusions = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
+            filterPattern = adminConfig.getSystemProperty(CxParam.FILTER_PATTERN);
+            scanTimeout = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES);
+        }
+        config.put(CxParam.DEFAULT_CXSAST, useDefaultCxSASTConfig);
+        config.put(CxParam.FOLDER_EXCLUSION, folderExclusions);
+        config.put(CxParam.FILTER_PATTERN, filterPattern);
+        config.put(CxParam.SCAN_TIMEOUT_IN_MINUTES, scanTimeout);
+
+        return config;
+    }
+
+    private Map<String, String> generateScanControlFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
+        final String useDefaultScanControl = params.getString(CxParam.DEFAULT_SCAN_CONTROL);
+        String thresholdsEnabled;
+        String highThreshold;
+        String mediumThreshold;
+        String lowThreshold;
+        String osaThresholdsEnabled;
+        String osaHighThreshold;
+        String osaMediumThreshold;
+        String osaLowThreshold;
+
+        if (useDefaultScanControl.equals(COSTUME_CONFIGURATION)) {
+            thresholdsEnabled = params.getString(CxParam.THRESHOLDS_ENABLED);
+            highThreshold = params.getString(CxParam.HIGH_THRESHOLD);
+            mediumThreshold = params.getString(CxParam.MEDIUM_THRESHOLD);
+            lowThreshold = params.getString(CxParam.LOW_THRESHOLD);
+            osaThresholdsEnabled = params.getString(CxParam.OSA_THRESHOLDS_ENABLED);
+            osaHighThreshold = params.getString(CxParam.OSA_HIGH_THRESHOLD);
+            osaMediumThreshold = params.getString(CxParam.OSA_MEDIUM_THRESHOLD);
+            osaLowThreshold = params.getString(CxParam.OSA_LOW_THRESHOLD);
+        } else {
+            thresholdsEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED);
+            highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD);
+            mediumThreshold = adminConfig.getSystemProperty(CxParam.MEDIUM_THRESHOLD);
+            lowThreshold = adminConfig.getSystemProperty(CxParam.LOW_THRESHOLD);
+            osaThresholdsEnabled = adminConfig.getSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED);
+            osaHighThreshold = adminConfig.getSystemProperty(CxParam.OSA_HIGH_THRESHOLD);
+            osaMediumThreshold = adminConfig.getSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD);
+            osaLowThreshold = adminConfig.getSystemProperty(CxParam.OSA_LOW_THRESHOLD);
+        }
+
+        config.put(CxParam.DEFAULT_SCAN_CONTROL, useDefaultScanControl);
+        config.put(CxParam.THRESHOLDS_ENABLED, thresholdsEnabled);
+        config.put(CxParam.HIGH_THRESHOLD, highThreshold);
+        config.put(CxParam.MEDIUM_THRESHOLD, mediumThreshold);
+        config.put(CxParam.LOW_THRESHOLD, lowThreshold);
+        config.put(CxParam.OSA_THRESHOLDS_ENABLED, osaThresholdsEnabled);
+        config.put(CxParam.OSA_HIGH_THRESHOLD, osaHighThreshold);
+        config.put(CxParam.OSA_MEDIUM_THRESHOLD, osaMediumThreshold);
+        config.put(CxParam.OSA_LOW_THRESHOLD, osaLowThreshold);
+
+        return config;
+    }
+
+    private boolean TryLogin(String userName, String cxPass, String serverUrl) {
+        cxPass = decrypt(cxPass);
+        try {
+            if (serverUrl == null) {
+                serverUrl = "";
+            }
+            URL cxUrl = new URL(serverUrl); //TODO handle exception if its empty
+            cxClientService = new CxClientServiceImpl(cxUrl, userName, cxPass); //TODO ask dor when change the password
+            cxClientService.loginToServer();
+
+            return true;
+
+        } catch (Exception CxClientException) {
+            System.out.println("Exception caught: '" + CxClientException.getMessage() + "'");//TODO
+            cxClientService = null;
+            return false;
+        }
+    }
+
+    private Map<String, String> convertPresetType(List<com.checkmarx.v7.Preset> oldType) {
+        HashMap<String, String> newType = new HashMap<String, String>();
+        for (com.checkmarx.v7.Preset preset : oldType) {
+            newType.put(Long.toString(preset.getID()), preset.getPresetName().toString());
+            if (preset.getPresetName().equals(DEFAULT_PRESET)) {
+                DEFAULT_PRESET_ID = preset.getID();
+            }
+        }
+
+        Map<String, String> sortedMap = sortMap(newType);
+        return sortedMap;
+    }
+
+    private Map<String, String> convertTeamPathType(ArrayOfGroup oldType) {
+
+        HashMap<String, String> newType = new HashMap<String, String>();
+        for (Group group : oldType.getGroup()) {
+            newType.put(group.getID(), group.getGroupName());
+            if (group.getGroupName().equals(DEFAULT_TEAM)) {
+                DEFAULT_TEAM_ID = group.getID();
+            }
+        }
+
+        Map<String, String> sortedMap = sortMap(newType);
+        return sortedMap;
+    }
+
+    private Map<String, String> sortMap(HashMap<String, String> unsortedMap) {
+        Comparator<String> comparator2 = new ValueComparator<String, String>(unsortedMap);
+        TreeMap<String, String> sortedMap = new TreeMap<String, String>(comparator2);
+        sortedMap.putAll(unsortedMap);
+
+        return sortedMap;
+    }
+
+    private String encrypt(String password) {
+        String encPass;
+        try {
+            encPass = new EncryptionServiceImpl().encrypt(password);
+        } catch (EncryptionException e) {
+            encPass = "";
+        }
+        return encPass;
+    }
+
+    private String decrypt(String password) {
+        String encPass;
+        try {
+            encPass = new EncryptionServiceImpl().decrypt(password);
+        } catch (EncryptionException e) {
+            encPass = "";
+        }
+
+        return encPass;
+    }
+
+    //Validation methods
     @Override
     public void validate(@NotNull final ActionParametersMap params, @NotNull final ErrorCollection errorCollection) {//TODO add more validations
         super.validate(params, errorCollection);
-        validateNotEmpty(params, errorCollection, CxParam.USER_NAME.value());
-        validateNotEmpty(params, errorCollection, CxParam.PASSWORD.value());
-        validateNotEmpty(params, errorCollection, CxParam.SERVER_URL.value());
+        validateNotEmpty(params, errorCollection, CxParam.USER_NAME);
+        validateNotEmpty(params, errorCollection, CxParam.PASSWORD);
+        validateNotEmpty(params, errorCollection, CxParam.SERVER_URL);
         // validateNotEmpty(params, errorCollection, CxParam.CX_PROJECT_NAME.value());
-        validateNotNegative(params, errorCollection, CxParam.SCAN_TIMEOUT_IN_MINUTES.value());
+        validateNotNegative(params, errorCollection, CxParam.SCAN_TIMEOUT_IN_MINUTES);
 
        /* String nami = params.getString(CxParam.USER_NAME.value());
         String urlii = params.getString(CxParam.URL.value());
@@ -229,195 +445,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             }
     }
 
-    //TODO change the mthod to get the list only when created
-    private void populateProjectSelectFields(final String serverUrl, final String userName, final String password, String preset, String teamPath,
-                                             @NotNull final Map<String, Object> context) {
 
-        if (serverUrl != null && !StringUtils.isEmpty(serverUrl) && userName != null && !StringUtils.isEmpty(userName) && password != null && !StringUtils.isEmpty(password)) {
-            try {
 
-                if (TryLogin(userName, password, serverUrl)) { //TODO handle Exceptions and handle url exceptiorn
-
-                    presetList = convertPresetType(cxClientService.getPresetList());
-                    context.put(CxParam.PRESET_LIST.value(), presetList);
-                    //     presetName = presetList.get(preset);
-
-                    if (preset != null && !StringUtils.isEmpty(preset)) {//TODO what if presetList not contain??
-                        context.put(CxParam.PRESET.value(), preset);
-                    }
-
-                    teamPathList = convertTeamPathType(cxClientService.getAssociatedGroupsList());
-                    context.put(CxParam.TEAM_PATH_LIST.value(), teamPathList);
-                    //       teamPathName = teamPathList.get(teamPath);
-                    if (teamPath != null && !StringUtils.isEmpty(teamPath)) {
-                        context.put(CxParam.TEAM_PATH.value(), teamPath);
-                    }
-                }
-            } catch (Exception e) {  //TODO handle the right exceptions
-                System.out.println("Exception caught: '" + e.getMessage() + "'");
-            }
-
-            return;
-        }
-
-        final List<CxObject> noPresets = new ArrayList<CxObject>();//TODO
-        // noPresets.add(new CxObject("noPreset", this.getI18nBean().getText(CxParam.PRESET.value() + "." + CxParam.NO_SESSION.value()))); //TODO
-        context.put(CxParam.PRESET.value(), noPresets);
-
-        final List<CxObject> noTeams = new ArrayList<CxObject>();//TODO
-        //noTeams.add(new CxObject("noTeam", this.getI18nBean().getText(CxParam.TEAM_PATH.value() + "." + CxParam.NO_SESSION.value()))); //TODO
-        context.put(CxParam.TEAM_PATH_LIST.value(), noTeams);
-    }
-
-    private Map<String, String> generateCredentialsFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
-        String cxServerUrl;
-        String cxUser;
-        String cxPass;
-        if (!params.getBoolean(CxParam.DEFAULT_CREDENTIALS.value())) {
-            cxServerUrl = params.getString(CxParam.SERVER_URL.value());
-            cxUser = params.getString(CxParam.USER_NAME.value());
-            cxPass = encrypt(params.getString(CxParam.PASSWORD.value()));
-        } else {
-            cxServerUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL.value());
-            cxUser = adminConfig.getSystemProperty(CxParam.USER_NAME.value());
-            cxPass = adminConfig.getSystemProperty(CxParam.PASSWORD.value());
-        }
-
-        config.put(CxParam.DEFAULT_CREDENTIALS.value(), params.getString(CxParam.DEFAULT_CREDENTIALS.value()));
-        config.put(CxParam.SERVER_URL.value(), cxServerUrl);
-        config.put(CxParam.USER_NAME.value(), cxUser);
-        config.put(CxParam.PASSWORD.value(), cxPass);
-
-        return config;
-    }
-
-    private Map<String, String> generateCxSASTFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config, String useDefaultCxSASTConfig) {
-        String isIncremental;
-        String folderExclusions;
-        String filterPattern;
-        String scanTimeout;
-
-        if (useDefaultCxSASTConfig.equals(COSTUME_CONFIGURATION)) {
-            isIncremental = params.getString(CxParam.IS_INCREMENTAL_SCAN.value());
-            folderExclusions = params.getString(CxParam.FOLDER_EXCLUSION.value());
-            filterPattern = params.getString(CxParam.FILTER_PATTERN.value());
-            scanTimeout = params.getString(CxParam.SCAN_TIMEOUT_IN_MINUTES.value());
-        } else {
-            isIncremental = adminConfig.getSystemProperty(CxParam.IS_INCREMENTAL_SCAN.value());
-            folderExclusions = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION.value());
-            filterPattern = adminConfig.getSystemProperty(CxParam.FILTER_PATTERN.value());
-            scanTimeout = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES.value());
-        }
-        config.put(CxParam.DEFAULT_CXSAST.value(), useDefaultCxSASTConfig);
-        config.put(CxParam.IS_INCREMENTAL_SCAN.value(), isIncremental);
-        config.put(CxParam.FOLDER_EXCLUSION.value(), folderExclusions);
-        config.put(CxParam.FILTER_PATTERN.value(), filterPattern);
-        config.put(CxParam.SCAN_TIMEOUT_IN_MINUTES.value(), scanTimeout);
-
-        return config;
-    }
-
-    private Map<String, String> generateScanControlFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config, String useDefaultScanControl) {
-
-        String isSynchronous;
-        String thresholdsEnabled;
-        String highThreshold;
-        String mediumThreshold;
-        String lowThreshold;
-        String osaThresholdsEnabled;
-        String osaHighThreshold;
-        String osaMediumThreshold;
-        String osaLowThreshold;
-        if (useDefaultScanControl.equals(COSTUME_CONFIGURATION)) {
-            isSynchronous = params.getString(CxParam.IS_SYNCHRONOUS.value());
-            thresholdsEnabled = params.getString(CxParam.THRESHOLDS_ENABLED.value());
-            highThreshold = params.getString(CxParam.HIGH_THRESHOLD.value());
-            mediumThreshold = params.getString(CxParam.MEDIUM_THRESHOLD.value());
-            lowThreshold = params.getString(CxParam.LOW_THRESHOLD.value());
-            osaThresholdsEnabled = params.getString(CxParam.OSA_THRESHOLDS_ENABLED.value());
-            osaHighThreshold = params.getString(CxParam.OSA_HIGH_THRESHOLD.value());
-            osaMediumThreshold = params.getString(CxParam.OSA_MEDIUM_THRESHOLD.value());
-            osaLowThreshold = params.getString(CxParam.OSA_LOW_THRESHOLD.value());
-        } else {
-            isSynchronous = adminConfig.getSystemProperty(CxParam.IS_SYNCHRONOUS.value());
-            thresholdsEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED.value());
-            highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD.value());
-            mediumThreshold = adminConfig.getSystemProperty(CxParam.MEDIUM_THRESHOLD.value());
-            lowThreshold = adminConfig.getSystemProperty(CxParam.LOW_THRESHOLD.value());
-            osaThresholdsEnabled = adminConfig.getSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED.value());
-            osaHighThreshold = adminConfig.getSystemProperty(CxParam.OSA_HIGH_THRESHOLD.value());
-            osaMediumThreshold = adminConfig.getSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD.value());
-            osaLowThreshold = adminConfig.getSystemProperty(CxParam.OSA_LOW_THRESHOLD.value());
-        }
-
-        config.put(CxParam.DEFAULT_SCAN_CONTROL.value(), useDefaultScanControl);
-        config.put(CxParam.IS_SYNCHRONOUS.value(), isSynchronous);
-        config.put(CxParam.THRESHOLDS_ENABLED.value(), thresholdsEnabled);
-        config.put(CxParam.HIGH_THRESHOLD.value(), highThreshold);
-        config.put(CxParam.MEDIUM_THRESHOLD.value(), mediumThreshold);
-        config.put(CxParam.LOW_THRESHOLD.value(), lowThreshold);
-        config.put(CxParam.OSA_THRESHOLDS_ENABLED.value(), osaThresholdsEnabled);
-        config.put(CxParam.OSA_HIGH_THRESHOLD.value(), osaHighThreshold);
-        config.put(CxParam.OSA_MEDIUM_THRESHOLD.value(), osaMediumThreshold);
-        config.put(CxParam.OSA_LOW_THRESHOLD.value(), osaLowThreshold);
-
-        return config;
-    }
-
-    private boolean TryLogin(String userName, String cxPass, String serverUrl) {
-        cxPass = decrypt(cxPass);
-        try {
-            if (serverUrl == null) {
-                serverUrl = "";
-            }
-            URL cxUrl = new URL(serverUrl); //TODO handle exception if its empty
-            cxClientService = new CxClientServiceImpl(cxUrl, userName, cxPass); //TODO ask dor when change the password
-            cxClientService.loginToServer();
-            return true;
-
-        } catch (Exception CxClientException) {
-            System.out.println("Exception caught: '" + CxClientException.getMessage() + "'");//TODO
-            cxClientService = null;
-            return false;
-        }
-    }
-
-    private Map<String, String> convertPresetType(List<com.checkmarx.v7.Preset> oldType) {
-        Map<String, String> newType = new HashMap<String, String>();
-        for (com.checkmarx.v7.Preset preset : oldType) {
-            newType.put(Long.toString(preset.getID()), preset.getPresetName().toString());
-        }
-        return newType;
-    }
-
-    private Map<String, String> convertTeamPathType(ArrayOfGroup oldType) {
-        Map<String, String> newType = new HashMap<String, String>();
-        for (Group group : oldType.getGroup()) {
-            newType.put(group.getID(), group.getGroupName());
-        }
-        return newType;
-    }
-
-    private String encrypt(String password) {
-        String encPass;
-        try {
-            encPass = new EncryptionServiceImpl().encrypt(password);
-        } catch (EncryptionException e) {
-            encPass = "";
-        }
-        return encPass;
-    }
-
-    private String decrypt(String password) {
-        String encPass;
-        try {
-            encPass = new EncryptionServiceImpl().decrypt(password);
-        } catch (EncryptionException e) {
-            encPass = "";
-        }
-
-        return encPass;
-    }
 }
 
 
@@ -433,7 +462,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
 
 //  @BoundClass(bindingName="filterStationRelationships")
-  /*  public class TestConnection implements TemplateMethodModelEx {
+  /*  public class TestConnectionAction implements TemplateMethodModelEx {
 
         public String exec(List args) throws TemplateModelException {
             boolean ret = false;

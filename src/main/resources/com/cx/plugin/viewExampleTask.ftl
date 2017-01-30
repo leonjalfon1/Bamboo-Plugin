@@ -27,7 +27,7 @@
     }
 
     input[type="radio"]:last-child {
-        left: 70px;
+        left: 200px;
     }
 
 </style>
@@ -44,8 +44,8 @@
     [/@ui.bambooSection]
 
         [@ww.textfield labelKey="projectName.label" name="projectName" required='false'/]
-        [@ww.select labelKey="preset.label" name="preset" list="presetList" listKey="key" listValue="value" multiple="false" required="true" cssClass="long-field"/]
-        [@ww.select labelKey="teamPath.label" name="teamPath" list="teamPathList" listKey="key" listValue="value" multiple="false" required="true" cssClass="long-field"/]
+        [@ww.select labelKey="preset.label" name="presetId" list="presetList" listKey="key" listValue="value" multiple="false" required="true" cssClass="long-field"/]
+        [@ww.select labelKey="teamPath.label" name="teamPathId" list="teamPathList" listKey="key" listValue="value" multiple="false" required="true" cssClass="long-field"/]
     </div>
 </div>
 
@@ -76,9 +76,6 @@
             source libraries in your applications</small></p>
         <div class="space"></div>
         [@ww.checkbox labelKey="osaEnabled.label" name="osaEnabled" toggle='true' /]
-        [@ui.bambooSection dependsOn='osaEnabled' showOn='true']
-            [@ww.textfield labelKey="osaScanTimeoutInMinutes.label" name="osaScanTimeoutInMinutes" required='false'/]
-        [/@ui.bambooSection]
     </div>
 [/@ui.bambooSection]
 </div>

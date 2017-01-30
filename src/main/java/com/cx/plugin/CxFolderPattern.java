@@ -14,15 +14,15 @@ import org.apache.commons.lang3.StringUtils;
  */
 
 public class CxFolderPattern {
-    public String generatePattern(final ConfigurationMap configurationMap, final BuildLogger buildLogger, CxParam folderExclusion, boolean useFilterPattern) throws IOException, InterruptedException {
+    public String generatePattern(final ConfigurationMap configurationMap, final BuildLogger buildLogger, String folderExclusion, boolean useFilterPattern) throws IOException, InterruptedException {
 
         String cxExclude = null;
         if (folderExclusion != null){
-            configurationMap.get(folderExclusion.value()); //TODO add the ENV expansion
+            configurationMap.get(folderExclusion); //TODO add the ENV expansion
         }
         String cxPattern = "";
         if (useFilterPattern){
-            cxPattern = configurationMap.get(CxParam.FILTER_PATTERN.value()) + ",";               //TODO, ask Sigal
+            cxPattern = configurationMap.get(CxParam.FILTER_PATTERN) + ",";               //TODO, ask Sigal
         }
         return cxPattern + processExcludeFolders(cxExclude, buildLogger);
     }

@@ -34,7 +34,6 @@
 <div class="field-group">
     <div class="center">
         [@ui.bambooSection title='Checkmarx Scan CxSAST' ]
-    [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" toggle='false' /]
         [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
@@ -47,8 +46,6 @@
 <div class="field-group">
     <div class="center">
         [@ui.bambooSection title='Control Checkmarx Scan']
-            [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" toggle='true' /]
-            [@ui.bambooSection dependsOn='isSynchronous' showOn='true']
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" toggle='true' /]
                 [@ui.bambooSection dependsOn='thresholdsEnabled' showOn='true']
                     [@ww.textfield labelKey="highThreshold.label" name="highThreshold" required='false'/]
@@ -61,7 +58,6 @@
                     [@ww.textfield labelKey="osaMediumThreshold.label" name="osaMediumThreshold" required='false'/]
                     [@ww.textfield labelKey="osaLowThreshold.label" name="osaLowThreshold" required='false'/]
                 [/@ui.bambooSection]
-            [/@ui.bambooSection]
         [/@ui.bambooSection]
     </div>
 </div>

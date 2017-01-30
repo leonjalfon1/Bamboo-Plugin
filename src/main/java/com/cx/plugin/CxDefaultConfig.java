@@ -8,12 +8,10 @@ import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
 import com.cx.plugin.dto.CxParam;
-import com.google.common.collect.ImmutableMap;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 
 /**
@@ -27,11 +25,11 @@ public class CxDefaultConfig extends GlobalAdminAction {
     private String serverUrl;
     private String userName;
     private String password;
+    private String DEFAULT_URL = "http://localhost";
 
 
-    private String isIncremental;
     private String folderExclusions;
-    private String filterPattern = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
+    private String filterPatterns = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
             "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
             "!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u,   !**/*.mid,   !**/*.mp3,  " +
             "!**/*.mpa,     !**/*.ra,        !**/*.wav,      !**/*.wma,      !**/*.3g2,     !**/*.3gp,   !**/*.asf,   !**/*.asx,  " +
@@ -44,8 +42,6 @@ public class CxDefaultConfig extends GlobalAdminAction {
             "!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml    ";
 
     private String scanTimeout;
-
-    private String isSynchronous;
     private String thresholdsEnabled;
     private String highThreshold;
     private String mediumThreshold;
@@ -59,70 +55,66 @@ public class CxDefaultConfig extends GlobalAdminAction {
     public String execute() {
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
 
-        serverUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL.value());
+        serverUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL);
         if (serverUrl == null || StringUtils.isEmpty(serverUrl)) {
-            this.serverUrl = CxParam.DEFAULT_URL.value();
+            this.serverUrl = DEFAULT_URL;
         }
-        userName = adminConfig.getSystemProperty(CxParam.USER_NAME.value());
-        password = adminConfig.getSystemProperty(CxParam.PASSWORD.value());
+        userName = adminConfig.getSystemProperty(CxParam.USER_NAME);
+        password = adminConfig.getSystemProperty(CxParam.PASSWORD);
 
-        isIncremental = adminConfig.getSystemProperty(CxParam.IS_INCREMENTAL_SCAN.value());
-        folderExclusions = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION.value());
-        String filterProperty = adminConfig.getSystemProperty(CxParam.FILTER_PATTERN.value());
+        folderExclusions = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
+        String filterProperty = adminConfig.getSystemProperty(CxParam.FILTER_PATTERN);
         if (filterProperty != null){
-            filterPattern = filterProperty;
+            filterPatterns = filterProperty;
         }
 
-        scanTimeout = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES.value());
-        isSynchronous = adminConfig.getSystemProperty(CxParam.IS_SYNCHRONOUS.value());
-        thresholdsEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED.value());
-        highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD.value());
-        mediumThreshold = adminConfig.getSystemProperty(CxParam.MEDIUM_THRESHOLD.value());
-        lowThreshold = adminConfig.getSystemProperty(CxParam.LOW_THRESHOLD.value());
-        osaThresholdsEnabled = adminConfig.getSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED.value());
-        osaHighThreshold = adminConfig.getSystemProperty(CxParam.OSA_HIGH_THRESHOLD.value());
-        osaMediumThreshold = adminConfig.getSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD.value());
-        osaLowThreshold = adminConfig.getSystemProperty(CxParam.OSA_LOW_THRESHOLD.value());
+        scanTimeout = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES);
+        thresholdsEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED);
+        highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD);
+        mediumThreshold = adminConfig.getSystemProperty(CxParam.MEDIUM_THRESHOLD);
+        lowThreshold = adminConfig.getSystemProperty(CxParam.LOW_THRESHOLD);
+        osaThresholdsEnabled = adminConfig.getSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED);
+        osaHighThreshold = adminConfig.getSystemProperty(CxParam.OSA_HIGH_THRESHOLD);
+        osaMediumThreshold = adminConfig.getSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD);
+        osaLowThreshold = adminConfig.getSystemProperty(CxParam.OSA_LOW_THRESHOLD);
         return INPUT;
     }
 
     public String save() { //TODO add validations
         boolean error = false;
 
-        error |= validateNotEmpty(this.serverUrl, CxParam.SERVER_URL.value());
+        error |= validateNotEmpty(this.serverUrl, CxParam.SERVER_URL);
         if (!error) {
             try {
                 validateUrl(serverUrl);
             } catch (MalformedURLException e) {
-                addFieldError(CxParam.SERVER_URL.value(), getText(CxParam.SERVER_URL.value() + "." + ERROR + ".malformed"));
+                addFieldError(CxParam.SERVER_URL, getText(CxParam.SERVER_URL + "." + ERROR + ".malformed"));
                 error = true;
             }
         }
-        error |= validateNotEmpty(this.userName, CxParam.USER_NAME.value());
-        error |= validateNotEmpty(this.password, CxParam.PASSWORD.value());
+        error |= validateNotEmpty(this.userName, CxParam.USER_NAME);
+        error |= validateNotEmpty(this.password, CxParam.PASSWORD);
 
         if (error) {
             return ERROR;
         }
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
-        adminConfig.setSystemProperty(CxParam.SERVER_URL.value(), serverUrl);
-        adminConfig.setSystemProperty(CxParam.USER_NAME.value(), userName);
-        adminConfig.setSystemProperty(CxParam.PASSWORD.value(), encrypt(password));
+        adminConfig.setSystemProperty(CxParam.SERVER_URL, serverUrl);
+        adminConfig.setSystemProperty(CxParam.USER_NAME, userName);
+        adminConfig.setSystemProperty(CxParam.PASSWORD, encrypt(password));
 
-        adminConfig.setSystemProperty(CxParam.IS_INCREMENTAL_SCAN.value(), isIncremental);
-        adminConfig.setSystemProperty(CxParam.FOLDER_EXCLUSION.value(), folderExclusions);
-        adminConfig.setSystemProperty(CxParam.FILTER_PATTERN.value(), filterPattern);
-        adminConfig.setSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES.value(), scanTimeout);
+        adminConfig.setSystemProperty(CxParam.FOLDER_EXCLUSION, folderExclusions);
+        adminConfig.setSystemProperty(CxParam.FILTER_PATTERN, filterPatterns);
+        adminConfig.setSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES, scanTimeout);
 
-        adminConfig.setSystemProperty(CxParam.IS_SYNCHRONOUS.value(), isSynchronous);
-        adminConfig.setSystemProperty(CxParam.THRESHOLDS_ENABLED.value(), thresholdsEnabled);
-        adminConfig.setSystemProperty(CxParam.HIGH_THRESHOLD.value(), highThreshold);
-        adminConfig.setSystemProperty(CxParam.MEDIUM_THRESHOLD.value(), mediumThreshold);
-        adminConfig.setSystemProperty(CxParam.LOW_THRESHOLD.value(), lowThreshold);
-        adminConfig.setSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED.value(), osaThresholdsEnabled);
-        adminConfig.setSystemProperty(CxParam.OSA_HIGH_THRESHOLD.value(), osaHighThreshold);
-        adminConfig.setSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD.value(), osaMediumThreshold);
-        adminConfig.setSystemProperty(CxParam.OSA_LOW_THRESHOLD.value(), osaLowThreshold);
+        adminConfig.setSystemProperty(CxParam.THRESHOLDS_ENABLED, thresholdsEnabled);
+        adminConfig.setSystemProperty(CxParam.HIGH_THRESHOLD, highThreshold);
+        adminConfig.setSystemProperty(CxParam.MEDIUM_THRESHOLD, mediumThreshold);
+        adminConfig.setSystemProperty(CxParam.LOW_THRESHOLD, lowThreshold);
+        adminConfig.setSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED, osaThresholdsEnabled);
+        adminConfig.setSystemProperty(CxParam.OSA_HIGH_THRESHOLD, osaHighThreshold);
+        adminConfig.setSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD, osaMediumThreshold);
+        adminConfig.setSystemProperty(CxParam.OSA_LOW_THRESHOLD, osaLowThreshold);
         ((AdministrationConfigurationPersister) ContainerManager.getComponent("administrationConfigurationPersister")).saveAdministrationConfiguration(adminConfig);
 
         addActionMessage(getText("cxDefaultConfigSuccess.label"));
@@ -153,14 +145,6 @@ public class CxDefaultConfig extends GlobalAdminAction {
         this.password = cxPass;
     }
 
-    public String getIsIncremental() {
-        return isIncremental;
-    }
-
-    public void setIsIncremental(String isIncermntal) {
-        this.isIncremental = isIncermntal;
-    }
-
     public String getFolderExclusions() {
         return folderExclusions;
     }
@@ -169,12 +153,12 @@ public class CxDefaultConfig extends GlobalAdminAction {
         this.folderExclusions = folderExclusions;
     }
 
-    public String getFilterPattern() {
-        return filterPattern;
+    public String getFilterPatterns() {
+        return filterPatterns;
     }
 
-    public void setFilterPattern(String filterPattern) {
-        this.filterPattern = filterPattern;
+    public void setFilterPatterns(String filterPatterns) {
+        this.filterPatterns = filterPatterns;
     }
 
     public String getScanTimeout() {
@@ -183,14 +167,6 @@ public class CxDefaultConfig extends GlobalAdminAction {
 
     public void setScanTimeout(String scanTimeout) {
         this.scanTimeout = scanTimeout;
-    }
-
-    public String getIsSynchronous() {
-        return isSynchronous;
-    }
-
-    public void setIsSynchronous(String isSynchronous) {
-        this.isSynchronous = isSynchronous;
     }
 
     public String getThresholdsEnabled() {

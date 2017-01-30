@@ -58,7 +58,7 @@ public class CheckmarxTask implements TaskType {
         //BambooLoggerAdapter.setLogger(taskContext.getBuildLogger());
         buildLogger = taskContext.getBuildLogger();
         buildContext = taskContext.getBuildContext();
-        projectName = buildContext.getProjectName();//TODO setBuildContext
+
         configurationMap = taskContext.getConfigurationMap();
         workDirectory = taskContext.getWorkingDirectory().getPath(); //     getRootDirectory()
         ScanResults scanResults = null;
@@ -70,7 +70,7 @@ public class CheckmarxTask implements TaskType {
 
 
         try {
-            config = new ScanConfiguration(configurationMap, projectName);
+            config = new ScanConfiguration(configurationMap);
             url = new URL(config.getUrl());//TODO -URL EMPTY
             printConfiguration(config);
 
@@ -170,7 +170,7 @@ public class CheckmarxTask implements TaskType {
         }
 
         //assert vulnerabilities under threshold
-        if (failed || (config.isSASTThresholdEnabled() && assertVulnerabilities(scanResults))) {
+        if (failed ||  assertVulnerabilities(scanResults , osaSummaryResults)) {
             return taskResultBuilder.failedWithError().build();
         }
 
@@ -254,20 +254,18 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("username: " + config.getUsername());
         buildLogger.addBuildLogEntry("url: " + config.getUrl());
         buildLogger.addBuildLogEntry("projectName: " + config.getProjectName());
-        buildLogger.addBuildLogEntry("scanTimeoutInMinutes: " + config.getScanTimeoutInMinutes());
-        buildLogger.addBuildLogEntry("outputDirectory: " + config.getOutputDirectory());
+        buildLogger.addBuildLogEntry("scanTimeoutInMinutes: " + (config.getScanTimeoutInMinutes() == null ? "" : config.getScanTimeoutInMinutes()));
         buildLogger.addBuildLogEntry("fullTeamPath: " + config.getFullTeamPath());
         buildLogger.addBuildLogEntry("preset: " + config.getPreset());
         buildLogger.addBuildLogEntry("isIncrementalScan: " + config.isIncrementalScan());
         buildLogger.addBuildLogEntry("folderExclusions: " + (Arrays.toString(config.getFolderExclusions())));
-        //buildLogger.addBuildLogEntry("fileExclusions: " +  Arrays.toString(fileExclusions));
         buildLogger.addBuildLogEntry("isSynchronous: " + config.isSynchronous());
         buildLogger.addBuildLogEntry("generatePDFReport: " + config.isGeneratePDFReport());
         buildLogger.addBuildLogEntry("thresholds enabled: " + config.isThresholdsEnabled());
         if (config.isSASTThresholdEnabled()) {
             buildLogger.addBuildLogEntry("highThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
-            buildLogger.addBuildLogEntry("mediumThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
-            buildLogger.addBuildLogEntry("lowThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
+            buildLogger.addBuildLogEntry("mediumThreshold: " + (config.getMediumThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
+            buildLogger.addBuildLogEntry("lowThreshold: " + (config.getLowThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
         }
         buildLogger.addBuildLogEntry("osaEnabled: " + config.isOsaEnabled());
         if (config.isOsaEnabled()) {
@@ -311,14 +309,20 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
     }
 
-    private boolean assertVulnerabilities(ScanResults scanResults) throws TaskException { //TODO ask dor regards the taskException (without exception but with build.unSuccess())
+    private boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults) throws TaskException { //TODO ask dor regards the taskException (without exception but with build.unSuccess())
 
         StringBuilder res = new StringBuilder("");
         boolean fail = false;
-
-        fail |= isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "High");
-        fail |= isFail(scanResults.getMediumSeverityResults(), config.getMediumThreshold(), res, "Medium");
-        fail |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "Low");
+        if (config.isSASTThresholdEnabled()) {
+            fail |= isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "High", "CxSAST ");
+            fail |= isFail(scanResults.getMediumSeverityResults(), config.getMediumThreshold(), res, "Medium", "CxSAST ");
+            fail |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "Low", "CxSAST ");
+        }
+        if (config.isOSAThresholdEnabled() && osaSummaryResults != null) {
+            fail |= isFail(osaSummaryResults.getHighVulnerabilities(), config.getOsaHighThreshold(), res, "High", "CxOSA ");
+            fail |= isFail(osaSummaryResults.getMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "Medium", "CxOSA ");
+            fail |= isFail(osaSummaryResults.getLowVulnerabilities(), config.getOsaLowThreshold(), res, "Low", "CxOSA ");
+        }
 
         if (fail) {
             //  throw new TaskException(res.toString());
@@ -334,10 +338,10 @@ public class CheckmarxTask implements TaskType {
         return fail;
     }
 
-    private boolean isFail(int result, Integer threshold, StringBuilder res, String severity) {
+    private boolean isFail(int result, Integer threshold, StringBuilder res, String severity, String severityType) {
         boolean fail = false;
         if (threshold != null && result > threshold) {
-            res.append(severity + " Severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
+            res.append(severityType + severity + " Severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
             fail = true;
         }
         return fail;
@@ -382,6 +386,4 @@ public class CheckmarxTask implements TaskType {
 
         return encPass;
     }
-
-
 }

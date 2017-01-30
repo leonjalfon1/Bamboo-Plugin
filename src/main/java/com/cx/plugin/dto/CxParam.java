@@ -1,56 +1,40 @@
-package com.cx.plugin.dto;/**
+package com.cx.plugin.dto;
+
+/**
  * Created by galn on 22/09/2016.
  */
 
-public enum CxParam {
-    USER_NAME("userName"),
-    PASSWORD("password"),
-    SERVER_URL("serverUrl"),
-    DEFAULT_URL ("http://localhost"), //TODO-DOR is that the right place?
-    PROJECT_NAME("projectName"),
-    TEAM_PATH("teamPath"),//TODO add Id
-    TEAM_PATH_NAME("teamPathName"),
-    PRESET("preset"), //TODO add Id
-    PRESET_NAME("presetName"),
-    IS_INCREMENTAL_SCAN("isIncrementalScan"),
-    FOLDER_EXCLUSION("folderExclusions"),
-    FILE_EXCLUSION("fileExclusions"),
-    IS_SYNCHRONOUS("isSynchronous"),
-    GENERATE_PDF_REPORT("generatePDFReport"),
-    THRESHOLDS_ENABLED("thresholdsEnabled"),
-    HIGH_THRESHOLD("highThreshold"),
-    MEDIUM_THRESHOLD("mediumThreshold"),
-    LOW_THRESHOLD("lowThreshold"),
-    SCAN_TIMEOUT_IN_MINUTES("scanTimeoutInMinutes"),
-    OSA_ENABLED("osaEnabled"),
-    OSA_SCAN_TIMEOUT_IN_MINUTES("osaScanTimeoutInMinutes"),
-    OSA_THRESHOLDS_ENABLED("osaThresholdsEnabled"),
-    OSA_HIGH_THRESHOLD("osaHighThreshold"),
-    OSA_MEDIUM_THRESHOLD("osaMediumThreshold"),
-    OSA_LOW_THRESHOLD("osaLowSThreshold"),
-    OUTPUT_DIRECTORY("outputDirectory"),
-    CX_PROJECT_NAME("myProject"),
-    NO_SESSION("noSession"),
-    PRESET_LIST("presetList"),
-    TEAM_PATH_LIST("teamPathList"),
-    FILTER_PATTERN("filterPatterns"),
-    DEFAULT_CREDENTIALS("defaultCredentials"),
-    DEFAULT_CXSAST("defaultCxSast"),
-    DEFAULT_SCAN_CONTROL("defaultScanControl"),
-    CONFIGURATION_MODE_TYPES("configurationModeTypes"),
-    ADMINISTRATION_CONFIGURATION("administrationConfiguration");
+public class CxParam {
 
-
-    //TODO
-
-    private String uiValue;
-
-    CxParam(String uiValue) {
-        this.uiValue = uiValue;
-    }
-
-    public String value() {
-        return this.uiValue;
-    }
-
+    public static final String USER_NAME = "userName";
+    public static final String PASSWORD = "password";
+    public static final String SERVER_URL = "serverUrl";
+    public static final String PROJECT_NAME = "projectName";
+    public static final String TEAM_PATH_ID = "teamPathId";
+    public static final String TEAM_PATH_NAME = "teamPathName";
+    public static final String PRESET_ID = "presetId";
+    public static final String PRESET_NAME = "presetName";
+    public static final String IS_INCREMENTAL_SCAN = "isIncrementalScan";
+    public static final String FOLDER_EXCLUSION = "folderExclusions";
+    public static final String IS_SYNCHRONOUS = "isSynchronous";
+    public static final String GENERATE_PDF_REPORT = "generatePDFReport";
+    public static final String THRESHOLDS_ENABLED = "thresholdsEnabled";
+    public static final String HIGH_THRESHOLD = "highThreshold";
+    public static final String MEDIUM_THRESHOLD = "mediumThreshold";
+    public static final String LOW_THRESHOLD = "lowThreshold";
+    public static final String SCAN_TIMEOUT_IN_MINUTES = "scanTimeoutInMinutes";
+    public static final String OSA_ENABLED = "osaEnabled";
+    public static final String OSA_THRESHOLDS_ENABLED = "osaThresholdsEnabled";
+    public static final String OSA_HIGH_THRESHOLD = "osaHighThreshold";
+    public static final String OSA_MEDIUM_THRESHOLD = "osaMediumThreshold;";
+    public static final String OSA_LOW_THRESHOLD = "osaLowSThreshold";
+    public static final String NO_SESSION = "noSession";
+    public static final String PRESET_LIST = "presetList";
+    public static final String TEAM_PATH_LIST = "teamPathList";
+    public static final String FILTER_PATTERN = "filterPatterns";
+    public static final String DEFAULT_CREDENTIALS = "defaultCredentials";
+    public static final String DEFAULT_CXSAST = "defaultCxSast";
+    public static final String DEFAULT_SCAN_CONTROL = "defaultScanControl";
+    public static final String CONFIGURATION_MODE_TYPES = "configurationModeTypes";
+    public static final String ADMINISTRATION_CONFIGURATION = "administrationConfiguration";
 }
