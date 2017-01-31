@@ -36,8 +36,8 @@
 [@ui.bambooSection title='Checkmarx Server' ]
 [/@ui.bambooSection]
     <div class="center">
-    [@ww.checkbox labelKey="defaultCredentials.label" name="defaultCredentials" toggle='true' /]
-        [@ui.bambooSection dependsOn='defaultCredentials' showOn='false']
+    [@ww.radio id = 'radioGroup' labelKey='' name='defaultCredentials' listKey='key' listValue='value' toggle='true' list=configurationModeTypes /]
+    [@ui.bambooSection dependsOn='defaultCredentials' showOn='costumeConfiguration']
         [@ww.textfield labelKey="serverUrl.label" name="serverUrl" required='true'/]
         [@ww.textfield labelKey="userName.label" name="userName" required='true'/]
         [@ww.password labelKey="password.label" name="password" required='true'/]
@@ -56,13 +56,13 @@
     <div class="center">
     [@ui.bambooSection title='Checkmarx Scan CxSAST']
      [@ww.radio id = 'radioGroup' labelKey='' name='defaultCxSast' listKey='key' listValue='value' toggle='true' list=configurationModeTypes /]
-        [@ui.bambooSection dependsOn='defaultCxSast' showOn='costumeConfiguration']
+     [@ui.bambooSection dependsOn='defaultCxSast' showOn='costumeConfiguration']
         [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" toggle='false' /]
         [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
     [/@ui.bambooSection]
-        [@ww.checkbox labelKey="generatePDFReport.label" name="generatePDFReport" toggle='false' /]
+    [@ww.checkbox labelKey="generatePDFReport.label" name="generatePDFReport" toggle='false' /]
     [/@ui.bambooSection]
     </div>
 </div>
@@ -86,7 +86,7 @@
     <div class="center">
     [@ui.bambooSection title='Control Checkmarx Scan']
      [@ww.radio id = 'radioGroup' labelKey='' name='defaultScanControl' listKey='key' listValue='value' toggle='true' list=configurationModeTypes /]
-        [@ui.bambooSection dependsOn='defaultCxSast' showOn='costumeConfiguration']
+        [@ui.bambooSection dependsOn='defaultScanControl' showOn='costumeConfiguration']
         [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" toggle='true' /]
         [@ui.bambooSection dependsOn='isSynchronous' showOn='true']
             [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" toggle='true' /]

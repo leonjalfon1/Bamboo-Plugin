@@ -60,6 +60,18 @@ public class CxClientServiceImpl implements CxClientService {
         restClient = new CxRestClient(url.toString(), username, password);
     }
 
+    //Constructor without rest initialization
+    public CxClientServiceImpl(URL url, String username, String password, boolean noRest) throws CxClientException {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+
+        CxSDKWebService ss = new CxSDKWebService(WSDL_LOCATION, SERVICE_NAME);
+        client = ss.getCxSDKWebServiceSoap();
+        BindingProvider bindingProvider = (BindingProvider) client;
+        bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url + SDK_PATH);
+    }
+
     public void setLogger(Logger log) {
         CxClientServiceImpl.log = log;
         restClient.setLogger(log);
@@ -82,7 +94,6 @@ public class CxClientServiceImpl implements CxClientService {
             throw new CxClientException(CHECKMARX_SERVER_WAS_NOT_FOUND_ON_THE_SPECIFIED_ADDRESS + ": " + url + ", exception message: " + e.getMessage(), e);
         }
     }
-
 
     public void loginToServer() throws CxClientException {
 

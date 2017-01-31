@@ -79,8 +79,6 @@ public class CheckmarxTask implements TaskType {
 
             //initialize cx client
             buildLogger.addBuildLogEntry("Initializing Cx client");
-
-
             cxClientService = new CxClientServiceImpl(url, config.getUsername(), decrypt(config.getPassword()));
             cxClientService.setLogger(buildLoggerAdapter);
 
@@ -236,7 +234,7 @@ public class CheckmarxTask implements TaskType {
         ret.setIncrementalScan(config.isIncrementalScan());
         ret.setPreset(config.getPreset());
         ret.setZippedSources(zippedSources);
-        ret.setFileName(config.getProjectName());//TODO  ???
+        ret.setFileName(config.getProjectName());
 
         return ret;
     }
@@ -269,17 +267,17 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("folderExclusions: " + (config.getFolderExclusions().length > 0? Arrays.toString(config.getFolderExclusions()) :"" ));
         buildLogger.addBuildLogEntry("isSynchronous: " + config.isSynchronous());
         buildLogger.addBuildLogEntry("generatePDFReport: " + config.isGeneratePDFReport());
-        buildLogger.addBuildLogEntry("thresholds enabled: " + config.isThresholdsEnabled());
+        buildLogger.addBuildLogEntry("thresholdsEnabled: " + config.isThresholdsEnabled());
         if (config.isSASTThresholdEnabled()) {
-            buildLogger.addBuildLogEntry("highThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
-            buildLogger.addBuildLogEntry("mediumThreshold: " + (config.getMediumThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
-            buildLogger.addBuildLogEntry("lowThreshold: " + (config.getLowThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
+            buildLogger.addBuildLogEntry("CxSAST-HighThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
+            buildLogger.addBuildLogEntry("CxSAST-mediumThreshold: " + (config.getMediumThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
+            buildLogger.addBuildLogEntry("CxSAST-lowThreshold: " + (config.getLowThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
         }
         buildLogger.addBuildLogEntry("osaEnabled: " + config.isOsaEnabled());
         if (config.isOsaEnabled()) {
-            buildLogger.addBuildLogEntry("osaHighSeveritiesThreshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
-            buildLogger.addBuildLogEntry("osaMediumSeveritiesThreshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
-            buildLogger.addBuildLogEntry("osaLowSeveritiesThreshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
+            buildLogger.addBuildLogEntry("CxOSA-HighSeveritiesThreshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
+            buildLogger.addBuildLogEntry("CxOSA-MediumSeveritiesThreshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
+            buildLogger.addBuildLogEntry("CxOSA-LowSeveritiesThreshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
         }
         buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
     }
