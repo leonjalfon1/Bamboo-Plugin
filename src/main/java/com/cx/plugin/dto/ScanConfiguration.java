@@ -26,40 +26,27 @@ public class ScanConfiguration {
      * The name of the project being scanned.
      */
     private String projectName;
-
     private String preset;
-
+    private String presetName;
     private String fullTeamPath;
-
     private String[] folderExclusions = new String[0];
-
-
     /**
      * Define a timeout (in minutes) for the scan. If the specified time has passed, the build fails.
      * Set to 0 to run the scan with no time limit.
      */
     private Integer scanTimeoutInMinutes;
-
     private boolean isIncrementalScan = false;
     private boolean isSynchronous = false;
-    //    private boolean generatePDFReport;
-
     private boolean thresholdsEnabled = false;
-
     @Nullable
     private Integer highThreshold;
     @Nullable
     private Integer mediumThreshold;
     @Nullable
     private Integer lowThreshold;
-
     private boolean generatePDFReport = false;
-
     private boolean osaEnabled = false;
-
-
     private boolean osaThresholdsEnabled = false;
-
     /**
      * Configure a threshold for the CxOSA High Severity Vulnerabilities.
      * The build will fail if the sum of High Severity Vulnerabilities is larger than the threshold.
@@ -79,16 +66,12 @@ public class ScanConfiguration {
      */
     private Integer osaLowThreshold;
 
-
-    //    private boolean osaGeneratePDFReport;
-    //  private boolean osaGenerateHTMLReport;
-
+    /**********   C-tor   ***************/
     public ScanConfiguration(ConfigurationMap configurationMap) {
         setUsername(configurationMap.get(CxParam.USER_NAME));
         String cxPass = configurationMap.get(CxParam.PASSWORD);
         setPassword(cxPass);
         setUrl(configurationMap.get(CxParam.SERVER_URL));
-        //this.projectName = configurationMap.value(CxParam.CX_PROJECT_NAME);
         setProjectName(configurationMap.get(CxParam.PROJECT_NAME));//TODO
         setPreset(configurationMap.get(CxParam.PRESET_ID));
         setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME));
@@ -110,8 +93,8 @@ public class ScanConfiguration {
         setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_LOW_THRESHOLD));
     }
 
-
     /********   Setters & Getters ***********/
+
     public String getUsername() {
         return username;
     }
@@ -309,6 +292,14 @@ public class ScanConfiguration {
         return inti;
     }
 
+    public String getPresetName() {
+        return presetName;
+    }
+
+    public void setPresetName(String presetName) {
+        this.presetName = presetName;
+    }
+
     public boolean isSASTThresholdEnabled() {
         return isThresholdsEnabled() && (getLowThreshold() != null || getMediumThreshold() != null || getHighThreshold() != null);
     }
@@ -316,5 +307,4 @@ public class ScanConfiguration {
     public boolean isOSAThresholdEnabled() {
         return isOsaEnabled() && (getOsaHighThreshold() != null || getOsaMediumThreshold() != null || getOsaLowThreshold() != null);
     }
-
 }

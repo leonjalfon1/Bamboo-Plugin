@@ -63,14 +63,13 @@ public class CheckmarxTask implements TaskType {
         buildContext = taskContext.getBuildContext();
 
         configurationMap = taskContext.getConfigurationMap();
-        workDirectory = taskContext.getWorkingDirectory().getPath(); //     getRootDirectory()
+        workDirectory = taskContext.getWorkingDirectory().getPath();
         ScanResults scanResults = null;
         OSASummaryResults osaSummaryResults = null;
         boolean failed = false;
 
         Exception osaCreateException = null;
         Exception scanWaitException = null;
-
 
         try {
             config = new ScanConfiguration(configurationMap);
@@ -262,7 +261,7 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("projectName: " + config.getProjectName());
         buildLogger.addBuildLogEntry("scanTimeoutInMinutes: " + (config.getScanTimeoutInMinutes() == null ? "" : config.getScanTimeoutInMinutes()));
         buildLogger.addBuildLogEntry("fullTeamPath: " + config.getFullTeamPath());
-        buildLogger.addBuildLogEntry("preset: " + config.getPreset());
+        buildLogger.addBuildLogEntry("preset: " + config.getPresetName());
         buildLogger.addBuildLogEntry("isIncrementalScan: " + config.isIncrementalScan());
         buildLogger.addBuildLogEntry("folderExclusions: " + (config.getFolderExclusions().length > 0? Arrays.toString(config.getFolderExclusions()) :"" ));
         buildLogger.addBuildLogEntry("isSynchronous: " + config.isSynchronous());

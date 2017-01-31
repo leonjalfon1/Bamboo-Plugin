@@ -25,7 +25,7 @@ public class CxDefaultConfig extends GlobalAdminAction {
     private String serverUrl;
     private String userName;
     private String password;
-    private String DEFAULT_URL = "http://localhost";
+    private String DEFAULT_URL = "http://localhost"; //TODO- need?
 
 
     private String folderExclusions;

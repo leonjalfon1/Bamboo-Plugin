@@ -52,7 +52,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
     private static Map<String, String> presetList = new HashMap<String, String>();
     private static Map<String, String> teamPathList = new HashMap<String, String>();
-    ;;
     private CxClientService cxClientService = null;
     public static final String GLOBAL_CONFIGURATION = "globalConfiguration";
     public static final String COSTUME_CONFIGURATION = "costumeConfiguration";
@@ -96,7 +95,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return config;
     }
 
-    @Override //TODO- remove all the params without a default value
+    @Override
     public void populateContextForCreate(@NotNull final Map<String, Object> context) {
         super.populateContextForCreate(context);
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
@@ -131,7 +130,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
         return projectName;
     }
-
     @Override
     public void populateContextForEdit(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition) {
 
@@ -289,7 +287,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         noTeams.put("noTeamPath", "Provide the correct Checkmarx server credentials to see teams list"); //TODO bind to properties
         context.put(CxParam.TEAM_PATH_LIST, noTeams);
     }
-
 
     private Map<String, String> generateCredentialsFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
         final String useDefaultCredentials = params.getString(CxParam.DEFAULT_CREDENTIALS);
