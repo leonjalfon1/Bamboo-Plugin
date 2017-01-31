@@ -90,7 +90,7 @@ public class ScanConfiguration {
         setUrl(configurationMap.get(CxParam.SERVER_URL));
         //this.projectName = configurationMap.value(CxParam.CX_PROJECT_NAME);
         setProjectName(configurationMap.get(CxParam.PROJECT_NAME));//TODO
-        setPreset(configurationMap.get(CxParam.PRESET_NAME));
+        setPreset(configurationMap.get(CxParam.PRESET_ID));
         setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME));
         setFolderExclusions(StringUtil.split(configurationMap.get(CxParam.FOLDER_EXCLUSION), ","));
 

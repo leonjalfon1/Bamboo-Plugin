@@ -40,7 +40,6 @@ public class CheckmarxTask implements TaskType {
     private String workDirectory;//TODO add default directory
     private File zipTempFile;
     protected String projectStateLink;
-    protected String projectName;
     protected ScanConfiguration config;
     protected String scanResultsUrl;
 
@@ -126,7 +125,7 @@ public class CheckmarxTask implements TaskType {
 
 
             } catch (Exception e) {
-                buildLogger.addErrorLogEntry("Fail to perform scan: " + e.getMessage());
+                buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 failed = true; //TODO handle exceptions or change the failed flag
                 scanWaitException = e;
             }
@@ -221,14 +220,14 @@ public class CheckmarxTask implements TaskType {
 
     private LocalScanConfiguration generateScanConfiguration(byte[] zippedSources) {
         LocalScanConfiguration ret = new LocalScanConfiguration();
-        ret.setProjectName(projectName);
+        ret.setProjectName(config.getProjectName());
         ret.setClientOrigin(ClientOrigin.BAMBOO);
         ret.setFolderExclusions(CxPluginHelper.convertArrayToString(config.getFolderExclusions()));
         ret.setFullTeamPath(config.getFullTeamPath());
         ret.setIncrementalScan(config.isIncrementalScan());
         ret.setPreset(config.getPreset());
         ret.setZippedSources(zippedSources);
-        ret.setFileName(projectName);//TODO  ???
+        ret.setFileName(config.getProjectName());//TODO  ???
 
         return ret;
     }
@@ -258,7 +257,7 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("fullTeamPath: " + config.getFullTeamPath());
         buildLogger.addBuildLogEntry("preset: " + config.getPreset());
         buildLogger.addBuildLogEntry("isIncrementalScan: " + config.isIncrementalScan());
-        buildLogger.addBuildLogEntry("folderExclusions: " + (Arrays.toString(config.getFolderExclusions())));
+        buildLogger.addBuildLogEntry("folderExclusions: " + (config.getFolderExclusions().length > 0? Arrays.toString(config.getFolderExclusions()) :"" ));
         buildLogger.addBuildLogEntry("isSynchronous: " + config.isSynchronous());
         buildLogger.addBuildLogEntry("generatePDFReport: " + config.isGeneratePDFReport());
         buildLogger.addBuildLogEntry("thresholds enabled: " + config.isThresholdsEnabled());
