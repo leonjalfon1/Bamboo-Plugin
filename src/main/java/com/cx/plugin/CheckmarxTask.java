@@ -21,6 +21,8 @@ import com.cx.plugin.dto.ScanConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +36,8 @@ import java.util.Date;
 import java.util.Map;
 
 public class CheckmarxTask implements TaskType {
+
+    public static final Logger log = LoggerFactory.getLogger(CheckmarxTask.class);
 
     protected CxClientService cxClientService;
     protected java.net.URL url;//TODO add default directory
@@ -54,8 +58,8 @@ public class CheckmarxTask implements TaskType {
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
 
         final TaskResultBuilder taskResultBuilder = TaskResultBuilder.create(taskContext);
-        //BambooLoggerAdapter.setLogger(taskContext.getBuildLogger());
         buildLogger = taskContext.getBuildLogger();
+        BuildLoggerAdapter buildLoggerAdapter = new BuildLoggerAdapter(buildLogger);
         buildContext = taskContext.getBuildContext();
 
         configurationMap = taskContext.getConfigurationMap();
@@ -78,6 +82,7 @@ public class CheckmarxTask implements TaskType {
 
 
             cxClientService = new CxClientServiceImpl(url, config.getUsername(), decrypt(config.getPassword()));
+            cxClientService.setLogger(buildLoggerAdapter);
 
             //perform login to server
             buildLogger.addBuildLogEntry("Logging into the Checkmarx service.");
@@ -111,8 +116,10 @@ public class CheckmarxTask implements TaskType {
 
             try {
                 //wait for SAST scan to finish
+                ConsoleScanWaitHandler consoleScanWaitHandler = new ConsoleScanWaitHandler();
+                consoleScanWaitHandler.setLogger(buildLoggerAdapter);
                 buildLogger.addBuildLogEntry("Waiting for CxSAST scan to finish.");
-                cxClientService.waitForScanToFinish(createScanResponse.getRunId(), checkScanTimeout(config.getScanTimeoutInMinutes()), new ConsoleScanWaitHandler());
+                cxClientService.waitForScanToFinish(createScanResponse.getRunId(), checkScanTimeout(config.getScanTimeoutInMinutes()), consoleScanWaitHandler);
 
                 buildLogger.addBuildLogEntry("Scan finished. Retrieving scan results");
                 scanResults = cxClientService.retrieveScanResults(createScanResponse.getProjectId());
@@ -136,8 +143,10 @@ public class CheckmarxTask implements TaskType {
                     throw osaCreateException;
                 }
                 //wait for OSA scan to finish
+                OSAConsoleScanWaitHandler osaConsoleScanWaitHandler = new OSAConsoleScanWaitHandler();
+                osaConsoleScanWaitHandler.setLogger(buildLoggerAdapter);
                 buildLogger.addBuildLogEntry("Waiting for OSA Scan to finish");
-                cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, new OSAConsoleScanWaitHandler());//TODO -1?
+                cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, osaConsoleScanWaitHandler);//TODO -1?
                 buildLogger.addBuildLogEntry("OSA scan finished successfully");
                 buildLogger.addBuildLogEntry("Creating OSA reports");
                 osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());

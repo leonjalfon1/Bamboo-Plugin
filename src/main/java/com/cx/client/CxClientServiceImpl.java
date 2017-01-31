@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class CxClientServiceImpl implements CxClientService {
 
-    private static final Logger log = LoggerFactory.getLogger(CxClientServiceImpl.class);
+    private static Logger log = LoggerFactory.getLogger(CxClientServiceImpl.class);
     private String sessionId;
     private CxSDKWebServiceSoap client;
     private CxRestClient restClient;
@@ -60,6 +60,11 @@ public class CxClientServiceImpl implements CxClientService {
         restClient = new CxRestClient(url.toString(), username, password);
     }
 
+    public void setLogger(Logger log) {
+        CxClientServiceImpl.log = log;
+        restClient.setLogger(log);
+    }
+
 
     public void checkServerConnectivity() throws CxClientException {
 
@@ -78,10 +83,6 @@ public class CxClientServiceImpl implements CxClientService {
         }
     }
 
-    public void disableSSLCertificateVerification() {
-        CxPluginHelper.disableSSLCertificateVerification();
-         restClient.disableCertificateValidation();
-    }
 
     public void loginToServer() throws CxClientException {
 

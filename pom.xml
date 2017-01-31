@@ -23,35 +23,7 @@
                     <productVersion>${bamboo.version}</productVersion>
                   <!--  <productDataVersion>${bamboo.data.version}</productDataVersion>-->
                     <enableQuickReload>true</enableQuickReload>
-                    <enableFastdev>false</enableFastdev>
                     <extractDependencies>false</extractDependencies>
-                     See here for an explanation of default instructions:
-                     https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins
-                    <instructions>
-                        <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
-                       <Export-Package>javax.ws.rs.*</Export-Package>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Import-Package>
-                            org.springframework.osgi.*,com.atlassian.spring.container,com.atlassian.bamboo.bandana,com.atlassian.bamboo.build.logger,
-                            com.atlassian.bamboo.collections,com.atlassian.bamboo.task,com.atlassian.bamboo.configuration,
-                            com.atlassian.bamboo.utils.error,com.atlassian.bamboo.utils.i18n,com.atlassian.bamboo.v2.build,
-                            com.atlassian.bamboo.ww2,com.atlassian.bamboo.ww2.actions.build.admin.config.task,
-                            com.atlassian.bandana,com.atlassian.bamboo.security,com.fasterxml.jackson.databind,javax.annotation,javax.net.ssl,javax.xml.bind.annotation,
-                            javax.xml.bind.annotation.adapters,javax.xml.datatype,javax.xml.namespace,javax.xml.ws,
-                            org.apache.commons.io,org.apache.commons.lang,org.apache.commons.lang3,org.apache.log4j,
-                            org.apache.maven.plugin,org.apache.tools.ant,org.apache.tools.zip,org.codehaus.plexus.util
-                            ,org.hsqldb.lib,org.slf4j ,org.slf4j.helpers,org.slf4j.spi, javax.activation,javax.imageio,
-                            javax.imageio.spi,javax.imageio.stream,javax.jms,javax.jws,javax.mail,javax.mail.internet,
-                            javax.management,javax.management.remote, javax.naming,javax.servlet,
-                            javax.servlet.http,javax.swing,javax.swing.border,javax.swing.event,javax.swing.table,
-                            javax.swing.text,javax.swing.tree,javax.xml.bind, javax.xml.parsers,javax.xml.transform,
-                            javax.xml.transform.dom,javax.xml.transform.sax,com.sun.jersey.api.client.*,
-                            javax.xml.transform.stream, org.xml.sax.*, com.sun.jersey.multipart.*, com.google.common.collect.*
-                        </Import-Package>
-                        <Embed-Dependency>*</Embed-Dependency>
-                        <!-- Ensure plugin is spring powered -->
-                        <Spring-Context>*</Spring-Context>
-                    </instructions>
                 </configuration>
             </plugin>
         </plugins>

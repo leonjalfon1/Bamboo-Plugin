@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ConsoleScanWaitHandler implements ScanWaitHandler<CxWSResponseScanStatus> {
 
-    private static final Logger log = LoggerFactory.getLogger(ConsoleScanWaitHandler.class);
+    private static Logger log = LoggerFactory.getLogger(ConsoleScanWaitHandler.class);
 
     private long startTime;
     private long scanTimeoutInMin;
@@ -22,6 +22,10 @@ public class ConsoleScanWaitHandler implements ScanWaitHandler<CxWSResponseScanS
         String status =  scanStatus.getCurrentStatus() == null ? CurrentStatusEnum.UNKNOWN.value() : scanStatus.getCurrentStatus().value();
         throw new CxClientException("scan has reached the time limit ("+scanTimeoutInMin+" minutes). status: ["+ status +"]");
 
+    }
+
+    public void setLogger(Logger log) {
+        ConsoleScanWaitHandler.log = log;
     }
 
     public void onFail(CxWSResponseScanStatus scanStatus) throws CxClientException {

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus> {
 
-    private static final Logger log = LoggerFactory.getLogger(OSAConsoleScanWaitHandler.class);
+    private static Logger log = LoggerFactory.getLogger(OSAConsoleScanWaitHandler.class);
 
     private long startTime;
     private long scanTimeoutInMin;
@@ -23,6 +23,10 @@ public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus>
         String status =  scanStatus.getStatus() == null ? OSAScanStatusEnum.NONE.uiValue() : scanStatus.getStatus().uiValue();
         throw new CxClientException("OSA scan has reached the time limit ("+scanTimeoutInMin+" minutes). status: ["+ status +"]");
 
+    }
+
+    public void setLogger(Logger log) {
+        OSAConsoleScanWaitHandler.log = log;
     }
 
     public void onFail(OSAScanStatus scanStatus) throws CxClientException {

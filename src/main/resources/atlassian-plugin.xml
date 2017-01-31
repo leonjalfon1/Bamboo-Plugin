@@ -5,9 +5,6 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
-       <bundle-instructions>
-            <Import-Package>javax.ws.rs.ext.MessageBodyReader,*;resolution:=optional</Import-Package>
-        </bundle-instructions>
     </plugin-info>
 
     <!-- add our i18n resource -->

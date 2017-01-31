@@ -1,6 +1,7 @@
 package com.cx.client;
 
 import com.cx.client.exception.CxClientException;
+import org.slf4j.Logger;
 
 /**
  * Created by: Dorg.
@@ -17,5 +18,7 @@ public interface ScanWaitHandler<T> {
     void onFail(T scanStatus) throws CxClientException;
 
     void onTimeout(T scanStatus) throws CxClientException;
+
+    void setLogger(Logger log);
 
 }

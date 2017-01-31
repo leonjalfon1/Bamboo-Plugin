@@ -11,11 +11,7 @@ import com.cx.client.exception.CxClientException;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSAScanStatus;
 import com.cx.client.rest.dto.OSASummaryResults;
-/*
-import com.cx.client.rest.dto.OSASummaryResults;
-import com.cx.client.rest.dto.CreateOSAScanResponse;
-import com.cx.client.rest.dto.OSAScanStatus;
-*/
+import org.slf4j.Logger;
 
 
 import java.io.File;
@@ -63,9 +59,9 @@ public interface CxClientService {
     ArrayOfGroup getAssociatedGroupsList();
     List<Preset> getPresetList();
 
-    void disableSSLCertificateVerification();
-
     void close();//todo implement
+
+    void setLogger(Logger log);
 
     String getSessionId();
 }

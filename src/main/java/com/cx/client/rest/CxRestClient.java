@@ -49,7 +49,7 @@ public class CxRestClient {
     private static String hostName;
     ObjectMapper mapper = new ObjectMapper();
 
-    private static final Logger log = LoggerFactory.getLogger(CxRestClient.class);
+    private static Logger log = LoggerFactory.getLogger(CxRestClient.class);
 
 
     private ClientFilter clientResponseFilter = new ClientFilter() {
@@ -99,54 +99,14 @@ public class CxRestClient {
         client.addFilter(clientResponseFilter);
     }
 
+    public void setLogger(Logger log) {
+        CxRestClient.log = log;
+    }
+
     public void destroy() {
         client.destroy();
     }
 
-/*    public void disableCertificateValidation() {
-
-        try {
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, CxPluginHelper.createFakeTrustManager(), null);
-        } catch (KeyManagementException e) {
-            log.warn("Failed to disable SSL/TLS certificate validation");
-        } catch (NoSuchAlgorithmException e) { //TODO handle this in the right way
-            e.printStackTrace();
-        }
-    }*/
-
-    public static void disableCertificateValidation() { //TODO- check
-        // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = new TrustManager[]{
-                new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
-                    }
-
-                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                    }
-
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                    }
-                }};
-
-        // Ignore differences between given hostname and certificate hostname
-        HostnameVerifier hv = new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
-
-        // Install the all-trusting trust manager
-        try {
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier(hv);
-        } catch (Exception e) {
-            log.warn("Failed to disable SSL/TLS certificate validation");
-        }
-    }
 
     public void login() throws CxClientException {
         newCookies = null;
