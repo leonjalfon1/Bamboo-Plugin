@@ -33,9 +33,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     protected final String OPTION_FALSE = "false";
     protected final String DEFAULT_URL = "http://localhost"; //TODO-DOR is that the right place?
     protected final String DEFAULT_PRESET = "Checkmarx Default";
-    protected long DEFAULT_PRESET_ID = 17;
+    protected long DEFAULT_PRESET_ID = 17;//TODO
     protected final String DEFAULT_TEAM = "CxServer"; //TODO-DOR is that the right place?
-    protected String DEFAULT_TEAM_ID = "1";
+    protected String DEFAULT_TEAM_ID = "1"; //TODO
 
     private static final String DEFAULT_FILTER_PATTERN = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
             "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
