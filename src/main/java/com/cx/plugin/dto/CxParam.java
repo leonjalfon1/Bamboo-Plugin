@@ -28,7 +28,8 @@ public class CxParam {
     public static final String OSA_HIGH_THRESHOLD = "osaHighThreshold";
     public static final String OSA_MEDIUM_THRESHOLD = "osaMediumThreshold;";
     public static final String OSA_LOW_THRESHOLD = "osaLowSThreshold";
-    public static final String NO_SESSION = "noSession";
+    public static final String NO_TEAM_PATH = "noTeamPath";
+    public static final String NO_PRESET = "noPreset";
     public static final String PRESET_LIST = "presetList";
     public static final String TEAM_PATH_LIST = "teamPathList";
     public static final String FILTER_PATTERN = "filterPatterns";

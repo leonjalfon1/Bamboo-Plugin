@@ -174,6 +174,7 @@ public class CheckmarxTask implements TaskType {
             throw new TaskException(e.getMessage());
         }
 
+
         //assert vulnerabilities under threshold
         if (failed ||  assertVulnerabilities(scanResults , osaSummaryResults)) {
             return taskResultBuilder.failedWithError().build();

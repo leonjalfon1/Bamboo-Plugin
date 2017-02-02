@@ -7,7 +7,7 @@
     .center {
         padding: 16px;
         border: solid 1px;
-        width: 91%;
+        width: 69%;
     }
 
     .space {
@@ -24,7 +24,7 @@
         [@ui.bambooSection title='Checkmarx Server' ]
         [@ww.textfield labelKey="defaultServerUrl.label" name="serverUrl" required="true" cssClass="long-field"/]
             [@ww.textfield labelKey="defaultUserName.label" name="userName" required="true" cssClass="long-field"/]
-            [@ww.password labelKey="defaultPassword.label" name="password" required="true" cssClass="long-field"/]
+            [@ww.password labelKey="defaultPassword.label" name="password" required="true" showPassword='true' cssClass="long-field"/]
         [/@ui.bambooSection]
     </div>
 </div>
@@ -34,7 +34,7 @@
 <div class="field-group">
     <div class="center">
         [@ui.bambooSection title='Checkmarx Scan CxSAST' ]
-        [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" cssClass="long-field"/]
+        [@ww.textfield labelKey="folderExclusion.label" name="folderExclusions" cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
     [/@ui.bambooSection]
@@ -54,9 +54,9 @@
                 [/@ui.bambooSection]
                 [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled" toggle='true' /]
                 [@ui.bambooSection dependsOn='osaThresholdsEnabled' showOn='true']
-                    [@ww.textfield labelKey="osaHighThreshold.label" name="osaHighThreshold" required='false'/]
-                    [@ww.textfield labelKey="osaMediumThreshold.label" name="osaMediumThreshold" required='false'/]
-                    [@ww.textfield labelKey="osaLowThreshold.label" name="osaLowThreshold" required='false'/]
+                    [@ww.textfield labelKey="highThreshold.label" name="osaHighThreshold" required='false'/]
+                    [@ww.textfield labelKey="mediumThreshold.label" name="osaMediumThreshold" required='false'/]
+                    [@ww.textfield labelKey="lowThreshold.label" name="osaLowThreshold" required='false'/]
                 [/@ui.bambooSection]
         [/@ui.bambooSection]
     </div>

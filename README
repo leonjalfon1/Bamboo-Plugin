@@ -1,13 +1,50 @@
-You have successfully created an Atlassian Plugin!
+Bamboo plugin for CxSAST scanning
+=================================
 
-Here are the SDK commands you'll use immediately:
 
-* atlas-run   -- installs this plugin into the product and starts it on localhost
-* atlas-debug -- same as atlas-run, but allows a debugger to attach at port 5005
-* atlas-cli   -- after atlas-run or atlas-debug, opens a Maven command line window:
-                 - 'pi' reinstalls the plugin into the running product instance
-* atlas-help  -- prints description for all commands in the SDK
+BUILD
+-----
+1. Set up the Atlassian Plugin SDK,
+   https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project
+2. From the plugin root, issue the atlas-run command
 
-Full documentation is always available at:
 
-https://developer.atlassian.com/display/DOCS/Introduction+to+the+Atlassian+Plugin+SDK
+INSTALL
+-------
+1. Stop Bamboo
+2. Copy the .jar file to the Bamboo WEB-INF/lib folder on the Bamboo master server.
+   Example: /opt/atlassian-bamboo-5.12.4/atlassian-bamboo/WEB-INF/lib
+3. Remove any previous versions of the .jar file from this folder
+4. Start Bamboo
+5. Make sure the plugin is enabled under Bamboo administration -> Manage add-ons
+
+
+CONFIGURE
+---------
+1. As Administrator, go to Bamboo administration -> ADD-ONS (left panel) -> Checkmarx Plugin to configure the default Checkmarx server settings.
+2. Server certificates are validated, so if HTTPS is used for the Checkmarx server communication then make sure the certificate CA is included in the local Java cacerts keystore.
+3. Create a new Plan and enable it. Under the Default Job, add a Source Code Checkout Task and a Checkmarx Scan Task.
+
+
+REQUIREMENTS NOT COMPLETED
+--------------------------
+- UI: Scan result breakdown into categories. Comment: There are currently examples in the plugin code of how to add new sections to the Plan/Job result views.
+- Plugin functionality and UI: Set job scan timeout threshold. Comment: This needs to be compatible with the Bamboo "Hanging build detection" feature.
+- Security: Disable TLS/SSL Server Certificate Validation.
+
+
+KNOWN BUGS AND OTHER LIMITATIONS
+--------------------------------
+- Currently, after changing the default Checkmarx server settings, all Tasks using the default Checkmarx server settings have to be opened and resaved so that Preset, Configuration and Team options are reflected correctly. A warning message should probably be displayed when saving the default Checkmarx server settings so that this is made more clear.
+- Currently, after changing the Task level Checkmarx server settings, the Task has to be saved before Preset, Configuration and Team options are reflected. Would be best fixed by adding a "Test Connection"-button (see NICE-TO-HAVE FEATURES below).
+- Currently, the source repository has to be checked out in the same Job as the Checkmarx Task for the plugin to recognize the checkout folder. This is a limitation that has been difficult to fix. If any customer is using Plan level repos that are checked out in another Job/Stage, then we need to fix this as the plugin currently does not handle it. It currently just writes a log message that repo was not found.
+- To handle more than one source repository per Checkmarx Scan Task, all repositories must be checked out in the same Source Code Checkout Task, with the first repository checked out in a root folder and subsequent repositories in subfolders.
+
+
+NICE-TO-HAVE FEATURES LEFT TO DEVELOP
+-------------------------------------
+- UI: Add "Test Connection"-buttons at both global and Task level. Update Task Preset/Configuration/Team select boxes.
+- UI: Fetch project names from server in the Task.
+- UI: Help texts and/or tooltips.
+- UI: Add a Trends tab to the results view. This is prepared in the plugin code.
+- Plugin functionality: Support using environment variables like in the Jenkins plugin.
