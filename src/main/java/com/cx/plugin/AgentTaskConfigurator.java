@@ -36,6 +36,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     protected long DEFAULT_PRESET_ID = 17;//TODO
     protected final String DEFAULT_TEAM = "CxServer"; //TODO-DOR is that the right place?
     protected String DEFAULT_TEAM_ID = "1"; //TODO
+    String loginError = "login Error for Yair!";//TODO
 
     private static final String DEFAULT_FILTER_PATTERN = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
             "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
@@ -410,9 +411,15 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
                 ret = true;
 
             } catch (Exception CxClientException) {
-                System.out.println("Exception caught: '" + CxClientException.getMessage() + "'");//TODO
+                loginError = CxClientException.getMessage();
+
+                System.out.println("Exception caught: " +loginError + "'");//TODO
+                if(loginError.startsWith("HTTP transport")){
+                    loginError = "Invalid URL";
+                }
                 cxClientService = null;
                 ret = false;
+
             }
         }
         return ret;
@@ -484,8 +491,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         validateNotNegative(params, errorCollection, CxParam.SCAN_TIMEOUT_IN_MINUTES);
 
         String useglobal = params.getString(CxParam.DEFAULT_SCAN_CONTROL);
-        String thresholdEnabled = params.get(CxParam.THRESHOLDS_ENABLED).toString();
-        String osaThresholdEnabled = params.get(CxParam.OSA_THRESHOLDS_ENABLED).toString();
         if(useglobal.equals(COSTUME_CONFIGURATION_CONTROL)) {
                 validateNotNegative(params, errorCollection, CxParam.HIGH_THRESHOLD);
                 validateNotNegative(params, errorCollection, CxParam.MEDIUM_THRESHOLD);
@@ -495,9 +500,14 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
                 validateNotNegative(params, errorCollection, CxParam.OSA_LOW_THRESHOLD);
 
         }
-       /* if (!TryLogin(nami, passi, urlii)) {
-           // errorCollection.addError("login", ((ConfigureBuildTasks) errorCollection).getText("login" + ".error"));
-        }*/
+
+        String nami = params.getString(CxParam.USER_NAME);
+        String passi = params.getString(CxParam.PASSWORD);
+        String urlii = params.getString(CxParam.SERVER_URL);
+
+       if (!TryLogin(nami, encrypt(passi), urlii)) {
+            errorCollection.addError(CxParam.DEFAULT_CREDENTIALS, loginError);
+        }
     }
 
     private void validateNotEmpty(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
