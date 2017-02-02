@@ -39,7 +39,7 @@
     }
 
     form.aui .checkbox > label, form.aui .radio > label {
-        color: rgb(112, 112, 112);
+        color: #333333;
         font-weight: bold;
     }
 
@@ -110,13 +110,13 @@
         [@ww.radio id = 'radioGroup' labelKey='' name='defaultCxSast' listKey='key' listValue='value' toggle='true' list=configurationModeTypesCxSAST /]
         <div class="afterRadio">
             [@ui.bambooSection dependsOn='defaultCxSast' showOn='costumeConfigurationCxSAST']
-                [@ww.textfield labelKey="folderExclusion.label" name="folderExclusions" descriptionKey="folderExclusion.description" cssClass="long-field"/]
+                [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
                 [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
                 [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
             [/@ui.bambooSection]
 
         [@ui.bambooSection dependsOn='defaultCxSast' showOn='globalConfigurationCxSAST']
-            [@ww.label labelKey="folderExclusion.label" name="folderExclusions" descriptionKey="folderExclusion.description" cssClass="long-field"/]
+            [@ww.label labelKey="folderExclusions.label" name="folderExclusions" cssClass="long-field"/]
             [@ww.label labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
             [@ww.label labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
         [/@ui.bambooSection]

@@ -34,7 +34,7 @@
 <div class="field-group">
     <div class="center">
         [@ui.bambooSection title='Checkmarx Scan CxSAST' ]
-        [@ww.textfield labelKey="folderExclusion.label" name="folderExclusions" cssClass="long-field"/]
+        [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
     [/@ui.bambooSection]
