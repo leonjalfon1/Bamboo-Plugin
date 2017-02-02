@@ -6,7 +6,7 @@
 
     .center {
         padding: 16px;
-        border: solid 1px;
+        border: double 1px;
         width: 69%;
     }
 

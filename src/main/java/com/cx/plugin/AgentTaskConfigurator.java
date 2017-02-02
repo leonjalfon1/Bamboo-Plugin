@@ -193,7 +193,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     private void populateCxSASTFields(@NotNull final Map<String, Object> context, AdministrationConfiguration adminConfig, Map<String, String> configMap, String fieldsSection) {
-        String isIncremental;
         String folderExclusion;
         String filterPattern;
         String scanTimeout;
@@ -476,13 +475,26 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
     //Validation methods
     @Override
-    public void validate(@NotNull final ActionParametersMap params, @NotNull final ErrorCollection errorCollection) {//TODO add more validations
+    public void validate(@NotNull final ActionParametersMap params, @NotNull final ErrorCollection errorCollection) {
         super.validate(params, errorCollection);
         validateNotEmpty(params, errorCollection, CxParam.USER_NAME);
         validateNotEmpty(params, errorCollection, CxParam.PASSWORD);
         validateNotEmpty(params, errorCollection, CxParam.SERVER_URL);
         validateNotEmpty(params, errorCollection, CxParam.PROJECT_NAME);
         validateNotNegative(params, errorCollection, CxParam.SCAN_TIMEOUT_IN_MINUTES);
+
+        String useglobal = params.getString(CxParam.DEFAULT_SCAN_CONTROL);
+        String thresholdEnabled = params.get(CxParam.THRESHOLDS_ENABLED).toString();
+        String osaThresholdEnabled = params.get(CxParam.OSA_THRESHOLDS_ENABLED).toString();
+        if(useglobal.equals(COSTUME_CONFIGURATION_CONTROL)) {
+                validateNotNegative(params, errorCollection, CxParam.HIGH_THRESHOLD);
+                validateNotNegative(params, errorCollection, CxParam.MEDIUM_THRESHOLD);
+                validateNotNegative(params, errorCollection, CxParam.LOW_THRESHOLD);
+                validateNotNegative(params, errorCollection, CxParam.OSA_HIGH_THRESHOLD);
+                validateNotNegative(params, errorCollection, CxParam.OSA_MEDIUM_THRESHOLD);
+                validateNotNegative(params, errorCollection, CxParam.OSA_LOW_THRESHOLD);
+
+        }
        /* if (!TryLogin(nami, passi, urlii)) {
            // errorCollection.addError("login", ((ConfigureBuildTasks) errorCollection).getText("login" + ".error"));
         }*/
@@ -497,16 +509,17 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
     private void validateNotNegative(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
         final String value = params.getString(key);
-        if (value != null && !StringUtils.isEmpty(value))
+        if (value != null && !StringUtils.isEmpty(value)) {
             try {
                 int num = Integer.parseInt(value);
                 if (num > 0) {
                     return;
                 }
-                errorCollection.addError("scanTimeoutInMinutes", "You did not provide a positive number of scanTimeoutInMinutes.");
+                errorCollection.addError(key,  "You did not provide a positive number.");
             } catch (Exception e) {
                 errorCollection.addError(key, "You did not provide a positive number");
             }
+        }
     }
 
 }
