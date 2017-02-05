@@ -31,9 +31,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public class CheckmarxTask implements TaskType {
 
@@ -57,10 +55,11 @@ public class CheckmarxTask implements TaskType {
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
 
-        final TaskResultBuilder taskResultBuilder = TaskResultBuilder.create(taskContext);
+        final TaskResultBuilder taskResultBuilder = TaskResultBuilder.newBuilder(taskContext);
         buildLogger = taskContext.getBuildLogger();
         BuildLoggerAdapter buildLoggerAdapter = new BuildLoggerAdapter(buildLogger);
         buildContext = taskContext.getBuildContext();
+        Map<String, String> results = new HashMap<String, String>();
 
         configurationMap = taskContext.getConfigurationMap();
         workDirectory = taskContext.getWorkingDirectory().getPath();
@@ -123,6 +122,24 @@ public class CheckmarxTask implements TaskType {
                 scanResultsUrl = CxPluginHelper.composeScanLink(url.toString(), scanResults);
                 printResultsToConsole(scanResults);
 
+                results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
+                results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
+                results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
+                results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
+
+                if(config.isSASTThresholdEnabled()) {
+
+                    if(config.getHighThreshold() != null) {
+                        results.put(CxResultsConst.HIGH_THRESHOLD, String.valueOf(config.getHighThreshold()));
+                    }
+                    if(config.getMediumThreshold() != null) {
+                        results.put(CxResultsConst.MEDIUM_THRESHOLD, String.valueOf(config.getMediumThreshold()));
+                    }
+                    if(config.getLowThreshold() != null) {
+                        results.put(CxResultsConst.LOW_THRESHOLD, String.valueOf(config.getLowThreshold()));
+                    }
+                }
+
                 if (config.isGeneratePDFReport()) {
                     createPDFReport(scanResults.getScanID());
                 }
@@ -174,6 +191,7 @@ public class CheckmarxTask implements TaskType {
             throw new TaskException(e.getMessage());
         }
 
+        buildContext.getBuildResult().getCustomBuildData().putAll(results);
 
         //assert vulnerabilities under threshold
         if (failed ||  assertVulnerabilities(scanResults , osaSummaryResults)) {

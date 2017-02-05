@@ -13,6 +13,7 @@
     <!-- publish components -->
     <taskType key="checkmarx" name="Checkmarx" class="com.cx.plugin.CheckmarxTask">
         <description>Security static source code analysis</description>
+        <category name="test"/>
         <configuration class="com.cx.plugin.AgentTaskConfigurator"/>
         <resource type="freemarker" name="edit" location="/com/cx/plugin/editExampleTask.ftl"/>
         <resource type="freemarker" name="view" location="/com/cx/plugin/viewExampleTask.ftl"/>
@@ -49,16 +50,7 @@
 </web-item>
 
 
-    <web-panel key="checkmarx-chainresult-summary" name="Checkmarx Plan Result Summary Panel" location="chainresult.summary">
-        <resource name="view" type="freemarker" location="/com/cx/plugin/cxResultSummary.ftl" />
-    </web-panel>
-
-    <web-panel key="checkmarx-chainresult-summary-right" name="Checkmarx Plan Result Summary Right Panel" location="chainresult.summary.right">
-        <resource name="view" type="freemarker" location="/com/cx/plugin/cxResultSummaryRight.ftl" />
-    </web-panel>
-
-    <web-panel key="checkmarx-jobresult-summary-right" name="Checkmarx Job Result Summary Right Panel" location="jobresult.summary.right">
-        <resource name="view" type="freemarker" location="/com/cx/plugin/cxResultSummaryRight.ftl" />
+    <web-panel key="checkmarx-chainresult-summary" name="Checkmarx Plan Result Summary Panel" location="chainresult.summary" class="com.cx.plugin.CxResultsWebPanel">
     </web-panel>
 
 
