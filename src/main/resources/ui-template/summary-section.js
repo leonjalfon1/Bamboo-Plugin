@@ -17,49 +17,48 @@ var medCount = 3;
 var lowCount = 3;
 
 //cve lists
-// **These dummies should be deleted from the end of this file after putting the real lists in from server**
 var highCveList = [
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        },
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        },
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        }
-    ];
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    },
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    },
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    }
+];
 var medCveList = [
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        },
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        },
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        }
-    ];
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    },
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    },
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    }
+];
 var lowCveList = [
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        },
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        },
-        {
-            "name": "cve-name-high",
-            "count": "10"
-        }
-    ];
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    },
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    },
+    {
+        "name": "cve-name-high",
+        "count": "10"
+    }
+];
 
 
 //-------------------------- osa vars --------------------------------------
@@ -89,22 +88,22 @@ var osaLowCount = 3;
 
 //cve lists
 var osaHighCveList = [
-        {
-            "cveName": "cve-name-high",
-            "publishDate": "28/06/2016",
-            "libraryName":"library-name"
-        },
-        {
-            "cveName": "cve-name-high",
-            "publishDate": "28/06/2016",
-            "libraryName":"library-name"
-        },
-        {
-            "cveName": "cve-name-high",
-            "publishDate": "28/06/2016",
-            "libraryName":"library-name"
-        }
-    ];
+    {
+        "cveName": "cve-name-high",
+        "publishDate": "28/06/2016",
+        "libraryName":"library-name"
+    },
+    {
+        "cveName": "cve-name-high",
+        "publishDate": "28/06/2016",
+        "libraryName":"library-name"
+    },
+    {
+        "cveName": "cve-name-high",
+        "publishDate": "28/06/2016",
+        "libraryName":"library-name"
+    }
+];
 var osaMedCveList = [
     {
         "cveName": "cve-name-high",
@@ -147,6 +146,15 @@ var sastFullCodeViewerPath = "tavi/CodeViewer/odetttt";
 
 var osaFullHtmlPath = "tavi/FullHtml/odetttt";
 var osaFullPdfPath = "tavi/FullPdf/odetttt";
+
+var sastStartDate = "28/06/2016";
+var sastEndtDate = "28/06/2016";
+var sastNumFiles = 2507;
+var sastLoc = 359;
+
+var osaStartDate = "28/07/2016";
+var osaEndtDate = "28/07/2016";
+var osaNumFiles = 3507;
 
 
 window.onload = function () {
@@ -285,6 +293,17 @@ window.onload = function () {
     //osa full links
     document.getElementById("osa-full-html-link").setAttribute("href", osaFullHtmlPath);
     document.getElementById("osa-full-pdf-link").setAttribute("href", osaFullPdfPath);
+
+    //sast info
+    document.getElementById("sast-full-start-date").innerHTML = sastStartDate;
+    document.getElementById("sast-full-end-date").innerHTML = sastEndtDate;
+    document.getElementById("sast-full-files").innerHTML = sastNumFiles;
+    document.getElementById("sast-full-loc").innerHTML = sastLoc;
+
+    //osa info
+    document.getElementById("osa-full-start-date").innerHTML = osaStartDate;
+    document.getElementById("osa-full-end-date").innerHTML = osaEndtDate;
+    document.getElementById("osa-full-files").innerHTML = osaNumFiles;
 
     //generate full reports
     if (highCount > 0) {
@@ -562,254 +581,3 @@ function generateCveTable(severity) {
             break;
     }
 }
-
-var dummyHighCveList = [
-    {
-        "name": "cve-name-high",
-        "count": "10"
-    },
-    {
-        "name": "cve-name-high",
-        "count": "10"
-    },
-    {
-        "name": "cve-name-high",
-        "count": "10"
-    }
-];
-var dummyMedCveList = [
-    {
-        "id": "0",
-        "cveName": "cve-name-med",
-        "score": 50.0,
-        "severity": {
-            "Id": 2,
-            "name": "Med"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 2",
-        "sourceFileName": "SourceFileName 2",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-med",
-        "score": 50.0,
-        "severity": {
-            "Id": 2,
-            "name": "Med"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 2",
-        "sourceFileName": "SourceFileName 2",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-med",
-        "score": 50.0,
-        "severity": {
-            "Id": 2,
-            "name": "Med"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 2",
-        "sourceFileName": "SourceFileName 2",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    }
-];
-var dummyLowCveList = [
-    {
-        "id": "0",
-        "cveName": "cve-name-low",
-        "score": 1.0,
-        "severity": {
-            "Id": 3,
-            "name": "Low"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 3",
-        "sourceFileName": "SourceFileName 3",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-low",
-        "score": 1.0,
-        "severity": {
-            "Id": 3,
-            "name": "Low"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 3",
-        "sourceFileName": "SourceFileName 3",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-low",
-        "score": 1.0,
-        "severity": {
-            "Id": 3,
-            "name": "Low"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 3",
-        "sourceFileName": "SourceFileName 3",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    }
-];
-
-var dummyOsaHighCveList = [
-    {
-        "id": "0",
-        "cveName": "cve-name-high",
-        "score": 100.0,
-        "severity": {
-            "Id": 1,
-            "name": "High"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 1",
-        "sourceFileName": "SourceFileName 1",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-high",
-        "score": 100.0,
-        "severity": {
-            "Id": 1,
-            "name": "High"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 1",
-        "sourceFileName": "SourceFileName 1",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-high",
-        "score": 100.0,
-        "severity": {
-            "Id": 1,
-            "name": "High"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 1",
-        "sourceFileName": "SourceFileName 1",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    }
-];
-var dummyOsaMedCveList = [
-    {
-        "id": "0",
-        "cveName": "cve-name-med",
-        "score": 50.0,
-        "severity": {
-            "Id": 2,
-            "name": "Med"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 2",
-        "sourceFileName": "SourceFileName 2",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-med",
-        "score": 50.0,
-        "severity": {
-            "Id": 2,
-            "name": "Med"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 2",
-        "sourceFileName": "SourceFileName 2",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-med",
-        "score": 50.0,
-        "severity": {
-            "Id": 2,
-            "name": "Med"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 2",
-        "sourceFileName": "SourceFileName 2",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    }
-];
-var dummyOsaLowCveList = [
-    {
-        "id": "0",
-        "cveName": "cve-name-low",
-        "score": 1.0,
-        "severity": {
-            "Id": 3,
-            "name": "Low"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 3",
-        "sourceFileName": "SourceFileName 3",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-low",
-        "score": 1.0,
-        "severity": {
-            "Id": 3,
-            "name": "Low"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 3",
-        "sourceFileName": "SourceFileName 3",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    },
-    {
-        "id": "0",
-        "cveName": "cve-name-low",
-        "score": 1.0,
-        "severity": {
-            "Id": 3,
-            "name": "Low"
-        },
-        "publishDate": "2016-11-07T10:16:06.1206743Z",
-        "url": "http://cv1",
-        "description": null,
-        "recommendations": "recommendation 3",
-        "sourceFileName": "SourceFileName 3",
-        "libraryId": "36b32b00-9ee6-4e2f-85c9-3f03f26519a9"
-    }
-];
