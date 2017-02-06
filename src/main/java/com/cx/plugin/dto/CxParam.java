@@ -38,4 +38,10 @@ public class CxParam {
     public static final String DEFAULT_SCAN_CONTROL = "defaultScanControl";
     public static final String CONFIGURATION_MODE_TYPES = "configurationModeTypes";
     public static final String ADMINISTRATION_CONFIGURATION = "administrationConfiguration";
+    public static final String GLOBAL_CONFIGURATION_SERVER = "globalConfigurationServer";
+    public static final String COSTUME_CONFIGURATION_SERVER = "costumeConfigurationServer";
+    public static final String GLOBAL_CONFIGURATION_CXSAST = "globalConfigurationCxSAST";
+    public static final String COSTUME_CONFIGURATION_CXSAST = "costumeConfigurationCxSAST";
+    public static final String GLOBAL_CONFIGURATION_CONTROL= "globalConfigurationControl";
+    public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
 }

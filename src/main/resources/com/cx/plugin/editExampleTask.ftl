@@ -49,7 +49,7 @@
         font-weight: bold;
         line-height: 1.5;
         text-transform: none;
-        margin: 30px 0 0 0;
+        margin: 5px 0 0 0;
     }
 
     form.aui .field-value {
@@ -83,9 +83,10 @@
 
         <div class="afterRadio">
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='costumeConfigurationServer']
-                [@ww.textfield labelKey="serverUrl.label" name="serverUrl" required='true'/]
-                [@ww.textfield labelKey="userName.label" name="userName" required='true'/]
-                [@ww.password labelKey="password.label" name="password" required='true' showPassword='true'/]
+                [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl" required='true'/]
+                [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
+                [@ww.password labelKey="password.label"  id="password" name="password" required='true' showPassword='true'/]
+                [@ww.submit value="Test Connection" class="aui-button" name="jira_authenticate" id="jira_authenticate"/]
             [/@ui.bambooSection]
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='globalConfigurationServer']
                 [@ww.label labelKey="serverUrl.label" name="serverUrl" required='true'/]
@@ -218,7 +219,6 @@
 
 
         [@ui.bambooSection dependsOn='defaultScanControl' showOn='globalConfigurationControl']
-            [#--[#if buildConfiguration.getString('repository.git.ssh.key')?has_content]--]
             [#if context.get("thresholdsEnabled")?has_content]
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='true' /]
             [#else]

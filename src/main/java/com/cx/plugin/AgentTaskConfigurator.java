@@ -38,31 +38,13 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     protected String DEFAULT_TEAM_ID = "1"; //TODO
     String loginError = "login Error for Yair!";//TODO
 
-    private static final String DEFAULT_FILTER_PATTERN = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
-            "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
-            "!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u,   !**/*.mid,   !**/*.mp3,  " +
-            "!**/*.mpa,     !**/*.ra,        !**/*.wav,      !**/*.wma,      !**/*.3g2,     !**/*.3gp,   !**/*.asf,   !**/*.asx,  " +
-            "!**/*.avi,     !**/*.flv,       !**/*.mov,      !**/*.mp4,      !**/*.mpg,     !**/*.rm,    !**/*.swf,   !**/*.vob,  " +
-            "!**/*.wmv,     !**/*.bmp,       !**/*.gif,      !**/*.jpg,      !**/*.png,     !**/*.psd,   !**/*.tif,   !**/*.swf,  " +
-            "!**/*.jar,     !**/*.zip,       !**/*.rar,      !**/*.exe,      !**/*.dll,     !**/*.pdb,   !**/*.7z,    !**/*.gz,   " +
-            "!**/*.tar.gz,  !**/*.tar,       !**/*.gz,       !**/*.ahtm,     !**/*.ahtml,   !**/*.fhtml, !**/*.hdm,   " +
-            "!**/*.hdml,    !**/*.hsql,      !**/*.ht,       !**/*.hta,      !**/*.htc,     !**/*.htd,   !**/*.war,   !**/*.ear,  " +
-            "!**/*.htmls,   !**/*.ihtml,     !**/*.mht,      !**/*.mhtm,     !**/*.mhtml,   !**/*.ssi,   !**/*.stm,   " +
-            "!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml    ";
-
-
     private static Map<String, String> presetList = new HashMap<String, String>();
     private static Map<String, String> teamPathList = new HashMap<String, String>();
     private CxClientService cxClientService = null;
-    public static final String GLOBAL_CONFIGURATION_SERVER = "globalConfigurationServer";
-    public static final String COSTUME_CONFIGURATION_SERVER = "costumeConfigurationServer";
-    public static final String GLOBAL_CONFIGURATION_CXSAST = "globalConfigurationCxSAST";
-    public static final String COSTUME_CONFIGURATION_CXSAST = "costumeConfigurationCxSAST";
-    public static final String GLOBAL_CONFIGURATION_CONTROL= "globalConfigurationControl";
-    public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, "Use Default Setting", COSTUME_CONFIGURATION_SERVER , "Specific Task Setting");
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, "Use Default Setting", COSTUME_CONFIGURATION_CXSAST , "Specific Task Setting");
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(GLOBAL_CONFIGURATION_CONTROL, "Use Default Setting", COSTUME_CONFIGURATION_CONTROL, "Specific Task Setting");
+
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_SERVER, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_SERVER , "Specific Task Setting");
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_CXSAST, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_CXSAST , "Specific Task Setting");
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_CONTROL, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_CONTROL, "Specific Task Setting");
 
 
     @NotNull
@@ -113,19 +95,15 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(CxParam.PROJECT_NAME, projectName);
         context.put(CxParam.SERVER_URL, DEFAULT_URL);//TODO
 
-        context.put(CxParam.DEFAULT_CREDENTIALS, GLOBAL_CONFIGURATION_SERVER);
+
         populateCredentialsFields(null, null, context, adminConfig, null, null);
 
-        context.put(CxParam.DEFAULT_CXSAST, GLOBAL_CONFIGURATION_CXSAST);
         populateCxSASTFields(context, adminConfig, null, null);
 
-        context.put(CxParam.DEFAULT_SCAN_CONTROL, GLOBAL_CONFIGURATION_CONTROL);
         context.put(CxParam.IS_INCREMENTAL_SCAN, OPTION_FALSE);
         populateScanControlFields(context, adminConfig, null, null);
 
-
         context.put(CxParam.IS_SYNCHRONOUS, OPTION_TRUE);
-
         context.put(CxParam.GENERATE_PDF_REPORT, OPTION_FALSE);
         context.put(CxParam.OSA_ENABLED, OPTION_FALSE);
     }
@@ -173,10 +151,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String cxPass;
         String configType;
         if (fieldsSection == null) {
-            configType = GLOBAL_CONFIGURATION_SERVER;
+            configType = CxParam.GLOBAL_CONFIGURATION_SERVER;
         } else{ configType = configMap.get(fieldsSection);}
 
-        if (configType.equals(GLOBAL_CONFIGURATION_SERVER)) {
+        if (configType.equals(CxParam.GLOBAL_CONFIGURATION_SERVER)) {
             cxServerUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL);
             cxUser = adminConfig.getSystemProperty(CxParam.USER_NAME);
             cxPass = adminConfig.getSystemProperty(CxParam.PASSWORD);
@@ -199,11 +177,11 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String scanTimeout;
         String configType;
         if (fieldsSection == null) {
-            configType = GLOBAL_CONFIGURATION_CXSAST;
+            configType = CxParam.GLOBAL_CONFIGURATION_CXSAST;
         }
         else{ configType = configMap.get(fieldsSection);}
 
-        if (configType.equals(GLOBAL_CONFIGURATION_CXSAST)) {
+        if (configType.equals(CxParam.GLOBAL_CONFIGURATION_CXSAST)) {
             folderExclusion = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
             filterPattern = (adminConfig.getSystemProperty(CxParam.FILTER_PATTERN));
             scanTimeout = (adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES));
@@ -231,11 +209,11 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String osaLowThreshold;
         String configType;
         if (fieldsSection == null) {
-            configType = GLOBAL_CONFIGURATION_CONTROL;
+            configType = CxParam.GLOBAL_CONFIGURATION_CONTROL;
         }
         else{ configType = configMap.get(fieldsSection);}
 
-        if (configType.equals(GLOBAL_CONFIGURATION_CONTROL)) {
+        if (configType.equals(CxParam.GLOBAL_CONFIGURATION_CONTROL)) {
             isSynchronous = adminConfig.getSystemProperty(CxParam.IS_SYNCHRONOUS);
             thresholdEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED);
             highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD);
@@ -311,7 +289,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String cxUser;
         String cxPass;
 
-        if (useDefaultCredentials.equals(GLOBAL_CONFIGURATION_SERVER)) {
+        if (useDefaultCredentials.equals(CxParam.GLOBAL_CONFIGURATION_SERVER)) {
             cxServerUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL);
             cxUser = adminConfig.getSystemProperty(CxParam.USER_NAME);
             cxPass = adminConfig.getSystemProperty(CxParam.PASSWORD);
@@ -336,7 +314,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String filterPattern;
         String scanTimeout;
 
-        if (useDefaultCxSASTConfig.equals(GLOBAL_CONFIGURATION_CXSAST)) {
+        if (useDefaultCxSASTConfig.equals(CxParam.GLOBAL_CONFIGURATION_CXSAST)) {
             folderExclusions = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
             filterPattern = adminConfig.getSystemProperty(CxParam.FILTER_PATTERN);
             scanTimeout = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES);
@@ -364,7 +342,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String osaMediumThreshold;
         String osaLowThreshold;
 
-        if (useDefaultScanControl.equals(GLOBAL_CONFIGURATION_CONTROL)) {
+        if (useDefaultScanControl.equals(CxParam.GLOBAL_CONFIGURATION_CONTROL)) {
             thresholdsEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED);
             highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD);
             mediumThreshold = adminConfig.getSystemProperty(CxParam.MEDIUM_THRESHOLD);
@@ -491,7 +469,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         validateNotNegative(params, errorCollection, CxParam.SCAN_TIMEOUT_IN_MINUTES);
 
         String useglobal = params.getString(CxParam.DEFAULT_SCAN_CONTROL);
-        if(useglobal.equals(COSTUME_CONFIGURATION_CONTROL)) {
+        if(useglobal.equals(CxParam.COSTUME_CONFIGURATION_CONTROL)) {
                 validateNotNegative(params, errorCollection, CxParam.HIGH_THRESHOLD);
                 validateNotNegative(params, errorCollection, CxParam.MEDIUM_THRESHOLD);
                 validateNotNegative(params, errorCollection, CxParam.LOW_THRESHOLD);
