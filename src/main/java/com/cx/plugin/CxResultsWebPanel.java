@@ -23,27 +23,51 @@ public class CxResultsWebPanel implements WebPanel{
 
     public String getHtml(Map<String, Object> map) {
 
-
         ChainResultsSummaryImpl a = (ChainResultsSummaryImpl)map.get("resultSummary");
 
-        //todo check the chain of gets
         Map<String, String> customBuildData = a.getOrderedJobResultSummaries().get(0).getCustomBuildData();
 
-        String ret = "<div>WAWAWAWAWA</div>";
-        String resultsTemplate = getResultsTemplate();
-        if(resultsTemplate != null) {
+        String ret = "";
+        if(customBuildData.get(CxResultsConst.SAST_RESULTS_READY) != null) {
+            String resultsTemplate = getResultsTemplate();
+            if(resultsTemplate != null) {
 
-            ret = resultsTemplate
-                    .replace(CxResultsConst.HIGH_RESULTS, customBuildData.get(CxResultsConst.HIGH_RESULTS))
-                    .replace(CxResultsConst.MEDIUM_RESULTS, customBuildData.get(CxResultsConst.MEDIUM_RESULTS))
-                    .replace(CxResultsConst.LOW_RESULTS, customBuildData.get(CxResultsConst.LOW_RESULTS))
-                    .replace(CxResultsConst.THRESHOLD_ENABLED, customBuildData.get(CxResultsConst.THRESHOLD_ENABLED))
-                    .replace(CxResultsConst.HIGH_THRESHOLD, customBuildData.get(CxResultsConst.HIGH_THRESHOLD) == null ? "null" : customBuildData.get(CxResultsConst.HIGH_THRESHOLD))
-                    .replace(CxResultsConst.MEDIUM_THRESHOLD, customBuildData.get(CxResultsConst.MEDIUM_THRESHOLD) == null ? "null" : customBuildData.get(CxResultsConst.MEDIUM_THRESHOLD))
-                    .replace(CxResultsConst.LOW_THRESHOLD, customBuildData.get(CxResultsConst.LOW_THRESHOLD) == null ? "null" : customBuildData.get(CxResultsConst.LOW_THRESHOLD));
+                ret = resultsTemplate
+                        .replaceAll(CxResultsConst.HIGH_RESULTS, String.valueOf(customBuildData.get(CxResultsConst.HIGH_RESULTS)))
+                        .replace(CxResultsConst.MEDIUM_RESULTS, String.valueOf(customBuildData.get(CxResultsConst.MEDIUM_RESULTS)))
+                        .replace(CxResultsConst.LOW_RESULTS, String.valueOf(customBuildData.get(CxResultsConst.LOW_RESULTS)))
+                        .replace(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(customBuildData.get(CxResultsConst.THRESHOLD_ENABLED)))
+                        .replace(CxResultsConst.HIGH_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.HIGH_THRESHOLD)))
+                        .replace(CxResultsConst.MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.MEDIUM_THRESHOLD)))
+                        .replace(CxResultsConst.LOW_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.LOW_THRESHOLD)));
 
+
+                if(customBuildData.get(CxResultsConst.OSA_RESULTS_READY) != null) {
+                    ret = ret
+                            .replace(CxResultsConst.OSA_ENABLED, "true")
+                            .replace(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(customBuildData.get(CxResultsConst.OSA_HIGH_RESULTS)))
+                            .replace(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(customBuildData.get(CxResultsConst.OSA_MEDIUM_RESULTS)))
+                            .replace(CxResultsConst.OSA_LOW_RESULTS, String.valueOf(customBuildData.get(CxResultsConst.OSA_LOW_RESULTS)))
+                            .replace(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(customBuildData.get(CxResultsConst.OSA_THRESHOLD_ENABLED)))
+                            .replace(CxResultsConst.OSA_HIGH_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.OSA_HIGH_THRESHOLD)))
+                            .replace(CxResultsConst.OSA_MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.OSA_MEDIUM_THRESHOLD)))
+                            .replace(CxResultsConst.OSA_LOW_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.OSA_LOW_THRESHOLD)));
+                } else {
+                    ret = ret
+                            .replace(CxResultsConst.OSA_ENABLED, "false")
+                            .replace(CxResultsConst.OSA_HIGH_RESULTS, "0")
+                            .replace(CxResultsConst.OSA_MEDIUM_RESULTS, "0")
+                            .replace(CxResultsConst.OSA_LOW_RESULTS, "0")
+                            .replace(CxResultsConst.OSA_THRESHOLD_ENABLED, "false")
+                            .replace(CxResultsConst.OSA_HIGH_THRESHOLD, "0")
+                            .replace(CxResultsConst.OSA_MEDIUM_THRESHOLD, "0")
+                            .replace(CxResultsConst.OSA_LOW_THRESHOLD, "0");
+                }
+            }
+
+        } else {
+            return "";
         }
-
 
         return ret;
     }
