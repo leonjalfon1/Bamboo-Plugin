@@ -53,5 +53,20 @@
     <web-panel key="checkmarx-chainresult-summary" name="Checkmarx Plan Result Summary Panel" location="chainresult.summary" class="com.cx.plugin.CxResultsWebPanel">
     </web-panel>
 
+    <web-resource key="test-connection-resources" name="test-connection Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <resource type="download" name="test-connection.js" location="/js/test-connection.js"/>
+        <resource type="download" name="images/" location="/images"/>
+        <context>atl.general</context>
+    </web-resource>
+
+    <servlet name="Message" class="com.cx.plugin.ExampleServlet" key="test">
+        <url-pattern>/test</url-pattern>
+    </servlet>
+
+
+    <rest name="My Rest Resource" key="my-rest-resource" path="/checkmarx" version="1.0">
+        <description key="The My Rest Resource Plugin">The My Rest Resource Plugin</description>
+    </rest>
 
 </atlassian-plugin>

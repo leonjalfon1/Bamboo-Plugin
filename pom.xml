@@ -32,7 +32,7 @@
         <bamboo.version>5.14.3</bamboo.version>
         <bamboo.data.version>5.14.3</bamboo.data.version>
         <amps.version>6.2.11</amps.version>
-        <jersey.version>1.8</jersey.version>
+        <jersey.version>1.0.2</jersey.version>
         <!--      <atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>-->
         <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
         <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
@@ -45,33 +45,49 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
-            <scope>compile</scope>
+            <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>provided</scope>
+        </dependency>
+
+       <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <version>${jersey.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+     <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
-            <version>${jersey.version}</version>
+            <version>1.8</version>
+
         </dependency>
-        <dependency>
+      <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
             <version>${jersey.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
@@ -99,79 +115,3 @@
         </dependency>
     </dependencies>
 </project>
-        <!--
-                            <dependency>
-                                <groupId>com.checkmarx.components</groupId>
-                                <artifactId>zipper</artifactId>
-                                <version>1.2.1</version>
-                                <scope>compile</scope>
-                            </dependency>-->
-        <!-- 3rd parties -->
-        <!--        <dependency>
-                            <groupId>org.glassfish.jersey.core</groupId>
-                            <artifactId>jersey-client</artifactId>
-                            <version>2.22.2</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.glassfish.jersey.media</groupId>
-                            <artifactId>jersey-media-json-jackson</artifactId>
-                            <version>2.22.2</version>
-                        </dependency>-->
-        <!--      <dependency>
-                          <groupId>junit</groupId>
-                          <artifactId>junit</artifactId>
-                          <version>4.10</version>
-                          <scope>test</scope>
-                      </dependency>
-              -->
-        <!-- WIRED TEST RUNNER DEPENDENCIES -->
-        <!--        <dependency>
-                            <groupId>com.atlassian.plugins</groupId>
-                            <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
-                            <version>${plugin.testrunner.version}</version>
-                            <scope>test</scope>
-                        </dependency>-->
-        <!--    <dependency>
-                        <groupId>com.atlassian.plugin</groupId>
-                        <artifactId>atlassian-spring-scanner-annotation</artifactId>
-                        <version>${atlassian.spring.scanner.version}</version>
-                        <scope>provided</scope>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>com.atlassian.plugin</groupId>
-                        <artifactId>atlassian-spring-scanner-runtime</artifactId>
-                        <version>${atlassian.spring.scanner.version}</version>
-                        <scope>provided</scope>
-                    </dependency>-->
-        <!--<plugin>
-                    <groupId>com.atlassian.plugin</groupId>
-                    <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
-                    <version>${atlassian.spring.scanner.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                   zx             <goal>atlassian-spring-scanner</goal>
-                            </goals>
-                            <phase>process-classes</phase>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <scannedDependencies>
-                            <dependency>
-                                <groupId>com.atlassian.plugin</groupId>
-                                <artifactId>atlassian-spring-scanner-external-jar</artifactId>
-                            </dependency>
-                        </scannedDependencies>
-                        <verbose>false</verbose>
-
-                    </configuration>
-                </plugin>-->
-        <!--
-                        <dependency>
-                            <groupId>com.google.code.gson</groupId>
-                            <artifactId>gson</artifactId>
-                            <version>2.2.2-atlassian-1</version>
-                            <scope>provided</scope>
-                        </dependency>
-                -->

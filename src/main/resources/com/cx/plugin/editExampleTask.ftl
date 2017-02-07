@@ -74,6 +74,17 @@
         min-height: 12px;
     }
 
+    #test_connection {
+           margin-top: 12px;
+        margin-bottom: 35px;
+       }
+    #testConnectionMessage{
+        margin-top: -65px;
+        margin-left: 145px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
 </style
 
 <div class="field-group">
@@ -86,7 +97,12 @@
                 [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl" required='true'/]
                 [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
                 [@ww.password labelKey="password.label"  id="password" name="password" required='true' showPassword='true'/]
-                [@ww.submit value="Test Connection" class="aui-button" name="jira_authenticate" id="jira_authenticate"/]
+                <button type="button" class="aui-button" id="test_connection">Test Connection</button>
+                <div id="testConnectionMessage">
+
+
+                </div>
+
             [/@ui.bambooSection]
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='globalConfigurationServer']
                 [@ww.label labelKey="serverUrl.label" name="serverUrl" required='true'/]
