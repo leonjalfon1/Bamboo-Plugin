@@ -51,7 +51,9 @@ public class CxResultsWebPanel implements WebPanel{
                             .replace(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(customBuildData.get(CxResultsConst.OSA_THRESHOLD_ENABLED)))
                             .replace(CxResultsConst.OSA_HIGH_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.OSA_HIGH_THRESHOLD)))
                             .replace(CxResultsConst.OSA_MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.OSA_MEDIUM_THRESHOLD)))
-                            .replace(CxResultsConst.OSA_LOW_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.OSA_LOW_THRESHOLD)));
+                            .replace(CxResultsConst.OSA_LOW_THRESHOLD, String.valueOf(customBuildData.get(CxResultsConst.OSA_LOW_THRESHOLD)))
+                            .replace(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(customBuildData.get(CxResultsConst.OSA_VULNERABLE_LIBRARIES)))
+                            .replace(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(customBuildData.get(CxResultsConst.OSA_OK_LIBRARIES)));
                 } else {
                     ret = ret
                             .replace(CxResultsConst.OSA_ENABLED, "false")
@@ -61,7 +63,9 @@ public class CxResultsWebPanel implements WebPanel{
                             .replace(CxResultsConst.OSA_THRESHOLD_ENABLED, "false")
                             .replace(CxResultsConst.OSA_HIGH_THRESHOLD, "0")
                             .replace(CxResultsConst.OSA_MEDIUM_THRESHOLD, "0")
-                            .replace(CxResultsConst.OSA_LOW_THRESHOLD, "0");
+                            .replace(CxResultsConst.OSA_LOW_THRESHOLD, "0")
+                            .replace(CxResultsConst.OSA_VULNERABLE_LIBRARIES, "0")
+                            .replace(CxResultsConst.OSA_OK_LIBRARIES, "0");
                 }
             }
 

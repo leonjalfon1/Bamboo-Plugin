@@ -33,5 +33,9 @@ public abstract class CxResultsConst {
     public static final String OSA_LOW_THRESHOLD = "cx.osaLowThreshold";
 
 
+    public static final String OSA_VULNERABLE_LIBRARIES = "cx.osaVulnerableLibraries";
+    public static final String OSA_OK_LIBRARIES = "cx.osaOkLibraries";
+
+
 
 }
