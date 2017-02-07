@@ -121,24 +121,7 @@ public class CheckmarxTask implements TaskType {
                 scanResults = cxClientService.retrieveScanResults(createScanResponse.getProjectId());
                 scanResultsUrl = CxPluginHelper.composeScanLink(url.toString(), scanResults);
                 printResultsToConsole(scanResults);
-
-                results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
-                results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
-                results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
-                results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
-
-                if(config.isSASTThresholdEnabled()) {
-
-                    if(config.getHighThreshold() != null) {
-                        results.put(CxResultsConst.HIGH_THRESHOLD, String.valueOf(config.getHighThreshold()));
-                    }
-                    if(config.getMediumThreshold() != null) {
-                        results.put(CxResultsConst.MEDIUM_THRESHOLD, String.valueOf(config.getMediumThreshold()));
-                    }
-                    if(config.getLowThreshold() != null) {
-                        results.put(CxResultsConst.LOW_THRESHOLD, String.valueOf(config.getLowThreshold()));
-                    }
-                }
+                addSastResults(results, scanResults, config);
 
                 if (config.isGeneratePDFReport()) {
                     createPDFReport(scanResults.getScanID());
@@ -165,6 +148,7 @@ public class CheckmarxTask implements TaskType {
                 buildLogger.addBuildLogEntry("Creating OSA reports");
                 osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());
                 printOSAResultsToConsole(osaSummaryResults);
+                addOSAResults(results, osaSummaryResults, config);
 
                 //OSA PDF and HTML reports
                 SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
@@ -199,6 +183,54 @@ public class CheckmarxTask implements TaskType {
         }
 
         return taskResultBuilder.success().build();
+    }
+
+    private void addSastResults(Map<String, String> results, ScanResults scanResults, ScanConfiguration config) {
+
+        results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
+        results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
+        results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
+
+        results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
+
+        if(config.isSASTThresholdEnabled()) {
+
+            String highThreshold = (config.getHighThreshold() == null ? "null" : String.valueOf(config.getHighThreshold()));
+            String mediumThreshold = (config.getMediumThreshold() == null ? "null" : String.valueOf(config.getMediumThreshold()));
+            String lowThreshold = (config.getLowThreshold() == null ? "null" : String.valueOf(config.getLowThreshold()));
+
+            results.put(CxResultsConst.HIGH_THRESHOLD, highThreshold);
+            results.put(CxResultsConst.MEDIUM_THRESHOLD, mediumThreshold);
+            results.put(CxResultsConst.LOW_THRESHOLD, lowThreshold);
+        }
+
+        results.put(CxResultsConst.SAST_RESULTS_READY, "true");
+    }
+
+    private void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, ScanConfiguration config) {
+
+        results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getHighVulnerabilities()));
+        results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getMediumVulnerabilities()));
+        results.put(CxResultsConst.OSA_LOW_RESULTS, String.valueOf(osaSummaryResults.getLowVulnerabilities()));
+
+
+        results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
+        results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
+
+        results.put(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(config.isOSAThresholdEnabled()));
+
+        if(config.isOSAThresholdEnabled()) {
+
+            String osaHighThreshold = (config.getOsaHighThreshold() == null ? "null" : String.valueOf(config.getOsaHighThreshold()));
+            String osaMediumThreshold = (config.getOsaMediumThreshold() == null ? "null" : String.valueOf(config.getOsaMediumThreshold()));
+            String osaLowThreshold = (config.getOsaLowThreshold() == null ? "null" : String.valueOf(config.getOsaLowThreshold()));
+
+            results.put(CxResultsConst.OSA_HIGH_THRESHOLD, osaHighThreshold);
+            results.put(CxResultsConst.OSA_MEDIUM_THRESHOLD, osaMediumThreshold);
+            results.put(CxResultsConst.OSA_LOW_THRESHOLD, osaLowThreshold);
+        }
+
+        results.put(CxResultsConst.OSA_RESULTS_READY, "true");
     }
 
     private CreateScanResponse createScan() { //TODO handle exceptions
