@@ -2,7 +2,7 @@
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
     </plugin-info>
@@ -17,13 +17,8 @@
         <configuration class="com.cx.plugin.AgentTaskConfigurator"/>
         <resource type="freemarker" name="edit" location="/com/cx/plugin/editExampleTask.ftl"/>
         <resource type="freemarker" name="view" location="/com/cx/plugin/viewExampleTask.ftl"/>
-        <resource type="download" name="icon" location="/images/TaskIcon.png" />
+        <resource type="download" name="icon" location="/images/TaskIcon.png"/>
     </taskType>
-
-
-    <web-resource key="releaseCSS" name="releaseCSS">
-        <resource type="download" name="release.css" location="release.css"/>
-    </web-resource>
 
 
     <xwork key="checkmarx-default-config-xwork" name="Checkmarx Default Configuration XWork">
@@ -34,23 +29,19 @@
                 <result name="success" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
             </action>
 
-            <action name="testConnection" class="com.cx.plugin.CxDefaultConfig" method="updateBintray">
-                <result name="input" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
-              <!--  <result name="success" type="redirect">com/cx/plugin/cxDefaultConfig.action</result>-->
-                <result name="success" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
-            </action>
-
         </package>
     </xwork>
 
 
-    <web-item key="checkmarx-default-config-webitem" name="Checkmarx Default Configuration WebItem" section="system.admin/plugins">
-    <label key="cxDefaultConfigWebItem.label" />
-    <link linkId="checkmarx-default-config-link">/admin/checkmarxDefaultConfiguration.action</link>
-</web-item>
+    <web-item key="checkmarx-default-config-webitem" name="Checkmarx Default Configuration WebItem"
+              section="system.admin/plugins">
+        <label key="cxDefaultConfigWebItem.label"/>
+        <link linkId="checkmarx-default-config-link">/admin/checkmarxDefaultConfiguration.action</link>
+    </web-item>
 
 
-    <web-panel key="checkmarx-chainresult-summary" name="Checkmarx Plan Result Summary Panel" location="chainresult.summary" class="com.cx.plugin.CxResultsWebPanel">
+    <web-panel key="checkmarx-chainresult-summary" name="Checkmarx Plan Result Summary Panel"
+               location="chainresult.summary" class="com.cx.plugin.CxResultsWebPanel">
     </web-panel>
 
     <web-resource key="test-connection-resources" name="test-connection Web Resources">
@@ -59,6 +50,7 @@
         <resource type="download" name="images/" location="/images"/>
         <context>atl.general</context>
     </web-resource>
+
 
     <rest name="My Rest Resource" key="my-rest-resource" path="/checkmarx" version="1.0">
         <description key="The My Rest Resource Plugin">The My Rest Resource Plugin</description>

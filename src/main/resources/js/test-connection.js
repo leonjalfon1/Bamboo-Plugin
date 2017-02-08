@@ -1,12 +1,12 @@
 (function ($) {
     $(document).on("click", "#test_connection", function (event) {
-        soapRequest();
+        restRequest();
         //  hideAuthenticationResult();
         //  populateDropdownLists();
         // event.preventDefault();
     });
 
-    function soapRequest() {
+    function restRequest() {
         var str = JSON.stringify(getInputData());
         function createRestRequest(method, url) {
 

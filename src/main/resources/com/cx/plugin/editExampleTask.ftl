@@ -107,7 +107,7 @@
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='globalConfigurationServer']
                 [@ww.label labelKey="serverUrl.label" name="serverUrl" required='true'/]
                 [@ww.label labelKey="userName.label" name="userName" required='true'/]
-                [@ww.label type="password" labelKey="password.label" name="password" required='true' showPassword='false'/]
+                [@ww.label type="password" labelKey="password.label"/]
             [/@ui.bambooSection]
         </div>
 

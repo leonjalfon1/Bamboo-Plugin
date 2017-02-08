@@ -36,7 +36,6 @@ public class CxParam {
     public static final String DEFAULT_CREDENTIALS = "defaultCredentials";
     public static final String DEFAULT_CXSAST = "defaultCxSast";
     public static final String DEFAULT_SCAN_CONTROL = "defaultScanControl";
-    public static final String CONFIGURATION_MODE_TYPES = "configurationModeTypes";
     public static final String ADMINISTRATION_CONFIGURATION = "administrationConfiguration";
     public static final String GLOBAL_CONFIGURATION_SERVER = "globalConfigurationServer";
     public static final String COSTUME_CONFIGURATION_SERVER = "costumeConfigurationServer";
@@ -44,4 +43,15 @@ public class CxParam {
     public static final String COSTUME_CONFIGURATION_CXSAST = "costumeConfigurationCxSAST";
     public static final String GLOBAL_CONFIGURATION_CONTROL= "globalConfigurationControl";
     public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
+    public static final String DEFAULT_FILTER_PATTERNS = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
+            "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
+            "!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u,   !**/*.mid,   !**/*.mp3,  " +
+            "!**/*.mpa,     !**/*.ra,        !**/*.wav,      !**/*.wma,      !**/*.3g2,     !**/*.3gp,   !**/*.asf,   !**/*.asx,  " +
+            "!**/*.avi,     !**/*.flv,       !**/*.mov,      !**/*.mp4,      !**/*.mpg,     !**/*.rm,    !**/*.swf,   !**/*.vob,  " +
+            "!**/*.wmv,     !**/*.bmp,       !**/*.gif,      !**/*.jpg,      !**/*.png,     !**/*.psd,   !**/*.tif,   !**/*.swf,  " +
+            "!**/*.jar,     !**/*.zip,       !**/*.rar,      !**/*.exe,      !**/*.dll,     !**/*.pdb,   !**/*.7z,    !**/*.gz,   " +
+            "!**/*.tar.gz,  !**/*.tar,       !**/*.gz,       !**/*.ahtm,     !**/*.ahtml,   !**/*.fhtml, !**/*.hdm,   " +
+            "!**/*.hdml,    !**/*.hsql,      !**/*.ht,       !**/*.hta,      !**/*.htc,     !**/*.htd,   !**/*.war,   !**/*.ear,  " +
+            "!**/*.htmls,   !**/*.ihtml,     !**/*.mht,      !**/*.mhtm,     !**/*.mhtml,   !**/*.ssi,   !**/*.stm,   " +
+            "!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml    ";
 }

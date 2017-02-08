@@ -181,9 +181,11 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String configType;
         if (fieldsSection == null) {
             configType = CxParam.GLOBAL_CONFIGURATION_CXSAST;
+            folderExclusion = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
+            filterPattern = CxParam.DEFAULT_FILTER_PATTERNS;
+            scanTimeout = (adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES));
         } else {
             configType = configMap.get(fieldsSection);
-        }
 
         if (configType.equals(CxParam.GLOBAL_CONFIGURATION_CXSAST)) {
             folderExclusion = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
@@ -193,7 +195,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             folderExclusion = configMap.get(CxParam.FOLDER_EXCLUSION);
             filterPattern = configMap.get(CxParam.FILTER_PATTERN);
             scanTimeout = configMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES);
-        }
+        }}
 
         context.put(CxParam.DEFAULT_CXSAST, configType);
         context.put(CxParam.FOLDER_EXCLUSION, folderExclusion);
