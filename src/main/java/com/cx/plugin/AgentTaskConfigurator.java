@@ -42,8 +42,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private static Map<String, String> teamPathList = new HashMap<String, String>();
     private CxClientService cxClientService = null;
 
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_SERVER, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_SERVER , "Specific Task Setting");
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_CXSAST, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_CXSAST , "Specific Task Setting");
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_SERVER, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_SERVER, "Specific Task Setting");
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_CXSAST, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_CXSAST, "Specific Task Setting");
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_CONTROL, "Use Default Setting", CxParam.COSTUME_CONFIGURATION_CONTROL, "Specific Task Setting");
 
 
@@ -119,6 +119,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
         return projectName;
     }
+
     @Override
     public void populateContextForEdit(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition) {
 
@@ -141,7 +142,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(CxParam.GENERATE_PDF_REPORT, configMap.get(CxParam.GENERATE_PDF_REPORT));
         context.put(CxParam.OSA_ENABLED, configMap.get(CxParam.OSA_ENABLED));
 
-        populateScanControlFields(context, adminConfig, configMap, CxParam.DEFAULT_CXSAST);
+        populateScanControlFields(context, adminConfig, configMap, CxParam.DEFAULT_SCAN_CONTROL);
     }
 
     private void populateCredentialsFields(final String cxPreset, final String cxTeam, @NotNull final Map<String, Object> context,
@@ -152,7 +153,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String configType;
         if (fieldsSection == null) {
             configType = CxParam.GLOBAL_CONFIGURATION_SERVER;
-        } else{ configType = configMap.get(fieldsSection);}
+        } else {
+            configType = configMap.get(fieldsSection);
+        }
 
         if (configType.equals(CxParam.GLOBAL_CONFIGURATION_SERVER)) {
             cxServerUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL);
@@ -178,8 +181,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String configType;
         if (fieldsSection == null) {
             configType = CxParam.GLOBAL_CONFIGURATION_CXSAST;
+        } else {
+            configType = configMap.get(fieldsSection);
         }
-        else{ configType = configMap.get(fieldsSection);}
 
         if (configType.equals(CxParam.GLOBAL_CONFIGURATION_CXSAST)) {
             folderExclusion = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
@@ -210,8 +214,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String configType;
         if (fieldsSection == null) {
             configType = CxParam.GLOBAL_CONFIGURATION_CONTROL;
+        } else {
+            configType = configMap.get(fieldsSection);
         }
-        else{ configType = configMap.get(fieldsSection);}
 
         if (configType.equals(CxParam.GLOBAL_CONFIGURATION_CONTROL)) {
             isSynchronous = adminConfig.getSystemProperty(CxParam.IS_SYNCHRONOUS);
@@ -391,8 +396,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             } catch (Exception CxClientException) {
                 loginError = CxClientException.getMessage();
 
-                System.out.println("Exception caught: " +loginError + "'");//TODO
-                if(loginError.startsWith("HTTP transport")){
+                System.out.println("Exception caught: " + loginError + "'");//TODO
+                if (loginError.startsWith("HTTP transport")) {
                     loginError = "Invalid URL";
                 }
                 cxClientService = null;
@@ -469,22 +474,13 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         validateNotNegative(params, errorCollection, CxParam.SCAN_TIMEOUT_IN_MINUTES);
 
         String useglobal = params.getString(CxParam.DEFAULT_SCAN_CONTROL);
-        if(useglobal.equals(CxParam.COSTUME_CONFIGURATION_CONTROL)) {
-                validateNotNegative(params, errorCollection, CxParam.HIGH_THRESHOLD);
-                validateNotNegative(params, errorCollection, CxParam.MEDIUM_THRESHOLD);
-                validateNotNegative(params, errorCollection, CxParam.LOW_THRESHOLD);
-                validateNotNegative(params, errorCollection, CxParam.OSA_HIGH_THRESHOLD);
-                validateNotNegative(params, errorCollection, CxParam.OSA_MEDIUM_THRESHOLD);
-                validateNotNegative(params, errorCollection, CxParam.OSA_LOW_THRESHOLD);
-
-        }
-
-        String nami = params.getString(CxParam.USER_NAME);
-        String passi = params.getString(CxParam.PASSWORD);
-        String urlii = params.getString(CxParam.SERVER_URL);
-
-       if (!TryLogin(nami, encrypt(passi), urlii)) {
-            errorCollection.addError(CxParam.DEFAULT_CREDENTIALS, loginError);
+        if (useglobal.equals(CxParam.COSTUME_CONFIGURATION_CONTROL)) {
+            validateNotNegative(params, errorCollection, CxParam.HIGH_THRESHOLD);
+            validateNotNegative(params, errorCollection, CxParam.MEDIUM_THRESHOLD);
+            validateNotNegative(params, errorCollection, CxParam.LOW_THRESHOLD);
+            validateNotNegative(params, errorCollection, CxParam.OSA_HIGH_THRESHOLD);
+            validateNotNegative(params, errorCollection, CxParam.OSA_MEDIUM_THRESHOLD);
+            validateNotNegative(params, errorCollection, CxParam.OSA_LOW_THRESHOLD);
         }
     }
 
@@ -503,7 +499,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
                 if (num > 0) {
                     return;
                 }
-                errorCollection.addError(key,  "You did not provide a positive number.");
+                errorCollection.addError(key, "You did not provide a positive number.");
             } catch (Exception e) {
                 errorCollection.addError(key, "You did not provide a positive number");
             }

@@ -6,20 +6,20 @@ import com.cx.client.rest.dto.OSAScanStatus;
 import com.cx.client.rest.dto.OSASummaryResults;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.*;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
 import com.sun.jersey.multipart.MultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
+import com.sun.jersey.multipart.impl.MultiPartWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
 /**
@@ -57,10 +57,10 @@ public class CxRestClient {
         public ClientResponse handle(ClientRequest request) throws ClientHandlerException {
             if (newCookies != null) {
                 cookies = convertToRequestCookie(newCookies);
-                request.getHeaders().put("Cookie", cookies);
+                request.getMetadata().put("Cookie", cookies);
             }
             if (csrfToken != null) {
-                request.getHeaders().putSingle(CSRF_TOKEN_HEADER, csrfToken);
+                request.getMetadata().putSingle(CSRF_TOKEN_HEADER, csrfToken);
             }
 
             ClientResponse response = getNext().handle(request);
@@ -94,7 +94,9 @@ public class CxRestClient {
         this.username = username;
         this.password = password;
 
-        client = Client.create();
+        ClientConfig cc = new DefaultClientConfig();
+        cc.getClasses().add(MultiPartWriter.class);
+        client = Client.create(cc);
         root = client.resource(hostname + "/" + ROOT_PATH);
         client.addFilter(clientResponseFilter);
     }

@@ -60,11 +60,6 @@
         <context>atl.general</context>
     </web-resource>
 
-    <servlet name="Message" class="com.cx.plugin.ExampleServlet" key="test">
-        <url-pattern>/test</url-pattern>
-    </servlet>
-
-
     <rest name="My Rest Resource" key="my-rest-resource" path="/checkmarx" version="1.0">
         <description key="The My Rest Resource Plugin">The My Rest Resource Plugin</description>
     </rest>

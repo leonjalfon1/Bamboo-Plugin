@@ -32,7 +32,7 @@
         <bamboo.version>5.14.3</bamboo.version>
         <bamboo.data.version>5.14.3</bamboo.data.version>
         <amps.version>6.2.11</amps.version>
-        <jersey.version>1.0.2</jersey.version>
+        <jersey.version>1.0.3</jersey.version>
         <!--      <atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>-->
         <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
         <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
@@ -71,19 +71,19 @@
             <scope>provided</scope>
         </dependency>
 
-       <dependency>
+        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <version>${jersey.version}</version>
             <scope>provided</scope>
         </dependency>
-     <dependency>
+        <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
-            <version>1.8</version>
+            <version>${jersey.version}</version>
 
         </dependency>
-      <dependency>
+        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
             <version>${jersey.version}</version>
