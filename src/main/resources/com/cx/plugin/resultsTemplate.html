@@ -1,438 +1,436 @@
-<div>
-    <style>
-        .cx-title.job-main-title {
-            width: calc(100% - 1em - 48px);
-        }
-
-        .cx-title {
-            font-size: 24px;
-            font-weight: 500;
-            display: inline-block;
-            padding: 10px 0;
-            width: calc(100% - 48px);
-            border-bottom: solid 2px #373050;
-            color: #373050;
-        }
-
-        .summary-section {
-            width: 100%;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        .summary-section td {
-            font-family: 'Roboto', sans-serif;
-        }
-
-        tr.summary-table-row {
-            white-space: nowrap;
-        }
-
-        table {
-            border-collapse: collapse;
-        }
-
-        table td,
-        table th {
-            border: solid transparent;
-        }
-
-        .top-padding td {
-            padding-top: 59px;
-        }
-
-        td {
-            border-color: transparent;
-        }
-
-        tr.cxsast,
-        tr.cxosa {
-            border-bottom: solid 2px #373050;
-        }
-
-        .title-column,
-        .main-column {
-            padding: 59px 0;
-            line-height: 25px;
-            display: inline-block;
-        }
-
-        .main-column {
-            text-align: center;
-            padding-bottom: 45px;
-            margin-bottom: 42px;
-            padding-left: 16px;
-            width: 79%;
-            min-height: 350px;
-            box-sizing: border-box;
-            max-width: 709px;
-        }
-
-        .title-column {
-            margin-right: 10px;
-            vertical-align: top;
-            height: 100%;
-            letter-spacing: -0.8px;
-            width: 20%;
-            color: #373050;
-            max-width: 250px;
-        }
-
-        .summary-title {
-            border-bottom: solid #979797 1px;
-            color: white;
-            background-color: #373050;
-            line-height: 28px;
-            padding: 5px 13px;
-        }
-
-        .sum1 {
-            font-size: 24px;
-            font-weight: 500;
-        }
-
-        .sum2 {
-            font-size: 16px;
-        }
-
-        .sum-line1 {
-            width: 100%;
-            height: 1px;
-            background-color: #979797;
-        }
-
-        .graph-title {
-            font-weight: 500;
-            font-size: 16px;
-            display: inline-block;
-        }
-
-        .graph-results {
-            position: relative;
-            max-width: 709px;
-            text-align: left;
-            margin-right: 50px;
-        }
-
-        .threshold-exceeded-text {
-            color: #da2945;
-        }
-
-        .threshold-compliance-text {
-            color: #21bf3f;
-        }
-
-        .threshold-exceeded,
-        .threshold-compliance {
-            display: inline-flex;
-            font-size: 14px;
-            position: absolute;
-            right: 0;
-        }
-
-        .threshold-exceeded-icon,
-        .threshold-compliance-icon {
-            margin-right: 6px;
-            line-height: 28px;
-        }
-
-        .detailed-report {
-            margin-top: 12px;
-            display: block;
-            padding: 0 11px;
-        }
-
-        .detailed-report-ttl {
-            font-size: 14px;
-            letter-spacing: -0.53px;
-        }
-
-        .download-detailed-report {
-            color: #9b9b9b;
-            font-size: 14px;
-            letter-spacing: -0.47px;
-        }
-
-        .download-icon,
-        .download-icon,
-        .download-txt {
-            display: inline-block;
-        }
-
-        .download-icon {
-            margin-right: 9px;
-        }
-
-        .download-icon > svg {
-            vertical-align: sub;
-        }
-
-        body {
-            font: 13px/1.3 'Lucida Grande', sans-serif;
-            color: #666;
-        }
-
-        .chart {
-            display: table;
-            table-layout: fixed;
-            max-width: 709px;
-            min-width: 550px;
-            width: 100%;
-            height: 288px;
-            margin: 38px auto 0;
-            padding: 0;
-            background-image: linear-gradient(to top, #d5d5d5, #ffffff 2%);
-            background-size: 100% 70px;
-            background-position: left bottom;
-            border-bottom: solid #979797 2px;
-        }
-
-        .chart tr {
-            white-space: nowrap;
-        }
-
-        .chart li {
-            position: relative;
-            display: table-cell;
-            vertical-align: bottom;
-            height: 200px;
-        }
-
-        .chart span {
-            margin: auto;
-            display: block;
-            background: #d1ecfa;
-            animation: draw 1s ease-in-out;
-        }
-
-        .chart .bar-count {
-            text-align: center;
-            font-size: 14px;
-            letter-spacing: -0.47px;
-            line-height: 40px;
-        }
-
-        .chart .bar-title {
-            font-size: 16px;
-            padding: 0 18px;
-            color: #525055;
-        }
-
-        .chart .bar-title-container {
-            position: absolute;
-            padding-top: 21px;
-            display: inline-flex;
-            text-align: center;
-            word-wrap: break-word;
-            left: 50%;
-            transform: translate(-50%);
-        }
-
-        .chart .bar-1 {
-            position: relative;
-            background-color: #da2945;
-        }
-
-        .chart .bar-2 {
-            position: relative;
-            background-color: #ffb400;
-        }
-
-        .chart .bar-3 {
-            position: relative;
-            background-color: #efd412;
-        }
-
-        .chart li span {
-            max-width: 53px;
-        }
-
-        .download-cx-report {
-            font-size: 16px;
-            padding-bottom: 5px;
-        }
-
-        .pdf-report.download-icon,
-        .html-report.download-icon {
-            margin-right: 6px;
-        }
-
-        .report-link {
-            line-height: 28px;
-        }
-
-        .libraries {
-            display: inline-flex;
-            text-align: left;
-            width: 100%;
-            padding-top: 10px;
-        }
-
-        .libraries-vulnerable,
-        .libraries-ok {
-            width: 200px;
-            overflow: hidden;
-            margin-bottom: 47px;
-            margin-right: 122px;
-        }
-
-        .libraries-vulnerable-number
-        {
-            display: inline-block;
-            font-size: 28px;
-            letter-spacing: -0.93px;
-        }
-
-        .libraries-vulnerable-icon,
-        .libraries-ok-icon {
-            display: inline-block;
-            margin-right: 9px;
-        }
-
-        .libraries-vulnerable-text,
-        .libraries-ok-text {
-            white-space: normal;
-            font-size: 16px;
-            letter-spacing: -0.53px;
-            color: #525055;
-        }
-
-
-        .full-loc > div {
-            display: inline-block;
-        }
-
-        .threshold-icon-white {
-            position: relative;
-            top: 2px;
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .threshold-text {
-            position: relative;
-            color: white;
-            display: inline-block;
-            padding-right: 6px;
-            padding-left: 7px;
-            vertical-align: top;
-            font-size: 13px;
-        }
-
-        .threshold-number {
-            position: relative;
-            color: white;
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .tooltip-container {
-            position: absolute;
-            display: inline-flex;
-        }
-
-        .threshold-tooltip {
-            text-align: right;
-            transform: translate(0, 50%);
-            flex-shrink: 0;
-        }
-
-        .threshold-line {
-            width: 53px;
-            border-bottom: dashed white 1px;
-            padding-right: 3px;
-            flex-shrink: 0;
-        }
-
-        .threshold-tooltip-background {
-            position: relative;
-            padding: 0 12px;
-            margin: 0;
-            margin-left: 4px;
-            background: #373050;
-            border-radius: 5px;
-        }
-
-        .threshold-tooltip-background::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            left: -5px;
-            border: 5px solid transparent;
-            border-right-color: #373050;
-        }
-
-        .threshold-exceeded,
-        .threshold-compliance {
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        .threshold-exceeded {
-            color: #d82743;
-        }
-
-        .threshold-compliance {
-            color: #20be3d;
-        }
-
-        .osa-downloads a,
-        .sast-downloads a {
-            color: black;
-            text-decoration: none;
-        }
-
-        .full-severity-title {
-            display: block;
-            text-align: left;
-            margin-top: 45px;
-            margin-bottom: 18px;
-        }
-
-        .full-severity-title .severity-title-name {
-            display: inline-block;
-            font-size: 16px;
-            margin: 0 10px;
-        }
-
-        .full-severity-title .severity-count {
-            display: inline-block;
-        }
-
-        .full-severity-title .severity-icon {
-            display: inline-block;
-        }
-
-        table.cve-table {
-            width: 100%;
-        }
-
-        table.cve-table th,
-        table.cve-table td {
-            border: 1px solid transparent;
-            text-align: left;
-        }
-
-        table.cve-table th {
-            border-bottom: 1px solid #373050;
-            font-size: 14px;
-            color: #9b9b9b;
-        }
-
-        table.cve-table td {
-            font-weight: 500;
-            font-size: 16px;
-            color: #373050;
-            border-bottom: 1px solid #979797;
-            padding: 11px 0;
-        }
-
-        table.cve-table td > .sast-cve-table-high,
-        table.cve-table td .sast-cve-table-med,
-        table.cve-table td .sast-cve-table-low {
-            max-width: 19px;
-        }
-    </style>
+<style>
+    .cx-title.job-main-title {
+        width: calc(100% - 1em - 48px);
+    }
+
+    .cx-title {
+        font-size: 24px;
+        font-weight: 500;
+        display: inline-block;
+        padding: 10px 0;
+        width: calc(100% - 48px);
+        border-bottom: solid 2px #373050;
+        color: #373050;
+    }
+
+    .summary-section {
+        width: 100%;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .summary-section td {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    tr.summary-table-row {
+        white-space: nowrap;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    table td,
+    table th {
+        border: solid transparent;
+    }
+
+    .top-padding td {
+        padding-top: 59px;
+    }
+
+    td {
+        border-color: transparent;
+    }
+
+    tr.cxsast,
+    tr.cxosa {
+        border-bottom: solid 2px #373050;
+    }
+
+    .title-column,
+    .main-column {
+        padding: 59px 0;
+        line-height: 25px;
+        display: inline-block;
+    }
+
+    .main-column {
+        text-align: center;
+        padding-bottom: 45px;
+        margin-bottom: 42px;
+        padding-left: 16px;
+        width: 79%;
+        min-height: 350px;
+        box-sizing: border-box;
+        max-width: 709px;
+    }
+
+    .title-column {
+        margin-right: 10px;
+        vertical-align: top;
+        height: 100%;
+        letter-spacing: -0.8px;
+        width: 20%;
+        color: #373050;
+        max-width: 250px;
+    }
+
+    .summary-title {
+        border-bottom: solid #979797 1px;
+        color: white;
+        background-color: #373050;
+        line-height: 28px;
+        padding: 5px 13px;
+    }
+
+    .sum1 {
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .sum2 {
+        font-size: 16px;
+    }
+
+    .sum-line1 {
+        width: 100%;
+        height: 1px;
+        background-color: #979797;
+    }
+
+    .graph-title {
+        font-weight: 500;
+        font-size: 16px;
+        display: inline-block;
+    }
+
+    .graph-results {
+        position: relative;
+        max-width: 709px;
+        text-align: left;
+        margin-right: 50px;
+    }
+
+    .threshold-exceeded-text {
+        color: #da2945;
+    }
+
+    .threshold-compliance-text {
+        color: #21bf3f;
+    }
+
+    .threshold-exceeded,
+    .threshold-compliance {
+        display: inline-flex;
+        font-size: 14px;
+        position: absolute;
+        right: 0;
+    }
+
+    .threshold-exceeded-icon,
+    .threshold-compliance-icon {
+        margin-right: 6px;
+        line-height: 28px;
+    }
+
+    .detailed-report {
+        margin-top: 12px;
+        display: block;
+        padding: 0 11px;
+    }
+
+    .detailed-report-ttl {
+        font-size: 14px;
+        letter-spacing: -0.53px;
+    }
+
+    .download-detailed-report {
+        color: #9b9b9b;
+        font-size: 14px;
+        letter-spacing: -0.47px;
+    }
+
+    .download-icon,
+    .download-icon,
+    .download-txt {
+        display: inline-block;
+    }
+
+    .download-icon {
+        margin-right: 9px;
+    }
+
+    .download-icon > svg {
+        vertical-align: sub;
+    }
+
+    body {
+        font: 13px/1.3 'Lucida Grande', sans-serif;
+        color: #666;
+    }
+
+    .chart {
+        display: table;
+        table-layout: fixed;
+        max-width: 709px;
+        min-width: 550px;
+        width: 100%;
+        height: 288px;
+        margin: 38px auto 0;
+        padding: 0;
+        background-image: linear-gradient(to top, #d5d5d5, #ffffff 2%);
+        background-size: 100% 70px;
+        background-position: left bottom;
+        border-bottom: solid #979797 2px;
+    }
+
+    .chart tr {
+        white-space: nowrap;
+    }
+
+    .chart li {
+        position: relative;
+        display: table-cell;
+        vertical-align: bottom;
+        height: 200px;
+    }
+
+    .chart span {
+        margin: auto;
+        display: block;
+        background: #d1ecfa;
+        animation: draw 1s ease-in-out;
+    }
+
+    .chart .bar-count {
+        text-align: center;
+        font-size: 14px;
+        letter-spacing: -0.47px;
+        line-height: 40px;
+    }
+
+    .chart .bar-title {
+        font-size: 16px;
+        padding: 0 18px;
+        color: #525055;
+    }
+
+    .chart .bar-title-container {
+        position: absolute;
+        padding-top: 21px;
+        display: inline-flex;
+        text-align: center;
+        word-wrap: break-word;
+        left: 50%;
+        transform: translate(-50%);
+    }
+
+    .chart .bar-1 {
+        position: relative;
+        background-color: #da2945;
+    }
+
+    .chart .bar-2 {
+        position: relative;
+        background-color: #ffb400;
+    }
+
+    .chart .bar-3 {
+        position: relative;
+        background-color: #efd412;
+    }
+
+    .chart li span {
+        max-width: 53px;
+    }
+
+    .download-cx-report {
+        font-size: 16px;
+        padding-bottom: 5px;
+    }
+
+    .pdf-report.download-icon,
+    .html-report.download-icon {
+        margin-right: 6px;
+    }
+
+    .report-link {
+        line-height: 28px;
+    }
+
+    .libraries {
+        display: inline-flex;
+        text-align: left;
+        width: 100%;
+        padding-top: 10px;
+    }
+
+    .libraries-vulnerable,
+    .libraries-ok {
+        width: 200px;
+        overflow: hidden;
+        margin-bottom: 47px;
+        margin-right: 122px;
+    }
+
+    .libraries-vulnerable-number,
+    .libraries-ok-number {
+        display: inline-block;
+        font-size: 28px;
+        letter-spacing: -0.93px;
+    }
+
+    .libraries-vulnerable-icon,
+    .libraries-ok-icon {
+        display: inline-block;
+        margin-right: 9px;
+    }
+
+    .libraries-vulnerable-text,
+    .libraries-ok-text {
+        white-space: normal;
+        font-size: 16px;
+        letter-spacing: -0.53px;
+        color: #525055;
+    }
+
+    .full-loc > div {
+        display: inline-block;
+    }
+
+    .threshold-icon-white {
+        position: relative;
+        top: 2px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .threshold-text {
+        position: relative;
+        color: white;
+        display: inline-block;
+        padding-right: 6px;
+        padding-left: 7px;
+        vertical-align: top;
+        font-size: 13px;
+    }
+
+    .threshold-number {
+        position: relative;
+        color: white;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .tooltip-container {
+        position: absolute;
+        display: inline-flex;
+    }
+
+    .threshold-tooltip {
+        text-align: right;
+        transform: translate(0, 50%);
+        flex-shrink: 0;
+    }
+
+    .threshold-line {
+        width: 53px;
+        border-bottom: dashed white 1px;
+        padding-right: 3px;
+        flex-shrink: 0;
+    }
+
+    .threshold-tooltip-background {
+        position: relative;
+        padding: 0 12px;
+        margin: 0;
+        margin-left: 4px;
+        background: #373050;
+        border-radius: 5px;
+    }
+
+    .threshold-tooltip-background::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        left: -5px;
+        border: 5px solid transparent;
+        border-right-color: #373050;
+    }
+
+    .threshold-exceeded,
+    .threshold-compliance {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .threshold-exceeded {
+        color: #d82743;
+    }
+
+    .threshold-compliance {
+        color: #20be3d;
+    }
+
+    .osa-downloads a,
+    .sast-downloads a {
+        color: black;
+        text-decoration: none;
+    }
+
+    .full-severity-title {
+        display: block;
+        text-align: left;
+        margin-top: 45px;
+        margin-bottom: 18px;
+    }
+
+    .full-severity-title .severity-title-name {
+        display: inline-block;
+        font-size: 16px;
+        margin: 0 10px;
+    }
+
+    .full-severity-title .severity-count {
+        display: inline-block;
+    }
+
+    .full-severity-title .severity-icon {
+        display: inline-block;
+    }
+
+    table.cve-table {
+        width: 100%;
+    }
+
+    table.cve-table th,
+    table.cve-table td {
+        border: 1px solid transparent;
+        text-align: left;
+    }
+
+    table.cve-table th {
+        border-bottom: 1px solid #373050;
+        font-size: 14px;
+        color: #9b9b9b;
+    }
+
+    table.cve-table td {
+        font-weight: 500;
+        font-size: 16px;
+        color: #373050;
+        border-bottom: 1px solid #979797;
+        padding: 11px 0;
+    }
+
+    table.cve-table td > .sast-cve-table-high,
+    table.cve-table td .sast-cve-table-med,
+    table.cve-table td .sast-cve-table-low {
+        max-width: 19px;
+    }
+</style>
 
 <div class="cx-title">Checkmarx</div>
 <table class="summary-section">
@@ -833,228 +831,226 @@
     </tr>
 
 </table>
+
 <script>
-        //-------------------------- sast vars --------------------------------------
+    //-------------------------- sast vars --------------------------------------
 
-        //thresholds
-        var thresholdsEnabled = cx.thresholdEnabled;
-        var highThreshold = cx.highThreshold;
-        var medThreshold = cx.mediumThreshold;
-        var lowThreshold = cx.lowThreshold;
+    //thresholds
+    var thresholdsEnabled = cx.thresholdEnabled;
+    var highThreshold = cx.highThreshold;
+    var medThreshold = cx.mediumThreshold;
+    var lowThreshold = cx.lowThreshold;
 
-        //counts
-        var highCount = cx.highResults;
-        var medCount = cx.mediumResults;
-        var lowCount = cx.lowResults;
-
-
-        //-------------------------- osa vars --------------------------------------
+    //counts
+    var highCount = cx.highResults;
+    var medCount = cx.mediumResults;
+    var lowCount = cx.lowResults;
 
 
-        var osaEnabled = cx.osaEnabled;
+    //-------------------------- osa vars --------------------------------------
 
-        //libraries
-        var vulnerableLibraries = cx.osaVulnerableLibraries;
-        var okLibraries = cx.osaOkLibraries;
 
-        //thresholds
-        var osaThresholdsEnabled = cx.osaThresholdEnabled;
-        var osaHighThreshold = cx.osaHighThreshold;
-        var osaMedThreshold = cx.osaMediumThreshold;
-        var osaLowThreshold = cx.osaLowThreshold;
+    var osaEnabled = cx.osaEnabled;
 
-        //counts
-        var osaHighCount = cx.osaHighResults;
-        var osaMedCount = cx.osaMediumResults;
-        var osaLowCount = cx.osaLowResults;
+    //libraries
+    var osaVulnerableAndOutdatedLibs = cx.osaVulnerableLibraries;
+    var okLibraries = cx.osaOkLibraries;
 
-        //---------------------------------------------------------- sast ---------------------------------------------------------------
+    //thresholds
+    var osaThresholdsEnabled = cx.osaThresholdEnabled;
+    var osaHighThreshold = cx.osaHighThreshold;
+    var osaMedThreshold = cx.osaMediumThreshold;
+    var osaLowThreshold = cx.osaLowThreshold;
+
+    //counts
+    var osaHighCount = cx.osaHighResults;
+    var osaMedCount = cx.osaMediumResults;
+    var osaLowCount = cx.osaLowResults;
+
+    //---------------------------------------------------------- other vars ---------------------------------------------------------------
+
+
+    var thresholdExceededHtml =
+            '<div class="threshold-exceeded">' +
+            '<div class="threshold-exceeded-icon">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1015" version="1.1" width="9.400000000000091" height="12.399999999999977" viewBox="0 0 9.400000000000091 12.399999999999977"><title>threshold ICON</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1016"/><path id="SvgjsPath1017" d="M1052 190L1056.29 190L1056.29 195.6L1052 195.6Z " fill="#da2945" fill-opacity="1" transform="matrix(1,0,0,1,-1049.3,-184.3)"/><path id="SvgjsPath1018" d="M1052.71 185.1L1055.57 185.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#da2945" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-1049.3,-184.3)"/><path id="SvgjsPath1019" d="M1052.71 188.1L1055.57 188.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#da2945" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-1049.3,-184.3)"/><path id="SvgjsPath1020" d="M1050.42 195.1L1057.64 195.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#da2945" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-1049.3,-184.3)"/></svg>' +
+            '</div>' +
+            '<div class="threshold-exceeded-text">' +
+            'Threshold Exceeded' +
+            '</div>' +
+            '</div>';
+
+    var thresholdComplianceHtml =
+            '<div class="threshold-compliance">' +
+            '<div class="threshold-compliance-icon">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1050" version="1.1" width="13.99264158479491" height="13" viewBox="0 0 13.99264158479491 13"><title>Icon</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1051"><clipPath id="SvgjsClipPath1056"><path id="SvgjsPath1055" d="M1035.00736 793.9841L1035.00736 784.01589L1046.9926400000002 784.01589L1046.9926400000002 793.9841ZM1038.67 790.72L1036.68 788.72L1036 789.4L1038.67 792.0699999999999L1045.21 785.67L1044.54 785Z " fill="#ffffff"/></clipPath></defs><path id="SvgjsPath1052" d="M1033 789.5C1033 785.91015 1035.91015 783 1039.5 783C1043.08985 783 1046 785.91015 1046 789.5C1046 793.08985 1043.08985 796 1039.5 796C1035.91015 796 1033 793.08985 1033 789.5Z " fill="#21bf3f" fill-opacity="1" transform="matrix(1,0,0,1,-1033,-783)"/><path id="SvgjsPath1053" d="M1038.67 790.72L1036.68 788.72L1036 789.4L1038.67 792.0699999999999L1045.21 785.67L1044.54 785Z " fill="#ffffff" fill-opacity="1" transform="matrix(1,0,0,1,-1033,-783)"/><path id="SvgjsPath1054" d="M1038.67 790.72L1036.68 788.72L1036 789.4L1038.67 792.0699999999999L1045.21 785.67L1044.54 785Z " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="butt" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" clip-path="url(&quot;#SvgjsClipPath1056&quot;)" transform="matrix(1,0,0,1,-1033,-783)"/></svg>' +
+            '</div>' +
+            '<div class="threshold-compliance-text">' +
+            'Threshold Compliance' +
+            '</div>' +
+            '</div>';
+
+    var SEVERITY = {
+        HIGH: {value: 0, name: "high"},
+        MED: {value: 1, name: "medium"},
+        LOW: {value: 2, name: "low"},
+        OSA_HIGH: {value: 3, name: "high"},
+        OSA_MED: {value: 4, name: "medium"},
+        OSA_LOW: {value: 5, name: "low"}
+    };
+
+    //---------------------------------------------------------- sast ---------------------------------------------------------------
+    //set bars height and count
+    document.getElementById("bar-count-high").innerHTML = highCount;
+    document.getElementById("bar-count-med").innerHTML = medCount;
+    document.getElementById("bar-count-low").innerHTML = lowCount;
+
+    document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / (highCount + medCount + lowCount) + "%");
+    document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / (highCount + medCount + lowCount) + "%");
+    document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / (highCount + medCount + lowCount) + "%");
+
+
+    //if threshold is enabled
+    if (thresholdsEnabled) {
+        var isThresholdExceeded = false;
+        var thresholdExceededComplianceElement = document.getElementById("threshold-exceeded-compliance");
+
+
+        if (highThreshold != null && highCount > highThreshold) {
+            document.getElementById("tooltip-high").innerHTML = tooltipGenerator(SEVERITY.HIGH);
+            isThresholdExceeded = true;
+        }
+
+        if (medThreshold != null && medCount > medThreshold) {
+            document.getElementById("tooltip-med").innerHTML = tooltipGenerator(SEVERITY.MED);
+            isThresholdExceeded = true;
+        }
+
+        if (lowThreshold != null && lowCount > lowThreshold) {
+            document.getElementById("tooltip-low").innerHTML = tooltipGenerator(SEVERITY.LOW);
+            isThresholdExceeded = true;
+        }
+
+
+        //if threshold exceeded
+        if (isThresholdExceeded) {
+            thresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
+        }
+
+        //else
+        //show threshold compliance element
+        else {
+            thresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+        }
+    }
+
+    //---------------------------------------------------------- osa ---------------------------------------------------------------
+    if (osaEnabled) {
+
         //set bars height and count
-        document.getElementById("bar-count-high").innerHTML = highCount;
-        document.getElementById("bar-count-med").innerHTML = medCount;
-        document.getElementById("bar-count-low").innerHTML = lowCount;
+        document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
+        document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
+        document.getElementById("osa-bar-count-low").innerHTML = osaLowCount;
 
-        document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / (highCount + medCount + lowCount) + "%");
-        document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / (highCount + medCount + lowCount) + "%");
-        document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / (highCount + medCount + lowCount) + "%");
+        document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
+        document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
+        document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
+
+        document.getElementById("vulnerable-libraries").innerHTML = osaVulnerableAndOutdatedLibs;
+        document.getElementById("ok-libraries").innerHTML = okLibraries;
 
 
         //if threshold is enabled
-        if (thresholdsEnabled) {
-            var isThresholdExceeded = false;
-            var thresholdExceededComplianceElement = document.getElementById("threshold-exceeded-compliance");
+        if (osaThresholdsEnabled) {
+            var isOsaThresholdExceeded = false;
+            var osaThresholdExceededComplianceElement = document.getElementById("osa-threshold-exceeded-compliance");
 
 
-            if (highThreshold != null && highCount > highThreshold) {
-                document.getElementById("tooltip-high").innerHTML = tooltipGenerator(SEVERITY.HIGH);
-                isThresholdExceeded = true;
+            if (osaHighThreshold != null && osaHighCount > osaHighThreshold) {
+                document.getElementById("osa-tooltip-high").innerHTML = tooltipGenerator(SEVERITY.OSA_HIGH);
+                isOsaThresholdExceeded = true;
             }
 
-            if (medThreshold != null && medCount > medThreshold) {
-                document.getElementById("tooltip-med").innerHTML = tooltipGenerator(SEVERITY.MED);
-                isThresholdExceeded = true;
+            if (osaMedThreshold != null && osaMedCount > osaMedThreshold) {
+                document.getElementById("osa-tooltip-med").innerHTML = tooltipGenerator(SEVERITY.OSA_MED);
+                isOsaThresholdExceeded = true;
             }
 
-            if (lowThreshold != null && lowCount > lowThreshold) {
-                document.getElementById("tooltip-low").innerHTML = tooltipGenerator(SEVERITY.LOW);
-                isThresholdExceeded = true;
+            if (osaLowThreshold != null && osaLowCount > osaLowThreshold) {
+                document.getElementById("osa-tooltip-low").innerHTML = tooltipGenerator(SEVERITY.OSA_LOW);
+                isOsaThresholdExceeded = true;
             }
 
 
             //if threshold exceeded
-            if (isThresholdExceeded) {
-                thresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
+            if (isOsaThresholdExceeded) {
+                osaThresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
             }
 
             //else
             //show threshold compliance element
             else {
-                thresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+                osaThresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
             }
+
+        }
+    }
+    else {
+        document.getElementById("osa-info").setAttribute("style", "display:none");
+    }
+
+    function tooltipGenerator(severity) {
+        var threshold = 0;
+        var count = 0;
+        var thresholdHeight = 0;
+
+        switch (severity) {
+            case SEVERITY.HIGH:
+                threshold = highThreshold;
+                count = highCount;
+                break;
+            case SEVERITY.MED:
+                threshold = medThreshold;
+                count = medCount;
+                break;
+            case SEVERITY.LOW:
+                threshold = lowThreshold;
+                count = lowCount;
+                break;
+
+            case SEVERITY.OSA_HIGH:
+                threshold = osaHighThreshold;
+                count = osaHighCount;
+                break;
+            case SEVERITY.OSA_MED:
+                threshold = osaMedThreshold;
+                count = osaMedCount;
+                break;
+            case SEVERITY.OSA_LOW:
+                threshold = osaLowThreshold;
+                count = osaLowCount;
+                break;
         }
 
-        //---------------------------------------------------------- osa ---------------------------------------------------------------
-        if (osaEnabled) {
-
-            //set bars height and count
-            document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
-            document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
-            document.getElementById("osa-bar-count-low").innerHTML = osaLowCount;
-
-            document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
-            document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
-            document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
-
-            document.getElementById("vulnerable-libraries").innerHTML = vulnerableLibraries;
-            document.getElementById("ok-libraries").innerHTML = okLibraries;
+        //calculate visual height
+        thresholdHeight = threshold * 100 / count;
 
 
-            //if threshold is enabled
-            if (osaThresholdsEnabled) {
-                var isOsaThresholdExceeded = false;
-                var osaThresholdExceededComplianceElement = document.getElementById("osa-threshold-exceeded-compliance");
+        return '' +
 
-
-                if (osaHighThreshold != null && osaHighCount > osaHighThreshold) {
-                    document.getElementById("osa-tooltip-high").innerHTML = tooltipGenerator(SEVERITY.OSA_HIGH);
-                    isOsaThresholdExceeded = true;
-                }
-
-                if (osaMedThreshold != null && osaMedCount > osaMedThreshold) {
-                    document.getElementById("osa-tooltip-med").innerHTML = tooltipGenerator(SEVERITY.OSA_MED);
-                    isOsaThresholdExceeded = true;
-                }
-
-                if (osaLowThreshold != null && osaLowCount > osaLowThreshold) {
-                    document.getElementById("osa-tooltip-low").innerHTML = tooltipGenerator(SEVERITY.OSA_LOW);
-                    isOsaThresholdExceeded = true;
-                }
-
-
-                //if threshold exceeded
-                if (isOsaThresholdExceeded) {
-                    osaThresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
-                }
-
-                //else
-                //show threshold compliance element
-                else {
-                    osaThresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
-                }
-
-            }
-        }
-        else {
-            document.getElementById("osa-info").setAttribute("style", "display:none");
-        }
-
-
-        //---------------------------------------------------------- full reports ---------------------------------------------------------------
-
-
-
-        var thresholdExceededHtml =
-                '<div class="threshold-exceeded">' +
-                '<div class="threshold-exceeded-icon">' +
-                '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1015" version="1.1" width="9.400000000000091" height="12.399999999999977" viewBox="0 0 9.400000000000091 12.399999999999977"><title>threshold ICON</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1016"/><path id="SvgjsPath1017" d="M1052 190L1056.29 190L1056.29 195.6L1052 195.6Z " fill="#da2945" fill-opacity="1" transform="matrix(1,0,0,1,-1049.3,-184.3)"/><path id="SvgjsPath1018" d="M1052.71 185.1L1055.57 185.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#da2945" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-1049.3,-184.3)"/><path id="SvgjsPath1019" d="M1052.71 188.1L1055.57 188.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#da2945" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-1049.3,-184.3)"/><path id="SvgjsPath1020" d="M1050.42 195.1L1057.64 195.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#da2945" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-1049.3,-184.3)"/></svg>' +
+                '<div class="tooltip-container" style="bottom:calc(' + thresholdHeight + '% - 1px)">' +
+                '<div class="threshold-line"></div>' +
+                '<div class="threshold-tooltip">' +
+                '<div class="threshold-tooltip-background">' +
+                '<div class="threshold-icon-white">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1044" version="1.1" width="9.400000000000091" height="12.399999999999977" viewBox="0 0 9.400000000000091 12.399999999999977"><title>threshold ICON</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1045"/><path id="SvgjsPath1046" d="M638 360L642.29 360L642.29 365.6L638 365.6Z " fill="#ffffff" fill-opacity="1" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1047" d="M638.71 355.1L641.57 355.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1048" d="M638.71 358.1L641.57 358.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1049" d="M636.42 365.1L643.64 365.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/></svg>' +
                 '</div>' +
-                '<div class="threshold-exceeded-text">' +
-                'Threshold Exceeded' +
+                '<div class="threshold-text">Threshold</div>' +
+                '<div class="threshold-number">' + threshold + '</div>' +
+                '</div>' +
                 '</div>' +
                 '</div>';
 
-        var thresholdComplianceHtml =
-                '<div class="threshold-compliance">' +
-                '<div class="threshold-compliance-icon">' +
-                '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1050" version="1.1" width="13.99264158479491" height="13" viewBox="0 0 13.99264158479491 13"><title>Icon</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1051"><clipPath id="SvgjsClipPath1056"><path id="SvgjsPath1055" d="M1035.00736 793.9841L1035.00736 784.01589L1046.9926400000002 784.01589L1046.9926400000002 793.9841ZM1038.67 790.72L1036.68 788.72L1036 789.4L1038.67 792.0699999999999L1045.21 785.67L1044.54 785Z " fill="#ffffff"/></clipPath></defs><path id="SvgjsPath1052" d="M1033 789.5C1033 785.91015 1035.91015 783 1039.5 783C1043.08985 783 1046 785.91015 1046 789.5C1046 793.08985 1043.08985 796 1039.5 796C1035.91015 796 1033 793.08985 1033 789.5Z " fill="#21bf3f" fill-opacity="1" transform="matrix(1,0,0,1,-1033,-783)"/><path id="SvgjsPath1053" d="M1038.67 790.72L1036.68 788.72L1036 789.4L1038.67 792.0699999999999L1045.21 785.67L1044.54 785Z " fill="#ffffff" fill-opacity="1" transform="matrix(1,0,0,1,-1033,-783)"/><path id="SvgjsPath1054" d="M1038.67 790.72L1036.68 788.72L1036 789.4L1038.67 792.0699999999999L1045.21 785.67L1044.54 785Z " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="butt" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" clip-path="url(&quot;#SvgjsClipPath1056&quot;)" transform="matrix(1,0,0,1,-1033,-783)"/></svg>' +
-                '</div>' +
-                '<div class="threshold-compliance-text">' +
-                'Threshold Compliance' +
-                '</div>' +
-                '</div>';
+    }
 
-        var SEVERITY = {
-            HIGH: {value: 0, name: "high"},
-            MED: {value: 1, name: "medium"},
-            LOW: {value: 2, name: "low"},
-            OSA_HIGH: {value: 3, name: "high"},
-            OSA_MED: {value: 4, name: "medium"},
-            OSA_LOW: {value: 5, name: "low"}
-        };
-
-
-        function tooltipGenerator(severity) {
-            var threshold = 0;
-            var count = 0;
-
-            switch (severity) {
-                case SEVERITY.HIGH:
-                    threshold = highThreshold;
-                    count = highCount;
-                    break;
-                case SEVERITY.MED:
-                    threshold = medThreshold;
-                    count = medCount;
-                    break;
-                case SEVERITY.LOW:
-                    threshold = lowThreshold;
-                    count = lowCount;
-                    break;
-
-                case SEVERITY.OSA_HIGH:
-                    threshold = osaHighThreshold;
-                    count = osaHighCount;
-                    break;
-                case SEVERITY.OSA_MED:
-                    threshold = osaMedThreshold;
-                    count = osaMedCount;
-                    break;
-                case SEVERITY.OSA_LOW:
-                    threshold = osaLowThreshold;
-                    count = osaLowCount;
-                    break;
-            }
-
-            //calculate visual height
-            thresholdHeight = threshold * 100 / count;
-
-
-            return '' +
-
-                    '<div class="tooltip-container" style="bottom:calc(' + thresholdHeight + '% - 1px)">' +
-                    '<div class="threshold-line"></div>' +
-                    '<div class="threshold-tooltip">' +
-                    '<div class="threshold-tooltip-background">' +
-                    '<div class="threshold-icon-white">' +
-                    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1044" version="1.1" width="9.400000000000091" height="12.399999999999977" viewBox="0 0 9.400000000000091 12.399999999999977"><title>threshold ICON</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1045"/><path id="SvgjsPath1046" d="M638 360L642.29 360L642.29 365.6L638 365.6Z " fill="#ffffff" fill-opacity="1" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1047" d="M638.71 355.1L641.57 355.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1048" d="M638.71 358.1L641.57 358.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1049" d="M636.42 365.1L643.64 365.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/></svg>' +
-                    '</div>' +
-                    '<div class="threshold-text">Threshold</div>' +
-                    '<div class="threshold-number">' + threshold + '</div>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>';
-
-        }
-
-    </script>
-</div>
+</script>
