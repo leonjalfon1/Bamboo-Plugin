@@ -1,12 +1,11 @@
 package com.cx.client.rest;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.checkmarx.v7.Credentials;
-import com.checkmarx.v7.CxSDKWebService;
-import com.checkmarx.v7.CxSDKWebServiceSoap;
-import com.checkmarx.v7.CxWSResponseLoginData;
+import com.checkmarx.v7.*;
 import com.cx.client.CxClientServiceImpl;
 import com.cx.client.exception.CxClientException;
+import com.cx.plugin.dto.CxClass;
+import com.cx.plugin.dto.TestConnectionResponse;
 import org.apache.commons.lang.StringUtils;
 
 import javax.ws.rs.*;
@@ -18,6 +17,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,17 +32,22 @@ public class MyRestResource {
     private static URL WSDL_LOCATION = CxSDKWebService.class.getClassLoader().getResource("WEB-INF/CxSDKWebService.wsdl");
     private static final QName SERVICE_NAME = new QName("http://Checkmarx.com/v7", "CxSDKWebService");
     private static String SDK_PATH = "/cxwebinterface/sdk/CxSDKWebService.asmx";
-
+    private static List<CxClass> presets;
+    private static List<CxClass> teams;
+    private static  CxSDKWebServiceSoap client;
+    private static  String sessionId;
 
 
     @POST
     @Path("test/connection")
     @Consumes({"application/json"})
-    @Produces({"text/plain"})
-    public Response testConnestion( Map<Object, Object> key) {
+    @Produces({"application/json"})
+    public Response testConnetion( Map<Object, Object> key) {
         String result ="";
         URL url = null;
         String urli = key.get("url").toString();
+        TestConnectionResponse tcResponse;
+
         try {
             url = new URL(urli);
             HttpURLConnection urlConn;
@@ -49,46 +56,37 @@ public class MyRestResource {
             urlConn.connect();
         } catch (Exception e) {
             result = "Invalid URL";
-            return Response.status(400).entity(result).build();
+            tcResponse = new TestConnectionResponse(result, null, null);
+            return Response.status(400).entity(tcResponse).build();
         }
 
         String username = key.get("username").toString();
         String password = key.get("password").toString();
         try {
             if (loginToServer(url, username, password)){
+                presets = getPresets();
+                teams = getTeamPath();
                 result =  "Success!";
-                return Response.status(200).entity(result).build();}
+                tcResponse = new TestConnectionResponse(result, presets, teams);
+
+                return Response.status(200).entity(tcResponse).build();}
             else{
                 result = "Wrong username or password";
-                return Response.status(400).entity(result).build();}
+                tcResponse = new TestConnectionResponse(result, null, null);
+                return Response.status(400).entity(tcResponse).build();}
         }
 
-       catch (Exception CxClientException) {
+       catch (Exception e) {
            result = "Fail to login";
-           return Response.status(400).entity(result).build();
+           tcResponse = new TestConnectionResponse(result, null, null);
+           return Response.status(400).entity(tcResponse).build();
        }
-
-    }
-
-
-    private Map<Object, Object>  getURLFromKey(Map<Object, Object> key) {
-        // In reality, this data would come from a database or some component
-        // within the hosting application, for demonstration purpopses I will
-        // just return the key
-        return key;
-    }
-
-    private String getMessageFromKey(String key) {
-        // In reality, this data would come from a database or some component
-        // within the hosting application, for demonstration purpopses I will
-        // just return the key
-        return key;
     }
 
     public boolean loginToServer(URL url, String username, String password)   {
         try {
             CxSDKWebService ss = new CxSDKWebService(WSDL_LOCATION, SERVICE_NAME);
-            CxSDKWebServiceSoap client = ss.getCxSDKWebServiceSoap();
+            client = ss.getCxSDKWebServiceSoap();
             BindingProvider bindingProvider = (BindingProvider) client;
             bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url + SDK_PATH);
 
@@ -96,11 +94,12 @@ public class MyRestResource {
             credentials.setUser(username);
             credentials.setPass(password);
             CxWSResponseLoginData res = client.login(credentials, 1099);
-            String sessionId = res.getSessionId();
+            sessionId = res.getSessionId();
 
             if (sessionId == null) {
                 return false;
             }
+
             return true;
         }
         catch (Exception CxClientException) {
@@ -114,6 +113,41 @@ public class MyRestResource {
         }
     }
 
+    private List<CxClass>  getPresets() {
+        CxWSResponsePresetList presetList = client.getPresetList(sessionId);
+        if (!presetList.isIsSuccesfull()) {
+           // log.warn("fail to retrieve preset list: ", presetList.getErrorMessage());
+            //return preset
+        }
+        return convertPresetType(presetList.getPresetList().getPreset());
+    }
+
+   private List<CxClass>  getTeamPath() {
+       CxWSResponseGroupList teamPathList = client.getAssociatedGroupsList(sessionId);
+       if (!teamPathList.isIsSuccesfull()) {
+           //log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
+         //  return group;
+       }
+        return convertTeamPathType(teamPathList.getGroupList());
+    }
+
+
+
+    private List<CxClass> convertPresetType(List<Preset> oldType) {
+        List<CxClass> newType = new ArrayList<CxClass>();
+        for (Preset preset : oldType) {
+            newType.add(new CxClass(Long.toString(preset.getID()), preset.getPresetName().toString()));
+        }
+        return newType;
+    }
+
+    private List<CxClass> convertTeamPathType(ArrayOfGroup oldType) {
+        List<CxClass> newType = new ArrayList<CxClass>();
+        for (Group group : oldType.getGroup()) {
+            newType.add(new CxClass(group.getID(), group.getGroupName()));
+        }
+        return newType;
+    }
 
 
 }

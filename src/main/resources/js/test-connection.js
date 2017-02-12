@@ -37,8 +37,7 @@
         }
 
         xhr.onload = function () {
-            var result = xhr.responseText;
-
+            var parsed = JSON.parse(xhr.responseText);
             var testConnectionMessage = document.getElementById("testConnectionMessage");
             if (xhr.status == 200) {
                 testConnectionMessage.style.color = "green";
@@ -46,7 +45,9 @@
             else {
                 testConnectionMessage.style.color = "#d22020";
             }
-            testConnectionMessage.innerHTML = result;
+            populateDropdownList(parsed.presetList, "#presetListId", "id", "value");
+            populateDropdownList(parsed.teamPathList, "#teamPathListId", "id", "value");
+            testConnectionMessage.innerHTML = parsed.loginResponse;
         };
 
 
