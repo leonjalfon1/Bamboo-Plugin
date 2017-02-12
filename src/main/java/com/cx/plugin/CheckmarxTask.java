@@ -99,6 +99,8 @@ public class CheckmarxTask implements TaskType {
                     buildLogger.addBuildLogEntry("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA); //TODO dont check the license!! where rhe async coming?
                     buildLogger.addBuildLogEntry("OSA scan created successfully");
+                    zipForOSA.delete(); //TODO check for null?
+                    buildLogger.addBuildLogEntry("Temporary file deleted");
                 } catch (Exception e) {
                     buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
                     osaCreateException = e;
