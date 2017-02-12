@@ -32,7 +32,7 @@ public class CxDefaultConfig extends GlobalAdminAction {
     private String folderExclusions;
 
 
-    private String scanTimeout;
+    private String scanTimeoutInMinutes;
     private String thresholdsEnabled;
     private String highThreshold;
     private String mediumThreshold;
@@ -59,7 +59,7 @@ public class CxDefaultConfig extends GlobalAdminAction {
             filterPatterns = filterProperty;
         }
 
-        scanTimeout = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES);
+        scanTimeoutInMinutes = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES);
         thresholdsEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED);
         highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD);
         mediumThreshold = adminConfig.getSystemProperty(CxParam.MEDIUM_THRESHOLD);
@@ -96,7 +96,7 @@ public class CxDefaultConfig extends GlobalAdminAction {
 
         adminConfig.setSystemProperty(CxParam.FOLDER_EXCLUSION, folderExclusions);
         adminConfig.setSystemProperty(CxParam.FILTER_PATTERN, filterPatterns);
-        adminConfig.setSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES, scanTimeout);
+        adminConfig.setSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES, scanTimeoutInMinutes);
 
         adminConfig.setSystemProperty(CxParam.THRESHOLDS_ENABLED, thresholdsEnabled);
         adminConfig.setSystemProperty(CxParam.HIGH_THRESHOLD, highThreshold);
@@ -152,12 +152,12 @@ public class CxDefaultConfig extends GlobalAdminAction {
         this.filterPatterns = filterPatterns;
     }
 
-    public String getScanTimeout() {
-        return scanTimeout;
+    public String getScanTimeoutInMinutes() {
+        return scanTimeoutInMinutes;
     }
 
-    public void setScanTimeout(String scanTimeout) {
-        this.scanTimeout = scanTimeout;
+    public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
+        this.scanTimeoutInMinutes = scanTimeoutInMinutes;
     }
 
     public String getThresholdsEnabled() {

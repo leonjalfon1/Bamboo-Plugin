@@ -7,6 +7,11 @@
     });
 
     function restRequest() {
+
+        if(!validateFields()) {
+            return;
+        }
+
         var str = JSON.stringify(getInputData());
         function createRestRequest(method, url) {
 
@@ -25,7 +30,7 @@
             return xhr;
         }
 
-        var xhr = createRestRequest("POST", "/rest/checkmarx/1.0/test/connection")
+        var xhr = createRestRequest("POST", "/rest/checkmarx/1.0/test/connection");
         if (!xhr) {
             console.log("Request Failed");
             return;
@@ -42,7 +47,7 @@
                 testConnectionMessage.style.color = "#d22020";
             }
             testConnectionMessage.innerHTML = result;
-        }
+        };
 
 
         xhr.onerror = function () {
@@ -51,6 +56,26 @@
 
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(str);
+    }
+
+    function validateFields() {
+
+        var messageElement = $('#testConnectionMessage');
+        if($('#serverUrl').val().length < 1) {
+            messageElement.text('URL must not be empty');
+            messageElement.css('color', '#d22020');
+            return false;
+        } else if($('#userName').val().length < 1) {
+            messageElement.text('Username must not be empty');
+            messageElement.css('color', '#d22020');
+            return false;
+        } else if($('#password').val().length < 1) {
+            messageElement.text('Password must not be empty');
+            messageElement.css('color', '#d22020');
+            return false;
+        }
+
+        return true;
     }
 
 
