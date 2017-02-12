@@ -115,7 +115,8 @@ public class BaseScanConfiguration {
         return presetId;
     }
 
-    public void setPresetId(long presetId) {
+    public void setPresetId(long presetId)
+    {
         this.presetId = presetId;
     }
 

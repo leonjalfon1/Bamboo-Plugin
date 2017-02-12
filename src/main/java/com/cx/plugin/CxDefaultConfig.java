@@ -22,207 +22,100 @@ import java.net.URL;
  */
 
 public class CxDefaultConfig extends GlobalAdminAction {
-    private String serverUrl;
-    private String userName;
-    private String password;
+    private String globalServerUrl;
+    private String globalUserName;
+    private String globalPassword;
     private String DEFAULT_URL = "http://localhost"; //TODO- need?
 
 
-    private String filterPatterns = CxParam.DEFAULT_FILTER_PATTERNS;
-    private String folderExclusions;
-
-
-    private String scanTimeoutInMinutes;
-    private String thresholdsEnabled;
-    private String highThreshold;
-    private String mediumThreshold;
-    private String lowThreshold;
-    private String osaThresholdsEnabled;
-    private String osaHighThreshold;
-    private String osaMediumThreshold;
-    private String osaLowThreshold;
+    private String globalFilterPatterns = CxParam.DEFAULT_FILTER_PATTERNS;
+    private String globalFolderExclusions;
+    private String globalIsSynchronous;
+    private String globalScanTimeoutInMinutes;
+    private String globalThresholdsEnabled;
+    private String globalHighThreshold;
+    private String globalMediumThreshold;
+    private String globalLowThreshold;
+    private String globalOsaThresholdsEnabled;
+    private String globalOsaHighThreshold;
+    private String globalOsaMediumThreshold;
+    private String globalOsaLowThreshold;
 
     @Override
     public String execute() {
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
 
-        serverUrl = adminConfig.getSystemProperty(CxParam.SERVER_URL);
-        if (serverUrl == null || StringUtils.isEmpty(serverUrl)) {
-            this.serverUrl = DEFAULT_URL;
+        globalServerUrl = adminConfig.getSystemProperty(CxParam.GLOBAL_SERVER_URL);
+        if (globalServerUrl == null || StringUtils.isEmpty(globalServerUrl)) {
+            this.globalServerUrl = DEFAULT_URL;
         }
-        userName = adminConfig.getSystemProperty(CxParam.USER_NAME);
-        password = adminConfig.getSystemProperty(CxParam.PASSWORD);
+        globalUserName = adminConfig.getSystemProperty(CxParam.GLOBAL_USER_NAME);
+        globalPassword = adminConfig.getSystemProperty(CxParam.GLOBAL_PASSWORD);
 
-        folderExclusions = adminConfig.getSystemProperty(CxParam.FOLDER_EXCLUSION);
-        String filterProperty = adminConfig.getSystemProperty(CxParam.FILTER_PATTERN);
+        globalFolderExclusions = adminConfig.getSystemProperty(CxParam.GLOBAL_FOLDER_EXCLUSION);
+        String filterProperty = adminConfig.getSystemProperty(CxParam.GLOBAL_FILTER_PATTERN);
         if (filterProperty != null){
-            filterPatterns = filterProperty;
+            globalFilterPatterns = filterProperty;
         }
 
-        scanTimeoutInMinutes = adminConfig.getSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES);
-        thresholdsEnabled = adminConfig.getSystemProperty(CxParam.THRESHOLDS_ENABLED);
-        highThreshold = adminConfig.getSystemProperty(CxParam.HIGH_THRESHOLD);
-        mediumThreshold = adminConfig.getSystemProperty(CxParam.MEDIUM_THRESHOLD);
-        lowThreshold = adminConfig.getSystemProperty(CxParam.LOW_THRESHOLD);
-        osaThresholdsEnabled = adminConfig.getSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED);
-        osaHighThreshold = adminConfig.getSystemProperty(CxParam.OSA_HIGH_THRESHOLD);
-        osaMediumThreshold = adminConfig.getSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD);
-        osaLowThreshold = adminConfig.getSystemProperty(CxParam.OSA_LOW_THRESHOLD);
+        globalScanTimeoutInMinutes = adminConfig.getSystemProperty(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES);
+        globalIsSynchronous = adminConfig.getSystemProperty(CxParam.GLOBAL_IS_SYNCHRONOUS);
+        globalThresholdsEnabled = adminConfig.getSystemProperty(CxParam.GLOBAL_THRESHOLDS_ENABLED);
+        globalHighThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_HIGH_THRESHOLD);
+        globalMediumThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_MEDIUM_THRESHOLD);
+        globalLowThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_LOW_THRESHOLD);
+        globalOsaThresholdsEnabled = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED);
+        globalOsaHighThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_HIGH_THRESHOLD);
+        globalOsaMediumThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD);
+        globalOsaLowThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_LOW_THRESHOLD);
         return INPUT;
     }
 
     public String save() { //TODO add validations
         boolean error = false;
 
-        error |= validateNotEmpty(this.serverUrl, CxParam.SERVER_URL);
+        error |= validateNotEmpty(this.globalServerUrl, CxParam.GLOBAL_SERVER_URL);
         if (!error) {
             try {
-                validateUrl(serverUrl);
+                validateUrl(globalServerUrl);
             } catch (MalformedURLException e) {
-                addFieldError(CxParam.SERVER_URL, getText(CxParam.SERVER_URL + "." + ERROR + ".malformed"));
+                addFieldError(CxParam.GLOBAL_SERVER_URL, getText(CxParam.GLOBAL_SERVER_URL + "." + ERROR + ".malformed"));
                 error = true;
             }
         }
-        error |= validateNotEmpty(this.userName, CxParam.USER_NAME);
-        error |= validateNotEmpty(this.password, CxParam.PASSWORD);
+        error |= validateNotEmpty(this.globalUserName, CxParam.GLOBAL_USER_NAME);
+        error |= validateNotEmpty(this.globalPassword, CxParam.GLOBAL_PASSWORD);
 
         if (error) {
             return ERROR;
         }
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
-        adminConfig.setSystemProperty(CxParam.SERVER_URL, serverUrl);
-        adminConfig.setSystemProperty(CxParam.USER_NAME, userName);
-        adminConfig.setSystemProperty(CxParam.PASSWORD, encrypt(password));
+        adminConfig.setSystemProperty(CxParam.GLOBAL_SERVER_URL, globalServerUrl);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_USER_NAME, globalUserName);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_PASSWORD, encrypt(globalPassword));
 
-        adminConfig.setSystemProperty(CxParam.FOLDER_EXCLUSION, folderExclusions);
-        adminConfig.setSystemProperty(CxParam.FILTER_PATTERN, filterPatterns);
-        adminConfig.setSystemProperty(CxParam.SCAN_TIMEOUT_IN_MINUTES, scanTimeoutInMinutes);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_FILTER_PATTERN, globalFilterPatterns);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES, globalScanTimeoutInMinutes);
 
-        adminConfig.setSystemProperty(CxParam.THRESHOLDS_ENABLED, thresholdsEnabled);
-        adminConfig.setSystemProperty(CxParam.HIGH_THRESHOLD, highThreshold);
-        adminConfig.setSystemProperty(CxParam.MEDIUM_THRESHOLD, mediumThreshold);
-        adminConfig.setSystemProperty(CxParam.LOW_THRESHOLD, lowThreshold);
-        adminConfig.setSystemProperty(CxParam.OSA_THRESHOLDS_ENABLED, osaThresholdsEnabled);
-        adminConfig.setSystemProperty(CxParam.OSA_HIGH_THRESHOLD, osaHighThreshold);
-        adminConfig.setSystemProperty(CxParam.OSA_MEDIUM_THRESHOLD, osaMediumThreshold);
-        adminConfig.setSystemProperty(CxParam.OSA_LOW_THRESHOLD, osaLowThreshold);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_IS_SYNCHRONOUS, globalIsSynchronous);
+        if (globalIsSynchronous== null){
+            globalThresholdsEnabled = null;
+        }
+        adminConfig.setSystemProperty(CxParam.GLOBAL_THRESHOLDS_ENABLED, globalThresholdsEnabled);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_HIGH_THRESHOLD, globalHighThreshold);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_MEDIUM_THRESHOLD, globalMediumThreshold);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_LOW_THRESHOLD, globalLowThreshold);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED, globalOsaThresholdsEnabled);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_HIGH_THRESHOLD, globalOsaHighThreshold);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD, globalOsaMediumThreshold);
+        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_LOW_THRESHOLD, globalOsaLowThreshold);
         ((AdministrationConfigurationPersister) ContainerManager.getComponent("administrationConfigurationPersister")).saveAdministrationConfiguration(adminConfig);
 
         addActionMessage(getText("cxDefaultConfigSuccess.label"));
         return SUCCESS;
     }
 
-    public String getServerUrl() {
-        return this.serverUrl;
-    }
-
-    public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
-    }
-
-    public String getUserName() {
-        return this.userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String cxPass) {
-        this.password = cxPass;
-    }
-
-    public String getFolderExclusions() {
-        return folderExclusions;
-    }
-
-    public void setFolderExclusions(String folderExclusions) {
-        this.folderExclusions = folderExclusions;
-    }
-
-    public String getFilterPatterns() {
-        return filterPatterns;
-    }
-
-    public void setFilterPatterns(String filterPatterns) {
-        this.filterPatterns = filterPatterns;
-    }
-
-    public String getScanTimeoutInMinutes() {
-        return scanTimeoutInMinutes;
-    }
-
-    public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
-        this.scanTimeoutInMinutes = scanTimeoutInMinutes;
-    }
-
-    public String getThresholdsEnabled() {
-        return thresholdsEnabled;
-    }
-
-    public void setThresholdsEnabled(String thresholdsEnabled) {
-        this.thresholdsEnabled = thresholdsEnabled;
-    }
-
-    public String getHighThreshold() {
-        return highThreshold;
-    }
-
-    public void setHighThreshold(String highThreshold) {
-        this.highThreshold = highThreshold;
-    }
-
-    public String getMediumThreshold() {
-        return mediumThreshold;
-    }
-
-    public void setMediumThreshold(String mediumThreshold) {
-        this.mediumThreshold = mediumThreshold;
-    }
-
-    public String getLowThreshold() {
-        return lowThreshold;
-    }
-
-    public void setLowThreshold(String lowThreshold) {
-        this.lowThreshold = lowThreshold;
-    }
-
-    public String getOsaThresholdsEnabled() {
-        return osaThresholdsEnabled;
-    }
-
-    public void setOsaThresholdsEnabled(String osaThresholdsEnabled) {
-        this.osaThresholdsEnabled = osaThresholdsEnabled;
-    }
-
-    public String getOsaHighThreshold() {
-        return osaHighThreshold;
-    }
-
-    public void setOsaHighThreshold(String osaHighThreshold) {
-        this.osaHighThreshold = osaHighThreshold;
-    }
-
-    public String getOsaMediumThreshold() {
-        return osaMediumThreshold;
-    }
-
-    public void setOsaMediumThreshold(String osaMediumThreshold) {
-        this.osaMediumThreshold = osaMediumThreshold;
-    }
-
-    public String getOsaLowThreshold() {
-        return osaLowThreshold;
-    }
-
-    public void setOsaLowThreshold(String osaLowThreshold) {
-        this.osaLowThreshold = osaLowThreshold;
-    }
 
     private boolean validateNotEmpty(@NotNull String value, @NotNull String key) { //TODO unite the validation to one class
         boolean ret = false;
@@ -250,4 +143,124 @@ public class CxDefaultConfig extends GlobalAdminAction {
         return encPass;
     }
 
+    /*************** Setters & Getters  ****************************/
+    public String getGlobalServerUrl() {
+        return globalServerUrl;
+    }
+
+    public void setGlobalServerUrl(String globalServerUrl) {
+        this.globalServerUrl = globalServerUrl;
+    }
+
+    public String getGlobalUserName() {
+        return globalUserName;
+    }
+
+    public void setGlobalUserName(String globalUserName) {
+        this.globalUserName = globalUserName;
+    }
+
+    public String getGlobalPassword() {
+        return globalPassword;
+    }
+
+    public void setGlobalPassword(String globalPassword) {
+        this.globalPassword = globalPassword;
+    }
+
+    public String getGlobalFilterPatterns() {
+        return globalFilterPatterns;
+    }
+
+    public void setGlobalFilterPatterns(String globalFilterPatterns) {
+        this.globalFilterPatterns = globalFilterPatterns;
+    }
+
+    public String getGlobalFolderExclusions() {
+        return globalFolderExclusions;
+    }
+
+    public void setGlobalFolderExclusions(String globalFolderExclusions) {
+        this.globalFolderExclusions = globalFolderExclusions;
+    }
+
+    public String getGlobalIsSynchronous() {
+        return globalIsSynchronous;
+    }
+
+    public void setGlobalIsSynchronous(String globalIsSynchronous) {
+        this.globalIsSynchronous = globalIsSynchronous;
+    }
+
+    public String getGlobalScanTimeoutInMinutes() {
+        return globalScanTimeoutInMinutes;
+    }
+
+    public void setGlobalScanTimeoutInMinutes(String globalScanTimeoutInMinutes) {
+        this.globalScanTimeoutInMinutes = globalScanTimeoutInMinutes;
+    }
+
+    public String getGlobalThresholdsEnabled() {
+        return globalThresholdsEnabled;
+    }
+
+    public void setGlobalThresholdsEnabled(String globalThresholdsEnabled) {
+        this.globalThresholdsEnabled = globalThresholdsEnabled;
+    }
+
+    public String getGlobalHighThreshold() {
+        return globalHighThreshold;
+    }
+
+    public void setGlobalHighThreshold(String globalHighThreshold) {
+        this.globalHighThreshold = globalHighThreshold;
+    }
+
+    public String getGlobalMediumThreshold() {
+        return globalMediumThreshold;
+    }
+
+    public void setGlobalMediumThreshold(String globalMediumThreshold) {
+        this.globalMediumThreshold = globalMediumThreshold;
+    }
+
+    public String getGlobalLowThreshold() {
+        return globalLowThreshold;
+    }
+
+    public void setGlobalLowThreshold(String globalLowThreshold) {
+        this.globalLowThreshold = globalLowThreshold;
+    }
+
+    public String getGlobalOsaThresholdsEnabled() {
+        return globalOsaThresholdsEnabled;
+    }
+
+    public void setGlobalOsaThresholdsEnabled(String globalOsaThresholdsEnabled) {
+        this.globalOsaThresholdsEnabled = globalOsaThresholdsEnabled;
+    }
+
+    public String getGlobalOsaHighThreshold() {
+        return globalOsaHighThreshold;
+    }
+
+    public void setGlobalOsaHighThreshold(String globalOsaHighThreshold) {
+        this.globalOsaHighThreshold = globalOsaHighThreshold;
+    }
+
+    public String getGlobalOsaMediumThreshold() {
+        return globalOsaMediumThreshold;
+    }
+
+    public void setGlobalOsaMediumThreshold(String globalOsaMediumThreshold) {
+        this.globalOsaMediumThreshold = globalOsaMediumThreshold;
+    }
+
+    public String getGlobalOsaLowThreshold() {
+        return globalOsaLowThreshold;
+    }
+
+    public void setGlobalOsaLowThreshold(String globalOsaLowThreshold) {
+        this.globalOsaLowThreshold = globalOsaLowThreshold;
+    }
 }

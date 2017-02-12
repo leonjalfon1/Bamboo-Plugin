@@ -105,8 +105,8 @@
 
             [/@ui.bambooSection]
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='globalConfigurationServer']
-                [@ww.label labelKey="serverUrl.label" name="serverUrl" required='true'/]
-                [@ww.label labelKey="userName.label" name="userName" required='true'/]
+                [@ww.label labelKey="serverUrl.label" name="globalServerUrl" required='true'/]
+                [@ww.label labelKey="userName.label" name="globalUserName" required='true'/]
                 [@ww.label type="password" labelKey="password.label"/]
             [/@ui.bambooSection]
         </div>
@@ -133,9 +133,9 @@
             [/@ui.bambooSection]
 
         [@ui.bambooSection dependsOn='defaultCxSast' showOn='globalConfigurationCxSAST']
-            [@ww.label labelKey="folderExclusions.label" name="folderExclusions" cssClass="long-field"/]
-            [@ww.label labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
-            [@ww.label labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
+            [@ww.label labelKey="folderExclusions.label" name="globalFolderExclusions" cssClass="long-field"/]
+            [@ww.label labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4" cssClass="long-field"/]
+            [@ww.label labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes" required='false'/]
         [/@ui.bambooSection]
 
         </div>
@@ -235,25 +235,33 @@
 
 
         [@ui.bambooSection dependsOn='defaultScanControl' showOn='globalConfigurationControl']
-            [#if context.get("thresholdsEnabled")?has_content]
-                [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='true' /]
+            [#if context.get("globalIsSynchronous")?has_content]
+                [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='true' /]
+                [#if context.get("globalThresholdsEnabled")?has_content]
+                    [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='true' /]
+                [#else]
+                    [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" /]
+                [/#if]
             [#else]
-                [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" /]
+                [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='false'/]
+                [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
             [/#if]
 
-            [@ww.label labelKey="highThreshold.label" name="highThreshold" required='false'/]
-            [@ww.label labelKey="mediumThreshold.label" name="mediumThreshold" required='false'/]
-            [@ww.label labelKey="lowThreshold.label" name="lowThreshold" required='false'/]
+
+
+            [@ww.label labelKey="highThreshold.label" name="globalHighThreshold" required='false'/]
+            [@ww.label labelKey="mediumThreshold.label" name="globalMediumThreshold" required='false'/]
+            [@ww.label labelKey="lowThreshold.label" name="globalLowThreshold" required='false'/]
 
             [#if context.get("osaThresholdsEnabled")?has_content]
-                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='true' /]
+                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='true' /]
             [#else]
-                [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" /]
+                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" /]
             [/#if]
 
-            [@ww.label labelKey="highThreshold.label" name="osaHighThreshold"required='false'/]
-            [@ww.label labelKey="mediumThreshold.label" name="osaMediumThreshold" required='false'/]
-            [@ww.label labelKey="lowThreshold.label" name="osaLowThreshold" required='false'/]
+            [@ww.label labelKey="highThreshold.label" name="globalOsaHighThreshold"required='false'/]
+            [@ww.label labelKey="mediumThreshold.label" name="globalOsaMediumThreshold" required='false'/]
+            [@ww.label labelKey="lowThreshold.label" name="globalOsaLowThreshold" required='false'/]
 
 
         [/@ui.bambooSection]
@@ -262,10 +270,3 @@
     [/@ui.bambooSection]
     </div>
     </div>
-    [#--
-
-    [@ui.messageBox type="info" titleKey="org.whitesource.bamboo.plugins.projectType.detection.maven" /]
-    [#else]
-        [@ui.messageBox type="warning" titleKey="org.whitesource.bamboo.plugins.projectType.maven.error" /]
-        [@ww.hidden name='projectName' value='false' /]
-        [@ww.file labelKey='repository.git.ssh.key' name='projectName' /]--]

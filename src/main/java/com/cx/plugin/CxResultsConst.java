@@ -7,7 +7,6 @@ package com.cx.plugin;
 public abstract class CxResultsConst {
 
 
-
     public static final String SAST_RESULTS_READY = "cx.sastResultsReady";
 
     public static final String HIGH_RESULTS = "cx.highResults";

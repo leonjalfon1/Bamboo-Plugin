@@ -1,9 +1,12 @@
 package com.cx.plugin;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
+import com.atlassian.bamboo.configuration.AdministrationConfiguration;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
+import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
 import com.cx.plugin.dto.CxParam;
 import org.apache.commons.lang3.StringUtils;
@@ -14,17 +17,10 @@ import org.apache.commons.lang3.StringUtils;
  */
 
 public class CxFolderPattern {
-    public String generatePattern(final ConfigurationMap configurationMap, final BuildLogger buildLogger, String folderExclusion, boolean useFilterPattern) throws IOException, InterruptedException {
-
-        String cxExclude = null;
-        if (folderExclusion != null){
-            configurationMap.get(folderExclusion); //TODO add the ENV expansion
-        }
-        String cxPattern = "";
-        if (useFilterPattern){
-            cxPattern = configurationMap.get(CxParam.FILTER_PATTERN) + ",";               //TODO, ask Sigal
-        }
-        return cxPattern + processExcludeFolders(cxExclude, buildLogger);
+    public String generatePattern(final HashMap<String, String> configurationMap, final BuildLogger buildLogger, String folderExclusion) throws IOException, InterruptedException {
+        String cxExclude = configurationMap.get(folderExclusion); //TODO add the ENV expansion
+        String cxPattern = configurationMap.get(CxParam.FILTER_PATTERN);
+        return cxPattern + "," + processExcludeFolders(cxExclude, buildLogger);
     }
 
     @NotNull

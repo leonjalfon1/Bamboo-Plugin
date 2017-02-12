@@ -55,7 +55,11 @@ public class CxZip {
         return tempFile;
     }
 
-    public File zipSourceCode(final String baseDir, String filterPattern) throws IOException, InterruptedException {
+    public File zipSourceCode(final String baseDir, String filterPattern, final BuildLogger buildLogger) throws IOException, InterruptedException {
+        numOfZippedFiles = 0;
+        if (baseDir == null || StringUtils.isEmpty(baseDir)) {
+            throw new CxAbortException("OSA Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
+        }
         //    ZipperCallable zipperCallable = new ZipperCallable(filterPattern); //TODO understand the role of the callable
         final File tempFile = File.createTempFile("zippedSource", ".bin");
         final OutputStream fileOutputStream = new FileOutputStream(tempFile);
@@ -68,6 +72,8 @@ public class CxZip {
         } catch (Zipper.NoFilesToZip e) {
             throw new IOException("No files to zip");
         }
+
+        buildLogger.addBuildLogEntry("Temporary file with zipped sources was created at: '" + tempFile.getAbsolutePath() + "'");
 
         return tempFile;
     }

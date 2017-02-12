@@ -26,8 +26,8 @@ public class CxParam {
     public static final String OSA_ENABLED = "osaEnabled";
     public static final String OSA_THRESHOLDS_ENABLED = "osaThresholdsEnabled";
     public static final String OSA_HIGH_THRESHOLD = "osaHighThreshold";
-    public static final String OSA_MEDIUM_THRESHOLD = "osaMediumThreshold;";
-    public static final String OSA_LOW_THRESHOLD = "osaLowSThreshold";
+    public static final String OSA_MEDIUM_THRESHOLD = "osaMediumThreshold";
+    public static final String OSA_LOW_THRESHOLD = "osaLowThreshold";
     public static final String NO_TEAM_PATH = "noTeamPath";
     public static final String NO_PRESET = "noPreset";
     public static final String PRESET_LIST = "presetList";
@@ -43,6 +43,22 @@ public class CxParam {
     public static final String COSTUME_CONFIGURATION_CXSAST = "costumeConfigurationCxSAST";
     public static final String GLOBAL_CONFIGURATION_CONTROL= "globalConfigurationControl";
     public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
+
+    public static final String GLOBAL_USER_NAME = "globalUserName";
+    public static final String GLOBAL_PASSWORD = "globalPassword";
+    public static final String GLOBAL_SERVER_URL = "globalServerUrl";
+    public static final String GLOBAL_FOLDER_EXCLUSION = "globalFolderExclusions";
+    public static final String GLOBAL_FILTER_PATTERN = "globalFilterPatterns";
+    public static final String GLOBAL_SCAN_TIMEOUT_IN_MINUTES = "globalScanTimeoutInMinutes";
+    public static final String GLOBAL_IS_SYNCHRONOUS = "globalIsSynchronous";
+    public static final String GLOBAL_THRESHOLDS_ENABLED = "globalThresholdsEnabled";
+    public static final String GLOBAL_HIGH_THRESHOLD = "globalHighThreshold";
+    public static final String GLOBAL_MEDIUM_THRESHOLD = "globalMediumThreshold";
+    public static final String GLOBAL_LOW_THRESHOLD = "globalLowThreshold";
+    public static final String GLOBAL_OSA_THRESHOLDS_ENABLED = "globalOsaThresholdsEnabled";
+    public static final String GLOBAL_OSA_HIGH_THRESHOLD = "globalOsaHighThreshold";
+    public static final String GLOBAL_OSA_MEDIUM_THRESHOLD = "globalOsaMediumThreshold";
+    public static final String GLOBAL_OSA_LOW_THRESHOLD = "globalOsaLowThreshold";
     public static final String DEFAULT_FILTER_PATTERNS = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
             "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
             "!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u,   !**/*.mid,   !**/*.mp3,  " +

@@ -7,6 +7,7 @@ import org.hsqldb.lib.StringUtil;
 
 import javax.annotation.Nullable;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.util.HashMap;
 
 /**
  * Created by galn on 21/12/2016.
@@ -26,7 +27,7 @@ public class ScanConfiguration {
      * The name of the project being scanned.
      */
     private String projectName;
-    private String preset;
+    private String presetId;
     private String presetName;
     private String fullTeamPath;
     private String[] folderExclusions = new String[0];
@@ -67,27 +68,28 @@ public class ScanConfiguration {
     private Integer osaLowThreshold;
 
     /**********   C-tor   ***************/
-    public ScanConfiguration(ConfigurationMap configurationMap) {
+    public ScanConfiguration(HashMap<String, String> configurationMap) {
         setUsername(configurationMap.get(CxParam.USER_NAME));
         String cxPass = configurationMap.get(CxParam.PASSWORD);
         setPassword(cxPass);
         setUrl(configurationMap.get(CxParam.SERVER_URL));
         setProjectName(configurationMap.get(CxParam.PROJECT_NAME));//TODO
-        setPreset(configurationMap.get(CxParam.PRESET_ID));
+        setPresetId(configurationMap.get(CxParam.PRESET_ID));
+        setPresetName(configurationMap.get(CxParam.PRESET_NAME));
         setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME));
         setFolderExclusions(StringUtil.split(configurationMap.get(CxParam.FOLDER_EXCLUSION), ","));
 
         setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
-        setIncrementalScan(configurationMap.getAsBoolean(CxParam.IS_INCREMENTAL_SCAN));
-        setSynchronous(configurationMap.getAsBoolean(CxParam.IS_SYNCHRONOUS));//TODO value as boolean/Int
-        setThresholdsEnabled(configurationMap.getAsBoolean(CxParam.THRESHOLDS_ENABLED));
+        setIncrementalScan(getAsBoolean(configurationMap.get(CxParam.IS_INCREMENTAL_SCAN)));
+        setSynchronous(getAsBoolean(configurationMap.get(CxParam.IS_SYNCHRONOUS)));//TODO value as boolean/Int
+        setThresholdsEnabled(getAsBoolean(configurationMap.get(CxParam.THRESHOLDS_ENABLED)));
         setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD));
         setMediumThreshold(configurationMap.get(CxParam.MEDIUM_THRESHOLD));
         setLowThreshold(configurationMap.get(CxParam.LOW_THRESHOLD));
-        setGeneratePDFReport(configurationMap.getAsBoolean(CxParam.GENERATE_PDF_REPORT));
+        setGeneratePDFReport(getAsBoolean(configurationMap.get(CxParam.GENERATE_PDF_REPORT)));
 
-        setOsaEnabled(configurationMap.getAsBoolean(CxParam.OSA_ENABLED));
-        setOsaThresholdsEnabled(configurationMap.getAsBoolean(CxParam.OSA_THRESHOLDS_ENABLED));
+        setOsaEnabled(getAsBoolean(configurationMap.get(CxParam.OSA_ENABLED)));
+        setOsaThresholdsEnabled(getAsBoolean(configurationMap.get(CxParam.OSA_THRESHOLDS_ENABLED)));
         setOsaHighSeveritiesThreshold(configurationMap.get(CxParam.OSA_HIGH_THRESHOLD));
         setOsaMediumSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD));
         setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_LOW_THRESHOLD));
@@ -127,12 +129,12 @@ public class ScanConfiguration {
         this.projectName = projectName;
     }
 
-    public String getPreset() {
-        return preset;
+    public String getPresetId() {
+        return presetId;
     }
 
-    public void setPreset(String preset) {
-        this.preset = preset;
+    public void setPresetId(String presetId) {
+        this.presetId = presetId;
     }
 
     public Integer getScanTimeoutInMinutes() {
@@ -140,7 +142,7 @@ public class ScanConfiguration {
     }
 
     public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
-        this.scanTimeoutInMinutes = setNumberFromString(scanTimeoutInMinutes);
+        this.scanTimeoutInMinutes = getAsInteger(scanTimeoutInMinutes);
     }
 
     public boolean isIncrementalScan() {
@@ -176,7 +178,7 @@ public class ScanConfiguration {
     }
 
     private void setHighThreshold(String highSeveritiesThreshold) {
-        this.highThreshold = setNumberFromString(highSeveritiesThreshold);
+        this.highThreshold = getAsInteger(highSeveritiesThreshold);
     }
 
     public Integer getMediumThreshold() {
@@ -188,7 +190,7 @@ public class ScanConfiguration {
     }
 
     private void setMediumThreshold(String mediumSeveritiesThreshold) {
-        this.mediumThreshold = setNumberFromString(mediumSeveritiesThreshold);
+        this.mediumThreshold = getAsInteger(mediumSeveritiesThreshold);
     }
 
     public Integer getLowThreshold() {
@@ -200,7 +202,7 @@ public class ScanConfiguration {
     }
 
     private void setLowThreshold(String lowSeveritiesThreshold) {
-        this.lowThreshold = setNumberFromString(lowSeveritiesThreshold);
+        this.lowThreshold = getAsInteger(lowSeveritiesThreshold);
     }
 
     public String getFullTeamPath() {
@@ -252,7 +254,7 @@ public class ScanConfiguration {
     }
 
     private void setOsaHighSeveritiesThreshold(String osaHighSeveritiesThreshold) {
-        this.osaHighThreshold = setNumberFromString(osaHighSeveritiesThreshold);
+        this.osaHighThreshold = getAsInteger(osaHighSeveritiesThreshold);
     }
 
     public Integer getOsaMediumThreshold() {
@@ -264,7 +266,7 @@ public class ScanConfiguration {
     }
 
     private void setOsaMediumSeveritiesThreshold(String osaMediumSeveritiesThreshold) {
-        this.osaMediumThreshold = setNumberFromString(osaMediumSeveritiesThreshold);
+        this.osaMediumThreshold = getAsInteger(osaMediumSeveritiesThreshold);
     }
 
     public Integer getOsaLowThreshold() {
@@ -276,20 +278,27 @@ public class ScanConfiguration {
     }
 
     private void setOsaLowSeveritiesThreshold(String osaLowSeveritiesThreshold) {
-        this.osaLowThreshold = setNumberFromString(osaLowSeveritiesThreshold);
+        this.osaLowThreshold = getAsInteger(osaLowSeveritiesThreshold);
     }
 
-    private Integer setNumberFromString(String number) { //TODO change to the builtin method
+    private Integer getAsInteger(String number) { //TODO change to the builtin method
         Integer inti = null;
         try {
             if (number != null && !StringUtil.isEmpty(number)) {
                 inti = Integer.parseInt(number);
             }
-
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             inti = null;
         }
         return inti;
+    }
+
+    private boolean getAsBoolean(String bool) {
+        boolean ret = false;
+        if (bool != null && !StringUtil.isEmpty(bool)) {
+            ret = Boolean.parseBoolean(bool);
+        }
+        return ret;
     }
 
     public String getPresetName() {
