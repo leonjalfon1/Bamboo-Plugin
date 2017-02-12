@@ -17,19 +17,30 @@ import org.apache.commons.lang3.StringUtils;
  */
 
 public class CxFolderPattern {
-    public String generatePattern(final HashMap<String, String> configurationMap, final BuildLogger buildLogger, String folderExclusion) throws IOException, InterruptedException {
-        String cxExclude = configurationMap.get(folderExclusion); //TODO add the ENV expansion
-        String cxPattern = configurationMap.get(CxParam.FILTER_PATTERN);
-        return cxPattern + "," + processExcludeFolders(cxExclude, buildLogger);
+    public static String generatePattern(String folderExclusions, String filterPattern, BuildLogger buildLogger) throws IOException, InterruptedException {
+
+        String excludeFoldersPattern = processExcludeFolders(folderExclusions, buildLogger);
+
+        if(StringUtils.isEmpty(filterPattern) && StringUtils.isEmpty(excludeFoldersPattern)) {
+            return "";
+        } else if(!StringUtils.isEmpty(filterPattern) && StringUtils.isEmpty(excludeFoldersPattern)) {
+            return filterPattern;
+        } else if(StringUtils.isEmpty(filterPattern) && !StringUtils.isEmpty(excludeFoldersPattern)) {
+            return excludeFoldersPattern;
+        } else {
+            return filterPattern + "," + excludeFoldersPattern;
+        }
     }
 
+
+
     @NotNull
-    private String processExcludeFolders(final String excludeFolders, final BuildLogger buildLogger) {
-        if (excludeFolders == null || excludeFolders.length() == 0) {
+    private static String processExcludeFolders(String folderExclusions, BuildLogger buildLogger) {
+        if (StringUtils.isEmpty(folderExclusions)) {
             return "";
         }
         StringBuilder result = new StringBuilder();
-        String[] patterns = StringUtils.split(excludeFolders, ",\n");
+        String[] patterns = StringUtils.split(folderExclusions, ",\n");
         for (String p : patterns) {
             p = p.trim();
             if (p.length() > 0) {

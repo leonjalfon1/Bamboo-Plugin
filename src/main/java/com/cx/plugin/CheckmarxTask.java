@@ -38,6 +38,9 @@ public class CheckmarxTask implements TaskType {
 
     public static final Logger log = LoggerFactory.getLogger(CheckmarxTask.class);
 
+    private static final long MAX_ZIP_SIZE_BYTES = 209715200;
+    private static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
+
     protected CxClientService cxClientService;
     protected java.net.URL url;//TODO add default directory
     private String workDirectory;//TODO add default directory
@@ -95,11 +98,13 @@ public class CheckmarxTask implements TaskType {
                     buildLogger.addBuildLogEntry("Creating OSA scan");
                     buildLogger.addBuildLogEntry("Zipping dependencies");
                     //prepare sources (zip it) for the OSA scan and send it to OSA scan
-                    File zipForOSA = createZipForOSA();
+                    File zipForOSA = zipWorkspaceFolder(workDirectory, "", "", MAX_OSA_ZIP_SIZE_BYTES);
                     buildLogger.addBuildLogEntry("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA); //TODO dont check the license!! where rhe async coming?
                     buildLogger.addBuildLogEntry("OSA scan created successfully");
-                    zipForOSA.delete(); //TODO check for null?
+                    if(zipForOSA.exists() && !zipForOSA.delete()) {
+                        buildLogger.addBuildLogEntry("Warning: fail to delete temporary zip file: " + zipForOSA.getAbsolutePath());
+                    }
                     buildLogger.addBuildLogEntry("Temporary file deleted");
                 } catch (Exception e) {
                     buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
@@ -305,7 +310,10 @@ public class CheckmarxTask implements TaskType {
         try {
             //prepare sources to scan (zip them)
             buildLogger.addBuildLogEntry("Zipping sources");
-            zipTempFile = zipWorkspaceFolder();
+
+            String folderExclusion = configurationMap.get(CxParam.FOLDER_EXCLUSION); //TODO add the ENV expansion
+            String filterPattern = configurationMap.get(CxParam.FILTER_PATTERN);
+            zipTempFile = zipWorkspaceFolder(workDirectory, folderExclusion, filterPattern, MAX_ZIP_SIZE_BYTES);
 
             //send sources to scan
             byte[] zippedSources = getBytesFromZippedSources();
@@ -314,7 +322,9 @@ public class CheckmarxTask implements TaskType {
             projectStateLink = CxPluginHelper.composeProjectStateLink(url.toString(), createScanResponse.getProjectId());
             buildLogger.addBuildLogEntry("Scan created successfully. Link to project state: " + projectStateLink);
 
-            zipTempFile.delete(); //TODO check for null?
+            if(zipTempFile.exists() && !zipTempFile.delete()) {
+                buildLogger.addBuildLogEntry("Warning: fail to delete temporary zip file: " + zipTempFile.getAbsolutePath());
+            }
             buildLogger.addBuildLogEntry("Temporary file deleted");
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("fail to create scan: " + e.getMessage());//TODO return success when still have problems, need to throw excepion to fail the scan
@@ -333,12 +343,10 @@ public class CheckmarxTask implements TaskType {
         return checkoutLocations.entrySet().iterator().next().getValue();
     }
 
-    private File zipWorkspaceFolder() throws IOException, InterruptedException { //TODO handle exceptions
-        CxFolderPattern folderPattern = new CxFolderPattern();
-        final String combinedFilterPattern = folderPattern.generatePattern(this.configurationMap, this.buildLogger, CxParam.FOLDER_EXCLUSION);
-        CxZip cxZip = new CxZip();
-        return cxZip.ZipWorkspaceFolder(getWorkspace(), combinedFilterPattern, this.buildLogger);
-
+    private File zipWorkspaceFolder(String baseZipDir, String folderExclusions, String filterPattern, long maxZipSizeInBytes) throws IOException, InterruptedException { //TODO handle exceptions
+        final String combinedFilterPattern = CxFolderPattern.generatePattern(folderExclusions, filterPattern, buildLogger);
+        CxZip cxZip = new CxZip().setMaxZipSizeInBytes(maxZipSizeInBytes);
+        return cxZip.zipWorkspaceFolder(baseZipDir, combinedFilterPattern, buildLogger);
     }
 
     private LocalScanConfiguration generateScanConfiguration(byte[] zippedSources) {
@@ -484,13 +492,6 @@ public class CheckmarxTask implements TaskType {
             timeout = scanTimeout;
         }
         return timeout;
-    }
-
-    private File createZipForOSA() throws IOException, InterruptedException { //TODO handle exceptions{
-        CxFolderPattern folderPattern = new CxFolderPattern();
-        String combinedFilterPattern = ""; //TODO change the 3 param null ASK DOR
-        CxZip cxZip = new CxZip();
-        return cxZip.zipSourceCode(getWorkspace(), combinedFilterPattern, buildLogger);
     }
 
     private void createPDFReport(long scanId) {

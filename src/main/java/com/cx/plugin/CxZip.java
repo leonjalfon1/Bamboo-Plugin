@@ -19,10 +19,12 @@ import com.checkmarx.components.zipper.ZipListener;
  */
 
 public class CxZip {
-    private static final long MAX_ZIP_SIZE_BYTES = 209715200;
+    private long maxZipSizeInBytes = 209715200;
     private int numOfZippedFiles = 0;
+    private String tempFileName = "CxZippedSource";
 
-    public File ZipWorkspaceFolder(final String baseDir, final String filterPattern, final BuildLogger buildLogger)
+
+    public File zipWorkspaceFolder(String baseDir, String filterPattern, final BuildLogger buildLogger)
             throws InterruptedException, IOException {
         if (baseDir == null || StringUtils.isEmpty(baseDir)) {
             throw new CxAbortException("Checkmarx Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
@@ -36,14 +38,14 @@ public class CxZip {
             }
         };
 
-        final File tempFile = File.createTempFile("zippedSource", ".bin");
-        final OutputStream fileOutputStream = new FileOutputStream(tempFile);
+        File tempFile = File.createTempFile(tempFileName, ".bin");
+        OutputStream fileOutputStream = new FileOutputStream(tempFile);
 
         File folder = new File(baseDir);
         try {
-            new Zipper().zip(folder, filterPattern, fileOutputStream, MAX_ZIP_SIZE_BYTES, zipListener);
+            new Zipper().zip(folder, filterPattern, fileOutputStream, maxZipSizeInBytes, zipListener);
         } catch (Zipper.MaxZipSizeReached e) {
-            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(MAX_ZIP_SIZE_BYTES));
+            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(maxZipSizeInBytes));
         } catch (Zipper.NoFilesToZip e) {
             throw new IOException("No files to zip");
         }
@@ -55,28 +57,14 @@ public class CxZip {
         return tempFile;
     }
 
-    public File zipSourceCode(final String baseDir, String filterPattern, final BuildLogger buildLogger) throws IOException, InterruptedException {
-        numOfZippedFiles = 0;
-        if (baseDir == null || StringUtils.isEmpty(baseDir)) {
-            throw new CxAbortException("OSA Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
-        }
-        //    ZipperCallable zipperCallable = new ZipperCallable(filterPattern); //TODO understand the role of the callable
-        final File tempFile = File.createTempFile("zippedSource", ".bin");
-        final OutputStream fileOutputStream = new FileOutputStream(tempFile);
-
-        File folder = new File(baseDir);
-        try {
-            new Zipper().zip(folder, filterPattern, fileOutputStream, MAX_ZIP_SIZE_BYTES, null);
-        } catch (Zipper.MaxZipSizeReached e) {
-            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(MAX_ZIP_SIZE_BYTES));
-        } catch (Zipper.NoFilesToZip e) {
-            throw new IOException("No files to zip");
-        }
-
-        buildLogger.addBuildLogEntry("Temporary file with zipped sources was created at: '" + tempFile.getAbsolutePath() + "'");
-
-        return tempFile;
+    public CxZip setMaxZipSizeInBytes(long maxZipSizeInBytes) {
+        this.maxZipSizeInBytes = maxZipSizeInBytes;
+        return this;
     }
 
+    public CxZip setTempFileName(String tempFileName) {
+        this.tempFileName = tempFileName;
+        return this;
+    }
 
 }
