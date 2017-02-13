@@ -165,9 +165,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
 
         context.put(CxParam.GLOBAL_SERVER_URL, adminConfig.getSystemProperty(CxParam.GLOBAL_SERVER_URL));
-        context.put(CxParam.GLOBAL_USER_NAME,  adminConfig.getSystemProperty(CxParam.GLOBAL_USER_NAME));
+        context.put(CxParam.GLOBAL_USER_NAME, adminConfig.getSystemProperty(CxParam.GLOBAL_USER_NAME));
         context.put(CxParam.GLOBAL_PASSWORD, adminConfig.getSystemProperty(CxParam.GLOBAL_PASSWORD));
-        context.put(CxParam.SERVER_URL,  configMap.get(CxParam.SERVER_URL));
+        context.put(CxParam.SERVER_URL, configMap.get(CxParam.SERVER_URL));
         context.put(CxParam.USER_NAME, configMap.get(CxParam.USER_NAME));
         context.put(CxParam.PASSWORD, configMap.get(CxParam.PASSWORD));
         context.put(CxParam.DEFAULT_CREDENTIALS, configType);
@@ -177,45 +177,50 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
     private void populateCxSASTFields(@NotNull final Map<String, Object> context, AdministrationConfiguration adminConfig, Map<String, String> configMap, String fieldsSection) {
         if (fieldsSection == null || configMap.get(fieldsSection).equals(CxParam.GLOBAL_CONFIGURATION_CXSAST)) {
-            String filterPattern = adminConfig.getSystemProperty(CxParam.GLOBAL_FILTER_PATTERN);
             context.put(CxParam.DEFAULT_CXSAST, CxParam.GLOBAL_CONFIGURATION_CXSAST);
-            context.put(CxParam.GLOBAL_FOLDER_EXCLUSION, adminConfig.getSystemProperty(CxParam.GLOBAL_FOLDER_EXCLUSION));
-            context.put(CxParam.GLOBAL_FILTER_PATTERN, fieldsSection == null ? filterPattern : CxParam.DEFAULT_FILTER_PATTERNS);
-            context.put(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES, adminConfig.getSystemProperty(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES));
+        } else {
             context.put(CxParam.DEFAULT_CXSAST, CxParam.COSTUME_CONFIGURATION_CXSAST);
-            context.put(CxParam.FOLDER_EXCLUSION, configMap.get(CxParam.FOLDER_EXCLUSION));
-            context.put(CxParam.FILTER_PATTERN, configMap.get(CxParam.FILTER_PATTERN));
-            context.put(CxParam.SCAN_TIMEOUT_IN_MINUTES, configMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
         }
+
+        String filterPattern = adminConfig.getSystemProperty(CxParam.GLOBAL_FILTER_PATTERN);
+        context.put(CxParam.GLOBAL_FOLDER_EXCLUSION, adminConfig.getSystemProperty(CxParam.GLOBAL_FOLDER_EXCLUSION));
+        context.put(CxParam.GLOBAL_FILTER_PATTERN, fieldsSection == null ? filterPattern : CxParam.DEFAULT_FILTER_PATTERNS);
+        context.put(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES, adminConfig.getSystemProperty(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES));
+        context.put(CxParam.FOLDER_EXCLUSION, configMap.get(CxParam.FOLDER_EXCLUSION));
+        context.put(CxParam.FILTER_PATTERN, configMap.get(CxParam.FILTER_PATTERN));
+        context.put(CxParam.SCAN_TIMEOUT_IN_MINUTES, configMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
     }
 
 
     private void populateScanControlFields(@NotNull final Map<String, Object> context, AdministrationConfiguration adminConfig, Map<String, String> configMap, String fieldsSection) {
         if (fieldsSection == null || configMap.get(fieldsSection).equals(CxParam.GLOBAL_CONFIGURATION_CONTROL)) {
             context.put(CxParam.DEFAULT_SCAN_CONTROL, CxParam.GLOBAL_CONFIGURATION_CONTROL);
-            String isSyn = adminConfig.getSystemProperty(CxParam.GLOBAL_IS_SYNCHRONOUS);
-            context.put(CxParam.GLOBAL_IS_SYNCHRONOUS, isSyn);
-            context.put(CxParam.GLOBAL_THRESHOLDS_ENABLED, adminConfig.getSystemProperty(CxParam.GLOBAL_THRESHOLDS_ENABLED));
-            context.put(CxParam.GLOBAL_HIGH_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_HIGH_THRESHOLD));
-            context.put(CxParam.GLOBAL_MEDIUM_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_MEDIUM_THRESHOLD));
-            context.put(CxParam.GLOBAL_LOW_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_LOW_THRESHOLD));
-            context.put(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED));
-            context.put(CxParam.GLOBAL_OSA_HIGH_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_HIGH_THRESHOLD));
-            context.put(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD));
-            context.put(CxParam.GLOBAL_OSA_LOW_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_LOW_THRESHOLD));
-
+        } else {
             context.put(CxParam.DEFAULT_SCAN_CONTROL, CxParam.COSTUME_CONFIGURATION_CONTROL);
-            context.put(CxParam.IS_SYNCHRONOUS, configMap.get(CxParam.IS_SYNCHRONOUS));
-            context.put(CxParam.THRESHOLDS_ENABLED, configMap.get(CxParam.THRESHOLDS_ENABLED));
-            context.put(CxParam.HIGH_THRESHOLD, configMap.get(CxParam.HIGH_THRESHOLD));
-            context.put(CxParam.MEDIUM_THRESHOLD, configMap.get(CxParam.MEDIUM_THRESHOLD));
-            context.put(CxParam.LOW_THRESHOLD, configMap.get(CxParam.LOW_THRESHOLD));
-            context.put(CxParam.OSA_THRESHOLDS_ENABLED, configMap.get(CxParam.OSA_THRESHOLDS_ENABLED));
-            context.put(CxParam.OSA_HIGH_THRESHOLD, configMap.get(CxParam.OSA_HIGH_THRESHOLD));
-            context.put(CxParam.OSA_MEDIUM_THRESHOLD, configMap.get(CxParam.OSA_MEDIUM_THRESHOLD));
-            context.put(CxParam.OSA_LOW_THRESHOLD, configMap.get(CxParam.OSA_LOW_THRESHOLD));
         }
+
+        context.put(CxParam.GLOBAL_IS_SYNCHRONOUS, adminConfig.getSystemProperty(CxParam.GLOBAL_IS_SYNCHRONOUS));
+        context.put(CxParam.GLOBAL_THRESHOLDS_ENABLED, adminConfig.getSystemProperty(CxParam.GLOBAL_THRESHOLDS_ENABLED));
+        context.put(CxParam.GLOBAL_HIGH_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_HIGH_THRESHOLD));
+        context.put(CxParam.GLOBAL_MEDIUM_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_MEDIUM_THRESHOLD));
+        context.put(CxParam.GLOBAL_LOW_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_LOW_THRESHOLD));
+        context.put(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED));
+        context.put(CxParam.GLOBAL_OSA_HIGH_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_HIGH_THRESHOLD));
+        context.put(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD));
+        context.put(CxParam.GLOBAL_OSA_LOW_THRESHOLD, adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_LOW_THRESHOLD));
+
+        context.put(CxParam.DEFAULT_SCAN_CONTROL, CxParam.COSTUME_CONFIGURATION_CONTROL);
+        context.put(CxParam.IS_SYNCHRONOUS, configMap.get(CxParam.IS_SYNCHRONOUS));
+        context.put(CxParam.THRESHOLDS_ENABLED, configMap.get(CxParam.THRESHOLDS_ENABLED));
+        context.put(CxParam.HIGH_THRESHOLD, configMap.get(CxParam.HIGH_THRESHOLD));
+        context.put(CxParam.MEDIUM_THRESHOLD, configMap.get(CxParam.MEDIUM_THRESHOLD));
+        context.put(CxParam.LOW_THRESHOLD, configMap.get(CxParam.LOW_THRESHOLD));
+        context.put(CxParam.OSA_THRESHOLDS_ENABLED, configMap.get(CxParam.OSA_THRESHOLDS_ENABLED));
+        context.put(CxParam.OSA_HIGH_THRESHOLD, configMap.get(CxParam.OSA_HIGH_THRESHOLD));
+        context.put(CxParam.OSA_MEDIUM_THRESHOLD, configMap.get(CxParam.OSA_MEDIUM_THRESHOLD));
+        context.put(CxParam.OSA_LOW_THRESHOLD, configMap.get(CxParam.OSA_LOW_THRESHOLD));
     }
+
 
     private void populateTeamAndPresetFields(final String serverUrl, final String userName, final String password, String preset, String teamPath,      //TODO change the method to get the list only when created??
 
