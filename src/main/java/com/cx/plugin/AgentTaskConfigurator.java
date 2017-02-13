@@ -39,7 +39,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private final static String DEFAULT_SETTING_LABEL = "Use Default Setting";
     private final static String SPECIFIC_SETTING_LABEL = "Specific Task Setting";
 
-
+    private static AdministrationConfiguration adminConfig;
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, CxParam.COSTUME_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, CxParam.COSTUME_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(CxParam.GLOBAL_CONFIGURATION_CONTROL, DEFAULT_SETTING_LABEL, CxParam.COSTUME_CONFIGURATION_CONTROL, SPECIFIC_SETTING_LABEL);
@@ -50,8 +50,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     public Map<String, String> generateTaskConfigMap(@NotNull final ActionParametersMap params, @Nullable final TaskDefinition previousTaskDefinition) {
 
         Map<String, String> config = super.generateTaskConfigMap(params, previousTaskDefinition);
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
-
+        getAdminConfiguration();
         config = generateCredentialsFields(params, adminConfig, config);
 
         config.put(CxParam.PROJECT_NAME, params.getString(CxParam.PROJECT_NAME));
@@ -85,8 +84,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     @Override
     public void populateContextForCreate(@NotNull final Map<String, Object> context) {
         super.populateContextForCreate(context);
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
-
+        getAdminConfiguration();
         context.put("configurationModeTypesServer", CONFIGURATION_MODE_TYPES_MAP_SERVER);
         context.put("configurationModeTypesCxSAST", CONFIGURATION_MODE_TYPES_MAP_CXSAST);
         context.put("configurationModeTypesControl", CONFIGURATION_MODE_TYPES_MAP_CONTROL);
@@ -126,7 +124,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         super.populateContextForEdit(context, taskDefinition);
         Map<String, String> configMap = taskDefinition.getConfiguration();
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
+        getAdminConfiguration();
 
         context.put("configurationModeTypesServer", CONFIGURATION_MODE_TYPES_MAP_SERVER);
         context.put("configurationModeTypesCxSAST", CONFIGURATION_MODE_TYPES_MAP_CXSAST);
@@ -275,7 +273,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         if (useDefaultCxSASTConfig != null && useDefaultCxSASTConfig.equals(CxParam.COSTUME_CONFIGURATION_CXSAST)) {
             config.put(CxParam.FOLDER_EXCLUSION, params.getString(CxParam.FOLDER_EXCLUSION));
-            config.put(CxParam.FILTER_PATTERN,  params.getString(CxParam.FILTER_PATTERN));
+            config.put(CxParam.FILTER_PATTERN, params.getString(CxParam.FILTER_PATTERN));
             config.put(CxParam.SCAN_TIMEOUT_IN_MINUTES, params.getString(CxParam.SCAN_TIMEOUT_IN_MINUTES));
         }
         return config;
@@ -419,8 +417,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     private void validateGlobalNotEmpty(@NotNull final ErrorCollection errorCollection, @NotNull String key) {
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
-
+        getAdminConfiguration();
         final String value = adminConfig.getSystemProperty(key);
         if (value == null || StringUtils.isEmpty(value)) {
             errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".error"));
@@ -441,5 +438,13 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             }
         }
     }
+
+    private void getAdminConfiguration(){
+        if (adminConfig == null) {
+            adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(CxParam.ADMINISTRATION_CONFIGURATION);
+        }
+    }
+
+
 
 }

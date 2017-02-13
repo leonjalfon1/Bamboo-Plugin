@@ -22,9 +22,9 @@
 <div class="field-group">
     <div class="center">
         [@ui.bambooSection title='Checkmarx Server' ]
-        [@ww.textfield labelKey="defaultServerUrl.label" name="globalServerUrl" required="true" cssClass="long-field"/]
-            [@ww.textfield labelKey="defaultUserName.label" name="globalUserName" required="true" cssClass="long-field"/]
-            [@ww.password labelKey="defaultPassword.label" name="globalPassword" required="true" showPassword='true' cssClass="long-field"/]
+        [@ww.textfield labelKey="defaultServerUrl.label" name="globalServerUrl" cssClass="long-field"/]
+            [@ww.textfield labelKey="defaultUserName.label" name="globalUserName"  cssClass="long-field"/]
+            [@ww.password labelKey="defaultPassword.label" name="globalPassword" showPassword='true' cssClass="long-field"/]
         [/@ui.bambooSection]
     </div>
 </div>

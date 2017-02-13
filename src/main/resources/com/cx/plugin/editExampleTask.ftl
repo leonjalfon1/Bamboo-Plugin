@@ -83,8 +83,10 @@
                 [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl" required='true'/]
                 [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
                 [@ww.password labelKey="password.label"  id="password" name="password" required='true' showPassword='true'/]
-                <button type="button" class="aui-button" id="test_connection">Test Connection</button>
-                <div id="testConnectionMessage"></div>
+              [#--  <button type="button" class="aui-button" id="test_connection">Test Connection</button>--]
+                <button type="button" class="aui-button test-connection" id="test_connection">Test Connection</button>
+            <div id="testConnectionMessage" class="test-connection-message"></div>
+              [#--  <div id="testConnectionMessage"></div>--]
 
             [/@ui.bambooSection]
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='globalConfigurationServer']
@@ -114,7 +116,7 @@
             [/@ui.bambooSection]
 
         [@ui.bambooSection dependsOn='defaultCxSast' showOn='globalConfigurationCxSAST']
-            [@ww.label labelKey="folderExclusions.label" name="globalFolderExclusions" cssClass="long-field"/]
+            [@ww.label labelKey="folderExclusions.label" name="globalFolderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
             [@ww.label labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4" cssClass="long-field"/]
             [@ww.label labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes" required='false'/]
         [/@ui.bambooSection]
