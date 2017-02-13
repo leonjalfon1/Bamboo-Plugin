@@ -25,8 +25,6 @@ public class CxDefaultConfig extends GlobalAdminAction {
     private String globalServerUrl;
     private String globalUserName;
     private String globalPassword;
-    private String DEFAULT_URL = "http://localhost"; //TODO- need?
-
 
     private String globalFilterPatterns = CxParam.DEFAULT_FILTER_PATTERNS;
     private String globalFolderExclusions;
@@ -46,9 +44,6 @@ public class CxDefaultConfig extends GlobalAdminAction {
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
 
         globalServerUrl = adminConfig.getSystemProperty(CxParam.GLOBAL_SERVER_URL);
-        if (globalServerUrl == null || StringUtils.isEmpty(globalServerUrl)) {
-            this.globalServerUrl = DEFAULT_URL;
-        }
         globalUserName = adminConfig.getSystemProperty(CxParam.GLOBAL_USER_NAME);
         globalPassword = adminConfig.getSystemProperty(CxParam.GLOBAL_PASSWORD);
 
@@ -72,9 +67,7 @@ public class CxDefaultConfig extends GlobalAdminAction {
     }
 
     public String save() { //TODO add validations
-        boolean error = false;
-
-        error |= validateNotEmpty(this.globalServerUrl, CxParam.GLOBAL_SERVER_URL);
+        boolean error = validateNotEmpty(this.globalServerUrl, CxParam.GLOBAL_SERVER_URL);
         if (!error) {
             try {
                 validateUrl(globalServerUrl);

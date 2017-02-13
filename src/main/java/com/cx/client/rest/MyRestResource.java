@@ -1,24 +1,16 @@
 package com.cx.client.rest;
 
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.checkmarx.v7.*;
-import com.cx.client.CxClientServiceImpl;
-import com.cx.client.exception.CxClientException;
 import com.cx.plugin.dto.CxClass;
-import com.cx.plugin.dto.TestConnectionResponse;
-import org.apache.commons.lang.StringUtils;
+import com.cx.client.rest.dto.TestConnectionResponse;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +28,7 @@ public class MyRestResource {
     private static List<CxClass> teams;
     private static  CxSDKWebServiceSoap client;
     private static  String sessionId;
+    private static  String result ="";;
 
 
     @POST
@@ -43,7 +36,7 @@ public class MyRestResource {
     @Consumes({"application/json"})
     @Produces({"application/json"})
     public Response testConnetion( Map<Object, Object> key) {
-        String result ="";
+
         URL url = null;
         String urli = key.get("url").toString();
         TestConnectionResponse tcResponse;
@@ -71,7 +64,9 @@ public class MyRestResource {
 
                 return Response.status(200).entity(tcResponse).build();}
             else{
-                result = "Wrong username or password";
+                if (result.equals("")) {
+                    result = "Wrong username or password";
+                }
                 tcResponse = new TestConnectionResponse(result, null, null);
                 return Response.status(400).entity(tcResponse).build();}
         }
@@ -97,18 +92,18 @@ public class MyRestResource {
             sessionId = res.getSessionId();
 
             if (sessionId == null) {
+                result = res.getErrorMessage();
                 return false;
             }
 
             return true;
         }
         catch (Exception CxClientException) {
-            String loginError = CxClientException.getMessage();
-
-            if(loginError.startsWith("HTTP transport")){
-                loginError = "Invalid URL";
+            result = CxClientException.getMessage();
+            if(result.startsWith("HTTP transport")){
+                result = "Invalid URL";
             }
-            System.out.println("Exception caught: " + loginError + "'");//TODO
+            System.out.println("Exception caught: " + result + "'");//TODO
             return  false;
         }
     }

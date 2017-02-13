@@ -1,9 +1,6 @@
 (function ($) {
     $(document).on("click", "#test_connection", function (event) {
         restRequest();
-        //  hideAuthenticationResult();
-        //  populateDropdownLists();
-        // event.preventDefault();
     });
 
     function restRequest() {

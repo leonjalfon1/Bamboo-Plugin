@@ -30,7 +30,8 @@ public class ScanConfiguration {
     private String presetId;
     private String presetName;
     private String fullTeamPath;
-    private String[] folderExclusions = new String[0];
+    private String folderExclusions;
+    private String filterPattern;
     /**
      * Define a timeout (in minutes) for the scan. If the specified time has passed, the build fails.
      * Set to 0 to run the scan with no time limit.
@@ -77,7 +78,8 @@ public class ScanConfiguration {
         setPresetId(configurationMap.get(CxParam.PRESET_ID));
         setPresetName(configurationMap.get(CxParam.PRESET_NAME));
         setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME));
-        setFolderExclusions(StringUtil.split(configurationMap.get(CxParam.FOLDER_EXCLUSION), ","));
+        setFolderExclusions(configurationMap.get(CxParam.FOLDER_EXCLUSION));
+        setFilterPattern(configurationMap.get(CxParam.FILTER_PATTERN));
 
         setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
         setIncrementalScan(getAsBoolean(configurationMap.get(CxParam.IS_INCREMENTAL_SCAN)));
@@ -141,7 +143,7 @@ public class ScanConfiguration {
         return scanTimeoutInMinutes;
     }
 
-    public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
+     public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
         this.scanTimeoutInMinutes = getAsInteger(scanTimeoutInMinutes);
     }
 
@@ -213,12 +215,20 @@ public class ScanConfiguration {
         this.fullTeamPath = fullTeamPath;
     }
 
-    public String[] getFolderExclusions() {
+    public String getFolderExclusions() {
         return folderExclusions;
     }
 
-    private void setFolderExclusions(String[] folderExclusions) {
+    public void setFolderExclusions(String folderExclusions) {
         this.folderExclusions = folderExclusions;
+    }
+
+    public String getFilterPattern() {
+        return filterPattern;
+    }
+
+    public void setFilterPattern(String filterPattern) {
+        this.filterPattern = filterPattern;
     }
 
     public boolean isGeneratePDFReport() {

@@ -1,37 +1,31 @@
 package com.cx.plugin;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.atlassian.bamboo.build.logger.BuildLogger;
-import com.atlassian.bamboo.configuration.AdministrationConfiguration;
-import com.atlassian.bamboo.configuration.ConfigurationMap;
-import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
-import com.cx.plugin.dto.CxParam;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
 
 
 /**
  * CxFolderPattern generates the patterns used for zipping the workspace folder
  */
 
-public class CxFolderPattern {
-    public static String generatePattern(String folderExclusions, String filterPattern, BuildLogger buildLogger) throws IOException, InterruptedException {
+class CxFolderPattern {
+     static String generatePattern(String folderExclusions, String filterPattern, BuildLogger buildLogger) throws IOException, InterruptedException {
 
         String excludeFoldersPattern = processExcludeFolders(folderExclusions, buildLogger);
 
-        if(StringUtils.isEmpty(filterPattern) && StringUtils.isEmpty(excludeFoldersPattern)) {
+        if (StringUtils.isEmpty(filterPattern) && StringUtils.isEmpty(excludeFoldersPattern)) {
             return "";
-        } else if(!StringUtils.isEmpty(filterPattern) && StringUtils.isEmpty(excludeFoldersPattern)) {
+        } else if (!StringUtils.isEmpty(filterPattern) && StringUtils.isEmpty(excludeFoldersPattern)) {
             return filterPattern;
-        } else if(StringUtils.isEmpty(filterPattern) && !StringUtils.isEmpty(excludeFoldersPattern)) {
+        } else if (StringUtils.isEmpty(filterPattern) && !StringUtils.isEmpty(excludeFoldersPattern)) {
             return excludeFoldersPattern;
         } else {
             return filterPattern + "," + excludeFoldersPattern;
         }
     }
-
 
 
     @NotNull

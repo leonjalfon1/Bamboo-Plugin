@@ -41,20 +41,20 @@ public class CheckmarxTask implements TaskType {
     private static final long MAX_ZIP_SIZE_BYTES = 209715200;
     private static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
 
-    protected CxClientService cxClientService;
-    protected java.net.URL url;//TODO add default directory
+    private CxClientService cxClientService;
+    protected java.net.URL url;
     private String workDirectory;//TODO add default directory
     private File zipTempFile;
-    protected String projectStateLink;
-    protected ScanConfiguration config;
-    protected String scanResultsUrl;
+    private String projectStateLink;
+    private ScanConfiguration config;
+    private String scanResultsUrl;
 
     private BuildLogger buildLogger;
     private HashMap<String, String> configurationMap;
     private BuildContext buildContext;
 
-    public static final String PDF_REPORT_NAME = "CxReport";
-    public static final String OSA_REPORT_NAME = "OSA_Report";
+    private static final String PDF_REPORT_NAME = "CxReport";
+    private static final String OSA_REPORT_NAME = "OSA_Report";
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
@@ -131,7 +131,7 @@ public class CheckmarxTask implements TaskType {
                 scanResults = cxClientService.retrieveScanResults(createScanResponse.getProjectId());
                 scanResultsUrl = CxPluginHelper.composeScanLink(url.toString(), scanResults);
                 printResultsToConsole(scanResults);
-                addSastResults(results, scanResults, config);
+                addSASTResults(results, scanResults, config);
 
                 if (config.isGeneratePDFReport()) {
                     createPDFReport(scanResults.getScanID());
@@ -260,7 +260,7 @@ public class CheckmarxTask implements TaskType {
         return param;
     }
 
-    private void addSastResults(Map<String, String> results, ScanResults scanResults, ScanConfiguration config) {
+    private void addSASTResults(Map<String, String> results, ScanResults scanResults, ScanConfiguration config) {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
         results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
@@ -310,10 +310,7 @@ public class CheckmarxTask implements TaskType {
         try {
             //prepare sources to scan (zip them)
             buildLogger.addBuildLogEntry("Zipping sources");
-
-            String folderExclusion = configurationMap.get(CxParam.FOLDER_EXCLUSION); //TODO add the ENV expansion
-            String filterPattern = configurationMap.get(CxParam.FILTER_PATTERN);
-            zipTempFile = zipWorkspaceFolder(workDirectory, folderExclusion, filterPattern, MAX_ZIP_SIZE_BYTES);
+            zipTempFile = zipWorkspaceFolder(workDirectory, config.getFolderExclusions(), config.getFilterPattern(), MAX_ZIP_SIZE_BYTES);//TODO add the ENV expansion
 
             //send sources to scan
             byte[] zippedSources = getBytesFromZippedSources();
@@ -353,7 +350,7 @@ public class CheckmarxTask implements TaskType {
         LocalScanConfiguration ret = new LocalScanConfiguration();
         ret.setProjectName(config.getProjectName());
         ret.setClientOrigin(ClientOrigin.BAMBOO);
-        ret.setFolderExclusions(CxPluginHelper.convertArrayToString(config.getFolderExclusions()));
+        ret.setFolderExclusions(config.getFolderExclusions());
         ret.setFullTeamPath(config.getFullTeamPath());
         ret.setIncrementalScan(config.isIncrementalScan());
         long presetId;
@@ -371,7 +368,7 @@ public class CheckmarxTask implements TaskType {
         return ret;
     }
 
-    protected byte[] getBytesFromZippedSources() throws TaskException {
+    private byte[] getBytesFromZippedSources() throws TaskException {
 
         buildLogger.addBuildLogEntry("Converting Zipped Sources to Byte Array");
         byte[] zipFileByte;
@@ -396,7 +393,7 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("fullTeamPath: " + config.getFullTeamPath());
         buildLogger.addBuildLogEntry("preset: " + config.getPresetName());
         buildLogger.addBuildLogEntry("isIncrementalScan: " + config.isIncrementalScan());
-        buildLogger.addBuildLogEntry("folderExclusions: " + (config.getFolderExclusions().length > 0 ? Arrays.toString(config.getFolderExclusions()) : ""));
+        buildLogger.addBuildLogEntry("folderExclusions: " + (config.getFolderExclusions()));
         buildLogger.addBuildLogEntry("isSynchronous: " + config.isSynchronous());
         buildLogger.addBuildLogEntry("generatePDFReport: " + config.isGeneratePDFReport());
         buildLogger.addBuildLogEntry("thresholdsEnabled: " + config.isThresholdsEnabled());
@@ -452,7 +449,7 @@ public class CheckmarxTask implements TaskType {
         StringBuilder res = new StringBuilder("");
         boolean fail = false;
         if (config.isSASTThresholdEnabled()) {
-            fail |= isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "High", "CxSAST ");
+            fail = isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "High", "CxSAST ");
             fail |= isFail(scanResults.getMediumSeverityResults(), config.getMediumThreshold(), res, "Medium", "CxSAST ");
             fail |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "Low", "CxSAST ");
         }
@@ -479,7 +476,7 @@ public class CheckmarxTask implements TaskType {
     private boolean isFail(int result, Integer threshold, StringBuilder res, String severity, String severityType) {
         boolean fail = false;
         if (threshold != null && result > threshold) {
-            res.append(severityType + severity + " Severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
+            res.append(severityType).append(severity).append(" Severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
             fail = true;
         }
         return fail;
