@@ -98,11 +98,11 @@ public class CheckmarxTask implements TaskType {
                     buildLogger.addBuildLogEntry("Creating OSA scan");
                     buildLogger.addBuildLogEntry("Zipping dependencies");
                     //prepare sources (zip it) for the OSA scan and send it to OSA scan
-                    File zipForOSA = zipWorkspaceFolder(workDirectory, "", "", MAX_OSA_ZIP_SIZE_BYTES);
+                    File zipForOSA = zipWorkspaceFolder(workDirectory, "", "", MAX_OSA_ZIP_SIZE_BYTES, false);
                     buildLogger.addBuildLogEntry("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA); //TODO dont check the license!! where rhe async coming?
                     buildLogger.addBuildLogEntry("OSA scan created successfully");
-                    if(zipForOSA.exists() && !zipForOSA.delete()) {
+                    if (zipForOSA.exists() && !zipForOSA.delete()) {
                         buildLogger.addBuildLogEntry("Warning: fail to delete temporary zip file: " + zipForOSA.getAbsolutePath());
                     }
                     buildLogger.addBuildLogEntry("Temporary file deleted");
@@ -310,7 +310,7 @@ public class CheckmarxTask implements TaskType {
         try {
             //prepare sources to scan (zip them)
             buildLogger.addBuildLogEntry("Zipping sources");
-            zipTempFile = zipWorkspaceFolder(workDirectory, config.getFolderExclusions(), config.getFilterPattern(), MAX_ZIP_SIZE_BYTES);//TODO add the ENV expansion
+            zipTempFile = zipWorkspaceFolder(workDirectory, config.getFolderExclusions(), config.getFilterPattern(), MAX_ZIP_SIZE_BYTES, true);//TODO add the ENV expansion
 
             //send sources to scan
             byte[] zippedSources = getBytesFromZippedSources();
@@ -319,7 +319,7 @@ public class CheckmarxTask implements TaskType {
             projectStateLink = CxPluginHelper.composeProjectStateLink(url.toString(), createScanResponse.getProjectId());
             buildLogger.addBuildLogEntry("Scan created successfully. Link to project state: " + projectStateLink);
 
-            if(zipTempFile.exists() && !zipTempFile.delete()) {
+            if (zipTempFile.exists() && !zipTempFile.delete()) {
                 buildLogger.addBuildLogEntry("Warning: fail to delete temporary zip file: " + zipTempFile.getAbsolutePath());
             }
             buildLogger.addBuildLogEntry("Temporary file deleted");
@@ -340,10 +340,11 @@ public class CheckmarxTask implements TaskType {
         return checkoutLocations.entrySet().iterator().next().getValue();
     }
 
-    private File zipWorkspaceFolder(String baseZipDir, String folderExclusions, String filterPattern, long maxZipSizeInBytes) throws IOException, InterruptedException { //TODO handle exceptions
+    private File zipWorkspaceFolder(String baseZipDir, String folderExclusions, String filterPattern, long maxZipSizeInBytes, boolean writeToLog) throws IOException, InterruptedException { //TODO handle exceptions
         final String combinedFilterPattern = CxFolderPattern.generatePattern(folderExclusions, filterPattern, buildLogger);
         CxZip cxZip = new CxZip().setMaxZipSizeInBytes(maxZipSizeInBytes);
-        return cxZip.zipWorkspaceFolder(baseZipDir, combinedFilterPattern, buildLogger);
+        BuildLoggerAdapter buildLoggerAdapter = new BuildLoggerAdapter(null);
+        return cxZip.zipWorkspaceFolder(baseZipDir, combinedFilterPattern, buildLogger, writeToLog);
     }
 
     private LocalScanConfiguration generateScanConfiguration(byte[] zippedSources) {
@@ -412,13 +413,13 @@ public class CheckmarxTask implements TaskType {
     }
 
     private void printResultsToConsole(ScanResults scanResults) {
-        buildLogger.addBuildLogEntry("----------------------------Scan Results:-------------------------------");
+        buildLogger.addBuildLogEntry("----------------------------Checkmarx Scan Results(CxSAST):-------------------------------");
         buildLogger.addBuildLogEntry("High Severity Results: " + scanResults.getHighSeverityResults());
         buildLogger.addBuildLogEntry("Medium Severity Results: " + scanResults.getMediumSeverityResults());
         buildLogger.addBuildLogEntry("Low Severity Results: " + scanResults.getLowSeverityResults());
         buildLogger.addBuildLogEntry("Info Severity Results: " + scanResults.getInfoSeverityResults());
         buildLogger.addBuildLogEntry("Scan Results location: " + scanResultsUrl);
-        buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
+        buildLogger.addBuildLogEntry("------------------------------------------------------------------------------------------\n");
     }
 
     private void printOSAResultsToConsole(OSASummaryResults osaSummaryResults) {
@@ -441,7 +442,7 @@ public class CheckmarxTask implements TaskType {
         buildLogger.addBuildLogEntry("Non-vulnerable libraries: " + osaSummaryResults.getNonVulnerableLibraries());
         buildLogger.addBuildLogEntry("");
         buildLogger.addBuildLogEntry("OSA scan results location: " + projectStateLink.replace("Summary", "OSA"));
-        buildLogger.addBuildLogEntry("------------------------------------------------------------------------");
+        buildLogger.addBuildLogEntry("-----------------------------------------------------------------------------------------");
     }
 
     private boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults) throws TaskException { //TODO ask dor regards the taskException (without exception but with build.unSuccess())

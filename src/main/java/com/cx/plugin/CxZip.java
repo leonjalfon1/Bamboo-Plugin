@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.checkmarx.components.zipper.Zipper;
 import com.checkmarx.components.zipper.ZipListener;
+
 /**
  * CxZip encapsulates the workspace folder zipping
  */
@@ -24,20 +25,28 @@ public class CxZip {
     private String tempFileName = "CxZippedSource";
 
 
-    public File zipWorkspaceFolder(String baseDir, String filterPattern, final BuildLogger buildLogger)
+    public File zipWorkspaceFolder(String baseDir, String filterPattern, final BuildLogger buildLogger, boolean writeToLog)
             throws InterruptedException, IOException {
         if (baseDir == null || StringUtils.isEmpty(baseDir)) {
             throw new CxAbortException("Checkmarx Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
         }
         buildLogger.addBuildLogEntry("Zipping workspace: '" + baseDir + "'");
 
-        ZipListener zipListener = new ZipListener() {
-            public void updateProgress(String fileName, long size) {
-                numOfZippedFiles++;
-                buildLogger.addBuildLogEntry("Zipping (" + FileUtils.byteCountToDisplaySize(size) + "): " + fileName);
-            }
-        };
-
+        ZipListener zipListener;
+        if (writeToLog) {
+            zipListener = new ZipListener() {
+                public void updateProgress(String fileName, long size) {
+                    numOfZippedFiles++;
+                    buildLogger.addBuildLogEntry("Zipping (" + FileUtils.byteCountToDisplaySize(size) + "): " + fileName);
+                }
+            };
+        } else {
+            zipListener = new ZipListener() {
+                public void updateProgress(String fileName, long size) {
+                    numOfZippedFiles++;
+                }
+            };
+        }
         File tempFile = File.createTempFile(tempFileName, ".bin");
         OutputStream fileOutputStream = new FileOutputStream(tempFile);
 
