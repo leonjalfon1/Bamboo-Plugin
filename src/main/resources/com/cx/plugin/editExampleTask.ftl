@@ -1,41 +1,32 @@
 <style type="text/css" xmlns="http://www.w3.org/1999/html">
-    .field-group {
-        border-style: 1px solid;
-        border-color: black;
+
+    form.aui .description {
+        width: 90%;
     }
 
-    .center {
+    .cx.center {
         padding: 16px;
-        border: double 1px;
-        width: 69%;
+        border: solid 1px;
+        width: 90%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        min-width: 500px;
+        max-width: 650px;
+        box-sizing: border-box;
     }
 
-    .space {
-        height: 10px;
-    }
-
-    .afterRadio {
-        margin-top: -22px;
-    }
-
-    #radioGroupcostumeConfigurationServer, #radioGroupcostumeConfigurationControl, #radioGroupcostumeConfigurationCxSAST {
-        left: 200px;
-        top: -25px;
-    }
-
-    #radioGroupcostumeConfigurationServer + label, #radioGroupcostumeConfigurationControl + label, #radioGroupcostumeConfigurationCxSAST + label {
-        position: inherit;
-        top: -25px;
-        left: 200px
+    input#radioGroupcostumeConfigurationServer, input#radioGroupglobalConfigurationServer, input#radioGroupglobalConfigurationCxSAST, input#radioGroupcostumeConfigurationCxSAST, input#radioGroupglobalConfigurationControl, input#radioGroupcostumeConfigurationControl {
+        width: 14px;
     }
 
     form.aui.top-label .field-group > label {
-        display: block;
-        float: none;
-        margin: 9px 0 5px 0;
-        padding: 0;
-        text-align: left;
+        margin: 5px 0;
         font-weight: bold;
+    }
+
+    form.aui .radio {
+        width: 43%;
+        display: inline-block;
     }
 
     form.aui .checkbox > label, form.aui .radio > label {
@@ -43,13 +34,14 @@
         font-weight: bold;
     }
 
+
+    .aui-page-focused .aui-page-panel-content h3:not(.collapsible-header) {
+        margin-top: 0;
+    }
+
     h3 {
         color: #3b73af;
         font-size: 17px;
-        font-weight: bold;
-        line-height: 1.5;
-        text-transform: none;
-        margin: 5px 0 0 0;
     }
 
     form.aui .field-value {
@@ -74,34 +66,25 @@
         min-height: 12px;
     }
 
-    #test_connection {
-           margin-top: 12px;
-        margin-bottom: 35px;
-       }
-    #testConnectionMessage{
-        margin-top: -65px;
-        margin-left: 145px;
-        font-weight: bold;
-        margin-bottom: 10px;
+    .aui-button.test-connection {
+        margin: 10px 0;
     }
+
 
 </style
 
 <div class="field-group">
-    <div class="center">
+    <div class="cx center">
     [@ui.bambooSection title='Checkmarx Server' ]
-        [@ww.radio id = 'radioGroup' labelKey='' name='defaultCredentials' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
+        [@ww.radio id = 'radioGroup' name='defaultCredentials' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
 
-        <div class="afterRadio">
+
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='costumeConfigurationServer']
                 [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl" required='true'/]
                 [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
                 [@ww.password labelKey="password.label"  id="password" name="password" required='true' showPassword='true'/]
                 <button type="button" class="aui-button" id="test_connection">Test Connection</button>
-                <div id="testConnectionMessage">
-
-
-                </div>
+                <div id="testConnectionMessage"></div>
 
             [/@ui.bambooSection]
             [@ui.bambooSection dependsOn='defaultCredentials' showOn='globalConfigurationServer']
@@ -109,7 +92,6 @@
                 [@ww.label labelKey="userName.label" name="globalUserName" required='true'/]
                 [@ww.label type="password" labelKey="password.label"/]
             [/@ui.bambooSection]
-        </div>
 
         [@ww.textfield labelKey="projectName.label" name="projectName" required='true'/]
         [@ww.select labelKey="preset.label" name="presetId" id="presetListId" list="presetList" listKey="key" listValue="value" multiple="false"  cssClass="long-field" descriptionKey="preset.description"/]
@@ -119,13 +101,12 @@
 </div>
 
 
-<div class="space"></div>
 
 <div class="field-group">
-    <div class="center">
+    <div class="cx center">
     [@ui.bambooSection title='Checkmarx Scan CxSAST']
         [@ww.radio id = 'radioGroup' labelKey='' name='defaultCxSast' listKey='key' listValue='value' toggle='true' list=configurationModeTypesCxSAST /]
-        <div class="afterRadio">
+
             [@ui.bambooSection dependsOn='defaultCxSast' showOn='costumeConfigurationCxSAST']
                 [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
                 [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
@@ -138,20 +119,20 @@
             [@ww.label labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes" required='false'/]
         [/@ui.bambooSection]
 
-        </div>
+
         [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='false' /]
         [@ww.checkbox labelKey="generatePDFReport.label" name="generatePDFReport" toggle='false' descriptionKey='generatePDFReport.description'/]
     [/@ui.bambooSection]
     </div>
 </div>
 
-<div class="space"></div>
 
 <div class="field-group">
-    <div class="center">
+    <div class="cx center">
     [@ui.bambooSection title='Checkmarx Scan CxOSA']
-        <p>
-            <small>Open Source Analysis (OSA) helps you manage the security risk involved in using open
+        <p class="description">
+            <small>
+                Open Source Analysis (OSA) helps you manage the security risk involved in using open
                 source libraries in your applications
             </small>
         </p>
@@ -160,18 +141,16 @@
     </div>
 </div>
 
-<div class="space"></div>
 
 <div class="field-group">
-    <div class="center">
+    <div class="cx center">
     [@ui.bambooSection title='Control Checkmarx Scan']
-        <p>
+        <p  class="description">
             <small>Controls the scan mode (synchrnous or asynchronous) and the build results threshold.
                 The thresholds will define the minimal criteria to fail the build.
             </small>
         </p>
         [@ww.radio id = 'radioGroup' labelKey='' name='defaultScanControl' listKey='key' listValue='value' toggle='true' list=configurationModeTypesControl /]
-    <div class="afterRadio">
         [@ui.bambooSection dependsOn='defaultScanControl' showOn='costumeConfigurationControl']
             [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" descriptionKey="isSynchronous.description" toggle='true' /]
 
@@ -269,4 +248,4 @@
     <div>
     [/@ui.bambooSection]
     </div>
-    </div>
+
