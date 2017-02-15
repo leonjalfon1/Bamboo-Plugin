@@ -402,6 +402,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             validateNotEmpty(params, errorCollection, USER_NAME);
             validateNotEmpty(params, errorCollection, PASSWORD);
             validateNotEmpty(params, errorCollection, SERVER_URL);
+            validateUrl(params, errorCollection, SERVER_URL);
         }
 
         validateNotEmpty(params, errorCollection, PROJECT_NAME);
@@ -450,5 +451,16 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return StringUtils.defaultString(adminConfig.getSystemProperty(key));
     }
 
+    private void validateUrl(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
+        final String spec = params.getString(key);
+        try {
+            URL url = new URL(spec);
+            if (url.getPath().length() > 0) {
+                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
+            }
+        } catch (MalformedURLException e) {
+            errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
+        }
 
+    }
 }

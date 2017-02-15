@@ -34,7 +34,6 @@
         font-weight: bold;
     }
 
-
     .aui-page-focused .aui-page-panel-content h3:not(.collapsible-header) {
         margin-top: 0;
     }
@@ -78,20 +77,20 @@
     [@ui.bambooSection title='Checkmarx Server' ]
         [@ww.radio id = 'radioGroup' name='globalServerCredentials' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
 
-            [@ui.bambooSection dependsOn='globalServerCredentials' showOn='costumeConfigurationServer']
-                [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl"  required='true' /]
-                [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
-                [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true' required='true'/]
-                <button type="button" class="aui-button test-connection" id="test_connection">Test Connection</button>
+        [@ui.bambooSection dependsOn='globalServerCredentials' showOn='costumeConfigurationServer']
+            [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl"  required='true' /]
+            [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
+            [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true' required='true'/]
+            <button type="button" class="aui-button test-connection" id="test_connection">Test Connection</button>
             <div id="testConnectionMessage" class="test-connection-message"></div>
 
 
-            [/@ui.bambooSection]
-            [@ui.bambooSection dependsOn='globalServerCredentials' showOn='globalConfigurationServer']
-                [@ww.label labelKey="serverUrl.label" name="globalServerUrl"/]
-                [@ww.label labelKey="userName.label" name="globalUserName" /]
-                [@ww.label type="password" labelKey="password.label"/]
-            [/@ui.bambooSection]
+        [/@ui.bambooSection]
+        [@ui.bambooSection dependsOn='globalServerCredentials' showOn='globalConfigurationServer']
+            [@ww.label labelKey="serverUrl.label" name="globalServerUrl"/]
+            [@ww.label labelKey="userName.label" name="globalUserName" /]
+            [@ww.label type="password" labelKey="password.label"/]
+        [/@ui.bambooSection]
 
         [@ww.textfield labelKey="projectName.label" name="projectName" required='true' descriptionKey='projectName.description' /]
         [@ww.select labelKey="preset.label" name="presetId" id="presetListId" list="presetList" listKey="key" listValue="value" multiple="false"  cssClass="long-field" descriptionKey="preset.description"/]
@@ -101,23 +100,22 @@
 </div>
 
 
-
 <div class="field-group">
     <div class="cx center">
     [@ui.bambooSection title='Checkmarx Scan CxSAST']
         [@ww.radio id = 'radioGroup' labelKey='' name='globalCxSast' listKey='key' listValue='value' toggle='true' list=configurationModeTypesCxSAST /]
 
             [@ui.bambooSection dependsOn='globalCxSast' showOn='costumeConfigurationCxSAST']
-                [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
-                [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" descriptionKey='filterPatterns.description' cssClass="long-field"/]
-                [@ww.textfield labelKey="scanTimeoutInMinutes.label"  name="scanTimeoutInMinutes" required='false'/]
-            [/@ui.bambooSection]
+        [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
+        [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" descriptionKey='filterPatterns.description' cssClass="long-field"/]
+        [@ww.textfield labelKey="scanTimeoutInMinutes.label"  name="scanTimeoutInMinutes"/]
+    [/@ui.bambooSection]
 
         [@ui.bambooSection dependsOn='globalCxSast' showOn='globalConfigurationCxSAST']
-            [@ww.label labelKey="folderExclusions.label" name="globalFolderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
-            [@ww.label labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4" cssClass="long-field"/]
-            [@ww.label labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes" required='false'/]
-        [/@ui.bambooSection]
+        [@ww.label labelKey="folderExclusions.label" name="globalFolderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
+        [@ww.label labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4" cssClass="long-field"/]
+        [@ww.label labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes"/]
+    [/@ui.bambooSection]
 
 
         [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='false' /]
@@ -145,7 +143,7 @@
 <div class="field-group">
     <div class="cx center">
     [@ui.bambooSection title='Control Checkmarx Scan']
-        <p  class="description">
+        <p class="description">
             <small>Controls the scan mode (synchrnous or asynchronous) and the build results threshold.
                 The thresholds will define the minimal criteria to fail the build.
             </small>
@@ -159,30 +157,30 @@
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' /]
                 [@ui.bambooSection dependsOn='thresholdsEnabled' showOn='true']
 
-                    [@ww.textfield labelKey="highThreshold.label" name="highThreshold" required='false'/]
-                    [@ww.textfield labelKey="mediumThreshold.label" name="mediumThreshold" required='false'/]
-                    [@ww.textfield labelKey="lowThreshold.label" name="lowThreshold" required='false'/]
+                    [@ww.textfield labelKey="highThreshold.label" name="highThreshold"/]
+                    [@ww.textfield labelKey="mediumThreshold.label" name="mediumThreshold"/]
+                    [@ww.textfield labelKey="lowThreshold.label" name="lowThreshold" /]
                 [/@ui.bambooSection]
 
                 [@ui.bambooSection dependsOn='thresholdsEnabled' showOn='false']
-                    [@ww.label labelKey="highThreshold.label" required='false'/]
-                    [@ww.label labelKey="mediumThreshold.label"  required='false'/]
-                    [@ww.label labelKey="lowThreshold.label" required='false'/]
+                    [@ww.label labelKey="highThreshold.label"/]
+                    [@ww.label labelKey="mediumThreshold.label" /]
+                    [@ww.label labelKey="lowThreshold.label"/]
                 [/@ui.bambooSection]
 
                 [@ui.bambooSection dependsOn='osaEnabled' showOn='true']
                     [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' /]
 
                     [@ui.bambooSection dependsOn='osaThresholdsEnabled' showOn='true']
-                        [@ww.textfield labelKey="highThreshold.label" name="osaHighThreshold"required='false'/]
-                        [@ww.textfield labelKey="mediumThreshold.label" name="osaMediumThreshold" required='false'/]
-                        [@ww.textfield labelKey="lowThreshold.label" name="osaLowThreshold" required='false'/]
+                        [@ww.textfield labelKey="highThreshold.label" name="osaHighThreshold"/]
+                        [@ww.textfield labelKey="mediumThreshold.label" name="osaMediumThreshold"/]
+                        [@ww.textfield labelKey="lowThreshold.label" name="osaLowThreshold" /]
                     [/@ui.bambooSection]
 
                     [@ui.bambooSection dependsOn='osaThresholdsEnabled' showOn='false']
-                        [@ww.label labelKey="highThreshold.label" required='false'/]
-                        [@ww.label labelKey="mediumThreshold.label"  required='false'/]
-                        [@ww.label labelKey="lowThreshold.label"  required='false'/]
+                        [@ww.label labelKey="highThreshold.label" /]
+                        [@ww.label labelKey="mediumThreshold.label" /]
+                        [@ww.label labelKey="lowThreshold.label"  /]
                     [/@ui.bambooSection]
 
                 [/@ui.bambooSection]
@@ -190,9 +188,9 @@
                 [@ui.bambooSection dependsOn='osaEnabled' showOn='false']
                     [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' /]
 
-                    [@ww.label labelKey="highThreshold.label" required='false'/]
-                    [@ww.label labelKey="mediumThreshold.label"  required='false'/]
-                    [@ww.label labelKey="lowThreshold.label"  required='false'/]
+                    [@ww.label labelKey="highThreshold.label"/]
+                    [@ww.label labelKey="mediumThreshold.label"/]
+                    [@ww.label labelKey="lowThreshold.label"  /]
 
                 [/@ui.bambooSection]
 
@@ -200,13 +198,13 @@
 
             [@ui.bambooSection dependsOn='isSynchronous' showOn='false']
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' /]
-                [@ww.label labelKey="highThreshold.label" required='false'/]
-                [@ww.label labelKey="mediumThreshold.label"  required='false'/]
-                [@ww.label labelKey="lowThreshold.label" required='false'/]
+                [@ww.label labelKey="highThreshold.label"/]
+                [@ww.label labelKey="mediumThreshold.label"  /]
+                [@ww.label labelKey="lowThreshold.label" /]
                 [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' /]
-                [@ww.label labelKey="highThreshold.label" required='false'/]
-                [@ww.label labelKey="mediumThreshold.label"  required='false'/]
-                [@ww.label labelKey="lowThreshold.label"  required='false'/]
+                [@ww.label labelKey="highThreshold.label" /]
+                [@ww.label labelKey="mediumThreshold.label" /]
+                [@ww.label labelKey="lowThreshold.label" /]
             [/@ui.bambooSection]
 
         [/@ui.bambooSection]
@@ -218,9 +216,28 @@
                 [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='true' /]
                 [#if context.get("globalThresholdsEnabled")?has_content]
                     [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='true' /]
+                    [@ww.label labelKey="highThreshold.label" name="globalHighThreshold" /]
+                    [@ww.label labelKey="mediumThreshold.label" name="globalMediumThreshold" /]
+                    [@ww.label labelKey="lowThreshold.label" name="globalLowThreshold" /]
                 [#else]
                     [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" /]
+                    [@ww.label labelKey="highThreshold.label"/]
+                    [@ww.label labelKey="mediumThreshold.label"/]
+                    [@ww.label labelKey="lowThreshold.label"/]
                 [/#if]
+                [#if context.get("osaThresholdsEnabled")?has_content]
+                    [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='true' /]
+                    [@ww.label labelKey="highThreshold.label" name="globalOsaHighThreshold"/]
+                    [@ww.label labelKey="mediumThreshold.label" name="globalOsaMediumThreshold" /]
+                    [@ww.label labelKey="lowThreshold.label" name="globalOsaLowThreshold" /]
+                [#else]
+                    [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" /]
+                    [@ww.label labelKey="highThreshold.label" /]
+                    [@ww.label labelKey="mediumThreshold.label" /]
+                    [@ww.label labelKey="lowThreshold.label"/]
+                [/#if]
+
+
             [#else]
                 [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='false'/]
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
@@ -228,19 +245,8 @@
 
 
 
-            [@ww.label labelKey="highThreshold.label" name="globalHighThreshold" required='false'/]
-            [@ww.label labelKey="mediumThreshold.label" name="globalMediumThreshold" required='false'/]
-            [@ww.label labelKey="lowThreshold.label" name="globalLowThreshold" required='false'/]
 
-            [#if context.get("osaThresholdsEnabled")?has_content]
-                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='true' /]
-            [#else]
-                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" /]
-            [/#if]
 
-            [@ww.label labelKey="highThreshold.label" name="globalOsaHighThreshold"required='false'/]
-            [@ww.label labelKey="mediumThreshold.label" name="globalOsaMediumThreshold" required='false'/]
-            [@ww.label labelKey="lowThreshold.label" name="globalOsaLowThreshold" required='false'/]
 
 
         [/@ui.bambooSection]
