@@ -225,7 +225,7 @@
                     [@ww.label labelKey="mediumThreshold.label"/]
                     [@ww.label labelKey="lowThreshold.label"/]
                 [/#if]
-                [#if context.get("osaThresholdsEnabled")?has_content]
+                [#if context.get("globalOsaThresholdsEnabled")?has_content]
                     [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='true' /]
                     [@ww.label labelKey="highThreshold.label" name="globalOsaHighThreshold"/]
                     [@ww.label labelKey="mediumThreshold.label" name="globalOsaMediumThreshold" /]
