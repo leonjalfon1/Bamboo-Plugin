@@ -37,7 +37,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private static Map<String, String> presetList = new HashMap<String, String>();
     private static Map<String, String> teamPathList = new HashMap<String, String>();
     private CxClientService cxClientService = null;
-    private final static String DEFAULT_SETTING_LABEL = "Use Default Setting";
+    private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
     private final static String SPECIFIC_SETTING_LABEL = "Specific Task Setting";
     private final static String DEFAULT_SERVER_URL = "http://";
     private final static String NO_PRESET_MESSAGE = "Provide the correct Checkmarx server credentials to see presets list";
@@ -74,7 +74,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
 
         config.put(OSA_ENABLED, params.getString(OSA_ENABLED));
-        config.put(IS_INCREMENTAL_SCAN, params.getString(IS_INCREMENTAL_SCAN));
+        config.put(IS_INCREMENTAL, params.getString(IS_INCREMENTAL));
         config.put(IS_SYNCHRONOUS, params.getString(IS_SYNCHRONOUS));
 
         //save 'CxSAST Scan' fields
@@ -100,7 +100,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         populateCxSASTFields(context, null, true);
 
-        context.put(IS_INCREMENTAL_SCAN, OPTION_FALSE);
+        context.put(IS_INCREMENTAL, OPTION_FALSE);
         populateScanControlFields(context, null, true);
 
         context.put(IS_SYNCHRONOUS, OPTION_TRUE);
@@ -150,7 +150,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         populateCredentialsFieldsForEdit(context, configMap);
 
         populateCxSASTFields(context, configMap, false);
-        context.put(IS_INCREMENTAL_SCAN, configMap.get(IS_INCREMENTAL_SCAN));
+        context.put(IS_INCREMENTAL, configMap.get(IS_INCREMENTAL));
         context.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         context.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
 
@@ -224,7 +224,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             context.put(OSA_MEDIUM_THRESHOLD, getAdminConfig(GLOBAL_OSA_MEDIUM_THRESHOLD));
             context.put(OSA_LOW_THRESHOLD, getAdminConfig(GLOBAL_OSA_LOW_THRESHOLD));
         } else {
-            context.put(GLOBAL_SCAN_CONTROL, COSTUME_CONFIGURATION_CONTROL);
+            context.put(GLOBAL_SCAN_CONTROL, configMap.get(GLOBAL_SCAN_CONTROL));
             context.put(IS_SYNCHRONOUS, configMap.get(IS_SYNCHRONOUS));
             context.put(THRESHOLDS_ENABLED, configMap.get(THRESHOLDS_ENABLED));
             context.put(HIGH_THRESHOLD, configMap.get(HIGH_THRESHOLD));
@@ -433,7 +433,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!StringUtils.isEmpty(value)) {
             try {
                 int num = Integer.parseInt(value);
-                if (num >= 0) {
+                if (num > 0) {
                     return;
                 }
                 errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".notPositive"));

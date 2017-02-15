@@ -258,7 +258,7 @@ public class CheckmarxTask implements TaskType {
             configurationMap.put(FILTER_PATTERN, getAdminConfig(GLOBAL_FILTER_PATTERN));
             configurationMap.put(SCAN_TIMEOUT_IN_MINUTES, getAdminConfig(GLOBAL_SCAN_TIMEOUT_IN_MINUTES));
         }
-        configurationMap.put(IS_INCREMENTAL_SCAN, configMap.get(IS_INCREMENTAL_SCAN));
+        configurationMap.put(IS_INCREMENTAL, configMap.get(IS_INCREMENTAL));
         configurationMap.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         configurationMap.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
 
@@ -377,7 +377,7 @@ public class CheckmarxTask implements TaskType {
         ret.setClientOrigin(ClientOrigin.BAMBOO);
         ret.setFolderExclusions(config.getFolderExclusions());
         ret.setFullTeamPath(config.getFullTeamPath());
-        ret.setIncrementalScan(config.isIncrementalScan());
+        ret.setIncrementalScan(config.isIncremental());
         ret.setPresetId(config.getPresetId());
         ret.setZippedSources(zippedSources);
         ret.setFileName(config.getProjectName());
@@ -408,7 +408,7 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("scanTimeoutInMinutes: " + (config.getScanTimeoutInMinutes() <= 0 ? "" : config.getScanTimeoutInMinutes()));
         buildLoggerAdapter.info("fullTeamPath: " + config.getFullTeamPath());
         buildLoggerAdapter.info("preset: " + config.getPresetName());
-        buildLoggerAdapter.info("isIncrementalScan: " + config.isIncrementalScan());
+        buildLoggerAdapter.info("isIncrementalScan: " + config.isIncremental());
         buildLoggerAdapter.info("folderExclusions: " + (config.getFolderExclusions()));
         buildLoggerAdapter.info("isSynchronous: " + config.isSynchronous());
         buildLoggerAdapter.info("generatePDFReport: " + config.isGeneratePDFReport());

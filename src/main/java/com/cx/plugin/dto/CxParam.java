@@ -14,7 +14,7 @@ public class CxParam {
     public static final String TEAM_PATH_NAME = "teamPathName";
     public static final String PRESET_ID = "presetId";
     public static final String PRESET_NAME = "presetName";
-    public static final String IS_INCREMENTAL_SCAN = "isIncrementalScan";
+    public static final String IS_INCREMENTAL = "isIncremental";
     public static final String FOLDER_EXCLUSION = "folderExclusions";
     public static final String IS_SYNCHRONOUS = "isSynchronous";
     public static final String GENERATE_PDF_REPORT = "generatePDFReport";

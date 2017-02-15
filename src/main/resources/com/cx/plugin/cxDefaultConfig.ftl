@@ -101,9 +101,9 @@
 [@ww.form action="checkmarxDefaultConfiguration!save.action" method="post" submitLabelKey="cxDefaultConfigSubmit.label" titleKey="cxDefaultConfigTitle.label"]
 <div class="cx-field-group">
     [@ui.bambooSection title='Checkmarx Server' ]
-        [@ww.textfield labelKey="defaultServerUrl.label" name="globalServerUrl" cssClass="long-field"/]
-            [@ww.textfield labelKey="defaultUserName.label" name="globalUserName"  cssClass="long-field"/]
-            [@ww.password labelKey="defaultPassword.label" name="globalPassword" showPassword='true' cssClass="long-field"/]
+        [@ww.textfield labelKey="serverUrl.label" name="globalServerUrl" cssClass="long-field"/]
+            [@ww.textfield labelKey="userName.label" name="globalUserName"  cssClass="long-field"/]
+            [@ww.password labelKey="password.label" name="globalPassword" showPassword='true' cssClass="long-field"/]
         [/@ui.bambooSection]
 </div>
 

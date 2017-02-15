@@ -55,7 +55,8 @@ public class CxDefaultConfig extends GlobalAdminAction {
         }
 
         globalScanTimeoutInMinutes = adminConfig.getSystemProperty(GLOBAL_SCAN_TIMEOUT_IN_MINUTES);
-        globalIsSynchronous = adminConfig.getSystemProperty(GLOBAL_IS_SYNCHRONOUS);
+        String isSyn = adminConfig.getSystemProperty(GLOBAL_IS_SYNCHRONOUS);
+        globalIsSynchronous = isSyn ==null? "true": isSyn ;
         globalThresholdsEnabled = adminConfig.getSystemProperty(GLOBAL_THRESHOLDS_ENABLED);
         globalHighThreshold = adminConfig.getSystemProperty(GLOBAL_HIGH_THRESHOLD);
         globalMediumThreshold = adminConfig.getSystemProperty(GLOBAL_MEDIUM_THRESHOLD);

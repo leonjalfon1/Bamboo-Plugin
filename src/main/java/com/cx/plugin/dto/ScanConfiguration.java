@@ -33,7 +33,7 @@ public class ScanConfiguration {
      * Set to 0 to run the scan with no time limit.
      */
     private Integer scanTimeoutInMinutes;
-    private boolean isIncrementalScan = false;
+    private boolean isIncremental = false;
     private boolean isSynchronous = false;
     private boolean thresholdsEnabled = false;
     @Nullable
@@ -78,7 +78,7 @@ public class ScanConfiguration {
         setFilterPattern(configurationMap.get(CxParam.FILTER_PATTERN));
 
         setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
-        setIncrementalScan(Boolean.parseBoolean(configurationMap.get(CxParam.IS_INCREMENTAL_SCAN)));
+        setIncremental(Boolean.parseBoolean(configurationMap.get(CxParam.IS_INCREMENTAL)));
         setSynchronous(Boolean.parseBoolean(configurationMap.get(CxParam.IS_SYNCHRONOUS)));
         setThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(CxParam.THRESHOLDS_ENABLED)));
         setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD));
@@ -148,12 +148,12 @@ public class ScanConfiguration {
         }
     }
 
-    public boolean isIncrementalScan() {
-        return isIncrementalScan;
+    public boolean isIncremental() {
+        return isIncremental;
     }
 
-    public void setIncrementalScan(boolean incrementalScan) {
-        isIncrementalScan = incrementalScan;
+    public void setIncremental(boolean incremental) {
+        isIncremental = incremental;
     }
 
     public boolean isSynchronous() {
