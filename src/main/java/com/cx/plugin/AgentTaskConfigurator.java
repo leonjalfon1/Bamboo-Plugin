@@ -121,7 +121,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     private void populateCredentialsFieldsForCreate(final Map<String, Object> context) {
-        String cxServerUrl = getAdminConfig(GLOBAL_SERVER_URL);//TODO check for null after install/uninstall
+        String cxServerUrl = getAdminConfig(GLOBAL_SERVER_URL);
         String cxUser = getAdminConfig(GLOBAL_USER_NAME);
         String cxPass = getAdminConfig(GLOBAL_PASSWORD);
 

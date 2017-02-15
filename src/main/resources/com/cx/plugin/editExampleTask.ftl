@@ -79,9 +79,9 @@
         [@ww.radio id = 'radioGroup' name='globalServerCredentials' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
 
             [@ui.bambooSection dependsOn='globalServerCredentials' showOn='costumeConfigurationServer']
-                [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl" /]
-                [@ww.textfield labelKey="userName.label"  id="userName" name="userName"/]
-                [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true'/]
+                [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl"  required='true' /]
+                [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
+                [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true' required='true'/]
                 <button type="button" class="aui-button test-connection" id="test_connection">Test Connection</button>
             <div id="testConnectionMessage" class="test-connection-message"></div>
 
