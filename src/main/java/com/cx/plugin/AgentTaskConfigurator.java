@@ -250,7 +250,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private void populateTeamAndPresetFields(final String serverUrl, final String userName, final String password, String preset, String teamPath, @NotNull final Map<String, Object> context) {
         try {
             //the method initialized the CxClient service
-            if (tryLogin(userName, password, serverUrl, cxClientService)) {
+            if (tryLogin(userName, password, serverUrl)) {
 
                 presetList = convertPresetType(cxClientService.getPresetList());
                 context.put(PRESET_LIST, presetList);
@@ -326,7 +326,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     //the method initialized the CxClient service
-    private boolean tryLogin(String userName, String cxPass, String serverUrl, CxClientService cxClientService) {
+    private boolean tryLogin(String userName, String cxPass, String serverUrl) {
         log.debug("tryLogin: server URL: " + serverUrl + " username" + userName);
 
         if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(userName) && !StringUtils.isEmpty(cxPass)) {

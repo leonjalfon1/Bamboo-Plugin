@@ -236,17 +236,11 @@
                     [@ww.label labelKey="mediumThreshold.label" /]
                     [@ww.label labelKey="lowThreshold.label"/]
                 [/#if]
-
-
             [#else]
+
                 [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='false'/]
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
             [/#if]
-
-
-
-
-
 
 
         [/@ui.bambooSection]

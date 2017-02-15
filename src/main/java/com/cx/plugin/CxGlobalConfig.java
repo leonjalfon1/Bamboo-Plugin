@@ -16,13 +16,13 @@ import static com.cx.plugin.dto.CxParam.*;
 
 
 /**
- * CxDefaultConfig is a GlobalAdminAction that populates cxDefaultConfig.ftl and handles the incoming data from it
+ * CxGlobalConfig is a GlobalAdminAction that populates cxGlobalConfig.ftl and handles the incoming data from it
  * <p>
  * It is being activated through the Bamboo framework,
  * as configured under checkmarx-default-config-xwork in atlassian-plugin.xml
  */
 
-public class CxDefaultConfig extends GlobalAdminAction {
+public class CxGlobalConfig extends GlobalAdminAction {
     private String globalServerUrl;
     private String globalUserName;
     private String globalPassword;

@@ -16,17 +16,17 @@
         <category name="test"/>
         <configuration class="com.cx.plugin.AgentTaskConfigurator"/>
         <resource type="freemarker" name="edit" location="/com/cx/plugin/editExampleTask.ftl"/>
-        <resource type="freemarker" name="view" location="/com/cx/plugin/viewExampleTask.ftl"/>
+        <resource type="freemarker" name="view" location="/com/cx/plugin/editExampleTask.ftl"/>
         <resource type="download" name="icon" location="/images/TaskIcon.png"/>
     </taskType>
 
 
     <xwork key="checkmarx-default-config-xwork" name="Checkmarx Default Configuration XWork">
         <package name="checkmarxDefaultConfigurationPackage" extends="admin">
-            <action name="checkmarxDefaultConfiguration" class="com.cx.plugin.CxDefaultConfig">
-                <result name="input" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
-                <result name="error" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
-                <result name="success" type="freemarker">/com/cx/plugin/cxDefaultConfig.ftl</result>
+            <action name="checkmarxDefaultConfiguration" class="com.cx.plugin.CxGlobalConfig">
+                <result name="input" type="freemarker">/com/cx/plugin/cxGlobalConfig.ftl</result>
+                <result name="error" type="freemarker">/com/cx/plugin/cxGlobalConfig.ftl</result>
+                <result name="success" type="freemarker">/com/cx/plugin/cxGlobalConfig.ftl</result>
             </action>
 
         </package>
