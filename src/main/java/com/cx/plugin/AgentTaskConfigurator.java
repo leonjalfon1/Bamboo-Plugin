@@ -19,7 +19,6 @@ import com.checkmarx.v7.Group;
 import com.cx.client.CxClientService;
 import com.cx.client.CxClientServiceImpl;
 import com.cx.client.exception.CxClientException;
-import com.cx.plugin.dto.ValueComparator;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +33,8 @@ import java.util.*;
 import static com.cx.plugin.dto.CxParam.*;
 
 public class AgentTaskConfigurator extends AbstractTaskConfigurator {
-    private static Map<String, String> presetList = new HashMap<String, String>();
-    private static Map<String, String> teamPathList = new HashMap<String, String>();
+    private static LinkedHashMap <String, String> presetList = new LinkedHashMap <String, String>();
+    private static LinkedHashMap <String, String> teamPathList = new LinkedHashMap <String, String>();
     private CxClientService cxClientService = null;
     private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
     private final static String SPECIFIC_SETTING_LABEL = "Specific Task Setting";
@@ -347,30 +346,23 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return false;
     }
 
-    private Map<String, String> convertPresetType(List<com.checkmarx.v7.Preset> oldType) {
-        HashMap<String, String> newType = new HashMap<String, String>();
+    private LinkedHashMap <String, String> convertPresetType(List<com.checkmarx.v7.Preset> oldType) {
+        LinkedHashMap <String, String> newType = new LinkedHashMap <String, String>();
         for (com.checkmarx.v7.Preset preset : oldType) {
             newType.put(Long.toString(preset.getID()), preset.getPresetName());
         }
 
-        return sortMap(newType);
+        return newType;
     }
 
-    private Map<String, String> convertTeamPathType(ArrayOfGroup oldType) {
-        HashMap<String, String> newType = new HashMap<String, String>();
+    private LinkedHashMap<String, String> convertTeamPathType(ArrayOfGroup oldType) {
+        LinkedHashMap <String, String> newType = new LinkedHashMap <String, String>();
         for (Group group : oldType.getGroup()) {
             newType.put(group.getID(), group.getGroupName());
         }
-        return sortMap(newType);
+        return newType;
     }
 
-    private Map<String, String> sortMap(HashMap<String, String> unsortedMap) {
-        Comparator<String> comparator2 = new ValueComparator<String, String>(unsortedMap);
-        TreeMap<String, String> sortedMap = new TreeMap<String, String>(comparator2);
-        sortedMap.putAll(unsortedMap);
-
-        return sortedMap;
-    }
 
     private String encrypt(String password) {
         String encPass;
