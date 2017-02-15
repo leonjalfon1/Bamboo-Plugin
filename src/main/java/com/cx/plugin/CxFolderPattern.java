@@ -1,6 +1,5 @@
 package com.cx.plugin;
 
-import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.util.concurrent.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,7 +11,7 @@ import java.io.IOException;
  */
 
 class CxFolderPattern {
-     static String generatePattern(String folderExclusions, String filterPattern, BuildLogger buildLogger) throws IOException, InterruptedException {
+    static String generatePattern(String folderExclusions, String filterPattern, BuildLoggerAdapter buildLogger) throws IOException, InterruptedException {
 
         String excludeFoldersPattern = processExcludeFolders(folderExclusions, buildLogger);
 
@@ -29,7 +28,7 @@ class CxFolderPattern {
 
 
     @NotNull
-    private static String processExcludeFolders(String folderExclusions, BuildLogger buildLogger) {
+    private static String processExcludeFolders(String folderExclusions, BuildLoggerAdapter buildLogger) {
         if (StringUtils.isEmpty(folderExclusions)) {
             return "";
         }
@@ -43,7 +42,7 @@ class CxFolderPattern {
                 result.append("/**/*, ");
             }
         }
-        buildLogger.addBuildLogEntry("Exclude folders converted to: '" + result.toString() + "'");
+        buildLogger.info("Exclude folders converted to: '" + result.toString() + "'");
         return result.toString();
     }
 }

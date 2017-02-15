@@ -1,12 +1,8 @@
 package com.cx.plugin.dto;
 
-import com.atlassian.bamboo.configuration.ConfigurationMap;
-import com.atlassian.bamboo.security.EncryptionException;
-import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import org.hsqldb.lib.StringUtil;
 
 import javax.annotation.Nullable;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashMap;
 
 /**
@@ -27,7 +23,7 @@ public class ScanConfiguration {
      * The name of the project being scanned.
      */
     private String projectName;
-    private String presetId;
+    private long presetId;
     private String presetName;
     private String fullTeamPath;
     private String folderExclusions;
@@ -68,30 +64,30 @@ public class ScanConfiguration {
      */
     private Integer osaLowThreshold;
 
+
     /**********   C-tor   ***************/
     public ScanConfiguration(HashMap<String, String> configurationMap) {
         setUsername(configurationMap.get(CxParam.USER_NAME));
-        String cxPass = configurationMap.get(CxParam.PASSWORD);
-        setPassword(cxPass);
+        setPassword(configurationMap.get(CxParam.PASSWORD));
         setUrl(configurationMap.get(CxParam.SERVER_URL));
-        setProjectName(configurationMap.get(CxParam.PROJECT_NAME));//TODO
-        setPresetId(configurationMap.get(CxParam.PRESET_ID));
+        setProjectName(configurationMap.get(CxParam.PROJECT_NAME));
+        setPresetId(Long.parseLong(configurationMap.get(CxParam.PRESET_ID)));
         setPresetName(configurationMap.get(CxParam.PRESET_NAME));
         setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME));
         setFolderExclusions(configurationMap.get(CxParam.FOLDER_EXCLUSION));
         setFilterPattern(configurationMap.get(CxParam.FILTER_PATTERN));
 
         setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
-        setIncrementalScan(getAsBoolean(configurationMap.get(CxParam.IS_INCREMENTAL_SCAN)));
-        setSynchronous(getAsBoolean(configurationMap.get(CxParam.IS_SYNCHRONOUS)));//TODO value as boolean/Int
-        setThresholdsEnabled(getAsBoolean(configurationMap.get(CxParam.THRESHOLDS_ENABLED)));
+        setIncrementalScan(Boolean.parseBoolean(configurationMap.get(CxParam.IS_INCREMENTAL_SCAN)));
+        setSynchronous(Boolean.parseBoolean(configurationMap.get(CxParam.IS_SYNCHRONOUS)));
+        setThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(CxParam.THRESHOLDS_ENABLED)));
         setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD));
         setMediumThreshold(configurationMap.get(CxParam.MEDIUM_THRESHOLD));
         setLowThreshold(configurationMap.get(CxParam.LOW_THRESHOLD));
-        setGeneratePDFReport(getAsBoolean(configurationMap.get(CxParam.GENERATE_PDF_REPORT)));
+        setGeneratePDFReport(Boolean.parseBoolean(configurationMap.get(CxParam.GENERATE_PDF_REPORT)));
 
-        setOsaEnabled(getAsBoolean(configurationMap.get(CxParam.OSA_ENABLED)));
-        setOsaThresholdsEnabled(getAsBoolean(configurationMap.get(CxParam.OSA_THRESHOLDS_ENABLED)));
+        setOsaEnabled(Boolean.parseBoolean(configurationMap.get(CxParam.OSA_ENABLED)));
+        setOsaThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(CxParam.OSA_THRESHOLDS_ENABLED)));
         setOsaHighSeveritiesThreshold(configurationMap.get(CxParam.OSA_HIGH_THRESHOLD));
         setOsaMediumSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD));
         setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_LOW_THRESHOLD));
@@ -131,11 +127,11 @@ public class ScanConfiguration {
         this.projectName = projectName;
     }
 
-    public String getPresetId() {
+    public long getPresetId() {
         return presetId;
     }
 
-    public void setPresetId(String presetId) {
+    public void setPresetId(long presetId) {
         this.presetId = presetId;
     }
 
@@ -143,8 +139,13 @@ public class ScanConfiguration {
         return scanTimeoutInMinutes;
     }
 
-     public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
-        this.scanTimeoutInMinutes = getAsInteger(scanTimeoutInMinutes);
+    public void setScanTimeoutInMinutes(String scanTimeoutInMinutes) {
+        Integer i = getAsInteger(scanTimeoutInMinutes);
+        if (i == null) {
+            this.scanTimeoutInMinutes = 0;
+        } else {
+            this.scanTimeoutInMinutes = i;
+        }
     }
 
     public boolean isIncrementalScan() {
@@ -291,24 +292,16 @@ public class ScanConfiguration {
         this.osaLowThreshold = getAsInteger(osaLowSeveritiesThreshold);
     }
 
-    private Integer getAsInteger(String number) { //TODO change to the builtin method
+    private Integer getAsInteger(String number) {
         Integer inti = null;
         try {
-            if (number != null && !StringUtil.isEmpty(number)) {
+            if (!StringUtil.isEmpty(number)) {
                 inti = Integer.parseInt(number);
             }
         } catch (NumberFormatException e) {
             inti = null;
         }
         return inti;
-    }
-
-    private boolean getAsBoolean(String bool) {
-        boolean ret = false;
-        if (bool != null && !StringUtil.isEmpty(bool)) {
-            ret = Boolean.parseBoolean(bool);
-        }
-        return ret;
     }
 
     public String getPresetName() {

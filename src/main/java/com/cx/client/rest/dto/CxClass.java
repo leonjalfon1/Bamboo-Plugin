@@ -1,4 +1,4 @@
-package com.cx.plugin.dto;
+package com.cx.client.rest.dto;
 
 /**
  * Created by galn on 12/02/2017.

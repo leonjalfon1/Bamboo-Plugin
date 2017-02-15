@@ -11,7 +11,7 @@
         margin-top: 10px;
         margin-bottom: 10px;
         min-width: 500px;
-        max-width: 650px;
+        max-width: 820px;
         box-sizing: border-box;
     }
 
@@ -76,26 +76,24 @@
 <div class="field-group">
     <div class="cx center">
     [@ui.bambooSection title='Checkmarx Server' ]
-        [@ww.radio id = 'radioGroup' name='defaultCredentials' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
+        [@ww.radio id = 'radioGroup' name='globalServerCredentials' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
 
-
-            [@ui.bambooSection dependsOn='defaultCredentials' showOn='costumeConfigurationServer']
-                [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl" required='true'/]
-                [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
-                [@ww.password labelKey="password.label"  id="password" name="password" required='true' showPassword='true'/]
-              [#--  <button type="button" class="aui-button" id="test_connection">Test Connection</button>--]
+            [@ui.bambooSection dependsOn='globalServerCredentials' showOn='costumeConfigurationServer']
+                [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl" /]
+                [@ww.textfield labelKey="userName.label"  id="userName" name="userName"/]
+                [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true'/]
                 <button type="button" class="aui-button test-connection" id="test_connection">Test Connection</button>
             <div id="testConnectionMessage" class="test-connection-message"></div>
-              [#--  <div id="testConnectionMessage"></div>--]
+
 
             [/@ui.bambooSection]
-            [@ui.bambooSection dependsOn='defaultCredentials' showOn='globalConfigurationServer']
-                [@ww.label labelKey="serverUrl.label" name="globalServerUrl" required='true'/]
-                [@ww.label labelKey="userName.label" name="globalUserName" required='true'/]
+            [@ui.bambooSection dependsOn='globalServerCredentials' showOn='globalConfigurationServer']
+                [@ww.label labelKey="serverUrl.label" name="globalServerUrl"/]
+                [@ww.label labelKey="userName.label" name="globalUserName" /]
                 [@ww.label type="password" labelKey="password.label"/]
             [/@ui.bambooSection]
 
-        [@ww.textfield labelKey="projectName.label" name="projectName" required='true'/]
+        [@ww.textfield labelKey="projectName.label" name="projectName" required='true' descriptionKey='projectName.description' /]
         [@ww.select labelKey="preset.label" name="presetId" id="presetListId" list="presetList" listKey="key" listValue="value" multiple="false"  cssClass="long-field" descriptionKey="preset.description"/]
         [@ww.select labelKey="teamPath.label" name="teamPathId" id="teamPathListId" list="teamPathList" listKey="key" listValue="value" multiple="false"  cssClass="long-field" descriptionKey="teamPath.description"/]
     [/@ui.bambooSection]
@@ -107,15 +105,15 @@
 <div class="field-group">
     <div class="cx center">
     [@ui.bambooSection title='Checkmarx Scan CxSAST']
-        [@ww.radio id = 'radioGroup' labelKey='' name='defaultCxSast' listKey='key' listValue='value' toggle='true' list=configurationModeTypesCxSAST /]
+        [@ww.radio id = 'radioGroup' labelKey='' name='globalCxSast' listKey='key' listValue='value' toggle='true' list=configurationModeTypesCxSAST /]
 
-            [@ui.bambooSection dependsOn='defaultCxSast' showOn='costumeConfigurationCxSAST']
+            [@ui.bambooSection dependsOn='globalCxSast' showOn='costumeConfigurationCxSAST']
                 [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
-                [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" cssClass="long-field"/]
-                [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="scanTimeoutInMinutes" required='false'/]
+                [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" descriptionKey='filterPatterns.description' cssClass="long-field"/]
+                [@ww.textfield labelKey="scanTimeoutInMinutes.label"  name="scanTimeoutInMinutes" required='false'/]
             [/@ui.bambooSection]
 
-        [@ui.bambooSection dependsOn='defaultCxSast' showOn='globalConfigurationCxSAST']
+        [@ui.bambooSection dependsOn='globalCxSast' showOn='globalConfigurationCxSAST']
             [@ww.label labelKey="folderExclusions.label" name="globalFolderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
             [@ww.label labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4" cssClass="long-field"/]
             [@ww.label labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes" required='false'/]
@@ -152,8 +150,8 @@
                 The thresholds will define the minimal criteria to fail the build.
             </small>
         </p>
-        [@ww.radio id = 'radioGroup' labelKey='' name='defaultScanControl' listKey='key' listValue='value' toggle='true' list=configurationModeTypesControl /]
-        [@ui.bambooSection dependsOn='defaultScanControl' showOn='costumeConfigurationControl']
+        [@ww.radio id = 'radioGroup' name='globalScanControl' listKey='key' listValue='value' toggle='true' list=configurationModeTypesControl /]
+        [@ui.bambooSection dependsOn='globalScanControl' showOn='costumeConfigurationControl']
             [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" descriptionKey="isSynchronous.description" toggle='true' /]
 
 
@@ -215,7 +213,7 @@
 
 
 
-        [@ui.bambooSection dependsOn='defaultScanControl' showOn='globalConfigurationControl']
+        [@ui.bambooSection dependsOn='globalScanControl' showOn='globalConfigurationControl']
             [#if context.get("globalIsSynchronous")?has_content]
                 [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='true' /]
                 [#if context.get("globalThresholdsEnabled")?has_content]

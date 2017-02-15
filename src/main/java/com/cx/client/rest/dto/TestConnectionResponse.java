@@ -1,7 +1,5 @@
 package com.cx.client.rest.dto;
 
-import com.cx.plugin.dto.CxClass;
-
 import java.util.List;
 
 /**

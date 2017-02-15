@@ -33,15 +33,15 @@ public class CxParam {
     public static final String PRESET_LIST = "presetList";
     public static final String TEAM_PATH_LIST = "teamPathList";
     public static final String FILTER_PATTERN = "filterPatterns";
-    public static final String DEFAULT_CREDENTIALS = "defaultCredentials";
-    public static final String DEFAULT_CXSAST = "defaultCxSast";
-    public static final String DEFAULT_SCAN_CONTROL = "defaultScanControl";
+    public static final String GLOBAL_SERVER_CREDENTIALS = "globalServerCredentials";
+    public static final String GLOBAL_CXSAST = "globalCxSast";
+    public static final String GLOBAL_SCAN_CONTROL = "globalScanControl";
     public static final String ADMINISTRATION_CONFIGURATION = "administrationConfiguration";
     public static final String GLOBAL_CONFIGURATION_SERVER = "globalConfigurationServer";
     public static final String COSTUME_CONFIGURATION_SERVER = "costumeConfigurationServer";
     public static final String GLOBAL_CONFIGURATION_CXSAST = "globalConfigurationCxSAST";
     public static final String COSTUME_CONFIGURATION_CXSAST = "costumeConfigurationCxSAST";
-    public static final String GLOBAL_CONFIGURATION_CONTROL= "globalConfigurationControl";
+    public static final String GLOBAL_CONFIGURATION_CONTROL = "globalConfigurationControl";
     public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
 
     public static final String GLOBAL_USER_NAME = "globalUserName";

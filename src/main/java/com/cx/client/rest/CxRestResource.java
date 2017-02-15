@@ -1,10 +1,13 @@
 package com.cx.client.rest;
 
 import com.checkmarx.v7.*;
-import com.cx.plugin.dto.CxClass;
+import com.cx.client.rest.dto.CxClass;
 import com.cx.client.rest.dto.TestConnectionResponse;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -18,7 +21,7 @@ import java.util.Map;
  * A resource of message.
  */
 @Path("/")
-public class MyRestResource {
+public class CxRestResource {
 
 
     private static URL WSDL_LOCATION = CxSDKWebService.class.getClassLoader().getResource("WEB-INF/CxSDKWebService.wsdl");
@@ -26,16 +29,17 @@ public class MyRestResource {
     private static String SDK_PATH = "/cxwebinterface/sdk/CxSDKWebService.asmx";
     private static List<CxClass> presets;
     private static List<CxClass> teams;
-    private static  CxSDKWebServiceSoap client;
-    private static  String sessionId;
-    private static  String result ="";;
+    private static CxSDKWebServiceSoap client;
+    private static String sessionId;
+    private static String result = "";
+    ;
 
 
     @POST
     @Path("test/connection")
     @Consumes({"application/json"})
     @Produces({"application/json"})
-    public Response testConnetion( Map<Object, Object> key) {
+    public Response testConnection(Map<Object, Object> key) {
 
         URL url = null;
         String urli = key.get("url").toString();
@@ -56,29 +60,28 @@ public class MyRestResource {
         String username = key.get("username").toString();
         String password = key.get("password").toString();
         try {
-            if (loginToServer(url, username, password)){
+            if (loginToServer(url, username, password)) {
                 presets = getPresets();
                 teams = getTeamPath();
-                result =  "Success!";
+                result = "Success!";
                 tcResponse = new TestConnectionResponse(result, presets, teams);
 
-                return Response.status(200).entity(tcResponse).build();}
-            else{
+                return Response.status(200).entity(tcResponse).build();
+            } else {
                 if (result.equals("")) {
-                    result = "Wrong username or password";
+                    result = "Login failed";
                 }
                 tcResponse = new TestConnectionResponse(result, null, null);
-                return Response.status(400).entity(tcResponse).build();}
+                return Response.status(400).entity(tcResponse).build();
+            }
+        } catch (Exception e) {
+            result = "Fail to login";
+            tcResponse = new TestConnectionResponse(result, null, null);
+            return Response.status(400).entity(tcResponse).build();
         }
-
-       catch (Exception e) {
-           result = "Fail to login";
-           tcResponse = new TestConnectionResponse(result, null, null);
-           return Response.status(400).entity(tcResponse).build();
-       }
     }
 
-    public boolean loginToServer(URL url, String username, String password)   {
+    public boolean loginToServer(URL url, String username, String password) {
         try {
             CxSDKWebService ss = new CxSDKWebService(WSDL_LOCATION, SERVICE_NAME);
             client = ss.getCxSDKWebServiceSoap();
@@ -97,41 +100,38 @@ public class MyRestResource {
             }
 
             return true;
-        }
-        catch (Exception CxClientException) {
+        } catch (Exception CxClientException) {
             result = CxClientException.getMessage();
-            if(result.startsWith("HTTP transport")){
+            if (result.startsWith("HTTP transport")) {
                 result = "Invalid URL";
             }
-            System.out.println("Exception caught: " + result + "'");//TODO
-            return  false;
+            return false;
         }
     }
 
-    private List<CxClass>  getPresets() {
+    private List<CxClass> getPresets() {
         CxWSResponsePresetList presetList = client.getPresetList(sessionId);
         if (!presetList.isIsSuccesfull()) {
-           // log.warn("fail to retrieve preset list: ", presetList.getErrorMessage());
+            // log.warn("fail to retrieve preset list: ", presetList.getErrorMessage());//TODO
             //return preset
         }
         return convertPresetType(presetList.getPresetList().getPreset());
     }
 
-   private List<CxClass>  getTeamPath() {
-       CxWSResponseGroupList teamPathList = client.getAssociatedGroupsList(sessionId);
-       if (!teamPathList.isIsSuccesfull()) {
-           //log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
-         //  return group;
-       }
+    private List<CxClass> getTeamPath() {
+        CxWSResponseGroupList teamPathList = client.getAssociatedGroupsList(sessionId);
+        if (!teamPathList.isIsSuccesfull()) {
+            //log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
+            //  return group;
+        }
         return convertTeamPathType(teamPathList.getGroupList());
     }
-
 
 
     private List<CxClass> convertPresetType(List<Preset> oldType) {
         List<CxClass> newType = new ArrayList<CxClass>();
         for (Preset preset : oldType) {
-            newType.add(new CxClass(Long.toString(preset.getID()), preset.getPresetName().toString()));
+            newType.add(new CxClass(Long.toString(preset.getID()), preset.getPresetName()));
         }
         return newType;
     }

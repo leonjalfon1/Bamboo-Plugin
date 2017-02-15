@@ -7,11 +7,12 @@ import com.atlassian.bamboo.security.EncryptionException;
 import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
-import com.cx.plugin.dto.CxParam;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import static com.cx.plugin.dto.CxParam.*;
 
 
 /**
@@ -26,7 +27,7 @@ public class CxDefaultConfig extends GlobalAdminAction {
     private String globalUserName;
     private String globalPassword;
 
-    private String globalFilterPatterns = CxParam.DEFAULT_FILTER_PATTERNS;
+    private String globalFilterPatterns = DEFAULT_FILTER_PATTERNS;
     private String globalFolderExclusions;
     private String globalIsSynchronous;
     private String globalScanTimeoutInMinutes;
@@ -43,66 +44,76 @@ public class CxDefaultConfig extends GlobalAdminAction {
     public String execute() {
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
 
-        globalServerUrl = adminConfig.getSystemProperty(CxParam.GLOBAL_SERVER_URL);
-        globalUserName = adminConfig.getSystemProperty(CxParam.GLOBAL_USER_NAME);
-        globalPassword = adminConfig.getSystemProperty(CxParam.GLOBAL_PASSWORD);
+        globalServerUrl = adminConfig.getSystemProperty(GLOBAL_SERVER_URL);
+        globalUserName = adminConfig.getSystemProperty(GLOBAL_USER_NAME);
+        globalPassword = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
 
-        globalFolderExclusions = adminConfig.getSystemProperty(CxParam.GLOBAL_FOLDER_EXCLUSION);
-        String filterProperty = adminConfig.getSystemProperty(CxParam.GLOBAL_FILTER_PATTERN);
-        if (filterProperty != null){
+        globalFolderExclusions = adminConfig.getSystemProperty(GLOBAL_FOLDER_EXCLUSION);
+        String filterProperty = adminConfig.getSystemProperty(GLOBAL_FILTER_PATTERN);
+        if (filterProperty != null) {
             globalFilterPatterns = filterProperty;
         }
 
-        globalScanTimeoutInMinutes = adminConfig.getSystemProperty(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES);
-        globalIsSynchronous = adminConfig.getSystemProperty(CxParam.GLOBAL_IS_SYNCHRONOUS);
-        globalThresholdsEnabled = adminConfig.getSystemProperty(CxParam.GLOBAL_THRESHOLDS_ENABLED);
-        globalHighThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_HIGH_THRESHOLD);
-        globalMediumThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_MEDIUM_THRESHOLD);
-        globalLowThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_LOW_THRESHOLD);
-        globalOsaThresholdsEnabled = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED);
-        globalOsaHighThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_HIGH_THRESHOLD);
-        globalOsaMediumThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD);
-        globalOsaLowThreshold = adminConfig.getSystemProperty(CxParam.GLOBAL_OSA_LOW_THRESHOLD);
+        globalScanTimeoutInMinutes = adminConfig.getSystemProperty(GLOBAL_SCAN_TIMEOUT_IN_MINUTES);
+        globalIsSynchronous = adminConfig.getSystemProperty(GLOBAL_IS_SYNCHRONOUS);
+        globalThresholdsEnabled = adminConfig.getSystemProperty(GLOBAL_THRESHOLDS_ENABLED);
+        globalHighThreshold = adminConfig.getSystemProperty(GLOBAL_HIGH_THRESHOLD);
+        globalMediumThreshold = adminConfig.getSystemProperty(GLOBAL_MEDIUM_THRESHOLD);
+        globalLowThreshold = adminConfig.getSystemProperty(GLOBAL_LOW_THRESHOLD);
+        globalOsaThresholdsEnabled = adminConfig.getSystemProperty(GLOBAL_OSA_THRESHOLDS_ENABLED);
+        globalOsaHighThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_HIGH_THRESHOLD);
+        globalOsaMediumThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_MEDIUM_THRESHOLD);
+        globalOsaLowThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_LOW_THRESHOLD);
         return INPUT;
     }
 
-    public String save() { //TODO add validations
-        boolean error = validateNotEmpty(this.globalServerUrl, CxParam.GLOBAL_SERVER_URL);
-        if (!error) {
-            try {
-                validateUrl(globalServerUrl);
-            } catch (MalformedURLException e) {
-                addFieldError(CxParam.GLOBAL_SERVER_URL, getText(CxParam.GLOBAL_SERVER_URL + "." + ERROR + ".malformed"));
-                error = true;
+    public String save() {
+        boolean error = false;
+
+        try {
+            validateUrl(globalServerUrl);
+        } catch (MalformedURLException e) {
+            addFieldError(GLOBAL_SERVER_URL, getText(GLOBAL_SERVER_URL + "." + ERROR + ".malformed"));
+            error = true;
+        }
+        if ("true".equals(globalIsSynchronous)) {
+            if ("true".equals(globalThresholdsEnabled)) {
+                error |= isNegative(getGlobalHighThreshold(), GLOBAL_HIGH_THRESHOLD);
+                error |= isNegative(getGlobalMediumThreshold(), GLOBAL_MEDIUM_THRESHOLD);
+                error |= isNegative(getGlobalLowThreshold(), GLOBAL_LOW_THRESHOLD);
+            }
+            if ("true".equals(globalOsaThresholdsEnabled)) {
+                error |= isNegative(getGlobalOsaHighThreshold(), GLOBAL_OSA_HIGH_THRESHOLD);
+                error |= isNegative(getGlobalOsaMediumThreshold(), GLOBAL_OSA_MEDIUM_THRESHOLD);
+                error |= isNegative(getGlobalOsaLowThreshold(), GLOBAL_OSA_LOW_THRESHOLD);
             }
         }
-        error |= validateNotEmpty(this.globalUserName, CxParam.GLOBAL_USER_NAME);
-        error |= validateNotEmpty(this.globalPassword, CxParam.GLOBAL_PASSWORD);
-
         if (error) {
             return ERROR;
         }
-        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
-        adminConfig.setSystemProperty(CxParam.GLOBAL_SERVER_URL, globalServerUrl);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_USER_NAME, globalUserName);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_PASSWORD, encrypt(globalPassword));
 
-        adminConfig.setSystemProperty(CxParam.GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_FILTER_PATTERN, globalFilterPatterns);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES, globalScanTimeoutInMinutes);
+        final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
+        adminConfig.setSystemProperty(GLOBAL_SERVER_URL, globalServerUrl);
+        adminConfig.setSystemProperty(GLOBAL_USER_NAME, globalUserName);
+        adminConfig.setSystemProperty(GLOBAL_PASSWORD, encrypt(globalPassword));
 
-        adminConfig.setSystemProperty(CxParam.GLOBAL_IS_SYNCHRONOUS, globalIsSynchronous);
-        if (globalIsSynchronous== null){
+        adminConfig.setSystemProperty(GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
+        adminConfig.setSystemProperty(GLOBAL_FILTER_PATTERN, globalFilterPatterns);
+        adminConfig.setSystemProperty(GLOBAL_SCAN_TIMEOUT_IN_MINUTES, globalScanTimeoutInMinutes);
+
+        adminConfig.setSystemProperty(GLOBAL_IS_SYNCHRONOUS, globalIsSynchronous);
+        if (globalIsSynchronous == null) {
             globalThresholdsEnabled = null;
+            globalOsaThresholdsEnabled = null;
         }
-        adminConfig.setSystemProperty(CxParam.GLOBAL_THRESHOLDS_ENABLED, globalThresholdsEnabled);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_HIGH_THRESHOLD, globalHighThreshold);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_MEDIUM_THRESHOLD, globalMediumThreshold);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_LOW_THRESHOLD, globalLowThreshold);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_THRESHOLDS_ENABLED, globalOsaThresholdsEnabled);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_HIGH_THRESHOLD, globalOsaHighThreshold);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_MEDIUM_THRESHOLD, globalOsaMediumThreshold);
-        adminConfig.setSystemProperty(CxParam.GLOBAL_OSA_LOW_THRESHOLD, globalOsaLowThreshold);
+        adminConfig.setSystemProperty(GLOBAL_THRESHOLDS_ENABLED, globalThresholdsEnabled);
+        adminConfig.setSystemProperty(GLOBAL_HIGH_THRESHOLD, globalHighThreshold);
+        adminConfig.setSystemProperty(GLOBAL_MEDIUM_THRESHOLD, globalMediumThreshold);
+        adminConfig.setSystemProperty(GLOBAL_LOW_THRESHOLD, globalLowThreshold);
+        adminConfig.setSystemProperty(GLOBAL_OSA_THRESHOLDS_ENABLED, globalOsaThresholdsEnabled);
+        adminConfig.setSystemProperty(GLOBAL_OSA_HIGH_THRESHOLD, globalOsaHighThreshold);
+        adminConfig.setSystemProperty(GLOBAL_OSA_MEDIUM_THRESHOLD, globalOsaMediumThreshold);
+        adminConfig.setSystemProperty(GLOBAL_OSA_LOW_THRESHOLD, globalOsaLowThreshold);
         ((AdministrationConfigurationPersister) ContainerManager.getComponent("administrationConfigurationPersister")).saveAdministrationConfiguration(adminConfig);
 
         addActionMessage(getText("cxDefaultConfigSuccess.label"));
@@ -110,14 +121,24 @@ public class CxDefaultConfig extends GlobalAdminAction {
     }
 
 
-    private boolean validateNotEmpty(@NotNull String value, @NotNull String key) { //TODO unite the validation to one class
-        boolean ret = false;
-        if (value == null || StringUtils.isEmpty(value)) {
-            addFieldError(key, getText(key + "." + ERROR));
-            ret = true;
+    private boolean isNegative(@NotNull String value, @NotNull String key) { //TODO unite the validation to one class
+
+        if (!StringUtils.isEmpty(value)) {
+            try {
+                int num = Integer.parseInt(value);
+                if (num > 0) {
+                    return false;
+                }
+                addFieldError(key, getText(key + ".notPositive"));
+
+            } catch (Exception e) {
+                addFieldError(key, getText(key + ".notPositive"));
+                return true;
+            }
         }
-        return ret;
+        return true;
     }
+
 
     private void validateUrl(final String spec) throws MalformedURLException {
         URL url = new URL(spec);
