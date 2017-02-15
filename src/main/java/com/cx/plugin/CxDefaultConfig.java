@@ -56,7 +56,7 @@ public class CxDefaultConfig extends GlobalAdminAction {
 
         globalScanTimeoutInMinutes = adminConfig.getSystemProperty(GLOBAL_SCAN_TIMEOUT_IN_MINUTES);
         String isSyn = adminConfig.getSystemProperty(GLOBAL_IS_SYNCHRONOUS);
-        globalIsSynchronous = isSyn ==null? "true": isSyn ;
+        globalIsSynchronous = isSyn == null ? "true" : isSyn;
         globalThresholdsEnabled = adminConfig.getSystemProperty(GLOBAL_THRESHOLDS_ENABLED);
         globalHighThreshold = adminConfig.getSystemProperty(GLOBAL_HIGH_THRESHOLD);
         globalMediumThreshold = adminConfig.getSystemProperty(GLOBAL_MEDIUM_THRESHOLD);
@@ -141,12 +141,15 @@ public class CxDefaultConfig extends GlobalAdminAction {
     }
 
 
-    private void validateUrl(final String spec) throws MalformedURLException {
-        URL url = new URL(spec);
-        if (url.getPath().length() > 0) {
-            throw new MalformedURLException("must not contain path");
+    private void validateUrl(final String value) throws MalformedURLException {
+        if (!StringUtils.isEmpty(value)) {
+            URL url = new URL(value);
+            if (url.getPath().length() > 0) {
+                throw new MalformedURLException("must not contain path");
+            }
         }
     }
+
 
     private String encrypt(String password) {
         String encPass;
