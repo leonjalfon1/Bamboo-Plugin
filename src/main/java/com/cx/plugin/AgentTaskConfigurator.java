@@ -452,15 +452,16 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     private void validateUrl(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
-        final String spec = params.getString(key);
-        try {
-            URL url = new URL(spec);
-            if (url.getPath().length() > 0) {
+        final String value = params.getString(key);
+        if (!StringUtils.isEmpty(value)) {
+            try {
+                URL url = new URL(value);
+                if (url.getPath().length() > 0) {
+                    errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
+                }
+            } catch (MalformedURLException e) {
                 errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
             }
-        } catch (MalformedURLException e) {
-            errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
         }
-
     }
 }
