@@ -285,12 +285,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private Map<String, String> generateCredentialsFields(@NotNull final ActionParametersMap params, Map<String, String> config) {
         final String configType = params.getString(GLOBAL_SERVER_CREDENTIALS);
         config.put(GLOBAL_SERVER_CREDENTIALS, configType);
+        config.put(SERVER_URL, params.getString(SERVER_URL));
+        config.put(USER_NAME, params.getString(USER_NAME));
+        config.put(PASSWORD, Encryption.encrypt(params.getString(PASSWORD)));
 
-        if (COSTUME_CONFIGURATION_SERVER.equals(configType)) {
-            config.put(SERVER_URL, params.getString(SERVER_URL));
-            config.put(USER_NAME, params.getString(USER_NAME));
-            config.put(PASSWORD, Encryption.encrypt(params.getString(PASSWORD)));
-        }
         return config;
     }
 
@@ -298,29 +296,25 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         final String configType = params.getString(GLOBAL_CXSAST);
         config.put(GLOBAL_CXSAST, configType);
+        config.put(FOLDER_EXCLUSION, params.getString(FOLDER_EXCLUSION));
+        config.put(FILTER_PATTERN, params.getString(FILTER_PATTERN));
+        config.put(SCAN_TIMEOUT_IN_MINUTES, params.getString(SCAN_TIMEOUT_IN_MINUTES));
 
-        if (COSTUME_CONFIGURATION_CXSAST.equals(configType)) {
-            config.put(FOLDER_EXCLUSION, params.getString(FOLDER_EXCLUSION));
-            config.put(FILTER_PATTERN, params.getString(FILTER_PATTERN));
-            config.put(SCAN_TIMEOUT_IN_MINUTES, params.getString(SCAN_TIMEOUT_IN_MINUTES));
-        }
         return config;
     }
 
     private Map<String, String> generateScanControlFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
         final String configType = params.getString(GLOBAL_SCAN_CONTROL);
         config.put(GLOBAL_SCAN_CONTROL, configType);
+        config.put(THRESHOLDS_ENABLED, params.getString(THRESHOLDS_ENABLED));
+        config.put(HIGH_THRESHOLD, params.getString(HIGH_THRESHOLD));
+        config.put(MEDIUM_THRESHOLD, params.getString(MEDIUM_THRESHOLD));
+        config.put(LOW_THRESHOLD, params.getString(LOW_THRESHOLD));
+        config.put(OSA_THRESHOLDS_ENABLED, params.getString(OSA_THRESHOLDS_ENABLED));
+        config.put(OSA_HIGH_THRESHOLD, params.getString(OSA_HIGH_THRESHOLD));
+        config.put(OSA_MEDIUM_THRESHOLD, params.getString(OSA_MEDIUM_THRESHOLD));
+        config.put(OSA_LOW_THRESHOLD, params.getString(OSA_LOW_THRESHOLD));
 
-        if (COSTUME_CONFIGURATION_CONTROL.equals(configType)) {
-            config.put(THRESHOLDS_ENABLED, params.getString(THRESHOLDS_ENABLED));
-            config.put(HIGH_THRESHOLD, params.getString(HIGH_THRESHOLD));
-            config.put(MEDIUM_THRESHOLD, params.getString(MEDIUM_THRESHOLD));
-            config.put(LOW_THRESHOLD, params.getString(LOW_THRESHOLD));
-            config.put(OSA_THRESHOLDS_ENABLED, params.getString(OSA_THRESHOLDS_ENABLED));
-            config.put(OSA_HIGH_THRESHOLD, params.getString(OSA_HIGH_THRESHOLD));
-            config.put(OSA_MEDIUM_THRESHOLD, params.getString(OSA_MEDIUM_THRESHOLD));
-            config.put(OSA_LOW_THRESHOLD, params.getString(OSA_LOW_THRESHOLD));
-        }
 
         return config;
     }

@@ -81,7 +81,7 @@
             [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl"  required='true' /]
             [@ww.textfield labelKey="userName.label"  id="userName" name="userName" required='true'/]
             [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true' required='true'/]
-            <button type="button" class="aui-button test-connection" id="test_connection">Connect To Server</button>
+            <button type="button" class="aui-button test-connection" id="test_connection">Connect to Server</button>
             <div id="testConnectionMessage" class="test-connection-message"></div>
 
 
@@ -90,7 +90,7 @@
             [@ww.label labelKey="serverUrl.label"  id="globalServerUrl" name="globalServerUrl"/]
             [@ww.label labelKey="userName.label" id="globalUserName" name="globalUserName" /]
             [@ww.label type="password" labelKey="password.label"/]
-            <button type="button" class="aui-button test-connection" id="global_test_connection">Connect To Server</button>
+            <button type="button" class="aui-button test-connection" id="global_test_connection">Connect to Server</button>
             <div id="globalTestConnectionMessage" class="test-connection-message"></div>
         [/@ui.bambooSection]
 
