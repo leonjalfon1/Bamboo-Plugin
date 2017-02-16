@@ -240,7 +240,7 @@ public class CheckmarxTask implements TaskType {
         }
 
         String teamName = configMap.get(TEAM_PATH_NAME);
-        if (!StringUtils.isNumeric(teamName)) {
+        if (!StringUtils.isEmpty(teamName)) {
             throw new TaskException("Invalid team path");
         }
 
