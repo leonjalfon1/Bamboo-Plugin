@@ -48,7 +48,7 @@ public class CxClientServiceImpl implements CxClientService {
     private static int generateReportTimeOutInSec = 500;
     private static int waitForScanToFinishRetry = 5;
 
-    public CxClientServiceImpl(URL url, String username, String password) throws CxClientException {
+    public CxClientServiceImpl(URL url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;
@@ -233,7 +233,7 @@ public class CxClientServiceImpl implements CxClientService {
         while (scanTimeoutInMin <= 0 || (System.currentTimeMillis() / 60000) <= timeToStop) {
 
             try {
-                Thread.sleep(10000); //Get status every 10 sec
+                Thread.sleep(20000); //Get status every 20 sec
             } catch (InterruptedException e) {
                 log.debug("Caught exception during sleep", e);
             }

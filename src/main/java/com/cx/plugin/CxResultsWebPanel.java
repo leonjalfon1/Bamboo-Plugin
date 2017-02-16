@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Map;
 
+import static com.cx.plugin.dto.CxParam.OPTION_TRUE;
 import static com.cx.plugin.dto.CxResultsConst.*;
 
 /**
@@ -47,7 +48,7 @@ public class CxResultsWebPanel implements WebPanel {
 
                 if (customBuildData.get(OSA_RESULTS_READY) != null) {
                     ret = ret
-                            .replace(OSA_ENABLED, "true")
+                            .replace(OSA_ENABLED, OPTION_TRUE)
                             .replace(OSA_HIGH_RESULTS, String.valueOf(customBuildData.get(OSA_HIGH_RESULTS)))
                             .replace(OSA_MEDIUM_RESULTS, String.valueOf(customBuildData.get(OSA_MEDIUM_RESULTS)))
                             .replace(OSA_LOW_RESULTS, String.valueOf(customBuildData.get(OSA_LOW_RESULTS)))

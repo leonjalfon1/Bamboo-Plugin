@@ -6,8 +6,6 @@ package com.cx.plugin;
 
 import com.atlassian.bamboo.collections.ActionParametersMap;
 import com.atlassian.bamboo.configuration.AdministrationConfiguration;
-import com.atlassian.bamboo.security.EncryptionException;
-import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.bamboo.task.AbstractTaskConfigurator;
 import com.atlassian.bamboo.task.TaskDefinition;
 import com.atlassian.bamboo.utils.error.ErrorCollection;
@@ -19,6 +17,7 @@ import com.checkmarx.v7.Group;
 import com.cx.client.CxClientService;
 import com.cx.client.CxClientServiceImpl;
 import com.cx.client.exception.CxClientException;
+import com.cx.plugin.dto.Encryption;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -28,21 +27,23 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.cx.plugin.dto.CxParam.*;
 
 public class AgentTaskConfigurator extends AbstractTaskConfigurator {
-    private static LinkedHashMap <String, String> presetList = new LinkedHashMap <String, String>();
-    private static LinkedHashMap <String, String> teamPathList = new LinkedHashMap <String, String>();
+    private static LinkedHashMap<String, String> presetList = new LinkedHashMap<String, String>();
+    private static LinkedHashMap<String, String> teamPathList = new LinkedHashMap<String, String>();
     private CxClientService cxClientService = null;
     private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
     private final static String SPECIFIC_SETTING_LABEL = "Specific Task Setting";
     private final static String DEFAULT_SERVER_URL = "http://";
-    private final static String NO_PRESET_MESSAGE = "Provide the correct Checkmarx server credentials to see presets list";
-    private final static String NO_TEAM_MESSAGE = "Provide the correct Checkmarx server credentials to see teams list";
-    private final static String OPTION_TRUE = "true";
-    private final static String OPTION_FALSE = "false";
+    private final static String NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
+    private final static String NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
+
 
     private static AdministrationConfiguration adminConfig;
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, COSTUME_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
@@ -288,7 +289,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (COSTUME_CONFIGURATION_SERVER.equals(configType)) {
             config.put(SERVER_URL, params.getString(SERVER_URL));
             config.put(USER_NAME, params.getString(USER_NAME));
-            config.put(PASSWORD, encrypt(params.getString(PASSWORD)));
+            config.put(PASSWORD, Encryption.encrypt(params.getString(PASSWORD)));
         }
         return config;
     }
@@ -331,7 +332,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(userName) && !StringUtils.isEmpty(cxPass)) {
             try {
                 URL cxUrl = new URL(serverUrl);
-                cxClientService = new CxClientServiceImpl(cxUrl, userName, decrypt(cxPass), true);
+                cxClientService = new CxClientServiceImpl(cxUrl, userName, Encryption.decrypt(cxPass), true);
                 cxClientService.checkServerConnectivity();
                 cxClientService.loginToServer();
                 return true;
@@ -346,8 +347,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return false;
     }
 
-    private LinkedHashMap <String, String> convertPresetType(List<com.checkmarx.v7.Preset> oldType) {
-        LinkedHashMap <String, String> newType = new LinkedHashMap <String, String>();
+    private LinkedHashMap<String, String> convertPresetType(List<com.checkmarx.v7.Preset> oldType) {
+        LinkedHashMap<String, String> newType = new LinkedHashMap<String, String>();
         for (com.checkmarx.v7.Preset preset : oldType) {
             newType.put(Long.toString(preset.getID()), preset.getPresetName());
         }
@@ -356,36 +357,13 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     private LinkedHashMap<String, String> convertTeamPathType(ArrayOfGroup oldType) {
-        LinkedHashMap <String, String> newType = new LinkedHashMap <String, String>();
+        LinkedHashMap<String, String> newType = new LinkedHashMap<String, String>();
         for (Group group : oldType.getGroup()) {
             newType.put(group.getID(), group.getGroupName());
         }
         return newType;
     }
 
-
-    private String encrypt(String password) {
-        String encPass;
-        try {
-            encPass = new EncryptionServiceImpl().encrypt(password);
-        } catch (EncryptionException e) {
-            encPass = "";
-        }
-        return encPass;
-    }
-
-    private String decrypt(String password) {
-        String encPass;
-        try {
-            encPass = new EncryptionServiceImpl().decrypt(password);
-        } catch (EncryptionException e) {
-            encPass = "";
-        }
-
-        return encPass;
-    }
-
-    //Validation methods
     @Override
     public void validate(@NotNull final ActionParametersMap params, @NotNull final ErrorCollection errorCollection) {
         super.validate(params, errorCollection);

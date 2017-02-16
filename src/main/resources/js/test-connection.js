@@ -3,13 +3,28 @@
         restRequest();
     });
 
-    function restRequest() {
+    $(document).on("click", "#global_test_connection", function (event) {
+        restRequest();
+    });
 
-        if(!validateFields()) {
-            return;
+    function restRequest() {
+        var request;
+        if ($('#radioGroupglobalConfigurationServer').is(':checked')) {
+            if (!validateGlobalFields()) {
+                return;
+            }
+            request = JSON.stringify(getGlobalInputData());
+
+        } else {
+            if (!validateFields()) {
+                return;
+            }
+
+            request = JSON.stringify(getInputData());
         }
 
-        var str = JSON.stringify(getInputData());
+
+
         function createRestRequest(method, url) {
 
             var urli = AJS.contextPath() + url;
@@ -35,16 +50,24 @@
 
         xhr.onload = function () {
             var parsed = JSON.parse(xhr.responseText);
-            var testConnectionMessage = document.getElementById("testConnectionMessage");
+            var testConnectionMessage;
+            if ($('#radioGroupglobalConfigurationServer').is(':checked')) {
+                testConnectionMessage =  $('#globalTestConnectionMessage');
+            }
+
+            else {
+                testConnectionMessage =$('#testConnectionMessage');
+            }
+
             if (xhr.status == 200) {
-                testConnectionMessage.style.color = "green";
+                testConnectionMessage.css('color', 'green');
             }
             else {
-                testConnectionMessage.style.color = "#d22020";
+                testConnectionMessage.css('color', '#d22020');
             }
             populateDropdownList(parsed.presetList, "#presetListId", "id", "value");
             populateDropdownList(parsed.teamPathList, "#teamPathListId", "id", "value");
-            testConnectionMessage.innerHTML = parsed.loginResponse;
+            testConnectionMessage.html(parsed.loginResponse);
         };
 
 
@@ -53,21 +76,21 @@
         };
 
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(str);
+        xhr.send(request);
     }
 
     function validateFields() {
 
         var messageElement = $('#testConnectionMessage');
-        if($('#serverUrl').val().length < 1) {
+        if ($('#serverUrl').val().length < 1) {
             messageElement.text('URL must not be empty');
             messageElement.css('color', '#d22020');
             return false;
-        } else if($('#userName').val().length < 1) {
+        } else if ($('#userName').val().length < 1) {
             messageElement.text('Username must not be empty');
             messageElement.css('color', '#d22020');
             return false;
-        } else if($('#password').val().length < 1) {
+        } else if ($('#password').val().length < 1) {
             messageElement.text('Password must not be empty');
             messageElement.css('color', '#d22020');
             return false;
@@ -76,13 +99,35 @@
         return true;
     }
 
+    function validateGlobalFields() {
+
+        var messageElement = $('#globalTestConnectionMessage');
+        if ($('#globalServerUrl').html().length < 1){
+            messageElement.text('URL must not be empty');
+            messageElement.css('color', '#d22020');
+            return false;
+        } else if ($('#globalUserName').html().length < 1) {
+            messageElement.text('Username must not be empty');
+            messageElement.css('color', '#d22020');
+            return false;
+        }
+        return true;
+    }
 
     function getInputData() {
         return {
             "url": $("#serverUrl").val(),
             "username": $('#userName').val(),
-            "password": $('#password').val()
+            "pas": $('#password').val(),
+            "global": $('#radioGroupglobalConfigurationServer').is(':checked')
+        };
+    }
 
+    function getGlobalInputData() {
+        return {
+            "url": $("#globalServerUrl").html(),
+            "username": $('#globalUserName').html(),
+            "global": $('#radioGroupglobalConfigurationServer').is(':checked')
         };
     }
 
@@ -99,4 +144,5 @@
 
     }
 
-})(AJS.$);
+})
+(AJS.$);

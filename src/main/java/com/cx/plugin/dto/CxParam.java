@@ -44,6 +44,9 @@ public class CxParam {
     public static final String GLOBAL_CONFIGURATION_CONTROL = "globalConfigurationControl";
     public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
 
+    public static final String OPTION_TRUE = "true";
+    public static final String OPTION_FALSE = "false";
+
     public static final String GLOBAL_USER_NAME = "globalUserName";
     public static final String GLOBAL_PASSWORD = "globalPassword";
     public static final String GLOBAL_SERVER_URL = "globalServerUrl";

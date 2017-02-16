@@ -20,7 +20,7 @@ public class ConsoleScanWaitHandler implements ScanWaitHandler<CxWSResponseScanS
     public void onTimeout(CxWSResponseScanStatus scanStatus) throws CxClientException {
 
         String status =  scanStatus.getCurrentStatus() == null ? CurrentStatusEnum.UNKNOWN.value() : scanStatus.getCurrentStatus().value();
-        throw new CxClientException("scan has reached the time limit ("+scanTimeoutInMin+" minutes). status: ["+ status +"]");
+        throw new CxClientException("CxSAST scan has been automatically aborted – reached the user-specified timeout (" + scanTimeoutInMin+" minutes).");
 
     }
 

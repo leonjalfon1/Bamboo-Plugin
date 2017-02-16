@@ -1,8 +1,11 @@
 package com.cx.client.rest;
 
+import com.atlassian.bamboo.configuration.AdministrationConfiguration;
+import com.atlassian.spring.container.ContainerManager;
 import com.checkmarx.v7.*;
 import com.cx.client.rest.dto.CxClass;
 import com.cx.client.rest.dto.TestConnectionResponse;
+import com.cx.plugin.dto.Encryption;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -16,6 +19,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.cx.plugin.dto.CxParam.*;
+import static com.cx.plugin.dto.CxParam.ADMINISTRATION_CONFIGURATION;
 
 /**
  * A resource of message.
@@ -41,12 +47,13 @@ public class CxRestResource {
     @Produces({"application/json"})
     public Response testConnection(Map<Object, Object> key) {
 
-        URL url = null;
-        String urli = key.get("url").toString();
+        URL url;
+        String urlToCheck = key.get("url").toString();
         TestConnectionResponse tcResponse;
+        boolean successLogin = false;
 
         try {
-            url = new URL(urli);
+            url = new URL(urlToCheck);
             HttpURLConnection urlConn;
             URL toCheck = new URL(url + SDK_PATH);
             urlConn = (HttpURLConnection) toCheck.openConnection();
@@ -56,13 +63,24 @@ public class CxRestResource {
             tcResponse = new TestConnectionResponse(result, null, null);
             return Response.status(400).entity(tcResponse).build();
         }
-
+        String useGlobal = key.get("global").toString();
         String username = key.get("username").toString();
-        String password = key.get("password").toString();
+        String password;
+        if (OPTION_TRUE.equals(useGlobal)) {
+            AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
+            password = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
+            successLogin = loginToServer(url, username, Encryption.decrypt(password));
+        } else {
+            password = key.get("pas").toString();
+            successLogin = loginToServer(url, username, password);
+        }
         try {
-            if (loginToServer(url, username, password)) {
+            if (successLogin) {
                 presets = getPresets();
                 teams = getTeamPath();
+                if (presets == null || teams == null){
+                    throw new Exception("invalid preset teamPath");
+                }
                 result = "Success!";
                 tcResponse = new TestConnectionResponse(result, presets, teams);
 
@@ -75,7 +93,7 @@ public class CxRestResource {
                 return Response.status(400).entity(tcResponse).build();
             }
         } catch (Exception e) {
-            result = "Fail to login";
+            result = "Fail to login: " + e.getMessage();
             tcResponse = new TestConnectionResponse(result, null, null);
             return Response.status(400).entity(tcResponse).build();
         }
@@ -83,6 +101,8 @@ public class CxRestResource {
 
     public boolean loginToServer(URL url, String username, String password) {
         try {
+
+
             CxSDKWebService ss = new CxSDKWebService(WSDL_LOCATION, SERVICE_NAME);
             client = ss.getCxSDKWebServiceSoap();
             BindingProvider bindingProvider = (BindingProvider) client;
@@ -112,8 +132,7 @@ public class CxRestResource {
     private List<CxClass> getPresets() {
         CxWSResponsePresetList presetList = client.getPresetList(sessionId);
         if (!presetList.isIsSuccesfull()) {
-            // log.warn("fail to retrieve preset list: ", presetList.getErrorMessage());//TODO
-            //return preset
+            return null;
         }
         return convertPresetType(presetList.getPresetList().getPreset());
     }
@@ -121,8 +140,7 @@ public class CxRestResource {
     private List<CxClass> getTeamPath() {
         CxWSResponseGroupList teamPathList = client.getAssociatedGroupsList(sessionId);
         if (!teamPathList.isIsSuccesfull()) {
-            //log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
-            //  return group;
+            return null;
         }
         return convertTeamPathType(teamPathList.getGroupList());
     }

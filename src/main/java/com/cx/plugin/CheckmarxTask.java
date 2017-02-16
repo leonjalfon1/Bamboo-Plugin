@@ -7,8 +7,6 @@ package com.cx.plugin;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.configuration.AdministrationConfiguration;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
-import com.atlassian.bamboo.security.EncryptionException;
-import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
 import com.atlassian.spring.container.ContainerManager;
@@ -19,6 +17,7 @@ import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSASummaryResults;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxResultsConst;
+import com.cx.plugin.dto.Encryption;
 import com.cx.plugin.dto.ScanConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -82,6 +81,7 @@ public class CheckmarxTask implements TaskType {
 
         Exception osaCreateException = null;
         Exception scanWaitException = null;
+        boolean fail = false;
 
         try {
             config = new ScanConfiguration(configurationMap);
@@ -90,7 +90,7 @@ public class CheckmarxTask implements TaskType {
 
             //initialize cx client
             buildLoggerAdapter.info("Initializing Cx client");
-            cxClientService = new CxClientServiceImpl(url, config.getUsername(), decrypt(config.getPassword()));
+            cxClientService = new CxClientServiceImpl(url, config.getUsername(), Encryption.decrypt(config.getPassword()));
             cxClientService.setLogger(buildLoggerAdapter);
 
             cxClientService.checkServerConnectivity();
@@ -149,6 +149,11 @@ public class CheckmarxTask implements TaskType {
                     createPDFReport(scanResults.getScanID());
                 }
 
+
+            } catch (CxClientException e) {
+                buildLogger.addErrorLogEntry(e.getMessage());
+                log.error(e.getMessage(), e);
+                scanWaitException = e;
             } catch (Exception e) {
                 buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error("Fail to perform CxSAST scan: " + e.getMessage(), e);
@@ -190,17 +195,17 @@ public class CheckmarxTask implements TaskType {
         } catch (MalformedURLException e) {
             buildLogger.addErrorLogEntry("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage());
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
-            throw new TaskException(e.getMessage());
+
 
         } catch (CxClientException e) {
             buildLogger.addErrorLogEntry("Caught exception: " + e.getMessage());
             log.error("Caught exception: " + e.getMessage(), e);
-            throw new TaskException(e.getMessage());
+            fail = true;
 
         } catch (NumberFormatException e) {
             buildLogger.addErrorLogEntry("Invalid preset id. " + e.getMessage());
             log.error("Invalid preset id: " + e.getMessage(), e);
-            throw new TaskException(e.getMessage());
+            fail = true;
 
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage());
@@ -210,8 +215,8 @@ public class CheckmarxTask implements TaskType {
 
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
 
-        //assert vulnerabilities under threshold
-        if (assertVulnerabilities(scanResults, osaSummaryResults)) {
+         //assert if expected exception is thrown  OR when vulnerabilities under threshold
+        if (fail || assertVulnerabilities(scanResults, osaSummaryResults)) {
             return taskResultBuilder.failed().build();
         }
 
@@ -305,7 +310,7 @@ public class CheckmarxTask implements TaskType {
             results.put(CxResultsConst.LOW_THRESHOLD, lowThreshold);
         }
 
-        results.put(CxResultsConst.SAST_RESULTS_READY, "true");
+        results.put(CxResultsConst.SAST_RESULTS_READY, OPTION_TRUE);
     }
 
     private void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, ScanConfiguration config) {
@@ -330,7 +335,7 @@ public class CheckmarxTask implements TaskType {
             results.put(CxResultsConst.OSA_LOW_THRESHOLD, osaLowThreshold);
         }
 
-        results.put(CxResultsConst.OSA_RESULTS_READY, "true");
+        results.put(CxResultsConst.OSA_RESULTS_READY, OPTION_TRUE);
     }
 
     private CreateScanResponse createScan() throws CxClientException, TaskException, IOException, InterruptedException {
@@ -520,14 +525,5 @@ public class CheckmarxTask implements TaskType {
         }
     }
 
-    private String decrypt(String password) {
-        String encPass;
-        try {
-            encPass = new EncryptionServiceImpl().decrypt(password);
-        } catch (EncryptionException e) {
-            encPass = "";
-        }
 
-        return encPass;
-    }
 }
