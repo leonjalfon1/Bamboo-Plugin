@@ -53,6 +53,7 @@ public class CheckmarxTask implements TaskType {
     private File workDirectory;
     private File zipTempFile;
     private String projectStateLink;
+    private String osaProjectSummaryLink;
     private ScanConfiguration config;
     private String scanResultsUrl;
 
@@ -111,6 +112,7 @@ public class CheckmarxTask implements TaskType {
                     File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", "", MAX_OSA_ZIP_SIZE_BYTES, false);
                     buildLoggerAdapter.info("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
+                    osaProjectSummaryLink  = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
                     buildLoggerAdapter.info("OSA scan created successfully");
                     if (zipForOSA.exists() && !zipForOSA.delete()) {
                         buildLoggerAdapter.info("Warning: fail to delete temporary zip file: " + zipForOSA.getAbsolutePath());
@@ -297,6 +299,7 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
         results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
+        results.put(CxResultsConst.SAST_SUMMARY_RESULTS_LINK, StringUtils.defaultString(projectStateLink));
 
         results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
 
@@ -318,6 +321,8 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getHighVulnerabilities()));
         results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getMediumVulnerabilities()));
         results.put(CxResultsConst.OSA_LOW_RESULTS, String.valueOf(osaSummaryResults.getLowVulnerabilities()));
+
+        results.put(CxResultsConst.OSA_SUMMARY_RESULTS_LINK, StringUtils.defaultString(osaProjectSummaryLink));
 
         results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
         results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
@@ -461,7 +466,7 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("Vulnerable and updated: " + osaSummaryResults.getVulnerableAndUpdated());
         buildLoggerAdapter.info("Non-vulnerable libraries: " + osaSummaryResults.getNonVulnerableLibraries());
         buildLoggerAdapter.info("");
-        buildLoggerAdapter.info("OSA scan results location: " + projectStateLink.replace("Summary", "OSA"));
+        buildLoggerAdapter.info("OSA scan results location: " + osaProjectSummaryLink);
         buildLoggerAdapter.info("-----------------------------------------------------------------------------------------");
     }
 

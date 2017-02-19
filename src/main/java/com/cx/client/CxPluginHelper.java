@@ -79,6 +79,10 @@ public abstract class CxPluginHelper {
         return String.format( url + "/CxWebClient/portal#/projectState/%s/Summary", projectId);
     }
 
+    public static String composeProjectOSASummaryLink(String url, long projectId) {
+        return String.format( url + "/CxWebClient/portal#/projectState/%s/OSA", projectId);
+    }
+
     public static String convertArrayToString(String[] array){
         return StringUtils.join(array, ',');
     }
