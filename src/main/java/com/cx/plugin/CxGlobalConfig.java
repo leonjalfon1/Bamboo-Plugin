@@ -123,21 +123,21 @@ public class CxGlobalConfig extends GlobalAdminAction {
 
 
     private boolean isNegative(@NotNull String value, @NotNull String key) { //TODO unite the validation to one class
-
+        boolean ret = false;
         if (!StringUtils.isEmpty(value)) {
             try {
                 int num = Integer.parseInt(value);
-                if (num > 0) {
-                    return false;
+                if (num < 0) {
+                    addFieldError(key, getText(key + ".notPositive"));
+                    ret = true;
                 }
-                addFieldError(key, getText(key + ".notPositive"));
 
             } catch (Exception e) {
                 addFieldError(key, getText(key + ".notPositive"));
-                return true;
+                ret = true;
             }
         }
-        return true;
+        return ret;
     }
 
 

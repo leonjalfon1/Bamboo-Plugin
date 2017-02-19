@@ -422,13 +422,14 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("folderExclusions: " + (config.getFolderExclusions()));
         buildLoggerAdapter.info("isSynchronous: " + config.isSynchronous());
         buildLoggerAdapter.info("generatePDFReport: " + config.isGeneratePDFReport());
-        buildLoggerAdapter.info("thresholdsEnabled: " + config.isThresholdsEnabled());
+        buildLoggerAdapter.info("CxSAST thresholdsEnabled: " + config.isThresholdsEnabled());
         if (config.isSASTThresholdEnabled()) {
             buildLoggerAdapter.info("CxSAST-HighThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
             buildLoggerAdapter.info("CxSAST-mediumThreshold: " + (config.getMediumThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
             buildLoggerAdapter.info("CxSAST-lowThreshold: " + (config.getLowThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
         }
         buildLoggerAdapter.info("osaEnabled: " + config.isOsaEnabled());
+        buildLoggerAdapter.info("CxOSA thresholdsEnabled: " + config.isOsaThresholdsEnabled());
         if (config.isOSAThresholdEnabled()) {
             buildLoggerAdapter.info("CxOSA-HighSeveritiesThreshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
             buildLoggerAdapter.info("CxOSA-MediumSeveritiesThreshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
