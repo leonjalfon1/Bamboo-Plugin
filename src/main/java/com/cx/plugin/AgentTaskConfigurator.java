@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.cx.plugin.dto.CxParam.*;
 
@@ -58,7 +60,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         Map<String, String> config = super.generateTaskConfigMap(params, previousTaskDefinition);
         config = generateCredentialsFields(params, config);
 
-        config.put(PROJECT_NAME, params.getString(PROJECT_NAME));
+        config.put(PROJECT_NAME, params.getString(PROJECT_NAME).trim());
         config.put(GENERATE_PDF_REPORT, params.getString(GENERATE_PDF_REPORT));
 
         String cxPreset = params.getString(PRESET_ID);
@@ -125,9 +127,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         String cxUser = getAdminConfig(GLOBAL_USER_NAME);
         String cxPass = getAdminConfig(GLOBAL_PASSWORD);
 
-        context.put(SERVER_URL, cxServerUrl);
-        context.put(USER_NAME, cxUser);
-        context.put(PASSWORD, cxPass);
+        context.put(SERVER_URL, "");
+        context.put(USER_NAME, "");
+        context.put(PASSWORD, "");
         context.put(GLOBAL_SERVER_URL, cxServerUrl);
         context.put(GLOBAL_USER_NAME, cxUser);
         context.put(GLOBAL_PASSWORD, cxPass);
@@ -286,7 +288,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         final String configType = params.getString(GLOBAL_SERVER_CREDENTIALS);
         config.put(GLOBAL_SERVER_CREDENTIALS, configType);
         config.put(SERVER_URL, params.getString(SERVER_URL));
-        config.put(USER_NAME, params.getString(USER_NAME));
+        config.put(USER_NAME, params.getString(USER_NAME).trim());
         config.put(PASSWORD, Encryption.encrypt(params.getString(PASSWORD)));
 
         return config;
@@ -298,7 +300,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(GLOBAL_CXSAST, configType);
         config.put(FOLDER_EXCLUSION, params.getString(FOLDER_EXCLUSION));
         config.put(FILTER_PATTERN, params.getString(FILTER_PATTERN));
-        config.put(SCAN_TIMEOUT_IN_MINUTES, params.getString(SCAN_TIMEOUT_IN_MINUTES));
+        config.put(SCAN_TIMEOUT_IN_MINUTES, params.getString(SCAN_TIMEOUT_IN_MINUTES).trim());
 
         return config;
     }
@@ -361,22 +363,23 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     @Override
     public void validate(@NotNull final ActionParametersMap params, @NotNull final ErrorCollection errorCollection) {
         super.validate(params, errorCollection);
-        String useGlobal = params.getString(GLOBAL_SERVER_CREDENTIALS);
-        if (COSTUME_CONFIGURATION_SERVER.equals(useGlobal)) {
+        String useSpecific = params.getString(GLOBAL_SERVER_CREDENTIALS);
+        if (COSTUME_CONFIGURATION_SERVER.equals(useSpecific)) {
             validateNotEmpty(params, errorCollection, USER_NAME);
             validateNotEmpty(params, errorCollection, PASSWORD);
             validateNotEmpty(params, errorCollection, SERVER_URL);
             validateUrl(params, errorCollection, SERVER_URL);
         }
-
         validateNotEmpty(params, errorCollection, PROJECT_NAME);
-        useGlobal = params.getString(GLOBAL_CXSAST);
-        if (COSTUME_CONFIGURATION_CXSAST.equals(useGlobal)) {
-            validateNotNegative(params, errorCollection, SCAN_TIMEOUT_IN_MINUTES);
+        containsIllegals(params, errorCollection, PROJECT_NAME);
+
+        useSpecific = params.getString(GLOBAL_CXSAST);
+        if (COSTUME_CONFIGURATION_CXSAST.equals(useSpecific)) {
+            validatePositive(params, errorCollection, SCAN_TIMEOUT_IN_MINUTES);
         }
 
-        useGlobal = params.getString(GLOBAL_SCAN_CONTROL);
-        if (COSTUME_CONFIGURATION_CONTROL.equals(useGlobal)) {
+        useSpecific = params.getString(GLOBAL_SCAN_CONTROL);
+        if (COSTUME_CONFIGURATION_CONTROL.equals(useSpecific)) {
             validateNotNegative(params, errorCollection, HIGH_THRESHOLD);
             validateNotNegative(params, errorCollection, MEDIUM_THRESHOLD);
             validateNotNegative(params, errorCollection, LOW_THRESHOLD);
@@ -393,7 +396,31 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
     }
 
-    private void validateNotNegative(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
+    private void validateUrl(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
+        final String value = params.getString(key);
+        if (!StringUtils.isEmpty(value)) {
+            try {
+                URL url = new URL(value);
+                if (url.getPath().length() > 0) {
+                    errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
+                }
+            } catch (MalformedURLException e) {
+                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
+            }
+        }
+    }
+
+    public void containsIllegals(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
+        String toExamine = params.getString(key);
+        ;
+        Pattern pattern = Pattern.compile("[/ ? < > \\ : * | \"]");
+        Matcher matcher = pattern.matcher(toExamine);
+        if (matcher.find()) {
+            errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".containsIllegals"));
+        }
+    }
+
+    private void validatePositive(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
         final String value = params.getString(key);
         if (!StringUtils.isEmpty(value)) {
             try {
@@ -408,24 +435,25 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
     }
 
+    private void validateNotNegative(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
+        final String value = params.getString(key);
+        if (!StringUtils.isEmpty(value)) {
+            try {
+                int num = Integer.parseInt(value);
+                if (num >= 0) {
+                    return;
+                }
+                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".notPositive"));
+            } catch (Exception e) {
+                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".notPositive"));
+            }
+        }
+    }
+
     private String getAdminConfig(String key) {
         if (adminConfig == null) {
             adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
         }
         return StringUtils.defaultString(adminConfig.getSystemProperty(key));
-    }
-
-    private void validateUrl(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
-        final String value = params.getString(key);
-        if (!StringUtils.isEmpty(value)) {
-            try {
-                URL url = new URL(value);
-                if (url.getPath().length() > 0) {
-                    errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
-                }
-            } catch (MalformedURLException e) {
-                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
-            }
-        }
     }
 }

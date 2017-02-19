@@ -109,7 +109,8 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("Creating OSA scan");
                     buildLoggerAdapter.info("Zipping dependencies");
                     //prepare sources (zip it) for the OSA scan and send it to OSA scan
-                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", "", MAX_OSA_ZIP_SIZE_BYTES, false);
+                    String patternExclusion = "!Checkmarx/Reports/*.*";
+                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);
                     buildLoggerAdapter.info("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
                     osaProjectSummaryLink  = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());

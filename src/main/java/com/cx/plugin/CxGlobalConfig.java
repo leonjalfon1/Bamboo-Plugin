@@ -7,6 +7,7 @@ import com.atlassian.bamboo.security.EncryptionException;
 import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
+import com.cx.plugin.dto.CxParam;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
@@ -69,14 +70,9 @@ public class CxGlobalConfig extends GlobalAdminAction {
     }
 
     public String save() {
-        boolean error = false;
+        boolean error = isURLInvalid(globalServerUrl);
+        error |= isScanTimeoutInvalid();
 
-        try {
-            validateUrl(globalServerUrl);
-        } catch (MalformedURLException e) {
-            addFieldError(GLOBAL_SERVER_URL, getText(GLOBAL_SERVER_URL + "." + ERROR + ".malformed"));
-            error = true;
-        }
         if ("true".equals(globalIsSynchronous)) {
             if ("true".equals(globalThresholdsEnabled)) {
                 error |= isNegative(getGlobalHighThreshold(), GLOBAL_HIGH_THRESHOLD);
@@ -122,6 +118,44 @@ public class CxGlobalConfig extends GlobalAdminAction {
     }
 
 
+    private boolean isURLInvalid(final String value) {
+        boolean ret = false;
+        if (!StringUtils.isEmpty(value)) {
+            try {
+                URL url = new URL(value);
+                if (url.getPath().length() > 0) {
+                    addFieldError(GLOBAL_SERVER_URL, ("URL must not contain path"));
+                    ret = true;
+                }
+            } catch (MalformedURLException e) {
+                addFieldError(GLOBAL_SERVER_URL, getText(GLOBAL_SERVER_URL + "." + ERROR + ".malformed"));
+                ret = true;
+            }
+        }
+        return ret;
+    }
+
+
+    private boolean isScanTimeoutInvalid() {
+        boolean ret = false;
+        String scanTimeout = getGlobalScanTimeoutInMinutes();
+        if (!StringUtils.isEmpty(scanTimeout)) {
+            try {
+                int num = Integer.parseInt(scanTimeout);
+                if (num <= 0) {
+                    addFieldError(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES, getText(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES + ".notPositive"));
+                    ret = true;
+                }
+
+            } catch (Exception e) {
+                addFieldError(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES, getText(CxParam.GLOBAL_SCAN_TIMEOUT_IN_MINUTES + ".notPositive"));
+                ret = true;
+            }
+        }
+        return ret;
+
+    }
+
     private boolean isNegative(@NotNull String value, @NotNull String key) { //TODO unite the validation to one class
         boolean ret = false;
         if (!StringUtils.isEmpty(value)) {
@@ -138,16 +172,6 @@ public class CxGlobalConfig extends GlobalAdminAction {
             }
         }
         return ret;
-    }
-
-
-    private void validateUrl(final String value) throws MalformedURLException {
-        if (!StringUtils.isEmpty(value)) {
-            URL url = new URL(value);
-            if (url.getPath().length() > 0) {
-                throw new MalformedURLException("must not contain path");
-            }
-        }
     }
 
 
@@ -215,7 +239,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
     }
 
     public void setGlobalScanTimeoutInMinutes(String globalScanTimeoutInMinutes) {
-        this.globalScanTimeoutInMinutes = globalScanTimeoutInMinutes;
+        this.globalScanTimeoutInMinutes = globalScanTimeoutInMinutes.trim();
     }
 
     public String getGlobalThresholdsEnabled() {
