@@ -50,7 +50,6 @@ public class CxRestResource {
         URL url;
         String urlToCheck = key.get("url").toString();
         TestConnectionResponse tcResponse;
-        boolean successLogin = false;
 
         try {
             url = new URL(urlToCheck);
@@ -69,16 +68,15 @@ public class CxRestResource {
         if (OPTION_TRUE.equals(useGlobal)) {
             AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
             password = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
-            successLogin = loginToServer(url, username, Encryption.decrypt(password));
         } else {
             password = key.get("pas").toString();
-            successLogin = loginToServer(url, username, password);
         }
         try {
-            if (successLogin) {
+
+            if (loginToServer(url, username, Encryption.decrypt(password))) {
                 presets = getPresets();
                 teams = getTeamPath();
-                if (presets == null || teams == null){
+                if (presets == null || teams == null) {
                     throw new Exception("invalid preset teamPath");
                 }
                 result = "Success!";
