@@ -413,7 +413,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     public void containsIllegals(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
         String toExamine = params.getString(key);
         ;
-        Pattern pattern = Pattern.compile("[/ ? < > \\ : * | \"]");
+        Pattern pattern = Pattern.compile("[/?<>\\:*|\"]");
         Matcher matcher = pattern.matcher(toExamine);
         if (matcher.find()) {
             errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".containsIllegals"));

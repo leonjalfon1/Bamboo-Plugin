@@ -413,28 +413,28 @@ public class CheckmarxTask implements TaskType {
 
     private void printConfiguration(ScanConfiguration config) {
         buildLoggerAdapter.info("----------------------------Configurations:-----------------------------");
-        buildLoggerAdapter.info("username: " + config.getUsername());
-        buildLoggerAdapter.info("url: " + config.getUrl());
-        buildLoggerAdapter.info("projectName: " + config.getProjectName());
-        buildLoggerAdapter.info("scanTimeoutInMinutes: " + (config.getScanTimeoutInMinutes() <= 0 ? "" : config.getScanTimeoutInMinutes()));
-        buildLoggerAdapter.info("fullTeamPath: " + config.getFullTeamPath());
-        buildLoggerAdapter.info("preset: " + config.getPresetName());
-        buildLoggerAdapter.info("isIncrementalScan: " + config.isIncremental());
-        buildLoggerAdapter.info("folderExclusions: " + (config.getFolderExclusions()));
-        buildLoggerAdapter.info("isSynchronous: " + config.isSynchronous());
-        buildLoggerAdapter.info("generatePDFReport: " + config.isGeneratePDFReport());
-        buildLoggerAdapter.info("CxSAST thresholdsEnabled: " + config.isThresholdsEnabled());
+        buildLoggerAdapter.info("Username: " + config.getUsername());
+        buildLoggerAdapter.info("URL: " + config.getUrl());
+        buildLoggerAdapter.info("Project name: " + config.getProjectName());
+        buildLoggerAdapter.info("Scan timeout in minutes: " + (config.getScanTimeoutInMinutes() <= 0 ? "" : config.getScanTimeoutInMinutes()));
+        buildLoggerAdapter.info("Full team path: " + config.getFullTeamPath());
+        buildLoggerAdapter.info("Preset: " + config.getPresetName());
+        buildLoggerAdapter.info("Is incremental scan: " + config.isIncremental());
+        buildLoggerAdapter.info("Folder exclusions: " + (config.getFolderExclusions()));
+        buildLoggerAdapter.info("Is synchronous scan: " + config.isSynchronous());
+        buildLoggerAdapter.info("Generate PDF report: " + config.isGeneratePDFReport());
+        buildLoggerAdapter.info("CxSAST thresholds enabled: " + config.isThresholdsEnabled());
         if (config.isSASTThresholdEnabled()) {
-            buildLoggerAdapter.info("CxSAST-HighThreshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
-            buildLoggerAdapter.info("CxSAST-mediumThreshold: " + (config.getMediumThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
-            buildLoggerAdapter.info("CxSAST-lowThreshold: " + (config.getLowThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
+            buildLoggerAdapter.info("CxSAST high threshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
+            buildLoggerAdapter.info("CxSAST medium threshold: " + (config.getMediumThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
+            buildLoggerAdapter.info("CxSAST low threshold: " + (config.getLowThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
         }
-        buildLoggerAdapter.info("osaEnabled: " + config.isOsaEnabled());
-        buildLoggerAdapter.info("CxOSA thresholdsEnabled: " + config.isOsaThresholdsEnabled());
+        buildLoggerAdapter.info("CxOSA enabled: " + config.isOsaEnabled());
+        buildLoggerAdapter.info("CxOSA thresholds enabled: " + config.isOsaThresholdsEnabled());
         if (config.isOSAThresholdEnabled()) {
-            buildLoggerAdapter.info("CxOSA-HighSeveritiesThreshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
-            buildLoggerAdapter.info("CxOSA-MediumSeveritiesThreshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
-            buildLoggerAdapter.info("CxOSA-LowSeveritiesThreshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
+            buildLoggerAdapter.info("CxOSA high threshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
+            buildLoggerAdapter.info("CxOSA medium threshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
+            buildLoggerAdapter.info("CxOSA low threshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
         }
         buildLoggerAdapter.info("------------------------------------------------------------------------");
     }
