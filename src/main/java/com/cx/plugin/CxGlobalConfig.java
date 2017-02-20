@@ -8,6 +8,7 @@ import com.atlassian.bamboo.security.EncryptionServiceImpl;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
 import com.cx.plugin.dto.CxParam;
+import com.cx.plugin.dto.Encryption;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
@@ -92,7 +93,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
         adminConfig.setSystemProperty(GLOBAL_SERVER_URL, globalServerUrl);
         adminConfig.setSystemProperty(GLOBAL_USER_NAME, globalUserName);
-        adminConfig.setSystemProperty(GLOBAL_PASSWORD, encrypt(globalPassword));
+        adminConfig.setSystemProperty(GLOBAL_PASSWORD, Encryption.encrypt(globalPassword));
 
         adminConfig.setSystemProperty(GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
         adminConfig.setSystemProperty(GLOBAL_FILTER_PATTERN, globalFilterPatterns);
@@ -175,15 +176,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
     }
 
 
-    private String encrypt(String password) {
-        String encPass;
-        try {
-            encPass = new EncryptionServiceImpl().encrypt(password);
-        } catch (EncryptionException e) {
-            encPass = "";
-        }
-        return encPass;
-    }
+
 
     /*************** Setters & Getters  ****************************/
     public String getGlobalServerUrl() {
