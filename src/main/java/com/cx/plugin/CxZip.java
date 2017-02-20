@@ -15,13 +15,13 @@ import java.io.OutputStream;
  * CxZip encapsulates the workspace folder zipping
  */
 
-public class CxZip {
+class CxZip {
     private long maxZipSizeInBytes = 209715200;
     private int numOfZippedFiles = 0;
     private String tempFileName = "CxZippedSource";
 
 
-    public File zipWorkspaceFolder(String baseDir, String filterPattern, final BuildLoggerAdapter buildLogger, boolean writeToLog)
+    File zipWorkspaceFolder(String baseDir, String filterPattern, final BuildLoggerAdapter buildLogger, boolean writeToLog)
             throws InterruptedException, IOException {
         if (baseDir == null || StringUtils.isEmpty(baseDir)) {
             throw new CxAbortException("Checkmarx Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
@@ -62,7 +62,7 @@ public class CxZip {
         return tempFile;
     }
 
-    public CxZip setMaxZipSizeInBytes(long maxZipSizeInBytes) {
+    CxZip setMaxZipSizeInBytes(long maxZipSizeInBytes) {
         this.maxZipSizeInBytes = maxZipSizeInBytes;
         return this;
     }

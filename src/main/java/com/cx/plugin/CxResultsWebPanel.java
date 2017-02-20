@@ -2,7 +2,6 @@ package com.cx.plugin;
 
 import com.atlassian.bamboo.chains.ChainResultsSummaryImpl;
 import com.atlassian.plugin.web.model.WebPanel;
-import com.cx.plugin.dto.CxResultsConst;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

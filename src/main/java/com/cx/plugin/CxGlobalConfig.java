@@ -156,7 +156,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
 
     }
 
-    private boolean isNegative(@NotNull String value, @NotNull String key) { //TODO unite the validation to one class
+    private boolean isNegative(@NotNull String value, @NotNull String key) {
         boolean ret = false;
         if (!StringUtils.isEmpty(value)) {
             try {

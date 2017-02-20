@@ -61,7 +61,7 @@ public class CheckmarxTask implements TaskType {
     private BuildLoggerAdapter buildLoggerAdapter;
     private HashMap<String, String> configurationMap;
     private BuildContext buildContext;
-    AdministrationConfiguration adminConfig;
+    private AdministrationConfiguration adminConfig;
 
     private static final String PDF_REPORT_NAME = "CxSASTReport";
     private static final String OSA_REPORT_NAME = "CxOSAReport";

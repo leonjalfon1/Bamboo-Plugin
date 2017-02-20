@@ -1,7 +1,8 @@
 package com.cx.plugin;
 
 /**
- * Created by galn on 20/12/2016.
+ * Created by galn
+ * Date: 20/12/2016.
  */
 
 import com.atlassian.bamboo.collections.ActionParametersMap;
@@ -61,7 +62,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         Map<String, String> config = super.generateTaskConfigMap(params, previousTaskDefinition);
         config = generateCredentialsFields(params, config);
 
-        config.put(PROJECT_NAME,getDefaultString(params, PROJECT_NAME).trim());
+        config.put(PROJECT_NAME, getDefaultString(params, PROJECT_NAME).trim());
         config.put(GENERATE_PDF_REPORT, params.getString(GENERATE_PDF_REPORT));
 
         String cxPreset = params.getString(PRESET_ID);
@@ -81,10 +82,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(IS_SYNCHRONOUS, params.getString(IS_SYNCHRONOUS));
 
         //save 'CxSAST Scan' fields
-        config = generateCxSASTFields(params, adminConfig, config);
+        config = generateCxSASTFields(params, config);
 
         //save Scan Control  fields
-        config = generateScanControlFields(params, adminConfig, config);
+        config = generateScanControlFields(params, config);
 
         return config;
     }
@@ -293,7 +294,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return config;
     }
 
-    private Map<String, String> generateCxSASTFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
+    private Map<String, String> generateCxSASTFields(@NotNull final ActionParametersMap params, Map<String, String> config) {
 
         final String configType = getDefaultString(params, GLOBAL_CXSAST);
         config.put(GLOBAL_CXSAST, configType);
@@ -304,10 +305,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return config;
     }
 
-    private Map<String, String> generateScanControlFields(@NotNull final ActionParametersMap params, final AdministrationConfiguration adminConfig, Map<String, String> config) {
+    private Map<String, String> generateScanControlFields(@NotNull final ActionParametersMap params, Map<String, String> config) {
         final String configType = getDefaultString(params, GLOBAL_SCAN_CONTROL);
         config.put(GLOBAL_SCAN_CONTROL, configType);
-        config.put(THRESHOLDS_ENABLED,params.getString(THRESHOLDS_ENABLED));
+        config.put(THRESHOLDS_ENABLED, params.getString(THRESHOLDS_ENABLED));
         config.put(HIGH_THRESHOLD, getDefaultString(params, HIGH_THRESHOLD));
         config.put(MEDIUM_THRESHOLD, getDefaultString(params, MEDIUM_THRESHOLD));
         config.put(LOW_THRESHOLD, getDefaultString(params, LOW_THRESHOLD));
@@ -320,9 +321,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return config;
     }
 
-    private String getDefaultString(@NotNull final ActionParametersMap params, String key){
+    private String getDefaultString(@NotNull final ActionParametersMap params, String key) {
         return StringUtils.defaultString(params.getString(key));
     }
+
     //the method initialized the CxClient service
     private boolean tryLogin(String userName, String cxPass, String serverUrl) {
         log.debug("tryLogin: server URL: " + serverUrl + " username" + userName);
@@ -416,15 +418,18 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private void containsIllegals(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
         String toExamine = params.getString(key);
         Pattern pattern = Pattern.compile("[/?<>\\:*|\"]");
-        Matcher matcher = pattern.matcher(toExamine);
-        if (matcher.find()) {
-            errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".containsIllegals"));
+        if (toExamine != null) {
+            Matcher matcher = pattern.matcher(toExamine);
+
+            if (matcher.find()) {
+                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".containsIllegals"));
+            }
         }
     }
 
-    private void validateProjectNameLength(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key){
+    private void validateProjectNameLength(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {
         String toExamine = params.getString(key);
-        if (toExamine.length() > MAX_PROJECT_NAME_LENGTH) {
+        if (toExamine != null && toExamine.length() > MAX_PROJECT_NAME_LENGTH) {
             errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".invalidLength"));
         }
     }

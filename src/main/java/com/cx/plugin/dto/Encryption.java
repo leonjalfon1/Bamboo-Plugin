@@ -2,10 +2,10 @@ package com.cx.plugin.dto;
 
 import com.atlassian.bamboo.security.EncryptionException;
 import com.atlassian.bamboo.security.EncryptionServiceImpl;
-import org.apache.commons.lang.StringUtils;
 
 /**
- * Created by galn on 16/02/2017.
+ * Created by: Galn
+ * Date: 16/02/2017.
  */
 public class Encryption {
     public static String decrypt(String str) {

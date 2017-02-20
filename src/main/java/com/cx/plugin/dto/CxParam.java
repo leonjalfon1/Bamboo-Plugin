@@ -1,7 +1,8 @@
 package com.cx.plugin.dto;
 
 /**
- * Created by galn on 22/09/2016.
+ * Created by galn
+ * Date: 22/09/2016.
  */
 
 public class CxParam {
