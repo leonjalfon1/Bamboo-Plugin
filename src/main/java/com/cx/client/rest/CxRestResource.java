@@ -63,7 +63,7 @@ public class CxRestResource {
             return Response.status(400).entity(tcResponse).build();
         }
         String useGlobal = key.get("global").toString();
-        String username = key.get("username").toString();
+        String username = key.get("username").toString().trim();
         String password;
         if (OPTION_TRUE.equals(useGlobal)) {
             AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);

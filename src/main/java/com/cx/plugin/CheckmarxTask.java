@@ -65,6 +65,8 @@ public class CheckmarxTask implements TaskType {
 
     private static final String PDF_REPORT_NAME = "CxSASTReport";
     private static final String OSA_REPORT_NAME = "CxOSAReport";
+    private static final String CX_REPORT_LOCATION = File.separator +"Checkmarx" + File.separator + "Reports";
+
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
@@ -113,7 +115,7 @@ public class CheckmarxTask implements TaskType {
                     File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);
                     buildLoggerAdapter.info("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
-                    osaProjectSummaryLink  = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
+                    osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
                     buildLoggerAdapter.info("OSA scan created successfully");
                     if (zipForOSA.exists() && !zipForOSA.delete()) {
                         buildLoggerAdapter.info("Warning: fail to delete temporary zip file: " + zipForOSA.getAbsolutePath());
@@ -184,12 +186,12 @@ public class CheckmarxTask implements TaskType {
                 String now = ft.format(new Date());
                 byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(createScanResponse.getProjectId());
                 String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
-                FileUtils.writeByteArrayToFile(new File(workDirectory, pdfFileName), osaPDF);
-                buildLoggerAdapter.info("OSA PDF report location: " + workDirectory + File.separator + pdfFileName);
+                FileUtils.writeByteArrayToFile(new File(workDirectory + CX_REPORT_LOCATION, pdfFileName), osaPDF);
+                buildLoggerAdapter.info("OSA PDF report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + pdfFileName);
                 String osaHtml = cxClientService.retrieveOSAScanHtmlResults(createScanResponse.getProjectId());
                 String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
-                FileUtils.writeStringToFile(new File(workDirectory, htmlFileName), osaHtml, Charset.defaultCharset());
-                buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + File.separator + htmlFileName);
+                FileUtils.writeStringToFile(new File(workDirectory + CX_REPORT_LOCATION, htmlFileName), osaHtml, Charset.defaultCharset());
+                buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
             }
             if (scanWaitException != null) {
                 throw scanWaitException;
@@ -218,7 +220,7 @@ public class CheckmarxTask implements TaskType {
 
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
 
-         //assert if expected exception is thrown  OR when vulnerabilities under threshold
+        //assert if expected exception is thrown  OR when vulnerabilities under threshold
         if (fail || assertVulnerabilities(scanResults, osaSummaryResults)) {
             return taskResultBuilder.failed().build();
         }
@@ -294,7 +296,6 @@ public class CheckmarxTask implements TaskType {
 
         return configurationMap;
     }
-
 
     private void addSASTResults(Map<String, String> results, ScanResults scanResults, ScanConfiguration config) {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
@@ -424,17 +425,19 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("Is synchronous scan: " + config.isSynchronous());
         buildLoggerAdapter.info("Generate PDF report: " + config.isGeneratePDFReport());
         buildLoggerAdapter.info("CxSAST thresholds enabled: " + config.isThresholdsEnabled());
-        if (config.isSASTThresholdEnabled()) {
+        if (config.isThresholdsEnabled()) {
             buildLoggerAdapter.info("CxSAST high threshold: " + (config.getHighThreshold() == null ? "[No Threshold]" : config.getHighThreshold()));
             buildLoggerAdapter.info("CxSAST medium threshold: " + (config.getMediumThreshold() == null ? "[No Threshold]" : config.getMediumThreshold()));
             buildLoggerAdapter.info("CxSAST low threshold: " + (config.getLowThreshold() == null ? "[No Threshold]" : config.getLowThreshold()));
         }
         buildLoggerAdapter.info("CxOSA enabled: " + config.isOsaEnabled());
-        buildLoggerAdapter.info("CxOSA thresholds enabled: " + config.isOsaThresholdsEnabled());
-        if (config.isOSAThresholdEnabled()) {
-            buildLoggerAdapter.info("CxOSA high threshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
-            buildLoggerAdapter.info("CxOSA medium threshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
-            buildLoggerAdapter.info("CxOSA low threshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
+        if (config.isOsaEnabled()) {
+            buildLoggerAdapter.info("CxOSA thresholds enabled: " + config.isOsaThresholdsEnabled());
+            if (config.isOsaThresholdsEnabled()) {
+                buildLoggerAdapter.info("CxOSA high threshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));
+                buildLoggerAdapter.info("CxOSA medium threshold: " + (config.getOsaMediumThreshold() == null ? "[No Threshold]" : config.getOsaMediumThreshold()));
+                buildLoggerAdapter.info("CxOSA low threshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
+            }
         }
         buildLoggerAdapter.info("------------------------------------------------------------------------");
     }
@@ -514,7 +517,6 @@ public class CheckmarxTask implements TaskType {
     private String getAdminConfig(String key) {
         return StringUtils.defaultString(adminConfig.getSystemProperty(key));
     }
-
 
     private void createPDFReport(long scanId) {
         buildLoggerAdapter.info("Generating PDF report");

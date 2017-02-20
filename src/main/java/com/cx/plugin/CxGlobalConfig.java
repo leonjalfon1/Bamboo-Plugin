@@ -199,7 +199,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
     }
 
     public void setGlobalUserName(String globalUserName) {
-        this.globalUserName = globalUserName;
+        this.globalUserName = globalUserName.trim();
     }
 
     public String getGlobalPassword() {

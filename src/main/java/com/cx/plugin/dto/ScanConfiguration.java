@@ -317,6 +317,6 @@ public class ScanConfiguration {
     }
 
     public boolean isOSAThresholdEnabled() {
-        return isOsaEnabled() && (getOsaHighThreshold() != null || getOsaMediumThreshold() != null || getOsaLowThreshold() != null);
+        return isOsaEnabled() && isOsaThresholdsEnabled() && (getOsaHighThreshold() != null || getOsaMediumThreshold() != null || getOsaLowThreshold() != null);
     }
 }
