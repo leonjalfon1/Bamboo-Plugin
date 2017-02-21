@@ -44,6 +44,8 @@ public class CxParam {
     public static final String COSTUME_CONFIGURATION_CXSAST = "costumeConfigurationCxSAST";
     public static final String GLOBAL_CONFIGURATION_CONTROL = "globalConfigurationControl";
     public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
+    public final static String NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
+    public final static String NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
 
     public static final String OPTION_TRUE = "true";
     public static final String OPTION_FALSE = "false";

@@ -65,6 +65,7 @@ public class CxRestResource {
         String useGlobal = key.get("global").toString();
         String username = key.get("username").toString().trim();
         String password;
+        int statusCode = 400;
         if (OPTION_TRUE.equals(useGlobal)) {
             AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
             password = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
@@ -81,20 +82,29 @@ public class CxRestResource {
                 }
                 result = "Success!";
                 tcResponse = new TestConnectionResponse(result, presets, teams);
+                statusCode=200;
 
-                return Response.status(200).entity(tcResponse).build();
             } else {
                 if (result.equals("")) {
                     result = "Login failed";
                 }
-                tcResponse = new TestConnectionResponse(result, null, null);
-                return Response.status(400).entity(tcResponse).build();
+                presets =new ArrayList<CxClass>(){{
+                add(new CxClass(NO_PRESET, NO_PRESET_MESSAGE));
+                }};
+
+                teams =new ArrayList<CxClass>(){{
+                add(new CxClass(NO_TEAM_PATH, NO_TEAM_MESSAGE));
+                }};
+
+                tcResponse = new TestConnectionResponse(result, presets, teams);
+
             }
         } catch (Exception e) {
             result = "Fail to login: " + e.getMessage();
-            tcResponse = new TestConnectionResponse(result, null, null);
-            return Response.status(400).entity(tcResponse).build();
+            tcResponse = new TestConnectionResponse(result, presets, teams);
+
         }
+        return Response.status(statusCode).entity(tcResponse).build();
     }
 
     public boolean loginToServer(URL url, String username, String password) {

@@ -51,6 +51,7 @@
         xhr.onload = function () {
             var parsed = JSON.parse(xhr.responseText);
             var testConnectionMessage;
+
             if ($('#radioGroupglobalConfigurationServer').is(':checked')) {
                 testConnectionMessage =  $('#globalTestConnectionMessage');
             }
@@ -65,7 +66,7 @@
             else {
                 testConnectionMessage.css('color', '#d22020');
             }
-            populateDropdownList(parsed.presetList, "#presetListId", "id", "value");
+            populateDropdownList( parsed.presetList, "#presetListId", "id", "value");
             populateDropdownList(parsed.teamPathList, "#teamPathListId", "id", "value");
             testConnectionMessage.html(parsed.loginResponse);
         };

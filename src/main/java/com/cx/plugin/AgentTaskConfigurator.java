@@ -44,8 +44,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
     private final static String SPECIFIC_SETTING_LABEL = "Specific Task Setting";
     private final static String DEFAULT_SERVER_URL = "http://";
-    private final static String NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
-    private final static String NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
+
     private final static int MAX_PROJECT_NAME_LENGTH = 200;
 
 
@@ -438,7 +437,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         final String value = params.getString(key);
         if (!StringUtils.isEmpty(value)) {
             try {
-                int num = Integer.parseInt(value);
+                int num = Integer.parseInt(value.trim());
                 if (num > 0) {
                     return;
                 }

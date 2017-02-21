@@ -136,7 +136,6 @@ public class CxGlobalConfig extends GlobalAdminAction {
         return ret;
     }
 
-
     private boolean isScanTimeoutInvalid() {
         boolean ret = false;
         String scanTimeout = getGlobalScanTimeoutInMinutes();
@@ -174,7 +173,6 @@ public class CxGlobalConfig extends GlobalAdminAction {
         }
         return ret;
     }
-
 
 
 

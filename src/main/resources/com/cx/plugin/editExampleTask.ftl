@@ -188,7 +188,7 @@
                 [/@ui.bambooSection]
 
                 [@ui.bambooSection dependsOn='osaEnabled' showOn='false']
-                    [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' /]
+                    [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='false'  /]
 
                     [@ww.label labelKey="highThreshold.label"/]
                     [@ww.label labelKey="mediumThreshold.label"/]
@@ -199,11 +199,11 @@
             [/@ui.bambooSection]
 
             [@ui.bambooSection dependsOn='isSynchronous' showOn='false']
-                [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' /]
+                [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false' /]
                 [@ww.label labelKey="highThreshold.label"/]
                 [@ww.label labelKey="mediumThreshold.label"  /]
                 [@ww.label labelKey="lowThreshold.label" /]
-                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' /]
+                [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="osaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='false' /]
                 [@ww.label labelKey="highThreshold.label" /]
                 [@ww.label labelKey="mediumThreshold.label" /]
                 [@ww.label labelKey="lowThreshold.label" /]

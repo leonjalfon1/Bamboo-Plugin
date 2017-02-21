@@ -396,7 +396,7 @@ public class CxClientServiceImpl implements CxClientService {
             try {
                 Thread.sleep(10000); //Get status every 10 sec
             } catch (InterruptedException e) {
-                log.debug("Caught exception during sleep", e);
+                log.debug("Caught exception during sleep", e);//TODO
             }
 
             try {
