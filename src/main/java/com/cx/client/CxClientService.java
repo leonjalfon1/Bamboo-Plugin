@@ -33,6 +33,10 @@ public interface CxClientService {
 
     long resolvePresetIdFromName(String presetName);
 
+    String resolvePresetNameFromId(String presetName);
+
+    String resolveTeamNameFromTeamId(String teamId);
+
     void waitForScanToFinish(String runId, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException;
 
     /**

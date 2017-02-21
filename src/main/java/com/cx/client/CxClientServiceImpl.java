@@ -195,6 +195,23 @@ public class CxClientServiceImpl implements CxClientService {
         return null;
     }
 
+    public String resolveTeamNameFromTeamId(String teamId) {
+        teamId = StringUtils.defaultString(teamId).trim();
+        CxWSResponseGroupList associatedGroupsList = client.getAssociatedGroupsList(sessionId);
+        if (!associatedGroupsList.isIsSuccesfull()) {
+            log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
+            return "";
+        }
+        List<Group> group = associatedGroupsList.getGroupList().getGroup();
+
+        for (Group g : group) {
+            if (teamId.equalsIgnoreCase(g.getID())) {
+                return g.getGroupName();
+            }
+        }
+        return "";
+    }
+
     public long resolvePresetIdFromName(String presetName) {
         presetName = StringUtils.defaultString(presetName).trim();
         CxWSResponsePresetList presetList = client.getPresetList(sessionId);
@@ -211,6 +228,24 @@ public class CxClientServiceImpl implements CxClientService {
             }
         }
         return 0;
+    }
+
+    public String resolvePresetNameFromId(String presetId) {
+        presetId = StringUtils.defaultString(presetId).trim();
+        CxWSResponsePresetList presetList = client.getPresetList(sessionId);
+        if (!presetList.isIsSuccesfull()) {
+            log.warn("Fail to retrieve preset list: ", presetList.getErrorMessage());
+            return "";
+        }
+
+        List<Preset> preset = presetList.getPresetList().getPreset();
+
+        for (Preset p : preset) {
+            if (presetId.equals(Long.toString(p.getID()))) {
+                return Long.toString(p.getID());
+            }
+        }
+        return "";
     }
 
     public void waitForScanToFinish(String runId, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException {
@@ -344,9 +379,9 @@ public class CxClientServiceImpl implements CxClientService {
         CxWSReportStatusResponse scanReportStatus = null;
 
         while ((System.currentTimeMillis() / 1000) <= timeToStop) {
-            log.debug("Waiting for server to generate pdf report" + (timeToStop - (System.currentTimeMillis() / 1000)) + " sec left to timeout");
+            log.debug("Waiting for server to generate pdf report " + (timeToStop - (System.currentTimeMillis() / 1000)) + " sec left to timeout");
             try {
-                Thread.sleep(2000); //Get status every 2 sec
+                Thread.sleep(10000); //Get status every 10 sec
             } catch (InterruptedException e) {
                 log.debug("Caught exception during sleep", e);
             }

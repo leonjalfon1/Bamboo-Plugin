@@ -232,7 +232,7 @@ public class CheckmarxTask implements TaskType {
         adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
         configurationMap = new HashMap<String, String>();
 
-        if (COSTUME_CONFIGURATION_SERVER.equals(configMap.get(GLOBAL_SERVER_CREDENTIALS))) {
+        if (COSTUME_CONFIGURATION_SERVER.equals(configMap.get(SERVER_CREDENTIALS_SECTION))) {
             configurationMap.put(SERVER_URL, configMap.get(SERVER_URL));
             configurationMap.put(USER_NAME, configMap.get(USER_NAME));
             configurationMap.put(PASSWORD, configMap.get(PASSWORD));
@@ -259,7 +259,7 @@ public class CheckmarxTask implements TaskType {
         configurationMap.put(TEAM_PATH_ID, StringUtils.defaultString(configMap.get(TEAM_PATH_ID)));
         configurationMap.put(TEAM_PATH_NAME, teamName);
 
-        if (COSTUME_CONFIGURATION_CXSAST.equals(configMap.get(GLOBAL_CXSAST))) {
+        if (COSTUME_CONFIGURATION_CXSAST.equals(configMap.get(CXSAST_SECTION))) {
             configurationMap.put(FOLDER_EXCLUSION, configMap.get(FOLDER_EXCLUSION));
             configurationMap.put(FILTER_PATTERN, configMap.get(FILTER_PATTERN));
             configurationMap.put(SCAN_TIMEOUT_IN_MINUTES, configMap.get(SCAN_TIMEOUT_IN_MINUTES));
@@ -272,7 +272,7 @@ public class CheckmarxTask implements TaskType {
         configurationMap.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         configurationMap.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
 
-        if (COSTUME_CONFIGURATION_CONTROL.equals(configMap.get(GLOBAL_SCAN_CONTROL))) {
+        if (COSTUME_CONFIGURATION_CONTROL.equals(configMap.get(SCAN_CONTROL_SECTION))) {
             configurationMap.put(IS_SYNCHRONOUS, configMap.get(IS_SYNCHRONOUS));
             configurationMap.put(THRESHOLDS_ENABLED, configMap.get(THRESHOLDS_ENABLED));
             configurationMap.put(HIGH_THRESHOLD, configMap.get(HIGH_THRESHOLD));
@@ -526,8 +526,8 @@ public class CheckmarxTask implements TaskType {
             SimpleDateFormat df = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
             String now = df.format(new Date());
             String pdfFileName = PDF_REPORT_NAME + "_" + now + ".pdf";
-            FileUtils.writeByteArrayToFile(new File(getWorkspace(), pdfFileName), scanReport);
-            buildLoggerAdapter.info("PDF report location: " + getWorkspace() + File.separator + pdfFileName);
+            FileUtils.writeByteArrayToFile(new File(getWorkspace() + CX_REPORT_LOCATION, pdfFileName), scanReport);
+            buildLoggerAdapter.info("PDF report location: " + getWorkspace() + CX_REPORT_LOCATION + File.separator + pdfFileName);
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("Fail to generate PDF report");
             log.error("Fail to generate PDF report ", e);

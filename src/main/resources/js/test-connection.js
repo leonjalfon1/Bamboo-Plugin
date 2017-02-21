@@ -9,20 +9,20 @@
 
     function restRequest() {
         var request;
+
+
         if ($('#radioGroupglobalConfigurationServer').is(':checked')) {
             if (!validateGlobalFields()) {
-                return;
+                return populateEmptyDropdownList();
             }
             request = JSON.stringify(getGlobalInputData());
 
         } else {
             if (!validateFields()) {
-                return;
+                return populateEmptyDropdownList();
             }
-
             request = JSON.stringify(getInputData());
         }
-
 
 
         function createRestRequest(method, url) {
@@ -130,6 +130,17 @@
             "username": $('#globalUserName').html(),
             "global": $('#radioGroupglobalConfigurationServer').is(':checked')
         };
+    }
+
+    function populateEmptyDropdownList() {
+        var NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
+        var NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
+        var noPresetList = [{ id: 'noPreset', value: NO_PRESET_MESSAGE}];
+        var noTeamList = [{ id: 'noTeamPath', value: NO_TEAM_MESSAGE}];
+        populateDropdownList( noPresetList, "#presetListId", "id", "value");
+        populateDropdownList(noTeamList, "#teamPathListId", "id", "value");
+        return;
+
     }
 
 

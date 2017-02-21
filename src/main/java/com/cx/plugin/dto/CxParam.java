@@ -29,14 +29,12 @@ public class CxParam {
     public static final String OSA_HIGH_THRESHOLD = "osaHighThreshold";
     public static final String OSA_MEDIUM_THRESHOLD = "osaMediumThreshold";
     public static final String OSA_LOW_THRESHOLD = "osaLowThreshold";
-    public static final String NO_TEAM_PATH = "noTeamPath";
-    public static final String NO_PRESET = "noPreset";
     public static final String PRESET_LIST = "presetList";
     public static final String TEAM_PATH_LIST = "teamPathList";
     public static final String FILTER_PATTERN = "filterPatterns";
-    public static final String GLOBAL_SERVER_CREDENTIALS = "globalServerCredentials";
-    public static final String GLOBAL_CXSAST = "globalCxSast";
-    public static final String GLOBAL_SCAN_CONTROL = "globalScanControl";
+    public static final String SERVER_CREDENTIALS_SECTION = "serverCredentialsSection";
+    public static final String CXSAST_SECTION = "cxSastSection";
+    public static final String SCAN_CONTROL_SECTION = "scanControlSection";
     public static final String ADMINISTRATION_CONFIGURATION = "administrationConfiguration";
     public static final String GLOBAL_CONFIGURATION_SERVER = "globalConfigurationServer";
     public static final String COSTUME_CONFIGURATION_SERVER = "costumeConfigurationServer";
@@ -44,6 +42,8 @@ public class CxParam {
     public static final String COSTUME_CONFIGURATION_CXSAST = "costumeConfigurationCxSAST";
     public static final String GLOBAL_CONFIGURATION_CONTROL = "globalConfigurationControl";
     public static final String COSTUME_CONFIGURATION_CONTROL = "costumeConfigurationControl";
+    public static final String NO_TEAM_PATH = "noTeamPath";
+    public static final String NO_PRESET = "noPreset";
     public final static String NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
     public final static String NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
 
@@ -75,5 +75,5 @@ public class CxParam {
             "!**/*.tar.gz,  !**/*.tar,       !**/*.gz,       !**/*.ahtm,     !**/*.ahtml,   !**/*.fhtml, !**/*.hdm,   " +
             "!**/*.hdml,    !**/*.hsql,      !**/*.ht,       !**/*.hta,      !**/*.htc,     !**/*.htd,   !**/*.war,   !**/*.ear,  " +
             "!**/*.htmls,   !**/*.ihtml,     !**/*.mht,      !**/*.mhtm,     !**/*.mhtml,   !**/*.ssi,   !**/*.stm,   " +
-            "!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml  !Checkmarx/Reports/*.*";
+            "!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml,   !Checkmarx/Reports/*.*";
 }
