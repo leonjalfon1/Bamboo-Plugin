@@ -85,7 +85,6 @@ public class CheckmarxTask implements TaskType {
         OSASummaryResults osaSummaryResults = null;
         Exception osaCreateException = null;
         Exception scanWaitException = null;
-        boolean fail = false;
 
         try {
             config = new ScanConfiguration(configurationMap);
@@ -213,12 +212,10 @@ public class CheckmarxTask implements TaskType {
         } catch (CxClientException e) {
             buildLogger.addErrorLogEntry("Caught exception: " + e.getMessage());
             log.error("Caught exception: " + e.getMessage(), e);
-            fail = true;
 
         } catch (NumberFormatException e) {
             buildLogger.addErrorLogEntry("Invalid preset id. " + e.getMessage());
             log.error("Invalid preset id: " + e.getMessage(), e);
-            fail = true;
 
         } catch (InterruptedException e) {
             buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
@@ -239,7 +236,7 @@ public class CheckmarxTask implements TaskType {
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
 
         //assert if expected exception is thrown  OR when vulnerabilities under threshold
-        if (fail || assertVulnerabilities(scanResults, osaSummaryResults)) {
+        if (assertVulnerabilities(scanResults, osaSummaryResults)) {
             return taskResultBuilder.failed().build();
         }
 
@@ -497,7 +494,7 @@ public class CheckmarxTask implements TaskType {
 
         StringBuilder res = new StringBuilder("");
         boolean fail = false;
-        if (config.isSASTThresholdEnabled()) {
+        if (config.isSASTThresholdEnabled() && scanResults != null) {
             fail = isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "high", "CxSAST ");
             fail |= isFail(scanResults.getMediumSeverityResults(), config.getMediumThreshold(), res, "medium", "CxSAST ");
             fail |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "low", "CxSAST ");
