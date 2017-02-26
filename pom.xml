@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.cx</groupId>
     <artifactId>checkmarx-bamboo-plugin</artifactId>
@@ -12,6 +13,7 @@
     <name>Checkmarx Bamboo Plugin</name>
     <description>Checkmarx Plugin For Atlassian Bamboo</description>
     <packaging>atlassian-plugin</packaging>
+
     <build>
         <plugins>
             <plugin>
@@ -21,7 +23,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>${bamboo.version}</productVersion>
-                  <!--  <productDataVersion>${bamboo.data.version}</productDataVersion>-->
+                    <!--  <productDataVersion>${bamboo.data.version}</productDataVersion>-->
                     <enableQuickReload>true</enableQuickReload>
                     <extractDependencies>false</extractDependencies>
                 </configuration>
@@ -36,6 +38,9 @@
         <!--      <atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>-->
         <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
         <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     </properties>
     <dependencies>
         <dependency>
@@ -62,8 +67,6 @@
             <version>2.1</version>
             <scope>provided</scope>
         </dependency>
-
-
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -106,6 +109,12 @@
             <artifactId>zipper</artifactId>
             <version>1.2.1</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>

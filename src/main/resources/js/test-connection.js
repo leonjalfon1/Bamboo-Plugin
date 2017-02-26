@@ -62,12 +62,13 @@
 
             if (xhr.status == 200) {
                 testConnectionMessage.css('color', 'green');
+                populateDropdownList( parsed.presetList, "#presetListId", "id", "value");
+                populateDropdownList(parsed.teamPathList, "#teamPathListId", "id", "value");
             }
             else {
                 testConnectionMessage.css('color', '#d22020');
+                populateEmptyDropdownList();
             }
-            populateDropdownList( parsed.presetList, "#presetListId", "id", "value");
-            populateDropdownList(parsed.teamPathList, "#teamPathListId", "id", "value");
             testConnectionMessage.html(parsed.loginResponse);
         };
 

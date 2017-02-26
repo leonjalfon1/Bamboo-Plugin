@@ -38,7 +38,6 @@ public class CxRestResource {
     private static CxSDKWebServiceSoap client;
     private static String sessionId;
     private static String result = "";
-    ;
 
 
     @POST

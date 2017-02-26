@@ -40,8 +40,13 @@
     </web-item>
 
 
-    <web-panel key="checkmarx-chainresult-summary" name="Checkmarx Plan Result Summary Panel"
-               location="chainresult.summary" class="com.cx.plugin.CxResultsWebPanel">
+    <web-panel key="checkmarx-planchainresult-summary" name="Checkmarx Plan Result Summary Panel"
+               location="chainresult.summary" class="com.cx.plugin.CxPlanResultsWebPanel">
+    </web-panel>
+
+
+    <web-panel key="checkmarx-jobchainresult-summary" name="Checkmarx Job Result Summary Panel"
+               location="jobresult.summary.right" class="com.cx.plugin.CxJobResultsWebPanel">
     </web-panel>
 
     <web-resource key="test-connection-resources" name="test-connection Web Resources">

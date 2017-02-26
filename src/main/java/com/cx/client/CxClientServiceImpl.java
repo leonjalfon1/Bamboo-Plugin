@@ -242,17 +242,17 @@ public class CxClientServiceImpl implements CxClientService {
 
         for (Preset p : preset) {
             if (presetId.equals(Long.toString(p.getID()))) {
-                return Long.toString(p.getID());
+                return p.getPresetName();
             }
         }
         return "";
     }
 
-    public void waitForScanToFinish(String runId, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException {
+    public void waitForScanToFinish(String runId, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException, InterruptedException {
         waitForScanToFinish(runId, 0, waitHandler);
     }
 
-    public void waitForScanToFinish(String runId, long scanTimeoutInMin, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException {
+    public void waitForScanToFinish(String runId, long scanTimeoutInMin, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException, InterruptedException {
 
         long timeToStop = (System.currentTimeMillis() / 60000) + scanTimeoutInMin;
 
@@ -267,12 +267,7 @@ public class CxClientServiceImpl implements CxClientService {
 
         while (scanTimeoutInMin <= 0 || (System.currentTimeMillis() / 60000) <= timeToStop) {
 
-            try {
-                Thread.sleep(20000); //Get status every 20 sec
-            } catch (InterruptedException e) {
-                log.debug("Caught exception during sleep", e);
-            }
-
+            Thread.sleep(20000); //Get status every 20 sec
 
             try {
                 scanStatus = client.getStatusOfSingleScan(sessionId, runId);
@@ -342,7 +337,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
 
-    public byte[] getScanReport(long scanId, ReportType reportType) throws CxClientException {
+    public byte[] getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException {
 
         CxWSReportRequest cxWSReportRequest = new CxWSReportRequest();
         cxWSReportRequest.setScanID(scanId);
@@ -373,18 +368,15 @@ public class CxClientServiceImpl implements CxClientService {
         //todo implement
     }
 
-    private void waitForReport(long reportId) throws CxClientException {
+    private void waitForReport(long reportId) throws CxClientException, InterruptedException {
         //todo: const+ research of the appropriate time
         long timeToStop = (System.currentTimeMillis() / 1000) + generateReportTimeOutInSec;
         CxWSReportStatusResponse scanReportStatus = null;
 
         while ((System.currentTimeMillis() / 1000) <= timeToStop) {
             log.debug("Waiting for server to generate pdf report " + (timeToStop - (System.currentTimeMillis() / 1000)) + " sec left to timeout");
-            try {
-                Thread.sleep(10000); //Get status every 10 sec
-            } catch (InterruptedException e) {
-                log.debug("Caught exception during sleep", e);
-            }
+
+            Thread.sleep(10000); //Get status every 10 sec
 
             scanReportStatus = client.getScanReportStatus(sessionId, reportId);
 
@@ -413,7 +405,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
 
-    public OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException {
+    public OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException {
         //re login in case of session timed out
         restClient.login();
         long timeToStop = (System.currentTimeMillis() / 60000) + scanTimeoutInMin;
@@ -427,12 +419,7 @@ public class CxClientServiceImpl implements CxClientService {
         int retry = waitForScanToFinishRetry;
 
         while (scanTimeoutInMin <= 0 || (System.currentTimeMillis() / 60000) <= timeToStop) {
-
-            try {
-                Thread.sleep(10000); //Get status every 10 sec
-            } catch (InterruptedException e) {
-                log.debug("Caught exception during sleep", e);//TODO
-            }
+            Thread.sleep(10000); //Get status every 10 sec
 
             try {
                 scanStatus = restClient.getOSAScanStatus(scanId);
@@ -519,5 +506,15 @@ public class CxClientServiceImpl implements CxClientService {
         }
         group = associatedGroupsList.getGroupList();
         return group;
+    }
+
+    /**
+     * Cancel scan on Checkmarx server
+     *
+     * @param runId run ID of the scan
+     * @return server response
+     */
+    public CxWSBasicRepsonse cancelScan(String runId) {
+        return client.cancelScan(sessionId, runId);
     }
 }

@@ -18,8 +18,12 @@ import java.io.OutputStream;
 class CxZip {
     private long maxZipSizeInBytes = 209715200;
     private int numOfZippedFiles = 0;
-    private String tempFileName = "CxZippedSource";
 
+    private String tempFileName;
+
+    public CxZip(String tempFileName) {
+        this.tempFileName = tempFileName;
+    }
 
     File zipWorkspaceFolder(String baseDir, String filterPattern, final BuildLoggerAdapter buildLogger, boolean writeToLog)
             throws InterruptedException, IOException {
@@ -50,6 +54,7 @@ class CxZip {
         try {
             new Zipper().zip(folder, filterPattern, fileOutputStream, maxZipSizeInBytes, zipListener);
         } catch (Zipper.MaxZipSizeReached e) {
+            tempFile.delete();
             throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(maxZipSizeInBytes));
         } catch (Zipper.NoFilesToZip e) {
             throw new IOException("No files to zip");
@@ -70,6 +75,10 @@ class CxZip {
     public CxZip setTempFileName(String tempFileName) {
         this.tempFileName = tempFileName;
         return this;
+    }
+
+    public String getTempFileName() {
+        return tempFileName;
     }
 
 }

@@ -1,8 +1,6 @@
 package com.cx.client;
 
-import com.checkmarx.v7.ArrayOfGroup;
-import com.checkmarx.v7.CxWSResponseScanStatus;
-import com.checkmarx.v7.Preset;
+import com.checkmarx.v7.*;
 import com.cx.client.dto.CreateScanResponse;
 import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
@@ -37,20 +35,20 @@ public interface CxClientService {
 
     String resolveTeamNameFromTeamId(String teamId);
 
-    void waitForScanToFinish(String runId, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException;
+    void waitForScanToFinish(String runId, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException, InterruptedException;
 
     /**
      * @param runId
      * @param scanTimeoutInMin set scanTimeoutInMin to -1 for no timeout
      * @throws CxClientException
      */
-    void waitForScanToFinish(String runId, long scanTimeoutInMin, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException;
+    void waitForScanToFinish(String runId, long scanTimeoutInMin, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException, InterruptedException;
 
     ScanResults retrieveScanResults(long projectId) throws CxClientException;
 
     CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException;
 
-    OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException;
+    OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException;
 
     OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException;
 
@@ -58,7 +56,7 @@ public interface CxClientService {
 
     byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException;
 
-    byte[] getScanReport(long scanId, ReportType reportType) throws CxClientException;
+    byte[]  getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException;
 
     ArrayOfGroup getAssociatedGroupsList();
     List<Preset> getPresetList();
@@ -68,4 +66,7 @@ public interface CxClientService {
     void setLogger(Logger log);
 
     String getSessionId();
+
+    CxWSBasicRepsonse cancelScan(String runId);
+
 }

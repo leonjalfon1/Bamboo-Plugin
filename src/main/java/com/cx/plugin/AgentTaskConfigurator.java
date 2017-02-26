@@ -356,8 +356,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
                 log.debug("Failed to login to retrieve data from server. " + e.getMessage(), e);
             } catch (CxClientException e) {
                 log.debug("Failed to login to retrieve data from server. " + e.getMessage(), e);
+                cxClientService = null;
             } catch (Exception e) {
                 log.debug("Failed to login to retrieve data from server. " + e.getMessage(), e);
+                cxClientService = null;
             }
         }
         return false;
@@ -423,10 +425,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             try {
                 URL url = new URL(value);
                 if (url.getPath().length() > 0) {
-                    errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
+                    errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".error.malformed"));
                 }
             } catch (MalformedURLException e) {
-                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + "error.malformed"));
+                errorCollection.addError(key, ((ConfigureBuildTasks) errorCollection).getText(key + ".error.malformed"));
             }
         }
     }

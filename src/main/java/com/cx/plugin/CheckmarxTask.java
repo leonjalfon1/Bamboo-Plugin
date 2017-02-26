@@ -65,11 +65,12 @@ public class CheckmarxTask implements TaskType {
 
     private static final String PDF_REPORT_NAME = "CxSASTReport";
     private static final String OSA_REPORT_NAME = "CxOSAReport";
-    private static final String CX_REPORT_LOCATION = File.separator +"Checkmarx" + File.separator + "Reports";
-
+    private static final String CX_REPORT_LOCATION = File.separator + "Checkmarx" + File.separator + "Reports";
+    private static final String TEMP_FILE_NAME_TO_ZIP  = "CxZippedSource";
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
+
 
         final TaskResultBuilder taskResultBuilder = TaskResultBuilder.newBuilder(taskContext);
         buildLogger = taskContext.getBuildLogger();
@@ -80,8 +81,8 @@ public class CheckmarxTask implements TaskType {
         configurationMap = resolveConfigurationMap(taskContext.getConfigurationMap());//resolve the global configuration properties
         workDirectory = taskContext.getWorkingDirectory();
         ScanResults scanResults = null;
+        CreateScanResponse createScanResponse = null;
         OSASummaryResults osaSummaryResults = null;
-
         Exception osaCreateException = null;
         Exception scanWaitException = null;
         boolean fail = false;
@@ -102,7 +103,7 @@ public class CheckmarxTask implements TaskType {
             cxClientService.loginToServer();
 
             //prepare sources (zip it) and send it to scan
-            CreateScanResponse createScanResponse = createScan();
+            createScanResponse = createScan();
 
             CreateOSAScanResponse osaScan = null;
             //OSA Scan
@@ -121,6 +122,9 @@ public class CheckmarxTask implements TaskType {
                         buildLoggerAdapter.info("Warning: fail to delete temporary zip file: " + zipForOSA.getAbsolutePath());
                     }
                     buildLoggerAdapter.info("Temporary file deleted");
+                } catch (InterruptedException e) {
+                    //TODO
+                    throw e;
                 } catch (Exception e) {
                     buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
                     log.error("Fail to create OSA Scan: " + e.getMessage(), e);
@@ -159,6 +163,10 @@ public class CheckmarxTask implements TaskType {
                 buildLogger.addErrorLogEntry(e.getMessage());
                 log.error(e.getMessage(), e);
                 scanWaitException = e;
+            } catch (InterruptedException e) {
+                //TODO
+                throw e;
+
             } catch (Exception e) {
                 buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error("Fail to perform CxSAST scan: " + e.getMessage(), e);
@@ -211,6 +219,16 @@ public class CheckmarxTask implements TaskType {
             buildLogger.addErrorLogEntry("Invalid preset id. " + e.getMessage());
             log.error("Invalid preset id: " + e.getMessage(), e);
             fail = true;
+
+        } catch (InterruptedException e) {
+            buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
+            log.error("Interrupted exception: " + e.getMessage(), e);
+
+            if (cxClientService !=null && createScanResponse != null) {
+                log.error("Canceling scan on the Checkmarx server...");
+                cxClientService.cancelScan(createScanResponse.getRunId());
+            }
+            throw new TaskException(e.getMessage());
 
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage());
@@ -305,7 +323,7 @@ public class CheckmarxTask implements TaskType {
 
         results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
 
-        if (config.isSASTThresholdEnabled()) {
+        if (config.isThresholdsEnabled()) {
             String highThreshold = (config.getHighThreshold() == null ? "null" : String.valueOf(config.getHighThreshold()));
             String mediumThreshold = (config.getMediumThreshold() == null ? "null" : String.valueOf(config.getMediumThreshold()));
             String lowThreshold = (config.getLowThreshold() == null ? "null" : String.valueOf(config.getLowThreshold()));
@@ -379,7 +397,7 @@ public class CheckmarxTask implements TaskType {
 
     private File zipWorkspaceFolder(String baseZipDir, String folderExclusions, String filterPattern, long maxZipSizeInBytes, boolean writeToLog) throws IOException, InterruptedException {
         final String combinedFilterPattern = CxFolderPattern.generatePattern(folderExclusions, filterPattern, buildLoggerAdapter);
-        CxZip cxZip = new CxZip().setMaxZipSizeInBytes(maxZipSizeInBytes);
+        CxZip cxZip = new CxZip(TEMP_FILE_NAME_TO_ZIP).setMaxZipSizeInBytes(maxZipSizeInBytes);
         return cxZip.zipWorkspaceFolder(baseZipDir, combinedFilterPattern, buildLoggerAdapter, writeToLog);
     }
 
@@ -518,7 +536,7 @@ public class CheckmarxTask implements TaskType {
         return StringUtils.defaultString(adminConfig.getSystemProperty(key));
     }
 
-    private void createPDFReport(long scanId) {
+    private void createPDFReport(long scanId) throws InterruptedException {
         buildLoggerAdapter.info("Generating PDF report");
         byte[] scanReport;
         try {
@@ -528,6 +546,8 @@ public class CheckmarxTask implements TaskType {
             String pdfFileName = PDF_REPORT_NAME + "_" + now + ".pdf";
             FileUtils.writeByteArrayToFile(new File(getWorkspace() + CX_REPORT_LOCATION, pdfFileName), scanReport);
             buildLoggerAdapter.info("PDF report location: " + getWorkspace() + CX_REPORT_LOCATION + File.separator + pdfFileName);
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("Fail to generate PDF report");
             log.error("Fail to generate PDF report ", e);
