@@ -7,9 +7,9 @@ import java.util.List;
  */
 public class TestConnectionResponse {
 
-    public String loginResponse;
-    public List<CxClass> presetList;
-    public List<CxClass> teamPathList;
+    private String loginResponse;
+    private List<CxClass> presetList;
+    private List<CxClass> teamPathList;
 
 
     public TestConnectionResponse(String loginResponse, List<CxClass> presetList, List<CxClass> teamPathList) {

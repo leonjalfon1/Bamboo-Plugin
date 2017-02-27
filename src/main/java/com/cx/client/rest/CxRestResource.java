@@ -109,7 +109,6 @@ public class CxRestResource {
     public boolean loginToServer(URL url, String username, String password) {
         try {
 
-
             CxSDKWebService ss = new CxSDKWebService(WSDL_LOCATION, SERVICE_NAME);
             client = ss.getCxSDKWebServiceSoap();
             BindingProvider bindingProvider = (BindingProvider) client;

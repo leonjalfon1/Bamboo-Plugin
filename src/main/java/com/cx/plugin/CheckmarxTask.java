@@ -66,7 +66,7 @@ public class CheckmarxTask implements TaskType {
     private static final String PDF_REPORT_NAME = "CxSASTReport";
     private static final String OSA_REPORT_NAME = "CxOSAReport";
     private static final String CX_REPORT_LOCATION = File.separator + "Checkmarx" + File.separator + "Reports";
-    private static final String TEMP_FILE_NAME_TO_ZIP  = "CxZippedSource";
+    private static final String TEMP_FILE_NAME_TO_ZIP = "CxZippedSource";
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
@@ -85,7 +85,7 @@ public class CheckmarxTask implements TaskType {
         OSASummaryResults osaSummaryResults = null;
         Exception osaCreateException = null;
         Exception scanWaitException = null;
-
+        boolean fail = false;
         try {
             config = new ScanConfiguration(configurationMap);
             url = new URL(config.getUrl());
@@ -199,6 +199,7 @@ public class CheckmarxTask implements TaskType {
                 String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
                 FileUtils.writeStringToFile(new File(workDirectory + CX_REPORT_LOCATION, htmlFileName), osaHtml, Charset.defaultCharset());
                 buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
+                buildLoggerAdapter.info("");
             }
             if (scanWaitException != null) {
                 throw scanWaitException;
@@ -212,16 +213,18 @@ public class CheckmarxTask implements TaskType {
         } catch (CxClientException e) {
             buildLogger.addErrorLogEntry("Caught exception: " + e.getMessage());
             log.error("Caught exception: " + e.getMessage(), e);
+            fail = true;
 
         } catch (NumberFormatException e) {
             buildLogger.addErrorLogEntry("Invalid preset id. " + e.getMessage());
             log.error("Invalid preset id: " + e.getMessage(), e);
+            fail = true;
 
         } catch (InterruptedException e) {
             buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
             log.error("Interrupted exception: " + e.getMessage(), e);
 
-            if (cxClientService !=null && createScanResponse != null) {
+            if (cxClientService != null && createScanResponse != null) {
                 log.error("Canceling scan on the Checkmarx server...");
                 cxClientService.cancelScan(createScanResponse.getRunId());
             }
@@ -236,7 +239,7 @@ public class CheckmarxTask implements TaskType {
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
 
         //assert if expected exception is thrown  OR when vulnerabilities under threshold
-        if (assertVulnerabilities(scanResults, osaSummaryResults)) {
+        if (assertVulnerabilities(scanResults, osaSummaryResults) || fail) {
             return taskResultBuilder.failed().build();
         }
 
@@ -463,6 +466,7 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("Medium severity results: " + scanResults.getMediumSeverityResults());
         buildLoggerAdapter.info("Low severity results: " + scanResults.getLowSeverityResults());
         buildLoggerAdapter.info("Info severity results: " + scanResults.getInfoSeverityResults());
+        buildLoggerAdapter.info("");
         buildLoggerAdapter.info("Scan results location: " + scanResultsUrl);
         buildLoggerAdapter.info("------------------------------------------------------------------------------------------\n");
     }
@@ -515,7 +519,8 @@ public class CheckmarxTask implements TaskType {
                 buildLogger.addErrorLogEntry(s);
                 log.info(s);
             }
-            buildLogger.addErrorLogEntry("---------------------------------------------------------------------\n");
+            buildLogger.addErrorLogEntry("-----------------------------------------------------------------------------------------\n");
+            buildLogger.addErrorLogEntry("");
         }
         return fail;
     }
