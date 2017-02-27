@@ -62,11 +62,12 @@ tr {
   text-align: center;
   padding-bottom: 45px;
   margin-bottom: 42px;
-  padding-left: 16px;
+  padding-left: 1%;
+  padding-right: 1%;
   width: 79%;
   min-height: 350px;
   box-sizing: border-box;
-  max-width: 709px;
+  /*max-width: 709px;*/
 }
 
 .title-column {
@@ -74,7 +75,7 @@ tr {
   vertical-align: top;
   height: 100%;
   letter-spacing: -0.8px;
-  width: 20%;
+  width: 17%;
   color: @mainBlack;
   max-width: 250px;
 }
@@ -184,8 +185,8 @@ body {
   display: table;
   table-layout: fixed;
   max-width: 709px;
-  //min-width: 550px;
-  width: 540px;
+  min-width: 550px;
+  width: 100%;
 
   height: 288px;
   margin-top: 38px;
@@ -209,7 +210,7 @@ body {
   }
 
   span {
-    margin: auto;
+    margin-left: 25%;
     display: block;
     background: #d1ecfa;
     animation: draw 1s ease-in-out;
@@ -220,6 +221,7 @@ body {
     font-size: 14px;
     letter-spacing: -0.47px;
     line-height: 40px;
+    width: 75%;
   }
 
 
@@ -235,7 +237,7 @@ body {
     display: inline-flex;
     text-align: center;
     word-wrap: break-word;
-    left: 50%;
+    left: 40%;
     transform: translate(-50%);
   }
 
@@ -386,7 +388,7 @@ body {
 
 .threshold-tooltip-background {
   position: relative;
-  padding: 0 12px;
+  padding: 0 5%;
   margin: 0;
   margin-left: 4px;
   background: @mainBlack;
