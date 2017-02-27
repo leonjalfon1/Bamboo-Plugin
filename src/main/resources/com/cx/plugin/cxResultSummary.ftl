@@ -177,16 +177,17 @@
         display: table;
         table-layout: fixed;
         max-width: 709px;
-        min-width: 550px;
-        width: 100%;
+        /*min-width: 550px;*/
+        width: 540px;
         height: 288px;
-        margin: 38px auto 0;
+        margin-top: 38px;
         padding: 0;
         background-image: linear-gradient(to top, #d5d5d5, #ffffff 2%);
         background-size: 100% 70px;
         background-position: left bottom;
         border-bottom: solid #979797 2px;
     }
+
 
     .chart tr {
         white-space: nowrap;
