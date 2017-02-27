@@ -989,8 +989,9 @@
     document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / (highCount + medCount + lowCount) + "%");
     document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / (highCount + medCount + lowCount) + "%");
 
-    document.getElementById("html-report-link").setAttribute("href", sastSummaryResultsLink);
-
+    if (sastSummaryResultsLink) {
+        document.getElementById("html-report-link").setAttribute("href", sastSummaryResultsLink);
+    }
 
 
     //if threshold is enabled
