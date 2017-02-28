@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public interface CxClientService {
 
     ScanResults retrieveScanResults(long projectId) throws CxClientException;
 
-    CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException;
+    CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException, IOException;
 
     OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException;
 

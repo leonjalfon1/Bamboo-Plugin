@@ -15,10 +15,7 @@ import com.cx.client.dto.*;
 import com.cx.client.exception.CxClientException;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSASummaryResults;
-import com.cx.plugin.dto.CxAbortException;
-import com.cx.plugin.dto.CxResultsConst;
-import com.cx.plugin.dto.Encryption;
-import com.cx.plugin.dto.ScanConfiguration;
+import com.cx.plugin.dto.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -112,7 +109,7 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("Zipping dependencies");
                     //prepare sources (zip it) for the OSA scan and send it to OSA scan
                     String patternExclusion = "!Checkmarx/Reports/*.*";
-                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);
+                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);//TODO- true?
                     buildLoggerAdapter.info("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
                     osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
@@ -125,7 +122,7 @@ public class CheckmarxTask implements TaskType {
                     //TODO
                     throw e;
                 } catch (Exception e) {
-                    buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
+                    buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());//TODO- why twice?
                     log.error("Fail to create OSA Scan: " + e.getMessage(), e);
                     osaCreateException = e;
                 }
@@ -210,7 +207,7 @@ public class CheckmarxTask implements TaskType {
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
 
 
-        } catch (CxClientException e) {
+        } catch (CxClientException e) { //TODO why catch & print twice?
             buildLogger.addErrorLogEntry("Caught exception: " + e.getMessage());
             log.error("Caught exception: " + e.getMessage(), e);
             fail = true;
@@ -234,6 +231,9 @@ public class CheckmarxTask implements TaskType {
             buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage());
             log.error("Unexpected exception: " + e.getMessage(), e);
             throw new TaskException(e.getMessage());
+        } finally { //TODO here or only for OSA
+            String tempDir = System.getProperty("java.io.tmpdir");
+            FileChecker.deleteFile(tempDir, TEMP_FILE_NAME_TO_ZIP);
         }
 
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
@@ -378,9 +378,9 @@ public class CheckmarxTask implements TaskType {
 
         if (zipTempFile.exists() && !zipTempFile.delete()) {
             buildLoggerAdapter.info("Warning: fail to delete temporary zip file: " + zipTempFile.getAbsolutePath());
+        } else {
+            buildLoggerAdapter.info("Temporary file deleted");
         }
-        buildLoggerAdapter.info("Temporary file deleted");
-
         return createScanResponse;
     }
 

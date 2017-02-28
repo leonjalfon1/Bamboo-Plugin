@@ -399,9 +399,9 @@ public class CxClientServiceImpl implements CxClientService {
         }
     }
 
-    public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException {
-        restClient.login();
-        return restClient.createOSAScan(projectId, zipFile);
+    public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException, IOException {
+        restClient.login(); //TODO- delete it?
+        return restClient.createScanLargeFileWorkaround(projectId, zipFile);
     }
 
 

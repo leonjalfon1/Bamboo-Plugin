@@ -6,6 +6,7 @@ import com.checkmarx.v7.*;
 import com.cx.client.rest.dto.CxClass;
 import com.cx.client.rest.dto.TestConnectionResponse;
 import com.cx.plugin.dto.Encryption;
+import org.codehaus.plexus.util.StringUtils;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.cx.plugin.dto.CxParam.*;
-import static com.cx.plugin.dto.CxParam.ADMINISTRATION_CONFIGURATION;
 
 /**
  * A resource of message.
@@ -44,11 +44,17 @@ public class CxRestResource {
     @Path("test/connection")
     @Consumes({"application/json"})
     @Produces({"application/json"})
-    public Response testConnection(Map<Object, Object> key) {
+    public Response testConnection(Map<Object, Object> credentials) {
 
-        URL url;
-        String urlToCheck = key.get("url").toString();
         TestConnectionResponse tcResponse;
+        URL url;
+        String urlToCheck;
+        String useGlobal;
+        String username;
+        String pas;
+        int statusCode = 400;
+
+        urlToCheck = StringUtils.defaultString(credentials.get("url"));
 
         try {
             url = new URL(urlToCheck);
@@ -59,21 +65,22 @@ public class CxRestResource {
         } catch (Exception e) {
             result = "Invalid URL";
             tcResponse = new TestConnectionResponse(result, null, null);
-            return Response.status(400).entity(tcResponse).build();
+            return Response.status(statusCode).entity(tcResponse).build();
         }
-        String useGlobal = key.get("global").toString();
-        String username = key.get("username").toString().trim();
-        String password;
-        int statusCode = 400;
+
+
+        useGlobal = StringUtils.defaultString(credentials.get("global"));
+        username = StringUtils.defaultString(credentials.get("username"));
+
         if (OPTION_TRUE.equals(useGlobal)) {
             AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
-            password = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
+            pas = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
         } else {
-            password = key.get("pas").toString();
+            pas = StringUtils.defaultString(credentials.get("pas"));
         }
         try {
 
-            if (loginToServer(url, username, Encryption.decrypt(password))) {
+            if (loginToServer(url, username, Encryption.decrypt(pas))) {
                 presets = getPresets();
                 teams = getTeamPath();
                 if (presets == null || teams == null) {
@@ -81,27 +88,26 @@ public class CxRestResource {
                 }
                 result = "Success!";
                 tcResponse = new TestConnectionResponse(result, presets, teams);
-                statusCode=200;
+                statusCode = 200;
 
             } else {
                 if (result.equals("")) {
                     result = "Login failed";
                 }
-                presets =new ArrayList<CxClass>(){{
-                add(new CxClass(NO_PRESET, NO_PRESET_MESSAGE));
+
+                presets = new ArrayList<CxClass>() {{
+                    add(new CxClass(NO_PRESET, NO_PRESET_MESSAGE));
                 }};
 
-                teams =new ArrayList<CxClass>(){{
-                add(new CxClass(NO_TEAM_PATH, NO_TEAM_MESSAGE));
+                teams = new ArrayList<CxClass>() {{
+                    add(new CxClass(NO_TEAM_PATH, NO_TEAM_MESSAGE));
                 }};
 
                 tcResponse = new TestConnectionResponse(result, presets, teams);
-
             }
         } catch (Exception e) {
             result = "Fail to login: " + e.getMessage();
             tcResponse = new TestConnectionResponse(result, presets, teams);
-
         }
         return Response.status(statusCode).entity(tcResponse).build();
     }
@@ -167,7 +173,4 @@ public class CxRestResource {
         }
         return newType;
     }
-
-
 }
- 

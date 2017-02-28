@@ -17,7 +17,7 @@ import static com.cx.plugin.dto.CxResultsConst.*;
  * Created by Galn on 23/02/2017.
  */
 public abstract class ResultUtils {
-    private static final Logger log = LoggerFactory.getLogger(ResultUtils.class);
+    public static final Logger log = LoggerFactory.getLogger(ResultUtils.class);
 
     public static String resolveCostumeBuildData(Map<String, String> costumeBuildData) {
         String ret = "";
