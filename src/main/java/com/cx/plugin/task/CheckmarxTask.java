@@ -199,19 +199,22 @@ public class CheckmarxTask implements TaskType {
             }
 
         } catch (MalformedURLException e) {
-            buildLoggerAdapter.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
-
+            buildLogger.addErrorLogEntry("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage());
+            log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
 
         } catch (CxClientException e) {
-            buildLoggerAdapter.error("Caught exception: " + e.getMessage(), e);
+            buildLogger.addErrorLogEntry("Caught exception: " + e.getMessage());
+            log.error("Caught exception: " + e.getMessage(), e);
             fail = true;
 
         } catch (NumberFormatException e) {
-            buildLoggerAdapter.error("Invalid preset id: " + e.getMessage(), e);
+            buildLogger.addErrorLogEntry("Invalid preset id. " + e.getMessage());
+            log.error("Invalid preset id: " + e.getMessage(), e);
             fail = true;
 
         } catch (InterruptedException e) {
-            buildLoggerAdapter.error("Interrupted exception: " + e.getMessage(), e);
+            buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
+            log.error("Interrupted exception: " + e.getMessage(), e);
 
             if (cxClientService != null && createScanResponse != null) {
                 log.error("Canceling scan on the Checkmarx server...");
@@ -220,7 +223,8 @@ public class CheckmarxTask implements TaskType {
             throw new TaskException(e.getMessage());
 
         } catch (Exception e) {
-            buildLoggerAdapter.error("Unexpected exception: " + e.getMessage(), e);
+            buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage());
+            log.error("Unexpected exception: " + e.getMessage(), e);
             throw new TaskException(e.getMessage());
         } finally {
 
@@ -552,8 +556,8 @@ public class CheckmarxTask implements TaskType {
         } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
-            buildLoggerAdapter.error("Fail to generate PDF report ", e);
-        }
+            buildLogger.addErrorLogEntry("Fail to generate PDF report");
+            log.error("Fail to generate PDF report ", e);        }
     }
 
 
