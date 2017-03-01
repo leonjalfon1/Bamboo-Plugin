@@ -1,8 +1,8 @@
-package com.cx.plugin;
+package com.cx.plugin.results;
 
 import com.atlassian.bamboo.chains.ChainResultsSummaryImpl;
 import com.atlassian.plugin.web.model.WebPanel;
-import com.cx.plugin.dto.ResultUtils;
+import com.cx.plugin.utils.CxResultUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -19,7 +19,7 @@ public class CxPlanResultsWebPanel implements WebPanel {
 
         ChainResultsSummaryImpl a = (ChainResultsSummaryImpl) map.get("resultSummary");
         Map<String, String> costumeBuildData = a.getOrderedJobResultSummaries().get(0).getCustomBuildData();
-        String ret =  ResultUtils.resolveCostumeBuildData(costumeBuildData);
+        String ret =  CxResultUtils.resolveCostumeBuildData(costumeBuildData);
         return ret;
 
 

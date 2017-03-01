@@ -1,4 +1,4 @@
-package com.cx.plugin;
+package com.cx.plugin.utils;
 
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
@@ -12,13 +12,13 @@ import org.slf4j.helpers.MessageFormatter;
  * Created by: Dorg.
  * Date: 14/09/2016.
  */
-class BuildLoggerAdapter extends MarkerIgnoringBase {
+public class CxBuildLoggerAdapter extends MarkerIgnoringBase {
 
     private static final Logger log = LoggerFactory.getLogger("Checkmarx Build Logger");
 
     private BuildLogger buildLogger;
 
-    BuildLoggerAdapter(BuildLogger log) {
+    public CxBuildLoggerAdapter(BuildLogger log) {
         this.name = "Build Logger";
         this.buildLogger = log;
     }

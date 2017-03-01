@@ -1,4 +1,4 @@
-package com.cx.plugin;
+package com.cx.plugin.configuration;
 
 /**
  * Created by galn
@@ -18,7 +18,7 @@ import com.checkmarx.v7.Group;
 import com.cx.client.CxClientService;
 import com.cx.client.CxClientServiceImpl;
 import com.cx.client.exception.CxClientException;
-import com.cx.plugin.dto.Encryption;
+import com.cx.plugin.utils.CxEncryption;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -305,7 +305,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(SERVER_CREDENTIALS_SECTION, configType);
         config.put(SERVER_URL, getDefaultString(params, SERVER_URL));
         config.put(USER_NAME, getDefaultString(params, USER_NAME).trim());
-        config.put(PASSWORD, Encryption.encrypt(getDefaultString(params, PASSWORD)));
+        config.put(PASSWORD, CxEncryption.encrypt(getDefaultString(params, PASSWORD)));
 
         return config;
     }
@@ -348,7 +348,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(userName) && !StringUtils.isEmpty(cxPass)) {
             try {
                 URL cxUrl = new URL(serverUrl);
-                cxClientService = new CxClientServiceImpl(cxUrl, userName, Encryption.decrypt(cxPass), true);
+                cxClientService = new CxClientServiceImpl(cxUrl, userName, CxEncryption.decrypt(cxPass), true);
                 cxClientService.checkServerConnectivity();
                 cxClientService.loginToServer();
                 return true;

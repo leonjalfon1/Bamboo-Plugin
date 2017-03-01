@@ -1,4 +1,4 @@
-package com.cx.plugin;
+package com.cx.plugin.utils;
 
 import com.checkmarx.components.zipper.ZipListener;
 import com.checkmarx.components.zipper.Zipper;
@@ -15,7 +15,7 @@ import java.io.OutputStream;
  * CxZip encapsulates the workspace folder zipping
  */
 
-class CxZip {
+public class CxZip {
     private long maxZipSizeInBytes = 209715200;
     private int numOfZippedFiles = 0;
 
@@ -25,7 +25,7 @@ class CxZip {
         this.tempFileName = tempFileName;
     }
 
-    File zipWorkspaceFolder(String baseDir, String filterPattern, final BuildLoggerAdapter buildLogger, boolean writeToLog)
+    public File zipWorkspaceFolder(String baseDir, String filterPattern, final CxBuildLoggerAdapter buildLogger, boolean writeToLog)
             throws InterruptedException, IOException {
         if (baseDir == null || StringUtils.isEmpty(baseDir)) {
             throw new CxAbortException("Checkmarx Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
@@ -67,7 +67,7 @@ class CxZip {
         return tempFile;
     }
 
-    CxZip setMaxZipSizeInBytes(long maxZipSizeInBytes) {
+    public CxZip setMaxZipSizeInBytes(long maxZipSizeInBytes) {
         this.maxZipSizeInBytes = maxZipSizeInBytes;
         return this;
     }

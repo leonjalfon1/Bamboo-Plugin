@@ -1,4 +1,4 @@
-package com.cx.plugin;
+package com.cx.plugin.task;
 
 /**
  * Created by galn on 18/12/2016.
@@ -16,6 +16,7 @@ import com.cx.client.exception.CxClientException;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSASummaryResults;
 import com.cx.plugin.dto.*;
+import com.cx.plugin.utils.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -51,11 +52,11 @@ public class CheckmarxTask implements TaskType {
     private File zipTempFile;
     private String projectStateLink;
     private String osaProjectSummaryLink;
-    private ScanConfiguration config;
+    private CxScanConfiguration config;
     private String scanResultsUrl;
 
     private BuildLogger buildLogger;
-    private BuildLoggerAdapter buildLoggerAdapter;
+    private CxBuildLoggerAdapter buildLoggerAdapter;
     private HashMap<String, String> configurationMap;
     private BuildContext buildContext;
     private AdministrationConfiguration adminConfig;
@@ -71,7 +72,7 @@ public class CheckmarxTask implements TaskType {
 
         final TaskResultBuilder taskResultBuilder = TaskResultBuilder.newBuilder(taskContext);
         buildLogger = taskContext.getBuildLogger();
-        buildLoggerAdapter = new BuildLoggerAdapter(buildLogger);
+        buildLoggerAdapter = new CxBuildLoggerAdapter(buildLogger);
         buildContext = taskContext.getBuildContext();
         Map<String, String> results = new HashMap<String, String>();
 
@@ -84,13 +85,13 @@ public class CheckmarxTask implements TaskType {
         Exception scanWaitException = null;
         boolean fail = false;
         try {
-            config = new ScanConfiguration(configurationMap);
+            config = new CxScanConfiguration(configurationMap);
             url = new URL(config.getUrl());
             printConfiguration(config);
 
             //initialize cx client
             buildLoggerAdapter.info("Initializing Cx client");
-            cxClientService = new CxClientServiceImpl(url, config.getUsername(), Encryption.decrypt(config.getPassword()));
+            cxClientService = new CxClientServiceImpl(url, config.getUsername(), CxEncryption.decrypt(config.getPassword()));
             cxClientService.setLogger(buildLoggerAdapter);
 
             cxClientService.checkServerConnectivity();
@@ -109,7 +110,7 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("Zipping dependencies");
                     //prepare sources (zip it) for the OSA scan and send it to OSA scan
                     String patternExclusion = "!Checkmarx/Reports/*.*";
-                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);//TODO- true?
+                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);//TODO- lIRAN osa
                     buildLoggerAdapter.info("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
                     osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
@@ -119,11 +120,9 @@ public class CheckmarxTask implements TaskType {
                     }
                     buildLoggerAdapter.info("Temporary file deleted");
                 } catch (InterruptedException e) {
-                    //TODO
                     throw e;
                 } catch (Exception e) {
-                    buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());//TODO- why twice?
-                    log.error("Fail to create OSA Scan: " + e.getMessage(), e);
+                    log.error("Fail to create OSA Scan." + e.getMessage(), e);
                     osaCreateException = e;
                 }
             }
@@ -156,15 +155,12 @@ public class CheckmarxTask implements TaskType {
 
 
             } catch (CxClientException e) {
-                buildLogger.addErrorLogEntry(e.getMessage());
                 log.error(e.getMessage(), e);
                 scanWaitException = e;
             } catch (InterruptedException e) {
-                //TODO
                 throw e;
 
             } catch (Exception e) {
-                buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error("Fail to perform CxSAST scan: " + e.getMessage(), e);
                 scanWaitException = e;
             }
@@ -203,23 +199,19 @@ public class CheckmarxTask implements TaskType {
             }
 
         } catch (MalformedURLException e) {
-            buildLogger.addErrorLogEntry("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage());
-            log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
+            buildLoggerAdapter.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
 
 
-        } catch (CxClientException e) { //TODO why catch & print twice?
-            buildLogger.addErrorLogEntry("Caught exception: " + e.getMessage());
-            log.error("Caught exception: " + e.getMessage(), e);
+        } catch (CxClientException e) {
+            buildLoggerAdapter.error("Caught exception: " + e.getMessage(), e);
             fail = true;
 
         } catch (NumberFormatException e) {
-            buildLogger.addErrorLogEntry("Invalid preset id. " + e.getMessage());
-            log.error("Invalid preset id: " + e.getMessage(), e);
+            buildLoggerAdapter.error("Invalid preset id: " + e.getMessage(), e);
             fail = true;
 
         } catch (InterruptedException e) {
-            buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
-            log.error("Interrupted exception: " + e.getMessage(), e);
+            buildLoggerAdapter.error("Interrupted exception: " + e.getMessage(), e);
 
             if (cxClientService != null && createScanResponse != null) {
                 log.error("Canceling scan on the Checkmarx server...");
@@ -228,12 +220,11 @@ public class CheckmarxTask implements TaskType {
             throw new TaskException(e.getMessage());
 
         } catch (Exception e) {
-            buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage());
-            log.error("Unexpected exception: " + e.getMessage(), e);
+            buildLoggerAdapter.error("Unexpected exception: " + e.getMessage(), e);
             throw new TaskException(e.getMessage());
-        } finally { //TODO here or only for OSA
-            String tempDir = System.getProperty("java.io.tmpdir");
-            FileChecker.deleteFile(tempDir, TEMP_FILE_NAME_TO_ZIP);
+        } finally {
+
+            deleteTempFiles();
         }
 
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
@@ -244,6 +235,17 @@ public class CheckmarxTask implements TaskType {
         }
 
         return taskResultBuilder.success().build();
+    }
+
+    private void deleteTempFiles() {
+
+        try {
+            String tempDir = System.getProperty("java.io.tmpdir");
+            CxFileChecker.deleteFile(tempDir, TEMP_FILE_NAME_TO_ZIP);
+        } catch (Exception e) {
+            buildLoggerAdapter.error("Failed to delete temp files: " +e.getMessage());
+        }
+
     }
 
     private HashMap<String, String> resolveConfigurationMap(ConfigurationMap configMap) throws TaskException {
@@ -315,7 +317,7 @@ public class CheckmarxTask implements TaskType {
         return configurationMap;
     }
 
-    private void addSASTResults(Map<String, String> results, ScanResults scanResults, ScanConfiguration config) {
+    private void addSASTResults(Map<String, String> results, ScanResults scanResults, CxScanConfiguration config) {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
         results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
@@ -336,7 +338,7 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.SAST_RESULTS_READY, OPTION_TRUE);
     }
 
-    private void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, ScanConfiguration config) {
+    private void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, CxScanConfiguration config) {
 
         results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getHighVulnerabilities()));
         results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getMediumVulnerabilities()));
@@ -430,7 +432,7 @@ public class CheckmarxTask implements TaskType {
         return zipFileByte;
     }
 
-    private void printConfiguration(ScanConfiguration config) {
+    private void printConfiguration(CxScanConfiguration config) {
         buildLoggerAdapter.info("----------------------------Configurations:-----------------------------");
         buildLoggerAdapter.info("Username: " + config.getUsername());
         buildLoggerAdapter.info("URL: " + config.getUrl());
@@ -510,17 +512,16 @@ public class CheckmarxTask implements TaskType {
         }
 
         if (fail) {
-            buildLogger.addErrorLogEntry("*************************");
-            buildLogger.addErrorLogEntry("The Build Failed due to: ");
-            log.info("The Build Failed due to: ");
-            buildLogger.addErrorLogEntry("*************************");
+            buildLoggerAdapter.error("*************************");
+            buildLoggerAdapter.error("The Build Failed due to: ");
+            buildLoggerAdapter.error("*************************");
             String[] lines = res.toString().split("\\n");
             for (String s : lines) {
-                buildLogger.addErrorLogEntry(s);
+                buildLoggerAdapter.error(s);
                 log.info(s);
             }
-            buildLogger.addErrorLogEntry("-----------------------------------------------------------------------------------------\n");
-            buildLogger.addErrorLogEntry("");
+            buildLoggerAdapter.error("-----------------------------------------------------------------------------------------\n");
+            buildLoggerAdapter.error("");
         }
         return fail;
     }
@@ -551,8 +552,7 @@ public class CheckmarxTask implements TaskType {
         } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
-            buildLogger.addErrorLogEntry("Fail to generate PDF report");
-            log.error("Fail to generate PDF report ", e);
+            buildLoggerAdapter.error("Fail to generate PDF report ", e);
         }
     }
 

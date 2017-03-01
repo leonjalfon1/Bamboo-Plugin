@@ -5,7 +5,7 @@ import com.atlassian.spring.container.ContainerManager;
 import com.checkmarx.v7.*;
 import com.cx.client.rest.dto.CxClass;
 import com.cx.client.rest.dto.TestConnectionResponse;
-import com.cx.plugin.dto.Encryption;
+import com.cx.plugin.utils.CxEncryption;
 import org.codehaus.plexus.util.StringUtils;
 
 import javax.ws.rs.Consumes;
@@ -80,7 +80,7 @@ public class CxRestResource {
         }
         try {
 
-            if (loginToServer(url, username, Encryption.decrypt(pas))) {
+            if (loginToServer(url, username, CxEncryption.decrypt(pas))) {
                 presets = getPresets();
                 teams = getTeamPath();
                 if (presets == null || teams == null) {

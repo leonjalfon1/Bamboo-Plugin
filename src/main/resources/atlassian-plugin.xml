@@ -11,10 +11,10 @@
     <resource type="i18n" name="Checkmarx language" location="english"/>
 
     <!-- publish components -->
-    <taskType key="checkmarx" name="Checkmarx" class="com.cx.plugin.CheckmarxTask">
+    <taskType key="checkmarx" name="Checkmarx" class="com.cx.plugin.task.CheckmarxTask">
         <description>Security static source code analysis</description>
         <category name="test"/>
-        <configuration class="com.cx.plugin.AgentTaskConfigurator"/>
+        <configuration class="com.cx.plugin.configuration.AgentTaskConfigurator"/>
         <resource type="freemarker" name="edit" location="/com/cx/plugin/editExampleTask.ftl"/>
         <resource type="freemarker" name="view" location="/com/cx/plugin/editExampleTask.ftl"/>
         <resource type="download" name="icon" location="/images/TaskIcon.png"/>
@@ -23,7 +23,7 @@
 
     <xwork key="checkmarx-default-config-xwork" name="Checkmarx Default Configuration XWork">
         <package name="checkmarxDefaultConfigurationPackage" extends="admin">
-            <action name="checkmarxDefaultConfiguration" class="com.cx.plugin.CxGlobalConfig">
+            <action name="checkmarxDefaultConfiguration" class="com.cx.plugin.configuration.CxGlobalConfig">
                 <result name="input" type="freemarker">/com/cx/plugin/cxGlobalConfig.ftl</result>
                 <result name="error" type="freemarker">/com/cx/plugin/cxGlobalConfig.ftl</result>
                 <result name="success" type="freemarker">/com/cx/plugin/cxGlobalConfig.ftl</result>
@@ -41,12 +41,12 @@
 
 
     <web-panel key="checkmarx-planchainresult-summary" name="Checkmarx Plan Result Summary Panel"
-               location="chainresult.summary" class="com.cx.plugin.CxPlanResultsWebPanel">
+               location="chainresult.summary" class="com.cx.plugin.results.CxPlanResultsWebPanel">
     </web-panel>
 
 
     <web-panel key="checkmarx-jobchainresult-summary" name="Checkmarx Job Result Summary Panel"
-               location="jobresult.summary.right" class="com.cx.plugin.CxJobResultsWebPanel">
+               location="jobresult.summary.right" class="com.cx.plugin.results.CxJobResultsWebPanel">
     </web-panel>
 
     <web-resource key="test-connection-resources" name="test-connection Web Resources">

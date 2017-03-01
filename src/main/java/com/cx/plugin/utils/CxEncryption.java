@@ -1,4 +1,4 @@
-package com.cx.plugin.dto;
+package com.cx.plugin.utils;
 
 import com.atlassian.bamboo.security.EncryptionException;
 import com.atlassian.bamboo.security.EncryptionServiceImpl;
@@ -7,7 +7,7 @@ import com.atlassian.bamboo.security.EncryptionServiceImpl;
  * Created by: Galn
  * Date: 16/02/2017.
  */
-public class Encryption {
+public abstract class CxEncryption {
     public static String decrypt(String str) {
         String encStr;
         if (isEncrypted(str)) {

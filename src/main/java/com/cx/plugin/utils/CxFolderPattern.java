@@ -1,4 +1,4 @@
-package com.cx.plugin;
+package com.cx.plugin.utils;
 
 import com.atlassian.util.concurrent.NotNull;
 import org.apache.commons.lang3.StringUtils;
@@ -10,8 +10,8 @@ import java.io.IOException;
  * CxFolderPattern generates the patterns used for zipping the workspace folder
  */
 
-class CxFolderPattern {
-    static String generatePattern(String folderExclusions, String filterPattern, BuildLoggerAdapter buildLogger) throws IOException, InterruptedException {
+public abstract class CxFolderPattern {
+    public static String generatePattern(String folderExclusions, String filterPattern, CxBuildLoggerAdapter buildLogger) throws IOException, InterruptedException {
 
         String excludeFoldersPattern = processExcludeFolders(folderExclusions, buildLogger);
 
@@ -28,7 +28,7 @@ class CxFolderPattern {
 
 
     @NotNull
-    private static String processExcludeFolders(String folderExclusions, BuildLoggerAdapter buildLogger) {
+    private static String processExcludeFolders(String folderExclusions, CxBuildLoggerAdapter buildLogger) {
         if (StringUtils.isEmpty(folderExclusions)) {
             return "";
         }

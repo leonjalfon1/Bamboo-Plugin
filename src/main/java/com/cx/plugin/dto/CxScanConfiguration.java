@@ -8,7 +8,7 @@ import java.util.HashMap;
 /**
  * Created by galn on 21/12/2016.
  */
-public class ScanConfiguration {
+public class CxScanConfiguration {
 
     private String username;
     /**
@@ -66,7 +66,7 @@ public class ScanConfiguration {
 
 
     /**********   C-tor   ***************/
-    public ScanConfiguration(HashMap<String, String> configurationMap) {
+    public CxScanConfiguration(HashMap<String, String> configurationMap) {
         setUsername(configurationMap.get(CxParam.USER_NAME));
         setPassword(configurationMap.get(CxParam.PASSWORD));
         setUrl(configurationMap.get(CxParam.SERVER_URL));
