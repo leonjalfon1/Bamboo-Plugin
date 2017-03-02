@@ -438,10 +438,10 @@
         height: 17%;
         margin-top: 1%;
     }
-    #scanErrorMessage{
-        position:absolute;
-    }
 
+    #scanErrorMessage {
+        display: inline-block;
+    }
 
 
 </style>
@@ -450,20 +450,23 @@
 <table class="summary-section">
     <!--sast row-->
 
-    <div id="onSastError">
-        <td class="title-column">
-        <div class="summary-title">
-            <div class="sum1">CxSAST</div>
-            <div class="sum2">Summary</div>
-        </div>
-        <div id="scanErrorMessage" class="aui-message error">
-          <p class="title">
-              <span class="aui-icon icon-error"></span>
-              <strong>An error has occurred during the scan. Please check the scan logs for more information</strong>
-          </p>
-        </div>
 
-    </div>
+    <tr id="onSastError" class="summary-table-row cxsast">
+        <td class="title-column">
+            <div class="summary-title">
+                <div class="sum1">CxSAST</div>
+                <div class="sum2">Summary</div>
+            </div>
+            <div id="scanErrorMessage" class="aui-message error">
+                <p class="title">
+                    <span class="aui-icon icon-error"></span>
+                    <strong>An error has occurred during the scan. Please check the scan logs for more
+                        information</strong>
+                </p>
+            </div>
+        </td>
+    </tr>
+
     <tr id="cxsast-info" class="summary-table-row cxsast">
         <td class="title-column">
             <div class="summary-title">
@@ -1089,6 +1092,7 @@
     //set bars height and count
     if (sastResultsReady) {
         document.getElementById("onSastError").setAttribute("style", "display:none");
+        document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
 
         document.getElementById("bar-count-high").innerHTML = highCount;
         document.getElementById("bar-count-med").innerHTML = medCount;
