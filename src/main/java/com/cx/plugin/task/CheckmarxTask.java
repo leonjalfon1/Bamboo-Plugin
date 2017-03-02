@@ -76,14 +76,16 @@ public class CheckmarxTask implements TaskType {
         buildContext = taskContext.getBuildContext();
         Map<String, String> results = new HashMap<String, String>();
 
-        configurationMap = resolveConfigurationMap(taskContext.getConfigurationMap());//resolve the global configuration properties
+        configurationMap = resolveConfigurationMap(taskContext.getConfigurationMap());//resolve the global configuration propertie
         workDirectory = taskContext.getWorkingDirectory();
         ScanResults scanResults = null;
         CreateScanResponse createScanResponse = null;
         OSASummaryResults osaSummaryResults = null;
         Exception osaCreateException = null;
-        Exception scanWaitException = null;
-        Exception buildFailException = null;
+        Exception sastWaitException = null;
+        Exception osaBuildFailException = null;
+        Exception sastBuildFailException = null;
+        Exception osaWaitException = null;
 
         try {
             config = new CxScanConfiguration(configurationMap);
@@ -159,60 +161,81 @@ public class CheckmarxTask implements TaskType {
             } catch (CxClientException e) {
                 buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error(e.getMessage(), e);
-                scanWaitException = new CxClientException("Fail to perform CxSAST scan: ", e);
+                sastWaitException = new CxClientException("Fail to perform CxSAST scan: ", e);
             } catch (InterruptedException e) {
                 throw e;
 
             } catch (Exception e) {
                 buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error("Fail to perform CxSAST scan: " + e.getMessage(), e);
-                scanWaitException = new Exception("Fail to perform CxSAST scan: ", e);
+                sastWaitException = new Exception("Fail to perform CxSAST scan: ", e);
             }
 
             if (config.isOsaEnabled()) {
 
-                if (osaCreateException != null) {
-                    throw osaCreateException;
-                }
-                //wait for OSA scan to finish
-                OSAConsoleScanWaitHandler osaConsoleScanWaitHandler = new OSAConsoleScanWaitHandler();
-                osaConsoleScanWaitHandler.setLogger(buildLoggerAdapter);
-                buildLoggerAdapter.info("Waiting for OSA scan to finish");
-                cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, osaConsoleScanWaitHandler);
-                buildLoggerAdapter.info("OSA scan finished successfully");
-                buildLoggerAdapter.info("Creating OSA reports");
-                osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());
-                printOSAResultsToConsole(osaSummaryResults);
-                addOSAResults(results, osaSummaryResults, config);
 
-                //OSA PDF and HTML reports
-                SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
-                String now = ft.format(new Date());
-                byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(createScanResponse.getProjectId());
-                String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
-                FileUtils.writeByteArrayToFile(new File(workDirectory + CX_REPORT_LOCATION, pdfFileName), osaPDF);
-                buildLoggerAdapter.info("OSA PDF report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + pdfFileName);
-                String osaHtml = cxClientService.retrieveOSAScanHtmlResults(createScanResponse.getProjectId());
-                String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
-                FileUtils.writeStringToFile(new File(workDirectory + CX_REPORT_LOCATION, htmlFileName), osaHtml, Charset.defaultCharset());
-                buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
-                buildLoggerAdapter.info("");
+                try {
+
+                    if (osaCreateException != null) {
+                        throw osaCreateException;
+                    }
+                    //wait for OSA scan to finish
+                    OSAConsoleScanWaitHandler osaConsoleScanWaitHandler = new OSAConsoleScanWaitHandler();
+                    osaConsoleScanWaitHandler.setLogger(buildLoggerAdapter);
+                    buildLoggerAdapter.info("Waiting for OSA scan to finish");
+                    cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, osaConsoleScanWaitHandler);
+                    buildLoggerAdapter.info("OSA scan finished successfully");
+                    buildLoggerAdapter.info("Creating OSA reports");
+                    osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());
+                    printOSAResultsToConsole(osaSummaryResults);
+                    addOSAResults(results, osaSummaryResults, config);
+
+                    //OSA PDF and HTML reports
+                    SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
+                    String now = ft.format(new Date());
+                    byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(createScanResponse.getProjectId());
+                    String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
+                    FileUtils.writeByteArrayToFile(new File(workDirectory + CX_REPORT_LOCATION, pdfFileName), osaPDF);
+                    buildLoggerAdapter.info("OSA PDF report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + pdfFileName);
+                    String osaHtml = cxClientService.retrieveOSAScanHtmlResults(createScanResponse.getProjectId());
+                    String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
+                    FileUtils.writeStringToFile(new File(workDirectory + CX_REPORT_LOCATION, htmlFileName), osaHtml, Charset.defaultCharset());
+                    buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
+                    buildLoggerAdapter.info("");
+                } catch (Exception e) {
+                    osaWaitException = e;
+                    throw osaWaitException;
+                }
             }
-            if (scanWaitException != null) {
-                throw scanWaitException;
+            if (sastWaitException != null) {
+                throw sastWaitException;
             }
 
         } catch (MalformedURLException e) {
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
-            buildFailException = e;
+            osaBuildFailException = e;
 
-        } catch (CxClientException e) {
+        } catch (CxClientException e) { //TODO redesign the exceptions
             log.error(e.getMessage(), e);
-            buildFailException = e;
+
+            if (osaCreateException != null) {
+                osaBuildFailException = osaCreateException;
+            }
+            if (osaWaitException != null) {
+                osaBuildFailException = osaWaitException;
+            }
+            if (sastWaitException != null) {
+                sastBuildFailException = sastWaitException;
+            }
+
+            if (osaCreateException == null && osaWaitException == null && sastWaitException == null) {
+                sastBuildFailException = e;
+            }
+
 
         } catch (NumberFormatException e) {
             log.error("Invalid preset id: " + e.getMessage(), e);
-            buildFailException = e;
+            osaBuildFailException = e;
 
         } catch (InterruptedException e) {
             buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
@@ -237,8 +260,8 @@ public class CheckmarxTask implements TaskType {
 
         //assert if expected exception is thrown  OR when vulnerabilities under threshold
         StringBuilder res = new StringBuilder("");
-        if (assertVulnerabilities(scanResults, osaSummaryResults, res) || buildFailException != null) {
-            printBuildFailure(res, buildFailException);
+        if (assertVulnerabilities(scanResults, osaSummaryResults, res) || sastBuildFailException != null || osaBuildFailException != null) {
+            printBuildFailure(res, sastBuildFailException, osaBuildFailException);
             return taskResultBuilder.failed().build();
         }
 
@@ -522,14 +545,16 @@ public class CheckmarxTask implements TaskType {
         return failByThreshold;
     }
 
-    private void printBuildFailure(StringBuilder res, Exception buildFailException) {
+    private void printBuildFailure(StringBuilder res, Exception sastBuildFailException, Exception osaBuildFailException) {
         buildLoggerAdapter.error("*************************");
         buildLoggerAdapter.error("The Build Failed due to: ");
         buildLoggerAdapter.error("*************************");
 
-        if (buildFailException != null) {
-            buildLoggerAdapter.error(buildFailException.getMessage() + (buildFailException.getCause()==null? "":buildFailException.getCause().getMessage()));
-            buildLoggerAdapter.error("");
+        if (sastBuildFailException != null) {
+            buildLoggerAdapter.error(sastBuildFailException.getMessage() + (sastBuildFailException.getCause() == null ? "" : sastBuildFailException.getCause().getMessage()));
+        }
+        if (osaBuildFailException != null) {
+            buildLoggerAdapter.error(osaBuildFailException.getMessage() + (osaBuildFailException.getCause() == null ? "" : osaBuildFailException.getCause().getMessage()));
         }
 
         String[] lines = res.toString().split("\\n");
@@ -538,8 +563,8 @@ public class CheckmarxTask implements TaskType {
             log.info(s);
         }
 
-            buildLoggerAdapter.error("-----------------------------------------------------------------------------------------\n");
-            buildLoggerAdapter.error("");
+        buildLoggerAdapter.error("-----------------------------------------------------------------------------------------\n");
+        buildLoggerAdapter.error("");
     }
 
     private boolean isFail(int result, Integer threshold, StringBuilder res, String severity, String severityType) {
