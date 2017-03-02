@@ -528,7 +528,7 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.error("*************************");
 
         if (buildFailException != null) {
-            buildLoggerAdapter.error(buildFailException.getMessage() + buildFailException.getCause()==null? "":buildFailException.getCause().getMessage());
+            buildLoggerAdapter.error(buildFailException.getMessage() + (buildFailException.getCause()==null? "":buildFailException.getCause().getMessage()));
             buildLoggerAdapter.error("");
         }
 
