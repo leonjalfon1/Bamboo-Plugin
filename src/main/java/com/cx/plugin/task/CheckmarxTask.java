@@ -83,7 +83,8 @@ public class CheckmarxTask implements TaskType {
         OSASummaryResults osaSummaryResults = null;
         Exception osaCreateException = null;
         Exception scanWaitException = null;
-        boolean fail = false;
+        Exception buildFailException = null;
+
         try {
             config = new CxScanConfiguration(configurationMap);
             url = new URL(config.getUrl());
@@ -122,7 +123,8 @@ public class CheckmarxTask implements TaskType {
                 } catch (InterruptedException e) {
                     throw e;
                 } catch (Exception e) {
-                    log.error("Fail to create OSA Scan." + e.getMessage(), e);
+                    buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
+                    log.error("Fail to create OSA Scan: " + e.getMessage(), e);
                     osaCreateException = e;
                 }
             }
@@ -155,14 +157,16 @@ public class CheckmarxTask implements TaskType {
 
 
             } catch (CxClientException e) {
+                buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error(e.getMessage(), e);
-                scanWaitException = e;
+                scanWaitException = new CxClientException("Fail to perform CxSAST scan: ", e);
             } catch (InterruptedException e) {
                 throw e;
 
             } catch (Exception e) {
+                buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error("Fail to perform CxSAST scan: " + e.getMessage(), e);
-                scanWaitException = e;
+                scanWaitException = new Exception("Fail to perform CxSAST scan: ", e);
             }
 
             if (config.isOsaEnabled()) {
@@ -199,18 +203,16 @@ public class CheckmarxTask implements TaskType {
             }
 
         } catch (MalformedURLException e) {
-            buildLogger.addErrorLogEntry("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage());
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
+            buildFailException = e;
 
         } catch (CxClientException e) {
-            buildLogger.addErrorLogEntry("Caught exception: " + e.getMessage());
-            log.error("Caught exception: " + e.getMessage(), e);
-            fail = true;
+            log.error(e.getMessage(), e);
+            buildFailException = e;
 
         } catch (NumberFormatException e) {
-            buildLogger.addErrorLogEntry("Invalid preset id. " + e.getMessage());
             log.error("Invalid preset id: " + e.getMessage(), e);
-            fail = true;
+            buildFailException = e;
 
         } catch (InterruptedException e) {
             buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
@@ -234,7 +236,9 @@ public class CheckmarxTask implements TaskType {
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
 
         //assert if expected exception is thrown  OR when vulnerabilities under threshold
-        if (assertVulnerabilities(scanResults, osaSummaryResults) || fail) {
+        StringBuilder res = new StringBuilder("");
+        if (assertVulnerabilities(scanResults, osaSummaryResults, res) || buildFailException != null) {
+            printBuildFailure(res, buildFailException);
             return taskResultBuilder.failed().build();
         }
 
@@ -247,7 +251,7 @@ public class CheckmarxTask implements TaskType {
             String tempDir = System.getProperty("java.io.tmpdir");
             CxFileChecker.deleteFile(tempDir, TEMP_FILE_NAME_TO_ZIP);
         } catch (Exception e) {
-            buildLoggerAdapter.error("Failed to delete temp files: " +e.getMessage());
+            buildLoggerAdapter.error("Failed to delete temp files: " + e.getMessage());
         }
 
     }
@@ -500,34 +504,42 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("-----------------------------------------------------------------------------------------");
     }
 
-    private boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults) throws TaskException {
+    private boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults, StringBuilder res) throws TaskException {
 
-        StringBuilder res = new StringBuilder("");
-        boolean fail = false;
+        boolean failByThreshold = false;
         if (config.isSASTThresholdEnabled() && scanResults != null) {
-            fail = isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "high", "CxSAST ");
-            fail |= isFail(scanResults.getMediumSeverityResults(), config.getMediumThreshold(), res, "medium", "CxSAST ");
-            fail |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "low", "CxSAST ");
+            failByThreshold = isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "high", "CxSAST ");
+            failByThreshold |= isFail(scanResults.getMediumSeverityResults(), config.getMediumThreshold(), res, "medium", "CxSAST ");
+            failByThreshold |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "low", "CxSAST ");
         }
         if (config.isOSAThresholdEnabled() && osaSummaryResults != null) {
-            fail |= isFail(osaSummaryResults.getHighVulnerabilities(), config.getOsaHighThreshold(), res, "high", "CxOSA ");
-            fail |= isFail(osaSummaryResults.getMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "medium", "CxOSA ");
-            fail |= isFail(osaSummaryResults.getLowVulnerabilities(), config.getOsaLowThreshold(), res, "low", "CxOSA ");
+            failByThreshold |= isFail(osaSummaryResults.getHighVulnerabilities(), config.getOsaHighThreshold(), res, "high", "CxOSA ");
+            failByThreshold |= isFail(osaSummaryResults.getMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "medium", "CxOSA ");
+            failByThreshold |= isFail(osaSummaryResults.getLowVulnerabilities(), config.getOsaLowThreshold(), res, "low", "CxOSA ");
         }
 
-        if (fail) {
-            buildLoggerAdapter.error("*************************");
-            buildLoggerAdapter.error("The Build Failed due to: ");
-            buildLoggerAdapter.error("*************************");
-            String[] lines = res.toString().split("\\n");
-            for (String s : lines) {
-                buildLoggerAdapter.error(s);
-                log.info(s);
-            }
-            buildLoggerAdapter.error("-----------------------------------------------------------------------------------------\n");
+
+        return failByThreshold;
+    }
+
+    private void printBuildFailure(StringBuilder res, Exception buildFailException) {
+        buildLoggerAdapter.error("*************************");
+        buildLoggerAdapter.error("The Build Failed due to: ");
+        buildLoggerAdapter.error("*************************");
+
+        if (buildFailException != null) {
+            buildLoggerAdapter.error(buildFailException.getMessage() + buildFailException.getCause().getMessage());
             buildLoggerAdapter.error("");
         }
-        return fail;
+
+        String[] lines = res.toString().split("\\n");
+        for (String s : lines) {
+            buildLoggerAdapter.error(s);
+            log.info(s);
+        }
+
+            buildLoggerAdapter.error("-----------------------------------------------------------------------------------------\n");
+            buildLoggerAdapter.error("");
     }
 
     private boolean isFail(int result, Integer threshold, StringBuilder res, String severity, String severityType) {
@@ -557,7 +569,8 @@ public class CheckmarxTask implements TaskType {
             throw e;
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("Fail to generate PDF report");
-            log.error("Fail to generate PDF report ", e);        }
+            log.error("Fail to generate PDF report ", e);
+        }
     }
 
 
