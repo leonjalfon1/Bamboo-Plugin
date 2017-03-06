@@ -6,6 +6,8 @@ package com.cx.plugin.task;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.configuration.AdministrationConfiguration;
+import com.atlassian.bamboo.configuration.AdministrationConfigurationAccessor;
+import com.atlassian.bamboo.configuration.CachingAdministrationConfigurationAccessor;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
@@ -280,7 +282,14 @@ public class CheckmarxTask implements TaskType {
     }
 
     private HashMap<String, String> resolveConfigurationMap(ConfigurationMap configMap) throws TaskException {
-        adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
+        Object a = ContainerManager.getComponent("administrationConfigurationAccessor");
+        if (a instanceof CachingAdministrationConfigurationAccessor) {
+            adminConfig = ((CachingAdministrationConfigurationAccessor) a).getAdministrationConfiguration();
+        } else if (a instanceof AdministrationConfigurationAccessor) {
+            adminConfig = ((AdministrationConfigurationAccessor) a).getAdministrationConfiguration();
+        } else {
+            throw new TaskException("Failed to resolve global configuration");
+        }
         configurationMap = new HashMap<String, String>();
 
         if (COSTUME_CONFIGURATION_SERVER.equals(configMap.get(SERVER_CREDENTIALS_SECTION))) {
