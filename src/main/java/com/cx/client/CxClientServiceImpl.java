@@ -405,7 +405,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
 
-    public OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException {
+    public OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException {
         //re login in case of session timed out
         restClient.login();
         long timeToStop = (System.currentTimeMillis() / 60000) + scanTimeoutInMin;
@@ -453,15 +453,15 @@ public class CxClientServiceImpl implements CxClientService {
         return scanStatus;
     }
 
-    public OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException {
+    public OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException, IOException {
         return restClient.getOSAScanSummaryResults(projectId);
     }
 
-    public String retrieveOSAScanHtmlResults(long projectId) throws CxClientException {
+    public String retrieveOSAScanHtmlResults(long projectId) throws CxClientException, IOException {
         return restClient.getOSAScanHtmlResults(projectId);
     }
 
-    public byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException {
+    public byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException, IOException {
         return restClient.getOSAScanPDFResults(projectId);
     }
 

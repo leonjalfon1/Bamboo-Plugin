@@ -49,13 +49,13 @@ public interface CxClientService {
 
     CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException, IOException;
 
-    OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException;
+    OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException;
 
-    OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException;
+    OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException, IOException;
 
-    String retrieveOSAScanHtmlResults(long projectId) throws CxClientException;
+    String retrieveOSAScanHtmlResults(long projectId) throws CxClientException, IOException;
 
-    byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException;
+    byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException, IOException;
 
     byte[]  getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException;
 

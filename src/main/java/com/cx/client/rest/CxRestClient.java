@@ -5,19 +5,13 @@ import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSAScanStatus;
 import com.cx.client.rest.dto.OSASummaryResults;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.*;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.ClientFilter;
-import com.sun.jersey.multipart.MultiPart;
-import com.sun.jersey.multipart.file.FileDataBodyPart;
-import com.sun.jersey.multipart.impl.MultiPartWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -29,7 +23,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -46,8 +39,10 @@ public class CxRestClient {
 
     private final String username;
     private final String password;
-    private Client client;
-    private WebResource root;
+    private HttpClient apacheClient;
+    private  HttpResponse loginResponse;
+    private Header[] setCookies;
+    private CookieStore cookieStore;
 
     public static final String OSA_SCAN_PROJECT_PATH = "projects/{projectId}/scans";
     public static final String OSA_SCAN_STATUS_PATH = "scans/{scanId}";
@@ -68,34 +63,7 @@ public class CxRestClient {
     private static Logger log = LoggerFactory.getLogger(CxRestClient.class);
 
 
-    private ClientFilter clientResponseFilter = new ClientFilter() {
-        @Override
-        public ClientResponse handle(ClientRequest request) throws ClientHandlerException {
-            if (newCookies != null) {
-                cookies = convertToRequestCookie(newCookies);
-                request.getMetadata().put("Cookie", cookies);
-            }
-            if (csrfToken != null) {
-                request.getMetadata().putSingle(CSRF_TOKEN_HEADER, csrfToken);
-            }
 
-            ClientResponse response = getNext().handle(request);
-            if (response.getCookies() != null) {
-                if (newCookies == null) {
-                    newCookies = new ArrayList<Object>();
-                }
-                // simple addAll just for illustration (should probably check for duplicates and expired newCookies)
-                newCookies.addAll(response.getCookies());
-
-                for (NewCookie cookie : response.getCookies()) {
-                    if (cookie.getName().equals(CSRF_TOKEN_HEADER)) {
-                        csrfToken = cookie.getValue();
-                    }
-                }
-            }
-            return response;
-        }
-    };
 
     private ArrayList<Object> convertToRequestCookie(ArrayList<Object> newCookies) {
         ArrayList<Object> cookies = new ArrayList<Object>();
@@ -110,30 +78,35 @@ public class CxRestClient {
         this.username = username;
         this.password = password;
 
-        ClientConfig cc = new DefaultClientConfig();
-        cc.getClasses().add(MultiPartWriter.class);
-        client = Client.create(cc);
-        root = client.resource(hostname + "/" + ROOT_PATH);
-        client.addFilter(clientResponseFilter);
+        //create httpclient
+        cookieStore = new BasicCookieStore();
+        apacheClient = HttpClientBuilder.create().setDefaultCookieStore(cookieStore).build();
     }
 
     public void setLogger(Logger log) {
         CxRestClient.log = log;
     }
 
-    public void destroy() {
-        client.destroy();
+   public void destroy() {
+       apacheClient.getConnectionManager().shutdown();
     }
 
 
-    public void login() throws CxClientException {
-        newCookies = null;
-        csrfToken = null;
-        String credentials = LOGIN_CREDENTIALS.replace("{userName}", username).replace("{userPassword}", password);
-        ClientResponse response = root.path(AUTHENTICATION_PATH).type("application/json").post(ClientResponse.class, credentials);//ClientResponse response = webResource.post(ClientResponse.class, "payload");
-        validateResponse(response, Response.Status.OK, "fail to perform login");
+    public void login() throws CxClientException, IOException {
+        //create login request
+        HttpPost loginPost = new HttpPost(hostName  + "/" + ROOT_PATH +"/"+ AUTHENTICATION_PATH);
+        String json = LOGIN_CREDENTIALS.replace("{userName}", username).replace("{userPassword}", password);
+        StringEntity requestEntity = new StringEntity(json, ContentType.APPLICATION_JSON);
+        loginPost.setEntity(requestEntity);
+        //send login request
+         loginResponse = apacheClient.execute(loginPost);
+
+        //validate login response
+
+        validateApacheHttpClientResponse(loginResponse, 200, "Fail to authenticate");
     }
 
+/*
     public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException {
 
         MultiPart multiPart = new MultiPart();
@@ -148,29 +121,14 @@ public class CxRestClient {
 
         return convertToObject(response, CreateOSAScanResponse.class);
     }
+*/
 
     public CreateOSAScanResponse createScanLargeFileWorkaround(long projectId, File zipFile) throws IOException, CxClientException {
 
-        //create httpclient
-        CookieStore cookieStore = new BasicCookieStore();
-        HttpClient apacheClient = HttpClientBuilder.create().setDefaultCookieStore(cookieStore).build();
-
-        //create login request
-        HttpPost loginPost = new HttpPost(root.getURI() +"/"+ AUTHENTICATION_PATH);
-        String json = LOGIN_CREDENTIALS.replace("{userName}", username).replace("{userPassword}", password);
-        StringEntity requestEntity = new StringEntity(json, ContentType.APPLICATION_JSON);
-        loginPost.setEntity(requestEntity);
-
-        //send login request
-        HttpResponse loginResponse = apacheClient.execute(loginPost);
-
-        //validate login response
-
-        validateApacheHttpClientResponse(loginResponse, 200, "Fail to authenticate");
 
 
-        //create OSA scan request
-        HttpPost post = new HttpPost(root.getURI()+"/"+  OSA_SCAN_PROJECT_PATH.replace("{projectId}", String.valueOf(projectId)));
+
+        HttpPost post = new HttpPost( hostName  + "/" + ROOT_PATH +"/"+   OSA_SCAN_PROJECT_PATH.replace("{projectId}", String.valueOf(projectId)));
         InputStreamBody streamBody = new InputStreamBody(new FileInputStream(zipFile) , ContentType.APPLICATION_OCTET_STREAM, OSA_ZIPPED_FILE_KEY_NAME);
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -184,7 +142,7 @@ public class CxRestClient {
                 post.addHeader(CSRF_TOKEN_HEADER, c.getValue());
             }
         }
-        Header[] setCookies = loginResponse.getHeaders("Set-Cookie");
+        setCookies = loginResponse.getHeaders("Set-Cookie");
         StringBuilder cookies = new StringBuilder();
         for (Header h : setCookies) {
             cookies.append(h.getValue()).append(";");
@@ -205,36 +163,79 @@ public class CxRestClient {
     }
 
 
-    public OSAScanStatus getOSAScanStatus(String scanId) throws CxClientException {
-        String resolvedPath = OSA_SCAN_STATUS_PATH.replace("{scanId}", String.valueOf(scanId));//TODO if  not int
-        ClientResponse response = root.path(resolvedPath).get(ClientResponse.class);
+    public OSAScanStatus getOSAScanStatus(String scanId) throws CxClientException, IOException {
+        String resolvedPath =  hostName  + "/" + ROOT_PATH +"/" +OSA_SCAN_STATUS_PATH.replace("{scanId}", String.valueOf(scanId));//TODO if  not int
+        HttpGet getRequest = new HttpGet(resolvedPath);
+        //set csrf header and cookies
+        for (org.apache.http.cookie.Cookie c : cookieStore.getCookies()) {
+            if (CSRF_TOKEN_HEADER.equals(c.getName())) {
+                getRequest.addHeader(CSRF_TOKEN_HEADER, c.getValue());
+            }
+        }
+        setCookies = loginResponse.getHeaders("Set-Cookie");
+        StringBuilder cookies = new StringBuilder();
+        for (Header h : setCookies) {
+            cookies.append(h.getValue()).append(";");
+        }
+        getRequest.addHeader("cookie", cookies.toString());
+
+        HttpResponse response = apacheClient.execute(getRequest);
         validateResponse(response, Response.Status.OK, "fail get OSA scan status");
 
         return convertToObject(response, OSAScanStatus.class);
     }
 
-    public OSASummaryResults getOSAScanSummaryResults(long projectId) throws CxClientException {
-        String resolvedPath = OSA_SCAN_SUMMARY_PATH.replace("{projectId}", String.valueOf(projectId));//TODO if  not int
-        ClientResponse response = root.path(resolvedPath).get(ClientResponse.class);
+    public OSASummaryResults getOSAScanSummaryResults(long projectId) throws CxClientException, IOException {
+        String resolvedPath = hostName  + "/" + ROOT_PATH +"/" + OSA_SCAN_SUMMARY_PATH.replace("{projectId}", String.valueOf(projectId));//TODO if  not int
+        HttpGet getRequest = new HttpGet(resolvedPath);
+        //set csrf header and cookies
+        for (org.apache.http.cookie.Cookie c : cookieStore.getCookies()) {
+            if (CSRF_TOKEN_HEADER.equals(c.getName())) {
+                getRequest.addHeader(CSRF_TOKEN_HEADER, c.getValue());
+            }
+        }
+        setCookies = loginResponse.getHeaders("Set-Cookie");
+        StringBuilder cookies = new StringBuilder();
+        for (Header h : setCookies) {
+            cookies.append(h.getValue()).append(";");
+        }
+        getRequest.addHeader("cookie", cookies.toString());
+
+        HttpResponse response = apacheClient.execute(getRequest);
         validateResponse(response, Response.Status.OK, "fail get OSA scan summary results");
 
         return convertToObject(response, OSASummaryResults.class);
     }
 
-    public String getOSAScanHtmlResults(long projectId) throws CxClientException {
-        String resolvedPath = OSA_SCAN_HTML_PATH.replace("{projectId}", String.valueOf(projectId));//TODO if  not int
-        ClientResponse response = root.path(resolvedPath).get(ClientResponse.class);
+    public String getOSAScanHtmlResults(long projectId) throws CxClientException, IOException {
+        String resolvedPath =  hostName  + "/" + ROOT_PATH +"/" +OSA_SCAN_HTML_PATH.replace("{projectId}", String.valueOf(projectId));//TODO if  not int
+        HttpGet getRequest = new HttpGet(resolvedPath);
+        //set csrf header and cookies
+        for (org.apache.http.cookie.Cookie c : cookieStore.getCookies()) {
+            if (CSRF_TOKEN_HEADER.equals(c.getName())) {
+                getRequest.addHeader(CSRF_TOKEN_HEADER, c.getValue());
+            }
+        }
+        setCookies = loginResponse.getHeaders("Set-Cookie");
+        StringBuilder cookies = new StringBuilder();
+        for (Header h : setCookies) {
+            cookies.append(h.getValue()).append(";");
+        }
+        getRequest.addHeader("cookie", cookies.toString());
+
+        HttpResponse response = apacheClient.execute(getRequest);
         validateResponse(response, Response.Status.OK, "fail get OSA scan html results");
 
-        return response.getEntity(String.class);
+        return response.getEntity().toString();//TODO
     }
 
-    public byte[] getOSAScanPDFResults(long projectId) throws CxClientException {
-        String resolvedPath = OSA_SCAN_PDF_PATH.replace("{projectId}", String.valueOf(projectId));//TODO if  not int
+    public byte[] getOSAScanPDFResults(long projectId) throws CxClientException, IOException {
+        String resolvedPath =  hostName  + "/" + ROOT_PATH +"/" +OSA_SCAN_PDF_PATH.replace("{projectId}", String.valueOf(projectId));//TODO if  not int
 
-        ClientResponse response = root.path(resolvedPath).get(ClientResponse.class);
+        HttpGet getRequest = new HttpGet(resolvedPath);
+        HttpResponse response = apacheClient.execute(getRequest);
         validateResponse(response, Response.Status.OK, "fail get OSA scan pdf results");
-        return response.getEntity(byte[].class);
+        return response.getEntity().toString().getBytes();//TODO EXC
 
     }
     private void validateApacheHttpClientResponse(HttpResponse response, int status, String message) throws CxClientException {
@@ -243,14 +244,14 @@ public class CxRestClient {
         }
     }
 
-    private void validateResponse(ClientResponse response, Response.Status expectedStatus, String message) throws CxClientException {
-        if (response.getStatus() != expectedStatus.getStatusCode()) {
-            throw new CxClientException(message + ": " + response.getStatus());
+    private void validateResponse(HttpResponse response, Response.Status expectedStatus, String message) throws CxClientException {
+        if (response.getStatusLine().getStatusCode() != expectedStatus.getStatusCode()) {
+            throw new CxClientException(message + ": " + response.getStatusLine().getStatusCode());
         }
     }
 
-    private <T> T convertToObject(ClientResponse response, Class<T> valueType) throws CxClientException {
-        String json = response.getEntity(String.class);
+    private <T> T convertToObject(HttpResponse response, Class<T> valueType) throws CxClientException {
+        String json = response.getEntity().toString();//TODO check
         T ret = null;
         try {
             ret = mapper.readValue(json, valueType);
