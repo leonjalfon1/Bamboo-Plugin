@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -291,14 +292,15 @@ public class CheckmarxTask implements TaskType {
     }
 
     private HashMap<String, String> resolveConfigurationMap(ConfigurationMap configMap) throws TaskException {
+
         Object a = ContainerManager.getComponent("administrationConfigurationAccessor");
-        if (a instanceof CachingAdministrationConfigurationAccessor) {
-            adminConfig = ((CachingAdministrationConfigurationAccessor) a).getAdministrationConfiguration();
-        } else if (a instanceof AdministrationConfigurationAccessor) {
-            adminConfig = ((AdministrationConfigurationAccessor) a).getAdministrationConfiguration();
-        } else {
-            throw new TaskException("Failed to resolve global configuration");
+        try {
+            Method getAdminConfig = a.getClass().getDeclaredMethod("getAdministrationConfiguration");
+            adminConfig = (AdministrationConfiguration) getAdminConfig.invoke(a);
+        } catch (Exception e) {
+            throw new TaskException("Failed to resolve global configuration", e);
         }
+
         configurationMap = new HashMap<String, String>();
 
         if (COSTUME_CONFIGURATION_SERVER.equals(configMap.get(SERVER_CREDENTIALS_SECTION))) {
