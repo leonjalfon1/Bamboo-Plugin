@@ -24,7 +24,6 @@ import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -121,7 +120,7 @@ public class CxRestClient {
             loginResponse = apacheClient.execute(loginPost);
 
             //validate login response
-            validateResponse(loginResponse, Response.Status.OK.getStatusCode(), "Fail to authenticate");
+            validateResponse(loginResponse, 200, "Fail to authenticate");
         } finally {
             loginPost.releaseConnection();
             HttpClientUtils.closeQuietly(loginResponse);
@@ -145,7 +144,7 @@ public class CxRestClient {
             //send scan request
             response = apacheClient.execute(post);
             //verify scan request
-            validateResponse(response, Response.Status.ACCEPTED.getStatusCode(), "Fail to create OSA scan");
+            validateResponse(response, 202, "Fail to create OSA scan");
 
             //extract response as object and return the link
             return convertToObject(response, CreateOSAScanResponse.class);
@@ -165,7 +164,7 @@ public class CxRestClient {
 
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, Response.Status.OK.getStatusCode(), "fail get OSA scan status");
+            validateResponse(response, 200, "fail get OSA scan status");
 
             return convertToObject(response, OSAScanStatus.class);
         } finally {
@@ -182,7 +181,7 @@ public class CxRestClient {
 
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, Response.Status.OK.getStatusCode(), "fail get OSA scan summary results");
+            validateResponse(response, 200, "fail get OSA scan summary results");
 
             return convertToObject(response, OSASummaryResults.class);
         } finally {
@@ -198,7 +197,7 @@ public class CxRestClient {
         HttpResponse response = null;
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, Response.Status.OK.getStatusCode(), "fail get OSA scan html results");
+            validateResponse(response, 200, "fail get OSA scan html results");
 
             return IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
 
@@ -215,7 +214,7 @@ public class CxRestClient {
 
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, Response.Status.OK.getStatusCode(), "fail get OSA scan pdf results");
+            validateResponse(response, 200, "fail get OSA scan pdf results");
             return IOUtils.toByteArray(response.getEntity().getContent());
         } finally {
             getRequest.releaseConnection();
