@@ -365,7 +365,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
     public void close() {
-        //todo implement
+        restClient.close();
     }
 
     private void waitForReport(long reportId) throws CxClientException, InterruptedException {
@@ -400,8 +400,8 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
     public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException, IOException {
-        restClient.login(); //TODO- delete it?
-        return restClient.createScanLargeFileWorkaround(projectId, zipFile);
+        restClient.login();
+        return restClient.createOSAScan(projectId, zipFile);
     }
 
 

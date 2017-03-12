@@ -254,8 +254,8 @@ public class CheckmarxTask implements TaskType {
             log.error("Unexpected exception: " + e.getMessage(), e);
             throw new TaskException(e.getMessage());
         } finally {
-
             deleteTempFiles();
+            closeClient(cxClientService);
         }
 
         buildContext.getBuildResult().getCustomBuildData().putAll(results);
@@ -279,6 +279,15 @@ public class CheckmarxTask implements TaskType {
             buildLoggerAdapter.error("Failed to delete temp files: " + e.getMessage());
         }
 
+    }
+
+    private void closeClient(CxClientService cxClientService) {
+        if(cxClientService != null) {
+            try {
+                cxClientService.close();
+            } catch (Exception e) {
+            }
+        }
     }
 
     private HashMap<String, String> resolveConfigurationMap(ConfigurationMap configMap) throws TaskException {

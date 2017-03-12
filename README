@@ -48,3 +48,8 @@ NICE-TO-HAVE FEATURES LEFT TO DEVELOP
 - UI: Help texts and/or tooltips.
 - UI: Add a Trends tab to the results view. This is prepared in the plugin code.
 - Plugin functionality: Support using environment variables like in the Jenkins plugin.
+
+
+NOTES:
+------
+- For the plugin to be runnable with agent, the agent must be started with the vm argument  "-Datlassian.org.osgi.framework.bootdelegation=javax.servlet,javax.servlet.*,sun.*,com.sun.*,org.w3c.dom.*,org.apache.xerces.*" (like with the master bamboo instance)
