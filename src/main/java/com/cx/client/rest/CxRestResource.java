@@ -157,7 +157,6 @@ public class CxRestResource {
         return convertTeamPathType(teamPathList.getGroupList());
     }
 
-
     private List<CxClass> convertPresetType(List<Preset> oldType) {
         List<CxClass> newType = new ArrayList<CxClass>();
         for (Preset preset : oldType) {

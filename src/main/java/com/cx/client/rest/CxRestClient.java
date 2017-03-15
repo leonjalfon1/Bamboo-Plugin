@@ -52,9 +52,9 @@ public class CxRestClient {
     public static final String CSRF_TOKEN_HEADER = "CXCSRFToken";
 
     private HttpClient apacheClient;
-    private final CookieStore cookieStore;
-    private static String cookies;
-    private static String csrfToken;
+    private CookieStore cookieStore;
+    private String cookies;
+    private String csrfToken;
     ObjectMapper mapper = new ObjectMapper();
 
 
