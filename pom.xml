@@ -25,7 +25,8 @@
                     <productVersion>${bamboo.version}</productVersion>
                     <!--  <productDataVersion>${bamboo.data.version}</productDataVersion>-->
                     <enableQuickReload>true</enableQuickReload>
-                    <extractDependencies>false</extractDependencies>
+                    <allowGoogleTracking>false</allowGoogleTracking>
+                    <jvmArgs>-Datlassian.org.osgi.framework.bootdelegation=com.sun.*,sun.*</jvmArgs>
                 </configuration>
             </plugin>
         </plugins>
@@ -49,10 +50,6 @@
             <version>${bamboo.version}</version>
             <scope>provided</scope>
         </dependency>
-
-
-
-
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>

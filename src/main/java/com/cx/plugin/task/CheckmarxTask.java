@@ -6,8 +6,6 @@ package com.cx.plugin.task;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.configuration.AdministrationConfiguration;
-import com.atlassian.bamboo.configuration.AdministrationConfigurationAccessor;
-import com.atlassian.bamboo.configuration.CachingAdministrationConfigurationAccessor;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
@@ -17,7 +15,9 @@ import com.cx.client.dto.*;
 import com.cx.client.exception.CxClientException;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSASummaryResults;
-import com.cx.plugin.dto.*;
+import com.cx.plugin.dto.CxAbortException;
+import com.cx.plugin.dto.CxResultsConst;
+import com.cx.plugin.dto.CxScanConfiguration;
 import com.cx.plugin.utils.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,10 +46,8 @@ public class CheckmarxTask implements TaskType {
 
     public static final Logger log = LoggerFactory.getLogger(CheckmarxTask.class);
 
-    private static final long MAX_ZIP_SIZE_BYTES = 209715200;
-    private static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
-
     private CxClientService cxClientService;
+
     protected java.net.URL url;
     private File workDirectory;
     private File zipTempFile;
@@ -57,13 +55,14 @@ public class CheckmarxTask implements TaskType {
     private String osaProjectSummaryLink;
     private CxScanConfiguration config;
     private String scanResultsUrl;
-
     private BuildLogger buildLogger;
     private CxBuildLoggerAdapter buildLoggerAdapter;
     private HashMap<String, String> configurationMap;
     private BuildContext buildContext;
     private AdministrationConfiguration adminConfig;
 
+    private static final long MAX_ZIP_SIZE_BYTES = 209715200;
+    private static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
     private static final String PDF_REPORT_NAME = "CxSASTReport";
     private static final String OSA_REPORT_NAME = "CxOSAReport";
     private static final String CX_REPORT_LOCATION = File.separator + "Checkmarx" + File.separator + "Reports";
@@ -72,23 +71,18 @@ public class CheckmarxTask implements TaskType {
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
 
-
         final TaskResultBuilder taskResultBuilder = TaskResultBuilder.newBuilder(taskContext);
         buildLogger = taskContext.getBuildLogger();
         buildLoggerAdapter = new CxBuildLoggerAdapter(buildLogger);
         buildContext = taskContext.getBuildContext();
         Map<String, String> results = new HashMap<String, String>();
-
         configurationMap = resolveConfigurationMap(taskContext.getConfigurationMap());//resolve the global configuration propertie
         workDirectory = taskContext.getWorkingDirectory();
         ScanResults scanResults = null;
         CreateScanResponse createScanResponse = null;
         OSASummaryResults osaSummaryResults = null;
-        Exception osaCreateException = null;
+        Exception osaException = null;
         Exception sastWaitException = null;
-        Exception osaBuildFailException = null;
-        Exception sastBuildFailException = null;
-        Exception osaWaitException = null;
 
         try {
             config = new CxScanConfiguration(configurationMap);
@@ -130,14 +124,13 @@ public class CheckmarxTask implements TaskType {
                 } catch (Exception e) {
                     buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
                     log.error("Fail to create OSA Scan: " + e.getMessage(), e);
-                    osaCreateException = e;
+                    osaException = e;
                 }
             }
-
             //Asynchronous MODE
             if (!config.isSynchronous()) {
-                if (osaCreateException != null) {
-                    throw osaCreateException;
+                if (osaException != null) {
+                    throw osaException;
                 }
                 buildLoggerAdapter.info("Running in Asynchronous mode. Not waiting for scan to finish");
                 return taskResultBuilder.success().build();
@@ -160,7 +153,6 @@ public class CheckmarxTask implements TaskType {
                     createPDFReport(scanResults.getScanID());
                 }
 
-
             } catch (CxClientException e) {
                 buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
                 log.error(e.getMessage(), e);
@@ -176,11 +168,9 @@ public class CheckmarxTask implements TaskType {
 
             if (config.isOsaEnabled()) {
 
-
                 try {
-
-                    if (osaCreateException != null) {
-                        throw osaCreateException;
+                    if (osaException != null) {
+                        throw osaException;
                     }
                     //wait for OSA scan to finish
                     OSAConsoleScanWaitHandler osaConsoleScanWaitHandler = new OSAConsoleScanWaitHandler();
@@ -206,8 +196,8 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
                     buildLoggerAdapter.info("");
                 } catch (Exception e) {
-                    osaWaitException = e;
-                    throw osaWaitException;
+                    osaException = e;
+                    throw osaException;
                 }
             }
             if (sastWaitException != null) {
@@ -216,29 +206,18 @@ public class CheckmarxTask implements TaskType {
 
         } catch (MalformedURLException e) {
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
-            osaBuildFailException = e;
+            osaException = e;
 
         } catch (CxClientException e) { //TODO redesign the exceptions
             log.error(e.getMessage(), e);
 
-            if (osaCreateException != null) {
-                osaBuildFailException = osaCreateException;
+            if (osaException == null && sastWaitException == null) {
+                sastWaitException = e;
             }
-            if (osaWaitException != null) {
-                osaBuildFailException = osaWaitException;
-            }
-            if (sastWaitException != null) {
-                sastBuildFailException = sastWaitException;
-            }
-
-            if (osaCreateException == null && osaWaitException == null && sastWaitException == null) {
-                sastBuildFailException = e;
-            }
-
 
         } catch (NumberFormatException e) {
             log.error("Invalid preset id: " + e.getMessage(), e);
-            osaBuildFailException = e;
+            osaException = e;
 
         } catch (InterruptedException e) {
             buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
@@ -263,8 +242,8 @@ public class CheckmarxTask implements TaskType {
 
         //assert if expected exception is thrown  OR when vulnerabilities under threshold
         StringBuilder res = new StringBuilder("");
-        if (assertVulnerabilities(scanResults, osaSummaryResults, res) || sastBuildFailException != null || osaBuildFailException != null) {
-            printBuildFailure(res, sastBuildFailException, osaBuildFailException);
+        if (assertVulnerabilities(scanResults, osaSummaryResults, res) || sastWaitException != null || osaException != null) {
+            printBuildFailure(res, sastWaitException, osaException);
             return taskResultBuilder.failed().build();
         }
 
@@ -373,7 +352,6 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
         results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
         results.put(CxResultsConst.SAST_SUMMARY_RESULTS_LINK, StringUtils.defaultString(projectStateLink));
-
         results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
 
         if (config.isThresholdsEnabled()) {
@@ -394,12 +372,9 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getHighVulnerabilities()));
         results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getMediumVulnerabilities()));
         results.put(CxResultsConst.OSA_LOW_RESULTS, String.valueOf(osaSummaryResults.getLowVulnerabilities()));
-
         results.put(CxResultsConst.OSA_SUMMARY_RESULTS_LINK, StringUtils.defaultString(osaProjectSummaryLink));
-
         results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
         results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
-
         results.put(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(config.isOSAThresholdEnabled()));
 
         if (config.isOSAThresholdEnabled()) {
@@ -560,7 +535,6 @@ public class CheckmarxTask implements TaskType {
             failByThreshold |= isFail(osaSummaryResults.getMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "medium", "CxOSA ");
             failByThreshold |= isFail(osaSummaryResults.getLowVulnerabilities(), config.getOsaLowThreshold(), res, "low", "CxOSA ");
         }
-
 
         return failByThreshold;
     }
