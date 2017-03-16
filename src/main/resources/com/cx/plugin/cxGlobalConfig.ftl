@@ -102,7 +102,7 @@
 <div class="cx-field-group">
     [@ui.bambooSection title='Checkmarx Server' ]
         [@ww.textfield labelKey="serverUrl.label" name="globalServerUrl" cssClass="long-field"/]
-            [@ww.textfield labelKey="userName.label" name="globalUserName"  cssClass="long-field"/]
+            [@ww.textfield labelKey="username.label" name="globalUsername"  cssClass="long-field"/]
             [@ww.password labelKey="password.label" name="globalPassword" showPassword='true' cssClass="long-field"/]
         [/@ui.bambooSection]
 </div>

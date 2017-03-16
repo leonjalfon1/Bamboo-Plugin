@@ -88,7 +88,7 @@
             messageElement.text('URL must not be empty');
             messageElement.css('color', '#d22020');
             return false;
-        } else if ($('#userName').val().length < 1) {
+        } else if ($('#username').val().length < 1) {
             messageElement.text('Username must not be empty');
             messageElement.css('color', '#d22020');
             return false;
@@ -108,7 +108,7 @@
             messageElement.text('URL must not be empty');
             messageElement.css('color', '#d22020');
             return false;
-        } else if ($('#globalUserName').html().length < 1) {
+        } else if ($('#globalUsername').html().length < 1) {
             messageElement.text('Username must not be empty');
             messageElement.css('color', '#d22020');
             return false;
@@ -119,7 +119,7 @@
     function getInputData() {
         return {
             "url": $("#serverUrl").val(),
-            "username": $('#userName').val(),
+            "username": $('#username').val(),
             "pas": $('#password').val(),
             "global": $('#radioGroupglobalConfigurationServer').is(':checked')
         };
@@ -128,7 +128,7 @@
     function getGlobalInputData() {
         return {
             "url": $("#globalServerUrl").html(),
-            "username": $('#globalUserName').html(),
+            "username": $('#globalUsername').html(),
             "global": $('#radioGroupglobalConfigurationServer').is(':checked')
         };
     }

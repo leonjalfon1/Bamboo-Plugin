@@ -26,7 +26,6 @@
                     <!--  <productDataVersion>${bamboo.data.version}</productDataVersion>-->
                     <enableQuickReload>true</enableQuickReload>
                     <allowGoogleTracking>false</allowGoogleTracking>
-                    <jvmArgs>-Datlassian.org.osgi.framework.bootdelegation=com.sun.*,sun.*</jvmArgs>
                 </configuration>
             </plugin>
         </plugins>

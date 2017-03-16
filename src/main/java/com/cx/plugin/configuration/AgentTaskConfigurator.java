@@ -104,10 +104,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         populateTeamAndPresetFields(cxServerUrl, cxUser, cxPass, null, null, context);
     }
 
-    private void populateTeamAndPresetFields(final String serverUrl, final String userName, final String password, String preset, String teamPath, @NotNull final Map<String, Object> context) {
+    private void populateTeamAndPresetFields(final String serverUrl, final String username, final String password, String preset, String teamPath, @NotNull final Map<String, Object> context) {
         try {
             //the method initialized the CxClient service
-            if (tryLogin(userName, password, serverUrl)) {
+            if (tryLogin(username, password, serverUrl)) {
 
                 presetList = convertPresetType(cxClientService.getPresetList());
                 context.put(PRESET_LIST, presetList);
@@ -342,13 +342,13 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     //the method initialized the CxClient service
-    private boolean tryLogin(String userName, String cxPass, String serverUrl) {
-        log.debug("tryLogin: server URL: " + serverUrl + " username" + userName);
+    private boolean tryLogin(String username, String cxPass, String serverUrl) {
+        log.debug("tryLogin: server URL: " + serverUrl + " username" + username);
 
-        if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(userName) && !StringUtils.isEmpty(cxPass)) {
+        if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(cxPass)) {
             try {
                 URL cxUrl = new URL(serverUrl);
-                cxClientService = new CxClientServiceImpl(cxUrl, userName, CxEncryption.decrypt(cxPass), true);
+                cxClientService = new CxClientServiceImpl(cxUrl, username, CxEncryption.decrypt(cxPass), true);
                 cxClientService.checkServerConnectivity();
                 cxClientService.loginToServer();
                 return true;

@@ -7,7 +7,7 @@ package com.cx.plugin.dto;
 
 public class CxParam {
 
-    public static final String USER_NAME = "userName";
+    public static final String USER_NAME = "username";
     public static final String PASSWORD = "password";
     public static final String SERVER_URL = "serverUrl";
     public static final String PROJECT_NAME = "projectName";
@@ -50,7 +50,7 @@ public class CxParam {
     public static final String OPTION_TRUE = "true";
     public static final String OPTION_FALSE = "false";
 
-    public static final String GLOBAL_USER_NAME = "globalUserName";
+    public static final String GLOBAL_USER_NAME = "globalUsername";
     public static final String GLOBAL_PASSWORD = "globalPassword";
     public static final String GLOBAL_SERVER_URL = "globalServerUrl";
     public static final String GLOBAL_FOLDER_EXCLUSION = "globalFolderExclusions";

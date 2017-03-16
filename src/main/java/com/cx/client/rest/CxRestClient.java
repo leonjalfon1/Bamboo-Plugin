@@ -145,7 +145,6 @@ public class CxRestClient {
             response = apacheClient.execute(post);
             //verify scan request
             validateResponse(response, 202, "Fail to create OSA scan");
-
             //extract response as object and return the link
             return convertToObject(response, CreateOSAScanResponse.class);
         } finally {

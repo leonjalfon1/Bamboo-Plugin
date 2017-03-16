@@ -24,7 +24,7 @@ import static com.cx.plugin.dto.CxParam.*;
 
 public class CxGlobalConfig extends GlobalAdminAction {
     private String globalServerUrl;
-    private String globalUserName;
+    private String globalUsername;
     private String globalPassword;
 
     private String globalFilterPatterns = DEFAULT_FILTER_PATTERNS;
@@ -45,7 +45,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent("administrationConfiguration");
 
         globalServerUrl = adminConfig.getSystemProperty(GLOBAL_SERVER_URL);
-        globalUserName = adminConfig.getSystemProperty(GLOBAL_USER_NAME);
+        globalUsername = adminConfig.getSystemProperty(GLOBAL_USER_NAME);
         globalPassword = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
 
         globalFolderExclusions = adminConfig.getSystemProperty(GLOBAL_FOLDER_EXCLUSION);
@@ -90,7 +90,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
 
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
         adminConfig.setSystemProperty(GLOBAL_SERVER_URL, globalServerUrl);
-        adminConfig.setSystemProperty(GLOBAL_USER_NAME, globalUserName);
+        adminConfig.setSystemProperty(GLOBAL_USER_NAME, globalUsername);
         adminConfig.setSystemProperty(GLOBAL_PASSWORD, CxEncryption.encrypt(globalPassword));
 
         adminConfig.setSystemProperty(GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
@@ -183,12 +183,12 @@ public class CxGlobalConfig extends GlobalAdminAction {
         this.globalServerUrl = globalServerUrl;
     }
 
-    public String getGlobalUserName() {
-        return globalUserName;
+    public String getGlobalUsername() {
+        return globalUsername;
     }
 
-    public void setGlobalUserName(String globalUserName) {
-        this.globalUserName = globalUserName.trim();
+    public void setGlobalUsername(String globalUsername) {
+        this.globalUsername = globalUsername.trim();
     }
 
     public String getGlobalPassword() {

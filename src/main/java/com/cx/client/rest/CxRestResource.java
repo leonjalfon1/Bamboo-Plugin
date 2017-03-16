@@ -47,6 +47,7 @@ public class CxRestResource {
     public Response testConnection(Map<Object, Object> credentials) {
 
         TestConnectionResponse tcResponse;
+        result = "";
         URL url;
         String urlToCheck;
         String useGlobal;
@@ -61,13 +62,14 @@ public class CxRestResource {
             HttpURLConnection urlConn;
             URL toCheck = new URL(url + SDK_PATH);
             urlConn = (HttpURLConnection) toCheck.openConnection();
+
+            urlConn.setConnectTimeout(2000);//TODO -DOR
             urlConn.connect();
         } catch (Exception e) {
             result = "Invalid URL";
             tcResponse = new TestConnectionResponse(result, null, null);
             return Response.status(statusCode).entity(tcResponse).build();
         }
-
 
         useGlobal = StringUtils.defaultString(credentials.get("global"));
         username = StringUtils.defaultString(credentials.get("username"));
@@ -86,7 +88,7 @@ public class CxRestResource {
                 if (presets == null || teams == null) {
                     throw new Exception("invalid preset teamPath");
                 }
-                result = "Success!";
+                result = "Connection successful!";
                 tcResponse = new TestConnectionResponse(result, presets, teams);
                 statusCode = 200;
 
