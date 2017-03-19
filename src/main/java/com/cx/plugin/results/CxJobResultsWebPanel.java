@@ -20,9 +20,10 @@ public class CxJobResultsWebPanel implements WebPanel {
 
         BuildResultsSummaryImpl a = (BuildResultsSummaryImpl) map.get("resultSummary");
         Map<String, String> costumeBuildData = a.getCustomBuildData();
-        String ret =  CxResultUtils.resolveCostumeBuildData(costumeBuildData);
+        String ret = CxResultUtils.resolveCostumeBuildData(costumeBuildData);
         return ret;
     }
+
     public void writeHtml(Writer writer, Map<String, Object> map) throws IOException {
 
     }

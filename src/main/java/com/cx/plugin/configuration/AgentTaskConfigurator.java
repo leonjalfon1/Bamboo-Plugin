@@ -41,19 +41,19 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private static LinkedHashMap<String, String> presetList = new LinkedHashMap<String, String>();
     private static LinkedHashMap<String, String> teamPathList = new LinkedHashMap<String, String>();
     private CxClientService cxClientService = null;
+    private static AdministrationConfiguration adminConfig;
+
     private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
     private final static String SPECIFIC_SETTING_LABEL = "Specific Task Setting";
     private final static String DEFAULT_SERVER_URL = "http://";
-
     private final static int MAX_PROJECT_NAME_LENGTH = 200;
 
-
-    private static AdministrationConfiguration adminConfig;
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, COSTUME_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, COSTUME_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(GLOBAL_CONFIGURATION_CONTROL, DEFAULT_SETTING_LABEL, COSTUME_CONFIGURATION_CONTROL, SPECIFIC_SETTING_LABEL);
     public static final Logger log = LoggerFactory.getLogger(AgentTaskConfigurator.class);
 
+    //create task configuration
     @Override
     public void populateContextForCreate(@NotNull final Map<String, Object> context) {
         super.populateContextForCreate(context);
@@ -139,6 +139,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
     }
 
+    //edit task configuration
     @Override
     public void populateContextForEdit(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition) {
 
@@ -191,7 +192,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         populateTeamAndPresetFields(cxServerUrl, cxUser, cxPass, cxPreset, cxTeam, context);
     }
 
-
     private void populateCxSASTFields(@NotNull final Map<String, Object> context, Map<String, String> configMap, boolean forCreate) {
         if (forCreate) {
             context.put(CXSAST_SECTION, GLOBAL_CONFIGURATION_CXSAST);
@@ -210,7 +210,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(GLOBAL_FILTER_PATTERN, getAdminConfig(GLOBAL_FILTER_PATTERN));
         context.put(GLOBAL_SCAN_TIMEOUT_IN_MINUTES, getAdminConfig(GLOBAL_SCAN_TIMEOUT_IN_MINUTES));
     }
-
 
     private void populateScanControlFields(@NotNull final Map<String, Object> context, Map<String, String> configMap, boolean forCreate) {
         if (forCreate) {
@@ -248,6 +247,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(GLOBAL_OSA_LOW_THRESHOLD, getAdminConfig(GLOBAL_OSA_LOW_THRESHOLD));
     }
 
+    //save task configuration
     @NotNull
     @Override
     public Map<String, String> generateTaskConfigMap(@NotNull final ActionParametersMap params, @Nullable final TaskDefinition previousTaskDefinition) {
@@ -382,6 +382,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return newType;
     }
 
+    //validate configuration fields
     @Override
     public void validate(@NotNull final ActionParametersMap params, @NotNull final ErrorCollection errorCollection) {
         super.validate(params, errorCollection);

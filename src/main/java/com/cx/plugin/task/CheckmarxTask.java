@@ -93,8 +93,8 @@ public class CheckmarxTask implements TaskType {
             buildLoggerAdapter.info("Initializing Cx client");
             cxClientService = new CxClientServiceImpl(url, config.getUsername(), CxEncryption.decrypt(config.getPassword()));
             cxClientService.setLogger(buildLoggerAdapter);
-
             cxClientService.checkServerConnectivity();
+
             //perform login to server
             buildLoggerAdapter.info("Logging into the Checkmarx service.");
             cxClientService.loginToServer();
@@ -103,7 +103,8 @@ public class CheckmarxTask implements TaskType {
             createScanResponse = createScan();
 
             CreateOSAScanResponse osaScan = null;
-            //OSA Scan
+
+            //create OSA Scan
             if (config.isOsaEnabled()) {
                 try {
                     buildLoggerAdapter.info("Creating OSA scan");
@@ -179,6 +180,7 @@ public class CheckmarxTask implements TaskType {
                     cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, osaConsoleScanWaitHandler);
                     buildLoggerAdapter.info("OSA scan finished successfully");
                     buildLoggerAdapter.info("Creating OSA reports");
+                    //retrieve OSA scan results
                     osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());
                     printOSAResultsToConsole(osaSummaryResults);
                     addOSAResults(results, osaSummaryResults, config);
@@ -535,7 +537,6 @@ public class CheckmarxTask implements TaskType {
             failByThreshold |= isFail(osaSummaryResults.getMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "medium", "CxOSA ");
             failByThreshold |= isFail(osaSummaryResults.getLowVulnerabilities(), config.getOsaLowThreshold(), res, "low", "CxOSA ");
         }
-
         return failByThreshold;
     }
 
@@ -556,7 +557,6 @@ public class CheckmarxTask implements TaskType {
             buildLoggerAdapter.error(s);
             log.info(s);
         }
-
         buildLoggerAdapter.error("-----------------------------------------------------------------------------------------\n");
         buildLoggerAdapter.error("");
     }
@@ -591,6 +591,4 @@ public class CheckmarxTask implements TaskType {
             log.error("Fail to generate PDF report ", e);
         }
     }
-
-
 }

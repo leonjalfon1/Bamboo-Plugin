@@ -63,7 +63,6 @@ public class CxRestResource {
             URL toCheck = new URL(url + SDK_PATH);
             urlConn = (HttpURLConnection) toCheck.openConnection();
 
-            urlConn.setConnectTimeout(2000);//TODO -DOR
             urlConn.connect();
         } catch (Exception e) {
             result = "Invalid URL";
