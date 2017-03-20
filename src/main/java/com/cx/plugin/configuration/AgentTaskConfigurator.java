@@ -198,13 +198,11 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             context.put(FOLDER_EXCLUSION, "");
             context.put(FILTER_PATTERN, DEFAULT_FILTER_PATTERNS);
             context.put(SCAN_TIMEOUT_IN_MINUTES, "");
-            context.put(COMMENT, "");
         } else {
             context.put(CXSAST_SECTION, configMap.get(CXSAST_SECTION));
             context.put(FOLDER_EXCLUSION, configMap.get(FOLDER_EXCLUSION));
             context.put(FILTER_PATTERN, configMap.get(FILTER_PATTERN));
             context.put(SCAN_TIMEOUT_IN_MINUTES, configMap.get(SCAN_TIMEOUT_IN_MINUTES));
-            context.put(COMMENT, configMap.get(COMMENT));
         }
 
         context.put(GLOBAL_FILTER_PATTERN, getAdminConfig(GLOBAL_FILTER_PATTERN));
@@ -318,7 +316,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(FOLDER_EXCLUSION, getDefaultString(params, FOLDER_EXCLUSION));
         config.put(FILTER_PATTERN, getDefaultString(params, FILTER_PATTERN));
         config.put(SCAN_TIMEOUT_IN_MINUTES, getDefaultString(params, SCAN_TIMEOUT_IN_MINUTES).trim());
-        config.put(COMMENT, getDefaultString(params, COMMENT).trim());
 
         return config;
     }

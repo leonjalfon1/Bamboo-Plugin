@@ -90,7 +90,6 @@
             [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true' required='true'/]
             <button type="button" class="aui-button test-connection" id="test_connection">Connect to Server</button>
             <div id="testConnectionMessage" class="test-connection-message"></div>
-            <img src="images/spinner.jpg" id="spinner"/>
 
 
         [/@ui.bambooSection]
@@ -119,7 +118,6 @@
         [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" descriptionKey='Comma separated list of include or exclude wildcard patterns. Exclude patterns start with exclamation mark "!". Example: **/*.java, **/*.html, !**\\test\\**\\XYZ*"' cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label"  name="scanTimeoutInMinutes" descriptionKey="scanTimeoutInMinutes.description"/]
-        [@ww.textarea labelKey="comment.label"  name="comment" rows="3" description="Free text comment. May reference build parameters like $\{bamboo.variableName}"  cssClass="long-field"/]
     [/@ui.bambooSection]
 
         [@ui.bambooSection dependsOn='cxSastSection' showOn='globalConfigurationCxSAST']
@@ -161,7 +159,6 @@
         [@ww.radio id = 'radioGroup' name='scanControlSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesControl /]
         [@ui.bambooSection dependsOn='scanControlSection' showOn='customConfigurationControl']
             [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" descriptionKey="isSynchronous.description" toggle='true' /]
-
 
             [@ui.bambooSection dependsOn='isSynchronous' showOn='true']
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' /]

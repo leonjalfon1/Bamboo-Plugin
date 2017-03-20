@@ -1,9 +1,7 @@
 (function ($) {
     $(document).on("click", "#test_connection", function (event) {
         $('#testConnectionMessage').html("");
-        $('#spinner').show();
         restRequest();
-        $('#spinner').hide();
     });
 
     $(document).on("click", "#global_test_connection", function (event) {

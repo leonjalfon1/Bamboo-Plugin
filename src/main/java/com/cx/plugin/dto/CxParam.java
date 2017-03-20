@@ -20,7 +20,6 @@ public class CxParam {
     public static final String FOLDER_EXCLUSION = "folderExclusions";
     public static final String FILTER_PATTERN = "filterPatterns";
     public static final String SCAN_TIMEOUT_IN_MINUTES = "scanTimeoutInMinutes";
-    public static final String COMMENT= "comment";
     public static final String IS_INCREMENTAL = "isIncremental";
     public static final String GENERATE_PDF_REPORT = "generatePDFReport";
     public static final String OSA_ENABLED = "osaEnabled";
