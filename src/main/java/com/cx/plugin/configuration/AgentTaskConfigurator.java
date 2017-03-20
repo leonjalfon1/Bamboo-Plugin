@@ -48,9 +48,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private final static String DEFAULT_SERVER_URL = "http://";
     private final static int MAX_PROJECT_NAME_LENGTH = 200;
 
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, COSTUME_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, COSTUME_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(GLOBAL_CONFIGURATION_CONTROL, DEFAULT_SETTING_LABEL, COSTUME_CONFIGURATION_CONTROL, SPECIFIC_SETTING_LABEL);
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
+    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(GLOBAL_CONFIGURATION_CONTROL, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CONTROL, SPECIFIC_SETTING_LABEL);
     public static final Logger log = LoggerFactory.getLogger(AgentTaskConfigurator.class);
 
     //create task configuration
@@ -198,11 +198,13 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             context.put(FOLDER_EXCLUSION, "");
             context.put(FILTER_PATTERN, DEFAULT_FILTER_PATTERNS);
             context.put(SCAN_TIMEOUT_IN_MINUTES, "");
+            context.put(COMMENT, "");
         } else {
             context.put(CXSAST_SECTION, configMap.get(CXSAST_SECTION));
             context.put(FOLDER_EXCLUSION, configMap.get(FOLDER_EXCLUSION));
             context.put(FILTER_PATTERN, configMap.get(FILTER_PATTERN));
             context.put(SCAN_TIMEOUT_IN_MINUTES, configMap.get(SCAN_TIMEOUT_IN_MINUTES));
+            context.put(COMMENT, configMap.get(COMMENT));
         }
 
         context.put(GLOBAL_FILTER_PATTERN, getAdminConfig(GLOBAL_FILTER_PATTERN));
@@ -272,7 +274,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             config.put(PRESET_NAME, presetName);
         }
 
-
         String teamId = params.getString(TEAM_PATH_ID);
         String teaName = "";
         if (!NO_TEAM_PATH.equals(teamId)) {
@@ -317,6 +318,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(FOLDER_EXCLUSION, getDefaultString(params, FOLDER_EXCLUSION));
         config.put(FILTER_PATTERN, getDefaultString(params, FILTER_PATTERN));
         config.put(SCAN_TIMEOUT_IN_MINUTES, getDefaultString(params, SCAN_TIMEOUT_IN_MINUTES).trim());
+        config.put(COMMENT, getDefaultString(params, COMMENT).trim());
 
         return config;
     }
@@ -387,7 +389,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     public void validate(@NotNull final ActionParametersMap params, @NotNull final ErrorCollection errorCollection) {
         super.validate(params, errorCollection);
         String useSpecific = params.getString(SERVER_CREDENTIALS_SECTION);
-        if (COSTUME_CONFIGURATION_SERVER.equals(useSpecific)) {
+        if (CUSTOM_CONFIGURATION_SERVER.equals(useSpecific)) {
             validateNotEmpty(params, errorCollection, USER_NAME);
             validateNotEmpty(params, errorCollection, PASSWORD);
             validateNotEmpty(params, errorCollection, SERVER_URL);
@@ -398,12 +400,12 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         validateProjectNameLength(params, errorCollection, PROJECT_NAME);
 
         useSpecific = params.getString(CXSAST_SECTION);
-        if (COSTUME_CONFIGURATION_CXSAST.equals(useSpecific)) {
+        if (CUSTOM_CONFIGURATION_CXSAST.equals(useSpecific)) {
             validatePositive(params, errorCollection, SCAN_TIMEOUT_IN_MINUTES);
         }
 
         useSpecific = params.getString(SCAN_CONTROL_SECTION);
-        if (COSTUME_CONFIGURATION_CONTROL.equals(useSpecific)) {
+        if (CUSTOM_CONFIGURATION_CONTROL.equals(useSpecific)) {
             validateNotNegative(params, errorCollection, HIGH_THRESHOLD);
             validateNotNegative(params, errorCollection, MEDIUM_THRESHOLD);
             validateNotNegative(params, errorCollection, LOW_THRESHOLD);

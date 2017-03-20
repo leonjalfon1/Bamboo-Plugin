@@ -284,7 +284,7 @@ public class CheckmarxTask implements TaskType {
 
         configurationMap = new HashMap<String, String>();
 
-        if (COSTUME_CONFIGURATION_SERVER.equals(configMap.get(SERVER_CREDENTIALS_SECTION))) {
+        if (CUSTOM_CONFIGURATION_SERVER.equals(configMap.get(SERVER_CREDENTIALS_SECTION))) {
             configurationMap.put(SERVER_URL, configMap.get(SERVER_URL));
             configurationMap.put(USER_NAME, configMap.get(USER_NAME));
             configurationMap.put(PASSWORD, configMap.get(PASSWORD));
@@ -311,10 +311,11 @@ public class CheckmarxTask implements TaskType {
         configurationMap.put(TEAM_PATH_ID, StringUtils.defaultString(configMap.get(TEAM_PATH_ID)));
         configurationMap.put(TEAM_PATH_NAME, teamName);
 
-        if (COSTUME_CONFIGURATION_CXSAST.equals(configMap.get(CXSAST_SECTION))) {
+        if (CUSTOM_CONFIGURATION_CXSAST.equals(configMap.get(CXSAST_SECTION))) {
             configurationMap.put(FOLDER_EXCLUSION, configMap.get(FOLDER_EXCLUSION));
             configurationMap.put(FILTER_PATTERN, configMap.get(FILTER_PATTERN));
             configurationMap.put(SCAN_TIMEOUT_IN_MINUTES, configMap.get(SCAN_TIMEOUT_IN_MINUTES));
+            configurationMap.put(COMMENT, configMap.get(COMMENT));
         } else {
             configurationMap.put(FOLDER_EXCLUSION, getAdminConfig(GLOBAL_FOLDER_EXCLUSION));
             configurationMap.put(FILTER_PATTERN, getAdminConfig(GLOBAL_FILTER_PATTERN));
@@ -324,7 +325,7 @@ public class CheckmarxTask implements TaskType {
         configurationMap.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         configurationMap.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
 
-        if (COSTUME_CONFIGURATION_CONTROL.equals(configMap.get(SCAN_CONTROL_SECTION))) {
+        if (CUSTOM_CONFIGURATION_CONTROL.equals(configMap.get(SCAN_CONTROL_SECTION))) {
             configurationMap.put(IS_SYNCHRONOUS, configMap.get(IS_SYNCHRONOUS));
             configurationMap.put(THRESHOLDS_ENABLED, configMap.get(THRESHOLDS_ENABLED));
             configurationMap.put(HIGH_THRESHOLD, configMap.get(HIGH_THRESHOLD));
@@ -441,6 +442,7 @@ public class CheckmarxTask implements TaskType {
         ret.setPresetId(config.getPresetId());
         ret.setZippedSources(zippedSources);
         ret.setFileName(config.getProjectName());
+        ret.setComment(config.getComment());
 
         return ret;
     }

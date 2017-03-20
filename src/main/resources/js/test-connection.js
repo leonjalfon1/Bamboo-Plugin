@@ -1,15 +1,19 @@
 (function ($) {
     $(document).on("click", "#test_connection", function (event) {
+        $('#testConnectionMessage').html("");
+        $('#spinner').show();
         restRequest();
+        $('#spinner').hide();
     });
 
     $(document).on("click", "#global_test_connection", function (event) {
+        $('#globalTestConnectionMessage').html("");
         restRequest();
+
     });
 
     function restRequest() {
         var request;
-
 
         if ($('#radioGroupglobalConfigurationServer').is(':checked')) {
             if (!validateGlobalFields()) {
@@ -27,15 +31,15 @@
 
         function createRestRequest(method, url) {
 
-            var urli = AJS.contextPath() + url;
+            var resolvedUrl = AJS.contextPath() + url;
 
             var xhr = new XMLHttpRequest();
             if ("withCredentials" in xhr) {
-                xhr.open(method, urli, true);
+                xhr.open(method, resolvedUrl, true);
 
             } else if (typeof XDomainRequest != "undefined") {
                 xhr = new XDomainRequest();
-                xhr.open(method, url);
+                xhr.open(method, resolvedUrl);
             } else {
                 xhr = null;
             }

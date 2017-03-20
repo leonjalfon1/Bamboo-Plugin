@@ -19,36 +19,36 @@ import static com.cx.plugin.dto.CxResultsConst.*;
 public abstract class CxResultUtils {
     public static final Logger log = LoggerFactory.getLogger(CxResultUtils.class);
 
-    public static String resolveCostumeBuildData(Map<String, String> costumeBuildData) {
+    public static String resolveCostumeBuildData(Map<String, String> customBuildData) {
         String ret = "";
         String resultsTemplate = getResultsTemplate();
-        if (costumeBuildData.get(SAST_RESULTS_READY) != null) {
+        if (customBuildData.get(SAST_RESULTS_READY) != null) {
             if (resultsTemplate != null) {
                 ret = resultsTemplate
-                        .replace(SAST_RESULTS_READY, String.valueOf(costumeBuildData.get(SAST_RESULTS_READY)))
-                        .replaceAll(HIGH_RESULTS, String.valueOf(costumeBuildData.get(HIGH_RESULTS)))
-                        .replace(MEDIUM_RESULTS, String.valueOf(costumeBuildData.get(MEDIUM_RESULTS)))
-                        .replace(LOW_RESULTS, String.valueOf(costumeBuildData.get(LOW_RESULTS)))
-                        .replace(SAST_SUMMARY_RESULTS_LINK, String.valueOf(costumeBuildData.get(SAST_SUMMARY_RESULTS_LINK)))
-                        .replace(THRESHOLD_ENABLED, String.valueOf(costumeBuildData.get(THRESHOLD_ENABLED)))
-                        .replace(HIGH_THRESHOLD, String.valueOf(costumeBuildData.get(HIGH_THRESHOLD)))
-                        .replace(MEDIUM_THRESHOLD, String.valueOf(costumeBuildData.get(MEDIUM_THRESHOLD)))
-                        .replace(LOW_THRESHOLD, String.valueOf(costumeBuildData.get(LOW_THRESHOLD)));
+                        .replace(SAST_RESULTS_READY, String.valueOf(customBuildData.get(SAST_RESULTS_READY)))
+                        .replaceAll(HIGH_RESULTS, String.valueOf(customBuildData.get(HIGH_RESULTS)))
+                        .replace(MEDIUM_RESULTS, String.valueOf(customBuildData.get(MEDIUM_RESULTS)))
+                        .replace(LOW_RESULTS, String.valueOf(customBuildData.get(LOW_RESULTS)))
+                        .replace(SAST_SUMMARY_RESULTS_LINK, String.valueOf(customBuildData.get(SAST_SUMMARY_RESULTS_LINK)))
+                        .replace(THRESHOLD_ENABLED, String.valueOf(customBuildData.get(THRESHOLD_ENABLED)))
+                        .replace(HIGH_THRESHOLD, String.valueOf(customBuildData.get(HIGH_THRESHOLD)))
+                        .replace(MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(MEDIUM_THRESHOLD)))
+                        .replace(LOW_THRESHOLD, String.valueOf(customBuildData.get(LOW_THRESHOLD)));
 
 
-                if (costumeBuildData.get(OSA_RESULTS_READY) != null) {
+                if (customBuildData.get(OSA_RESULTS_READY) != null) {
                     ret = ret
                             .replace(OSA_ENABLED, OPTION_TRUE)
-                            .replace(OSA_HIGH_RESULTS, String.valueOf(costumeBuildData.get(OSA_HIGH_RESULTS)))
-                            .replace(OSA_MEDIUM_RESULTS, String.valueOf(costumeBuildData.get(OSA_MEDIUM_RESULTS)))
-                            .replace(OSA_LOW_RESULTS, String.valueOf(costumeBuildData.get(OSA_LOW_RESULTS)))
-                            .replace(OSA_SUMMARY_RESULTS_LINK, String.valueOf(costumeBuildData.get(OSA_SUMMARY_RESULTS_LINK)))
-                            .replace(OSA_THRESHOLD_ENABLED, String.valueOf(costumeBuildData.get(OSA_THRESHOLD_ENABLED)))
-                            .replace(OSA_HIGH_THRESHOLD, String.valueOf(costumeBuildData.get(OSA_HIGH_THRESHOLD)))
-                            .replace(OSA_MEDIUM_THRESHOLD, String.valueOf(costumeBuildData.get(OSA_MEDIUM_THRESHOLD)))
-                            .replace(OSA_LOW_THRESHOLD, String.valueOf(costumeBuildData.get(OSA_LOW_THRESHOLD)))
-                            .replace(OSA_VULNERABLE_LIBRARIES, String.valueOf(costumeBuildData.get(OSA_VULNERABLE_LIBRARIES)))
-                            .replace(OSA_OK_LIBRARIES, String.valueOf(costumeBuildData.get(OSA_OK_LIBRARIES)));
+                            .replace(OSA_HIGH_RESULTS, String.valueOf(customBuildData.get(OSA_HIGH_RESULTS)))
+                            .replace(OSA_MEDIUM_RESULTS, String.valueOf(customBuildData.get(OSA_MEDIUM_RESULTS)))
+                            .replace(OSA_LOW_RESULTS, String.valueOf(customBuildData.get(OSA_LOW_RESULTS)))
+                            .replace(OSA_SUMMARY_RESULTS_LINK, String.valueOf(customBuildData.get(OSA_SUMMARY_RESULTS_LINK)))
+                            .replace(OSA_THRESHOLD_ENABLED, String.valueOf(customBuildData.get(OSA_THRESHOLD_ENABLED)))
+                            .replace(OSA_HIGH_THRESHOLD, String.valueOf(customBuildData.get(OSA_HIGH_THRESHOLD)))
+                            .replace(OSA_MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(OSA_MEDIUM_THRESHOLD)))
+                            .replace(OSA_LOW_THRESHOLD, String.valueOf(customBuildData.get(OSA_LOW_THRESHOLD)))
+                            .replace(OSA_VULNERABLE_LIBRARIES, String.valueOf(customBuildData.get(OSA_VULNERABLE_LIBRARIES)))
+                            .replace(OSA_OK_LIBRARIES, String.valueOf(customBuildData.get(OSA_OK_LIBRARIES)));
                 } else {
                     ret = ret
                             .replace(OSA_ENABLED, OPTION_FALSE)
@@ -65,7 +65,7 @@ public abstract class CxResultUtils {
                 }
             }
 
-        } else if (costumeBuildData.get(OSA_RESULTS_READY) != null) {
+        } else if (customBuildData.get(OSA_RESULTS_READY) != null) {
             ret = resultsTemplate
                     .replace(SAST_RESULTS_READY, OPTION_FALSE)
                     .replaceAll(HIGH_RESULTS, "0")
@@ -78,16 +78,16 @@ public abstract class CxResultUtils {
                     .replace(LOW_THRESHOLD, "0")
 
                     .replace(OSA_ENABLED, OPTION_TRUE)
-                    .replace(OSA_HIGH_RESULTS, String.valueOf(costumeBuildData.get(OSA_HIGH_RESULTS)))
-                    .replace(OSA_MEDIUM_RESULTS, String.valueOf(costumeBuildData.get(OSA_MEDIUM_RESULTS)))
-                    .replace(OSA_LOW_RESULTS, String.valueOf(costumeBuildData.get(OSA_LOW_RESULTS)))
-                    .replace(OSA_SUMMARY_RESULTS_LINK, String.valueOf(costumeBuildData.get(OSA_SUMMARY_RESULTS_LINK)))
-                    .replace(OSA_THRESHOLD_ENABLED, String.valueOf(costumeBuildData.get(OSA_THRESHOLD_ENABLED)))
-                    .replace(OSA_HIGH_THRESHOLD, String.valueOf(costumeBuildData.get(OSA_HIGH_THRESHOLD)))
-                    .replace(OSA_MEDIUM_THRESHOLD, String.valueOf(costumeBuildData.get(OSA_MEDIUM_THRESHOLD)))
-                    .replace(OSA_LOW_THRESHOLD, String.valueOf(costumeBuildData.get(OSA_LOW_THRESHOLD)))
-                    .replace(OSA_VULNERABLE_LIBRARIES, String.valueOf(costumeBuildData.get(OSA_VULNERABLE_LIBRARIES)))
-                    .replace(OSA_OK_LIBRARIES, String.valueOf(costumeBuildData.get(OSA_OK_LIBRARIES)));
+                    .replace(OSA_HIGH_RESULTS, String.valueOf(customBuildData.get(OSA_HIGH_RESULTS)))
+                    .replace(OSA_MEDIUM_RESULTS, String.valueOf(customBuildData.get(OSA_MEDIUM_RESULTS)))
+                    .replace(OSA_LOW_RESULTS, String.valueOf(customBuildData.get(OSA_LOW_RESULTS)))
+                    .replace(OSA_SUMMARY_RESULTS_LINK, String.valueOf(customBuildData.get(OSA_SUMMARY_RESULTS_LINK)))
+                    .replace(OSA_THRESHOLD_ENABLED, String.valueOf(customBuildData.get(OSA_THRESHOLD_ENABLED)))
+                    .replace(OSA_HIGH_THRESHOLD, String.valueOf(customBuildData.get(OSA_HIGH_THRESHOLD)))
+                    .replace(OSA_MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(OSA_MEDIUM_THRESHOLD)))
+                    .replace(OSA_LOW_THRESHOLD, String.valueOf(customBuildData.get(OSA_LOW_THRESHOLD)))
+                    .replace(OSA_VULNERABLE_LIBRARIES, String.valueOf(customBuildData.get(OSA_VULNERABLE_LIBRARIES)))
+                    .replace(OSA_OK_LIBRARIES, String.valueOf(customBuildData.get(OSA_OK_LIBRARIES)));
 
         } else {
             return "";

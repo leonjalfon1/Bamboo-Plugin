@@ -18,8 +18,8 @@ public class CxPlanResultsWebPanel implements WebPanel {
     public String getHtml(Map<String, Object> map) {
 
         ChainResultsSummaryImpl a = (ChainResultsSummaryImpl) map.get("resultSummary");
-        Map<String, String> costumeBuildData = a.getOrderedJobResultSummaries().get(0).getCustomBuildData();
-        String ret = CxResultUtils.resolveCostumeBuildData(costumeBuildData);
+        Map<String, String> customBuildData = a.getOrderedJobResultSummaries().get(0).getCustomBuildData();
+        String ret = CxResultUtils.resolveCostumeBuildData(customBuildData);
         return ret;
     }
 

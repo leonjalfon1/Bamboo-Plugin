@@ -15,7 +15,7 @@
         box-sizing: border-box;
     }
 
-    input#radioGroupcostumeConfigurationServer, input#radioGroupglobalConfigurationServer, input#radioGroupglobalConfigurationCxSAST, input#radioGroupcostumeConfigurationCxSAST, input#radioGroupglobalConfigurationControl, input#radioGroupcostumeConfigurationControl {
+    input#radioGroupcustomConfigurationServer, input#radioGroupglobalConfigurationServer, input#radioGroupglobalConfigurationCxSAST, input#radioGroupcustomConfigurationCxSAST, input#radioGroupglobalConfigurationControl, input#radioGroupcustomConfigurationControl {
         width: 14px;
     }
 
@@ -69,6 +69,13 @@
         margin: 10px 0;
     }
 
+    #spinner{
+        display: none;
+        position: absolute;
+        left: 50%;
+        top: 20%;
+    }
+
 
 </style
 
@@ -77,12 +84,13 @@
     [@ui.bambooSection title='Checkmarx Server' ]
         [@ww.radio id = 'radioGroup' name='serverCredentialsSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
 
-        [@ui.bambooSection dependsOn='serverCredentialsSection' showOn='costumeConfigurationServer']
+        [@ui.bambooSection dependsOn='serverCredentialsSection' showOn='customConfigurationServer']
             [@ww.textfield labelKey="serverUrl.label" id="serverUrl" name="serverUrl"  required='true' /]
             [@ww.textfield labelKey="username.label"  id="username" name="username" required='true'/]
             [@ww.password labelKey="password.label"  id="password" name="password" showPassword='true' required='true'/]
             <button type="button" class="aui-button test-connection" id="test_connection">Connect to Server</button>
             <div id="testConnectionMessage" class="test-connection-message"></div>
+            <img src="images/spinner.jpg" id="spinner"/>
 
 
         [/@ui.bambooSection]
@@ -107,10 +115,11 @@
     [@ui.bambooSection title='Checkmarx Scan CxSAST']
         [@ww.radio id = 'radioGroup' name='cxSastSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesCxSAST /]
 
-            [@ui.bambooSection dependsOn='cxSastSection' showOn='costumeConfigurationCxSAST']
+            [@ui.bambooSection dependsOn='cxSastSection' showOn='customConfigurationCxSAST']
         [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
-        [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" descriptionKey='filterPatterns.description' cssClass="long-field"/]
-        [@ww.textfield labelKey="scanTimeoutInMinutes.label"  name="scanTimeoutInMinutes"/]
+        [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" descriptionKey='Comma separated list of include or exclude wildcard patterns. Exclude patterns start with exclamation mark "!". Example: **/*.java, **/*.html, !**\\test\\**\\XYZ*"' cssClass="long-field"/]
+        [@ww.textfield labelKey="scanTimeoutInMinutes.label"  name="scanTimeoutInMinutes" descriptionKey="scanTimeoutInMinutes.description"/]
+        [@ww.textarea labelKey="comment.label"  name="comment" rows="3" description="Free text comment. May reference build parameters like $\{bamboo.variableName}"  cssClass="long-field"/]
     [/@ui.bambooSection]
 
         [@ui.bambooSection dependsOn='cxSastSection' showOn='globalConfigurationCxSAST']
@@ -118,7 +127,6 @@
         [@ww.label labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4" cssClass="long-field"/]
         [@ww.label labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes"/]
     [/@ui.bambooSection]
-
 
         [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='false' /]
         [@ww.checkbox labelKey="generatePDFReport.label" name="generatePDFReport" toggle='false' descriptionKey='generatePDFReport.description'/]
@@ -151,7 +159,7 @@
             </small>
         </p>
         [@ww.radio id = 'radioGroup' name='scanControlSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesControl /]
-        [@ui.bambooSection dependsOn='scanControlSection' showOn='costumeConfigurationControl']
+        [@ui.bambooSection dependsOn='scanControlSection' showOn='customConfigurationControl']
             [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" descriptionKey="isSynchronous.description" toggle='true' /]
 
 

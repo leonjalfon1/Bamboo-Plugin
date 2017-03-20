@@ -5,6 +5,8 @@ import org.hsqldb.lib.StringUtil;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 
+import static com.cx.plugin.dto.CxParam.*;
+
 /**
  * Created by galn on 21/12/2016.
  */
@@ -33,6 +35,8 @@ public class CxScanConfiguration {
      * Set to 0 to run the scan with no time limit.
      */
     private Integer scanTimeoutInMinutes;
+    private String comment;
+
     private boolean isIncremental = false;
     private boolean isSynchronous = false;
     private boolean thresholdsEnabled = false;
@@ -67,30 +71,30 @@ public class CxScanConfiguration {
 
     /**********   C-tor   ***************/
     public CxScanConfiguration(HashMap<String, String> configurationMap) {
-        setUsername(configurationMap.get(CxParam.USER_NAME));
-        setPassword(configurationMap.get(CxParam.PASSWORD));
-        setUrl(configurationMap.get(CxParam.SERVER_URL));
-        setProjectName(configurationMap.get(CxParam.PROJECT_NAME));
-        setPresetId(Long.parseLong(configurationMap.get(CxParam.PRESET_ID)));
-        setPresetName(configurationMap.get(CxParam.PRESET_NAME));
-        setFullTeamPath(configurationMap.get(CxParam.TEAM_PATH_NAME));
-        setFolderExclusions(configurationMap.get(CxParam.FOLDER_EXCLUSION));
-        setFilterPattern(configurationMap.get(CxParam.FILTER_PATTERN));
+        setUsername(configurationMap.get(USER_NAME));
+        setPassword(configurationMap.get(PASSWORD));
+        setUrl(configurationMap.get(SERVER_URL));
+        setProjectName(configurationMap.get(PROJECT_NAME));
+        setPresetId(Long.parseLong(configurationMap.get(PRESET_ID)));
+        setPresetName(configurationMap.get(PRESET_NAME));
+        setFullTeamPath(configurationMap.get(TEAM_PATH_NAME));
+        setFolderExclusions(configurationMap.get(FOLDER_EXCLUSION));
+        setFilterPattern(configurationMap.get(FILTER_PATTERN));
+        setScanTimeoutInMinutes(configurationMap.get(SCAN_TIMEOUT_IN_MINUTES));
+        setComment(configurationMap.get(COMMENT));
+        setIncremental(Boolean.parseBoolean(configurationMap.get(IS_INCREMENTAL)));
+        setSynchronous(Boolean.parseBoolean(configurationMap.get(IS_SYNCHRONOUS)));
+        setThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(THRESHOLDS_ENABLED)));
+        setHighThreshold(configurationMap.get(HIGH_THRESHOLD));
+        setMediumThreshold(configurationMap.get(MEDIUM_THRESHOLD));
+        setLowThreshold(configurationMap.get(LOW_THRESHOLD));
+        setGeneratePDFReport(Boolean.parseBoolean(configurationMap.get(GENERATE_PDF_REPORT)));
 
-        setScanTimeoutInMinutes(configurationMap.get(CxParam.SCAN_TIMEOUT_IN_MINUTES));
-        setIncremental(Boolean.parseBoolean(configurationMap.get(CxParam.IS_INCREMENTAL)));
-        setSynchronous(Boolean.parseBoolean(configurationMap.get(CxParam.IS_SYNCHRONOUS)));
-        setThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(CxParam.THRESHOLDS_ENABLED)));
-        setHighThreshold(configurationMap.get(CxParam.HIGH_THRESHOLD));
-        setMediumThreshold(configurationMap.get(CxParam.MEDIUM_THRESHOLD));
-        setLowThreshold(configurationMap.get(CxParam.LOW_THRESHOLD));
-        setGeneratePDFReport(Boolean.parseBoolean(configurationMap.get(CxParam.GENERATE_PDF_REPORT)));
-
-        setOsaEnabled(Boolean.parseBoolean(configurationMap.get(CxParam.OSA_ENABLED)));
-        setOsaThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(CxParam.OSA_THRESHOLDS_ENABLED)));
-        setOsaHighSeveritiesThreshold(configurationMap.get(CxParam.OSA_HIGH_THRESHOLD));
-        setOsaMediumSeveritiesThreshold(configurationMap.get(CxParam.OSA_MEDIUM_THRESHOLD));
-        setOsaLowSeveritiesThreshold(configurationMap.get(CxParam.OSA_LOW_THRESHOLD));
+        setOsaEnabled(Boolean.parseBoolean(configurationMap.get(OSA_ENABLED)));
+        setOsaThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(OSA_THRESHOLDS_ENABLED)));
+        setOsaHighSeveritiesThreshold(configurationMap.get(OSA_HIGH_THRESHOLD));
+        setOsaMediumSeveritiesThreshold(configurationMap.get(OSA_MEDIUM_THRESHOLD));
+        setOsaLowSeveritiesThreshold(configurationMap.get(OSA_LOW_THRESHOLD));
     }
 
     /********   Setters & Getters ***********/
@@ -146,6 +150,14 @@ public class CxScanConfiguration {
         } else {
             this.scanTimeoutInMinutes = i;
         }
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public boolean isIncremental() {
