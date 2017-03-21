@@ -87,7 +87,7 @@ public class CxRestResource {
                 if (presets == null || teams == null) {
                     throw new Exception("invalid preset teamPath");
                 }
-                result = "Connection successful!";
+                result = "Connection successful";
                 tcResponse = new TestConnectionResponse(result, presets, teams);
                 statusCode = 200;
 
