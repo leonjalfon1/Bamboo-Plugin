@@ -35,7 +35,7 @@ public class CxScanConfiguration {
      * Set to 0 to run the scan with no time limit.
      */
     private Integer scanTimeoutInMinutes;
-
+    private String comment;
     private boolean isIncremental = false;
     private boolean isSynchronous = false;
     private boolean thresholdsEnabled = false;
@@ -80,6 +80,7 @@ public class CxScanConfiguration {
         setFolderExclusions(configurationMap.get(FOLDER_EXCLUSION));
         setFilterPattern(configurationMap.get(FILTER_PATTERN));
         setScanTimeoutInMinutes(configurationMap.get(SCAN_TIMEOUT_IN_MINUTES));
+        setComment(configurationMap.get(COMMENT));
         setIncremental(Boolean.parseBoolean(configurationMap.get(IS_INCREMENTAL)));
         setSynchronous(Boolean.parseBoolean(configurationMap.get(IS_SYNCHRONOUS)));
         setThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(THRESHOLDS_ENABLED)));
@@ -150,7 +151,15 @@ public class CxScanConfiguration {
         }
     }
 
-   public boolean isIncremental() {
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public boolean isIncremental() {
         return isIncremental;
     }
 

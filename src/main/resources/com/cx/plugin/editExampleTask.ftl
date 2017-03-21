@@ -118,6 +118,7 @@
         [@ww.textfield labelKey="folderExclusions.label" name="folderExclusions" descriptionKey="folderExclusions.description" cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="filterPatterns" rows="4" descriptionKey='Comma separated list of include or exclude wildcard patterns. Exclude patterns start with exclamation mark "!". Example: **/*.java, **/*.html, !**\\test\\**\\XYZ*"' cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label"  name="scanTimeoutInMinutes" descriptionKey="scanTimeoutInMinutes.description"/]
+        [@ww.textarea labelKey="comment.label"  name="comment" rows="3" description="Free text comment. May reference build parameters like $\{bamboo.variableName}"  cssClass="long-field"/]
     [/@ui.bambooSection]
 
         [@ui.bambooSection dependsOn='cxSastSection' showOn='globalConfigurationCxSAST']
@@ -215,8 +216,6 @@
             [/@ui.bambooSection]
 
         [/@ui.bambooSection]
-
-
 
         [@ui.bambooSection dependsOn='scanControlSection' showOn='globalConfigurationControl']
             [#if context.get("globalIsSynchronous")?has_content]
