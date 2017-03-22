@@ -103,7 +103,7 @@ public abstract class CxResultUtils {
             try {
                 ret = IOUtils.toString(resourceAsStream, Charset.defaultCharset().name());
             } catch (IOException e) {
-                log.warn("fail to get results template", e.getMessage());
+                log.warn("Failed to get results template", e.getMessage());
             } finally {
                 try {
                     resourceAsStream.close();

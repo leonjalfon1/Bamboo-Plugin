@@ -117,7 +117,7 @@ public class CheckmarxTask implements TaskType {
                     osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
                     buildLoggerAdapter.info("OSA scan created successfully");
                     if (zipForOSA.exists() && !zipForOSA.delete()) {
-                        buildLoggerAdapter.info("Warning: fail to delete temporary zip file: " + zipForOSA.getAbsolutePath());
+                        buildLoggerAdapter.info("Warning: failed to delete temporary zip file: " + zipForOSA.getAbsolutePath());
                     }
                     buildLoggerAdapter.info("Temporary file deleted");
                 } catch (InterruptedException e) {
@@ -181,18 +181,18 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("OSA scan finished successfully");
                     buildLoggerAdapter.info("Creating OSA reports");
                     //retrieve OSA scan results
-                    osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(createScanResponse.getProjectId());
+                    osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(osaScan.getScanId());
                     printOSAResultsToConsole(osaSummaryResults);
                     addOSAResults(results, osaSummaryResults, config);
 
                     //OSA PDF and HTML reports
                     SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
                     String now = ft.format(new Date());
-                    byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(createScanResponse.getProjectId());
+                    byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(osaScan.getScanId());
                     String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
                     FileUtils.writeByteArrayToFile(new File(workDirectory + CX_REPORT_LOCATION, pdfFileName), osaPDF);
                     buildLoggerAdapter.info("OSA PDF report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + pdfFileName);
-                    String osaHtml = cxClientService.retrieveOSAScanHtmlResults(createScanResponse.getProjectId());
+                    String osaHtml = cxClientService.retrieveOSAScanHtmlResults(osaScan.getScanId());
                     String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
                     FileUtils.writeStringToFile(new File(workDirectory + CX_REPORT_LOCATION, htmlFileName), osaHtml, Charset.defaultCharset());
                     buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
@@ -372,9 +372,9 @@ public class CheckmarxTask implements TaskType {
 
     private void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, CxScanConfiguration config) {
 
-        results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getHighVulnerabilities()));
-        results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getMediumVulnerabilities()));
-        results.put(CxResultsConst.OSA_LOW_RESULTS, String.valueOf(osaSummaryResults.getLowVulnerabilities()));
+        results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getTotalHighVulnerabilities()));
+        results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getTotalMediumVulnerabilities()));
+        results.put(CxResultsConst.OSA_LOW_RESULTS, String.valueOf(osaSummaryResults.getTotalLowVulnerabilities()));
         results.put(CxResultsConst.OSA_SUMMARY_RESULTS_LINK, StringUtils.defaultString(osaProjectSummaryLink));
         results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
         results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
@@ -408,7 +408,7 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("Scan created successfully. Link to project state: " + projectStateLink);
 
         if (zipTempFile.exists() && !zipTempFile.delete()) {
-            buildLoggerAdapter.info("Warning: fail to delete temporary zip file: " + zipTempFile.getAbsolutePath());
+            buildLoggerAdapter.info("Warning: failed to delete temporary zip file: " + zipTempFile.getAbsolutePath());
         } else {
             buildLoggerAdapter.info("Temporary file deleted");
         }
@@ -509,9 +509,9 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("------------------------");
         buildLoggerAdapter.info("Vulnerabilities Summary:");
         buildLoggerAdapter.info("------------------------");
-        buildLoggerAdapter.info("OSA high severity results: " + osaSummaryResults.getHighVulnerabilities());
-        buildLoggerAdapter.info("OSA medium severity results: " + osaSummaryResults.getMediumVulnerabilities());
-        buildLoggerAdapter.info("OSA low severity results: " + osaSummaryResults.getLowVulnerabilities());
+        buildLoggerAdapter.info("OSA high severity results: " + osaSummaryResults.getTotalHighVulnerabilities());
+        buildLoggerAdapter.info("OSA medium severity results: " + osaSummaryResults.getTotalMediumVulnerabilities());
+        buildLoggerAdapter.info("OSA low severity results: " + osaSummaryResults.getTotalLowVulnerabilities());
         buildLoggerAdapter.info("Vulnerability score: " + osaSummaryResults.getVulnerabilityScore());
         buildLoggerAdapter.info("");
         buildLoggerAdapter.info("-----------------------");
@@ -535,9 +535,9 @@ public class CheckmarxTask implements TaskType {
             failByThreshold |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "low", "CxSAST ");
         }
         if (config.isOSAThresholdEnabled() && osaSummaryResults != null) {
-            failByThreshold |= isFail(osaSummaryResults.getHighVulnerabilities(), config.getOsaHighThreshold(), res, "high", "CxOSA ");
-            failByThreshold |= isFail(osaSummaryResults.getMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "medium", "CxOSA ");
-            failByThreshold |= isFail(osaSummaryResults.getLowVulnerabilities(), config.getOsaLowThreshold(), res, "low", "CxOSA ");
+            failByThreshold |= isFail(osaSummaryResults.getTotalHighVulnerabilities(), config.getOsaHighThreshold(), res, "high", "CxOSA ");
+            failByThreshold |= isFail(osaSummaryResults.getTotalMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "medium", "CxOSA ");
+            failByThreshold |= isFail(osaSummaryResults.getTotalLowVulnerabilities(), config.getOsaLowThreshold(), res, "low", "CxOSA ");
         }
         return failByThreshold;
     }

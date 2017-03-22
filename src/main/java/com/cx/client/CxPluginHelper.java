@@ -49,7 +49,7 @@ public abstract class CxPluginHelper {
         try {
             cxClientType = CxClientType.valueOf(conf.getClientOrigin().name());
         } catch (Exception e) {
-            log.debug("fail to convert client origin enum from value: {}. client origin set to SDK", conf.getClientOrigin().name());
+            log.debug("Failed to convert client origin enum from value: {}. client origin set to SDK", conf.getClientOrigin().name());
         }
         cliScanArgs.setClientOrigin(cxClientType);
         cliScanArgs.setIsIncremental(conf.isIncrementalScan());

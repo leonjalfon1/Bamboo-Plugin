@@ -1,6 +1,9 @@
 package com.cx.client;
 
-import com.checkmarx.v7.*;
+import com.checkmarx.v7.ArrayOfGroup;
+import com.checkmarx.v7.CxWSBasicRepsonse;
+import com.checkmarx.v7.CxWSResponseScanStatus;
+import com.checkmarx.v7.Preset;
 import com.cx.client.dto.CreateScanResponse;
 import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
@@ -10,7 +13,6 @@ import com.cx.client.rest.dto.CreateOSAScanResponse;
 import com.cx.client.rest.dto.OSAScanStatus;
 import com.cx.client.rest.dto.OSASummaryResults;
 import org.slf4j.Logger;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -51,11 +53,11 @@ public interface CxClientService {
 
     OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException;
 
-    OSASummaryResults retrieveOSAScanSummaryResults(long projectId) throws CxClientException, IOException;
+    OSASummaryResults retrieveOSAScanSummaryResults(String scanId) throws CxClientException, IOException;
 
-    String retrieveOSAScanHtmlResults(long projectId) throws CxClientException, IOException;
+    String retrieveOSAScanHtmlResults(String scanId) throws CxClientException, IOException;
 
-    byte[] retrieveOSAScanPDFResults(long projectId) throws CxClientException, IOException;
+    byte[] retrieveOSAScanPDFResults(String scanId) throws CxClientException, IOException;
 
     byte[]  getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException;
 

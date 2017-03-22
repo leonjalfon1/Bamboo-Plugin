@@ -39,17 +39,15 @@ public class CxRestClient {
 
     private final String username;
     private final String password;
-    private final String hostName;
+    private String ROOT_PATH = "{hostName}/CxRestAPI/";
 
     public static final String OSA_SCAN_PROJECT_PATH = "projects/{projectId}/scans";
-    public static final String OSA_SCAN_STATUS_PATH = "scans/{scanId}";
-    public static final String OSA_SCAN_SUMMARY_PATH = "projects/{projectId}/summaryresults";
-    public static final String OSA_SCAN_HTML_PATH = "projects/{projectId}/opensourceanalysis/htmlresults";
-    public static final String OSA_SCAN_PDF_PATH = "projects/{projectId}/opensourceanalysis/pdfresults";
+    public static final String OSA_SCAN_STATUS_PATH = "osa/scans/{scanId}";
+    public static final String OSA_SCAN_SUMMARY_PATH = "osa/reports";
     private static final String AUTHENTICATION_PATH = "auth/login";
     public static final String OSA_ZIPPED_FILE_KEY_NAME = "OSAZippedSourceCode";
-    private static final String ROOT_PATH = "CxRestAPI";
     public static final String CSRF_TOKEN_HEADER = "CXCSRFToken";
+    public static final String SCAN_ID_QUERY_PARAM = "?scanId=";
 
     private HttpClient apacheClient;
     private CookieStore cookieStore;
@@ -63,7 +61,6 @@ public class CxRestClient {
             if (csrfToken != null) {
                 httpRequest.addHeader(CSRF_TOKEN_HEADER, csrfToken);
             }
-
             if (cookies != null) {
                 httpRequest.addHeader("cookie", cookies);
             }
@@ -92,13 +89,11 @@ public class CxRestClient {
     };
 
     public CxRestClient(String hostname, String username, String password) {
-        this.hostName = hostname;
         this.username = username;
         this.password = password;
-
+        this.ROOT_PATH = ROOT_PATH.replace("{hostName}", hostname);
         //create httpclient
         cookieStore = new BasicCookieStore();
-
         apacheClient = HttpClientBuilder.create().addInterceptorFirst(requestFilter).addInterceptorLast(responseFilter).setDefaultCookieStore(cookieStore).build();
     }
 
@@ -106,13 +101,12 @@ public class CxRestClient {
         CxRestClient.log = log;
     }
 
-
     public void login() throws CxClientException, IOException {
         cookies = null;
         csrfToken = null;
         HttpResponse loginResponse = null;
         //create login request
-        HttpPost loginPost = new HttpPost(hostName + "/" + ROOT_PATH + "/" + AUTHENTICATION_PATH);
+        HttpPost loginPost = new HttpPost(ROOT_PATH + AUTHENTICATION_PATH);
         StringEntity requestEntity = new StringEntity(mapper.writeValueAsString(new LoginRequest(username, password)), ContentType.APPLICATION_JSON);
         loginPost.setEntity(requestEntity);
         try {
@@ -124,13 +118,12 @@ public class CxRestClient {
         } finally {
             loginPost.releaseConnection();
             HttpClientUtils.closeQuietly(loginResponse);
-
         }
     }
 
     public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws IOException, CxClientException {
         //create scan request
-        HttpPost post = new HttpPost(hostName + "/" + ROOT_PATH + "/" + OSA_SCAN_PROJECT_PATH.replace("{projectId}", String.valueOf(projectId)));
+        HttpPost post = new HttpPost(ROOT_PATH + OSA_SCAN_PROJECT_PATH.replace("{projectId}", String.valueOf(projectId)));
         FileInputStream fileInputStream = new FileInputStream(zipFile);
         InputStreamBody streamBody = new InputStreamBody(fileInputStream, ContentType.APPLICATION_OCTET_STREAM, OSA_ZIPPED_FILE_KEY_NAME);
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -154,16 +147,15 @@ public class CxRestClient {
         }
     }
 
-
     public OSAScanStatus getOSAScanStatus(String scanId) throws CxClientException, IOException {
 
-        String resolvedPath = hostName + "/" + ROOT_PATH + "/" + OSA_SCAN_STATUS_PATH.replace("{scanId}", String.valueOf(scanId));
+        String resolvedPath = ROOT_PATH + OSA_SCAN_STATUS_PATH.replace("{scanId}", String.valueOf(scanId));
         HttpGet getRequest = new HttpGet(resolvedPath);
         HttpResponse response = null;
 
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, 200, "fail get OSA scan status");
+            validateResponse(response, 200, "Failed to get OSA scan status");
 
             return convertToObject(response, OSAScanStatus.class);
         } finally {
@@ -172,15 +164,13 @@ public class CxRestClient {
         }
     }
 
-    public OSASummaryResults getOSAScanSummaryResults(long projectId) throws CxClientException, IOException {
-
-        String resolvedPath = hostName + "/" + ROOT_PATH + "/" + OSA_SCAN_SUMMARY_PATH.replace("{projectId}", String.valueOf(projectId));
-        HttpGet getRequest = new HttpGet(resolvedPath);
+    public OSASummaryResults getOSAScanSummaryResults(String scanId) throws CxClientException, IOException {
+        HttpGet getRequest = createHttpRequest(scanId, "application/json");
         HttpResponse response = null;
 
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, 200, "fail get OSA scan summary results");
+            validateResponse(response, 200, "Failed to get OSA scan summary results");
 
             return convertToObject(response, OSASummaryResults.class);
         } finally {
@@ -189,14 +179,13 @@ public class CxRestClient {
         }
     }
 
-    public String getOSAScanHtmlResults(long projectId) throws CxClientException, IOException {
+    public String getOSAScanHtmlResults(String scanId) throws CxClientException, IOException {
 
-        String resolvedPath = hostName + "/" + ROOT_PATH + "/" + OSA_SCAN_HTML_PATH.replace("{projectId}", String.valueOf(projectId));
-        HttpGet getRequest = new HttpGet(resolvedPath);
+        HttpGet getRequest = createHttpRequest(scanId, "text/html");
         HttpResponse response = null;
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, 200, "fail get OSA scan html results");
+            validateResponse(response, 200, "Failed to get OSA scan html results");
 
             return IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
 
@@ -206,19 +195,25 @@ public class CxRestClient {
         }
     }
 
-    public byte[] getOSAScanPDFResults(long projectId) throws CxClientException, IOException {
-        String resolvedPath = hostName + "/" + ROOT_PATH + "/" + OSA_SCAN_PDF_PATH.replace("{projectId}", String.valueOf(projectId));
-        HttpGet getRequest = new HttpGet(resolvedPath);
+    public byte[] getOSAScanPDFResults(String scanId) throws CxClientException, IOException {
+        HttpGet getRequest = createHttpRequest(scanId, "application/pdf");
         HttpResponse response = null;
 
         try {
             response = apacheClient.execute(getRequest);
-            validateResponse(response, 200, "fail get OSA scan pdf results");
+            validateResponse(response, 200, "Failed to get OSA scan pdf results");
             return IOUtils.toByteArray(response.getEntity().getContent());
         } finally {
             getRequest.releaseConnection();
             HttpClientUtils.closeQuietly(response);
         }
+    }
+
+    private HttpGet createHttpRequest(String scanId, String mediaType) {
+        String resolvedPath = ROOT_PATH + OSA_SCAN_SUMMARY_PATH + SCAN_ID_QUERY_PARAM + scanId;
+        HttpGet getRequest = new HttpGet(resolvedPath);
+        getRequest.setHeader("Accept", mediaType);
+        return getRequest;
     }
 
     public void close() {
@@ -237,8 +232,8 @@ public class CxRestClient {
             json = IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
             return mapper.readValue(json, valueType);
         } catch (IOException e) {
-            log.debug("fail to parse json response: [" + json + "]", e);
-            throw new CxClientException("fail to parse json response: " + e.getMessage());
+            log.debug("Failed to parse json response: [" + json + "]", e);
+            throw new CxClientException("Failed to parse json response: " + e.getMessage());
         }
     }
 }

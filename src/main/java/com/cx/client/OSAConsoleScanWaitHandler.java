@@ -20,9 +20,14 @@ public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus>
 
     public void onTimeout(OSAScanStatus scanStatus) throws CxClientException {
 
-        String status =  scanStatus.getStatus() == null ? OSAScanStatusEnum.NONE.uiValue() : scanStatus.getStatus().uiValue();
-        throw new CxClientException("OSA scan has reached the time limit ("+scanTimeoutInMin+" minutes). status: ["+ status +"]");
+        String status =  scanStatus.getState() == null ? "Unknown" : scanStatus.getState().getName();
 
+        String reason = "";
+        if(scanStatus.getState() != null && !StringUtils.isEmpty(scanStatus.getState().getFailureReason())) {
+            reason = "Reason: " + scanStatus.getState().getFailureReason();
+        }
+
+        throw new CxClientException("OSA scan has reached the time limit ("+scanTimeoutInMin+" minutes). status: ["+ status +"]. " +reason );
     }
 
     public void setLogger(Logger log) {
@@ -30,8 +35,12 @@ public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus>
     }
 
     public void onFail(OSAScanStatus scanStatus) throws CxClientException {
-        throw new CxClientException("OSA scan cannot be completed. status ["+scanStatus.getStatus().uiValue()+"]. message: ["+ StringUtils.defaultString(scanStatus.getMessage())+"]" );
+        String reason = "";
+        if(scanStatus.getState() != null && !StringUtils.isEmpty(scanStatus.getState().getFailureReason())) {
+            reason = "Reason: " + scanStatus.getState().getFailureReason();
+        }
 
+        throw new CxClientException("OSA scan cannot be completed. status ["+scanStatus.getState().getName()+"]. "  + reason);
     }
 
     public void onIdle(OSAScanStatus scanStatus) {
@@ -46,7 +55,7 @@ public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus>
 
         log.info("Waiting for OSA scan results. " +
                 "Elapsed time: " + hoursStr + ":" + minutesStr + ":" + secondsStr + ". " +
-                "Status: " + scanStatus.getStatus().uiValue());
+                "Status: " + scanStatus.getState().getName());
 
     }
 
