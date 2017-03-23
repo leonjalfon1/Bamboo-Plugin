@@ -9,9 +9,7 @@ import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
 import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
-import com.cx.client.rest.dto.CreateOSAScanResponse;
-import com.cx.client.rest.dto.OSAScanStatus;
-import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.client.rest.dto.*;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -58,6 +56,10 @@ public interface CxClientService {
     String retrieveOSAScanHtmlResults(String scanId) throws CxClientException, IOException;
 
     byte[] retrieveOSAScanPDFResults(String scanId) throws CxClientException, IOException;
+
+    List<Library> getOSALibraries(String scanId) throws CxClientException, IOException;
+
+    List<CVE> getOSAVulnerabilities(String scanId) throws CxClientException, IOException;
 
     byte[]  getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException;
 

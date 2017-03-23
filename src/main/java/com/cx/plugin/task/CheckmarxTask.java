@@ -1,7 +1,7 @@
 package com.cx.plugin.task;
 
 /**
- * Created by galn on 18/12/2016.
+ -* Created by galn on 18/12/2016.
  */
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
@@ -13,12 +13,15 @@ import com.atlassian.spring.container.ContainerManager;
 import com.cx.client.*;
 import com.cx.client.dto.*;
 import com.cx.client.exception.CxClientException;
+import com.cx.client.rest.dto.CVE;
 import com.cx.client.rest.dto.CreateOSAScanResponse;
+import com.cx.client.rest.dto.Library;
 import com.cx.client.rest.dto.OSASummaryResults;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxResultsConst;
 import com.cx.plugin.dto.CxScanConfiguration;
 import com.cx.plugin.utils.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +40,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.cx.plugin.dto.CxParam.*;
@@ -60,6 +64,8 @@ public class CheckmarxTask implements TaskType {
     private HashMap<String, String> configurationMap;
     private BuildContext buildContext;
     private AdministrationConfiguration adminConfig;
+    private ObjectMapper objectMapper = new ObjectMapper();
+
 
     private static final long MAX_ZIP_SIZE_BYTES = 209715200;
     private static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
@@ -67,6 +73,9 @@ public class CheckmarxTask implements TaskType {
     private static final String OSA_REPORT_NAME = "CxOSAReport";
     private static final String CX_REPORT_LOCATION = File.separator + "Checkmarx" + File.separator + "Reports";
     private static final String TEMP_FILE_NAME_TO_ZIP = "CxZippedSource";
+    public static final String OSA_LIBRARIES_NAME = "CxOSALibraries";
+    public static final String OSA_VULNERABILITIES_NAME = "CxOSAVulnerabilities";
+    public static final String OSA_SUMMARY_NAME = "CxOSASummary";
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
@@ -185,18 +194,36 @@ public class CheckmarxTask implements TaskType {
                     printOSAResultsToConsole(osaSummaryResults);
                     addOSAResults(results, osaSummaryResults, config);
 
-                    //OSA PDF and HTML reports
+                    //OSA PDF report
                     SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
                     String now = ft.format(new Date());
                     byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(osaScan.getScanId());
                     String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
                     FileUtils.writeByteArrayToFile(new File(workDirectory + CX_REPORT_LOCATION, pdfFileName), osaPDF);
                     buildLoggerAdapter.info("OSA PDF report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + pdfFileName);
+
+                    //OSA HTML report
                     String osaHtml = cxClientService.retrieveOSAScanHtmlResults(osaScan.getScanId());
                     String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
                     FileUtils.writeStringToFile(new File(workDirectory + CX_REPORT_LOCATION, htmlFileName), osaHtml, Charset.defaultCharset());
                     buildLoggerAdapter.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
                     buildLoggerAdapter.info("");
+
+                    //OSA json reports
+                    String fileName =  OSA_SUMMARY_NAME + "_" + now + ".json";
+                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDirectory + CX_REPORT_LOCATION, fileName), osaSummaryResults);
+                    buildLoggerAdapter.info("OSA summary json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
+
+                    List<Library> libraries = cxClientService.getOSALibraries(osaScan.getScanId());
+                    fileName = OSA_LIBRARIES_NAME + "_" + now + ".json";
+                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDirectory + CX_REPORT_LOCATION, fileName), libraries);
+                    buildLoggerAdapter.info("OSA libraries json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
+
+                    List<CVE> osaVulnerabilities = cxClientService.getOSAVulnerabilities(osaScan.getScanId());
+                    fileName =  OSA_VULNERABILITIES_NAME + "_" + now + ".json";
+                    objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDirectory + CX_REPORT_LOCATION, fileName), osaVulnerabilities);
+                    buildLoggerAdapter.info("OSA vulnerabilities json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
+
                 } catch (Exception e) {
                     osaException = e;
                     throw osaException;

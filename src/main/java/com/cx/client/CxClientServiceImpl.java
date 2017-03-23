@@ -464,6 +464,14 @@ public class CxClientServiceImpl implements CxClientService {
         return restClient.getOSAScanPDFResults(scanId);
     }
 
+    public List<Library> getOSALibraries(String scanId) throws CxClientException, IOException {
+        return restClient.getOSALibraries(scanId);
+    }
+
+    public List<CVE> getOSAVulnerabilities(String scanId) throws CxClientException, IOException {
+        return restClient.getOSAVulnerabilities(scanId);
+    }
+
     public static int getWaitForScanToFinishRetry() {
         return waitForScanToFinishRetry;
     }

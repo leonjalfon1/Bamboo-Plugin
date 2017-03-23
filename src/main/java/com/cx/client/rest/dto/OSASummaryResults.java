@@ -20,7 +20,6 @@ public class OSASummaryResults {
     private int totalHighVulnerabilities;
     private int totalMediumVulnerabilities;
     private int totalLowVulnerabilities;
-    private String analyzeTime;
 
     public int getTotalLibraries() {
         return totalLibraries;
@@ -110,11 +109,4 @@ public class OSASummaryResults {
         this.totalLowVulnerabilities = totalLowVulnerabilities;
     }
 
-    public String getAnalyzeTime() {
-        return analyzeTime;
-    }
-
-    public void setAnalyzeTime(String analyzeTime) {
-        this.analyzeTime = analyzeTime;
-    }
 }
