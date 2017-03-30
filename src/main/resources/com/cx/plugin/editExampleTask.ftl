@@ -9,7 +9,7 @@
         border: solid 1px;
         width: 90%;
         margin-top: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 25px;
         min-width: 500px;
         max-width: 820px;
         box-sizing: border-box;
@@ -77,11 +77,9 @@
     }
 
 
-</style
+</style>
 
-<div class="field-group">
-    <div class="cx center">
-    [@ui.bambooSection title='Checkmarx Server' ]
+    [@ui.bambooSection title='Checkmarx Server' cssClass="cx center"]
         [@ww.radio id = 'radioGroup' name='serverCredentialsSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
 
         [@ui.bambooSection dependsOn='serverCredentialsSection' showOn='customConfigurationServer']
@@ -105,13 +103,9 @@
         [@ww.select labelKey="preset.label" name="presetId" id="presetListId" list="presetList" listKey="key" listValue="value" multiple="false"  cssClass="long-field" descriptionKey="preset.description"/]
         [@ww.select labelKey="teamPath.label" name="teamPathId" id="teamPathListId" list="teamPathList" listKey="key" listValue="value" multiple="false"  cssClass="long-field" descriptionKey="teamPath.description"/]
     [/@ui.bambooSection]
-    </div>
-</div>
 
 
-<div class="field-group">
-    <div class="cx center">
-    [@ui.bambooSection title='Checkmarx Scan CxSAST']
+    [@ui.bambooSection title='Checkmarx Scan CxSAST' cssClass="cx center"]
         [@ww.radio id = 'radioGroup' name='cxSastSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesCxSAST /]
 
             [@ui.bambooSection dependsOn='cxSastSection' showOn='customConfigurationCxSAST']
@@ -130,13 +124,9 @@
         [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='false' /]
         [@ww.checkbox labelKey="generatePDFReport.label" name="generatePDFReport" toggle='false' descriptionKey='generatePDFReport.description'/]
     [/@ui.bambooSection]
-    </div>
-</div>
 
 
-<div class="field-group">
-    <div class="cx center">
-    [@ui.bambooSection title='Checkmarx Scan CxOSA']
+    [@ui.bambooSection title='Checkmarx Scan CxOSA' cssClass="cx center"]
         <p class="description">
             <small>
                 Open Source Analysis (OSA) helps you manage the security risk involved in using open
@@ -145,13 +135,9 @@
         </p>
         [@ww.checkbox labelKey="osaEnabled.label" name="osaEnabled" toggle='true' /]
     [/@ui.bambooSection]
-    </div>
-</div>
 
 
-<div class="field-group">
-    <div class="cx center">
-    [@ui.bambooSection title='Control Checkmarx Scan']
+    [@ui.bambooSection title='Control Checkmarx Scan' cssClass="cx center"]
         <p class="description">
             <small>Controls the scan mode (synchrnous or asynchronous) and the build results threshold.
                 The thresholds will define the minimal criteria to fail the build.
@@ -251,7 +237,5 @@
 
         [/@ui.bambooSection]
 
-    <div>
     [/@ui.bambooSection]
-    </div>
 
