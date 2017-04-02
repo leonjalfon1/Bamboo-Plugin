@@ -59,6 +59,17 @@
         max-width: 53px;
     }
 
+    .results-report .sast-summary.chart-large .chart .bar-title-container {
+        min-width: 53px;
+        margin-left: 25%;
+        transform: translate(0, 0);
+    }
+
+    .results-report .sast-summary.chart-large .chart .bar-title {
+        text-align: center;
+        width: 100%;
+    }
+
     .results-report .chart {
         display: table;
         table-layout: fixed;
@@ -92,9 +103,13 @@
         animation: draw 1s ease-in-out;
     }
 
+    .results-report .sast-summary.chart-large .chart .bar-count {
+        width: 53px;
+    }
+
     .results-report .chart .bar-count {
-        /*margin-left: 25%;*/
-        width: 65%;
+        margin-left: 25%;
+        width: 20px;
         display: inline-block;
         min-width: 20px;
         text-align: center;
@@ -105,12 +120,14 @@
 
     .results-report .chart .bar-title {
         font-size: 16px;
-        padding: 0 18px;
+        /*padding: 0 18px;*/
         color: #525055;
     }
 
     .results-report .chart .bar-title-container {
         position: absolute;
+        margin-left: 25%;
+        transform: translate(-25%, 0);
         padding-top: 21px;
         display: inline-flex;
         text-align: center;
@@ -726,33 +743,6 @@
             </div>
             <div class="detailed-report">
                 <div class="sast-downloads">
-                    <div class="report-link"><a class="html-report" id="sast-html-link">
-                        <div class="html-report download-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16px" version="1.1" viewBox="0 0 13 16"
-                                 width="13px"><title>
-                                Analize</title>
-                                <desc>Created with Sketch.</desc>
-                                <defs/>
-                                <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
-                                    <g transform="translate(-286.000000, -1439.000000)" id="Jenkins">
-                                        <g transform="translate(272.000000, 1290.000000)" id="CxSAST">
-                                            <g transform="translate(14.000000, 148.000000)" id="Group">
-                                                <g transform="translate(1.000000, 2.000000)" id="Analize">
-                                                    <circle cy="5" stroke-width="2" id="Oval-3" r="5" stroke="#373050" cx="5"/>
-                                                    <rect transform="translate(8.866025, 11.696152) rotate(-30.000000) translate(-8.866025, -11.696152) "
-                                                          height="6.53589838"
-                                                          id="Rectangle-9" width="2" fill="#373050" x="7.8660254" y="8.42820323"/>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="html-report download-txt">
-                            <div class="detailed-report-ttl">Analyzed results</div>
-                        </div>
-                    </a></div>
                     <!--pdf-->
                     <div class="report-link"><a class="pdf-report" id="sast-pdf-link">
                         <div style="display: none;">h</div>
@@ -1600,7 +1590,7 @@
     //---------------------------------------------------------- full reports ---------------------------------------------------------------
     //sast links
     try {
-        document.getElementById("sast-html-link").setAttribute("href", sastHtmlPath);
+//        document.getElementById("sast-html-link").setAttribute("href", sastHtmlPath);
 
         //sastPdfPath only if pdfReportReady
         if (pdfReportReady) {
