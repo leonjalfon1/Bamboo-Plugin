@@ -1,30 +1,264 @@
 <style>
-    .cx-title.job-main-title {
-        width: calc(100% - 1em - 48px);
+    .results-report {
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
     }
 
-    .cx-title {
+    .results-report .cx-icon {
+        margin-right: 1em;
+        padding: 4px;
+        width: 48px;
+        height: 48px;
+        vertical-align: middle;
+    }
+
+    .results-report .cx-report-title {
         font-size: 24px;
-        font-weight: 500;
+        font-weight: normal;
         display: inline-block;
-        padding: 10px 0;
-        width: calc(100% - 48px);
-        border-bottom: solid 2px #373050;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin-bottom: 1em;
+        width: 95%;
+        margin-left: 4%;
+        border-bottom: solid 1px #cccccc;
         color: #373050;
     }
 
-    .summary-section {
+    .results-report .summary-section {
+        display: flex;
+        padding: 10px;
+        padding-bottom: 26px;
+    }
+
+    .results-report .summary-report-title {
+        font-size: 20px;
+        font-weight: normal;
+        padding-bottom: 30px;
+        color: #373050;
+        letter-spacing: -1px;
+    }
+
+    .results-report .sast-summary {
+        margin-right: 9%;
+    }
+
+    .results-report .sast-summary.chart-large {
         width: 100%;
-        font-family: 'Roboto', sans-serif;
+        max-width: 1375px;
     }
 
-    .summary-section td {
-        font-family: 'Roboto', sans-serif;
-        font-size: 13px;
+    .results-report .sast-summary.chart-large .chart {
+        max-width: 709px;
+        margin-right: auto;
+        margin-left: auto;
+        /*margin-left: calc(250px + 8%);*/
     }
 
-    tr.summary-table-row {
+    .results-report .sast-summary.chart-large .chart li span {
+        max-width: 53px;
+    }
+
+    .results-report .chart {
+        display: table;
+        table-layout: fixed;
+        max-width: 475px;
+        min-width: 330px;
+        width: 100%;
+        height: 288px;
+        margin-top: 40px;
+        padding: 0;
+        background-image: linear-gradient(to top, #d5d5d5, #ffffff 2%);
+        background-size: 100% 70px;
+        background-position: left bottom;
+        border-bottom: solid #979797 2px;
+    }
+
+    .results-report .chart li {
+        position: relative;
+        display: table-cell;
+        vertical-align: bottom;
+        height: 200px;
+    }
+
+    .results-report .chart li span {
+        max-width: 20px;
+    }
+
+    .results-report .chart span {
+        margin-left: 25%;
+        display: block;
+        background: #d1ecfa;
+        animation: draw 1s ease-in-out;
+    }
+
+    .results-report .chart .bar-count {
+        /*margin-left: 25%;*/
+        width: 65%;
+        display: inline-block;
+        min-width: 20px;
+        text-align: center;
+        font-size: 14px;
+        letter-spacing: -0.47px;
+        line-height: 43px;
+    }
+
+    .results-report .chart .bar-title {
+        font-size: 16px;
+        padding: 0 18px;
+        color: #525055;
+    }
+
+    .results-report .chart .bar-title-container {
+        position: absolute;
+        padding-top: 21px;
+        display: inline-flex;
+        text-align: center;
+        word-wrap: break-word;
+    }
+
+    .results-report .chart .bar-1 {
+        position: relative;
+        background-color: #da2945;
+    }
+
+    .results-report .chart .bar-2 {
+        position: relative;
+        background-color: #ffb400;
+    }
+
+    .results-report .chart .bar-3 {
+        position: relative;
+        background-color: #efd412;
+    }
+
+    .results-report .threshold-exceeded-compliance {
+        height: 18px;
+    }
+
+    .results-report .threshold-exceeded,
+    .results-report .threshold-compliance {
+        display: flex;
+    }
+
+    .results-report .threshold-exceeded-text,
+    .results-report .threshold-compliance-text {
+        font-size: 14px;
+    }
+
+    .results-report .threshold-exceeded-icon,
+    .results-report .threshold-compliance-icon {
+        display: inline-flex;
+        padding-right: 6px;
+        margin: auto 0;
+    }
+
+    .results-report .threshold-exceeded-text {
+        color: #da2945;
+    }
+
+    .results-report .threshold-compliance-text {
+        color: #21bf3f;
+    }
+
+    .results-report .osa-libraries {
+        text-align: left;
+        margin-right: 35px;
+        background-color: #f2f2f2;
+        width: 107px;
+        padding: 40px 16px;
+    }
+
+    .results-report .osa-libraries-title {
+        font-size: 14px;
+        font-weight: 600;
+        padding-bottom: 25px;
+    }
+
+    .results-report .libraries-vulnerable,
+    .results-report .libraries-ok {
+        overflow: hidden;
+        margin-bottom: 34px;
+        margin-top: 16px;
+    }
+
+    .results-report .libraries-vulnerable-number,
+    .results-report .libraries-ok-number {
+        font-size: 18px;
+        margin: auto auto auto 10px;
+    }
+
+    .results-report .libraries-vulnerable-icon,
+    .results-report .libraries-ok-icon {
+        font-size: 18px;
+    }
+
+    .results-report .libraries-vulnerable-text,
+    .results-report .libraries-ok-text {
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .results-report .libraries-icon-number {
+        display: flex;
+        margin-bottom: 13px;
+    }
+
+    .results-report .osa-results {
+        display: flex;
+    }
+
+    .results-report .threshold-line {
+        width: 20px;
+        border-bottom: dashed white 1px;
+        padding-right: 3px;
+    }
+
+    .results-report .threshold-tooltip {
+        transform: translate(0, 50%);
+        line-height: 14px;
+        font-size: 12px;
+        color: white;
+        text-align: center;
+        padding: 4px 10px;
+        margin-left: 4px;
+        background: #373050;
+        border-radius: 5px;
+    }
+
+    .results-report .threshold-tooltip::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        left: -5px;
+        border: 5px solid transparent;
+        border-right-color: #373050;
+    }
+
+    .results-report .tooltip-container {
+        position: absolute;
+        display: inline-flex;
+    }
+
+    .full-results-section {
+        border-top: solid 1px #cccccc;
+    }
+
+    .full-results-section,
+    .summary-section {
+        margin-left: 4%;
+    }
+
+    .summary-table-row {
         white-space: nowrap;
+        display: inline-flex;
+        width: 100%;
+    }
+
+    .summary-table-row.cxosa,
+    .summary-table-row.cxsast {
+        display: inline-flex;
     }
 
     table {
@@ -44,11 +278,6 @@
         border-color: transparent;
     }
 
-    tr.cxsast,
-    tr.cxosa {
-        border-bottom: solid 2px #373050;
-    }
-
     .title-column,
     .main-column {
         padding: 59px 0;
@@ -57,25 +286,20 @@
     }
 
     .main-column {
-        text-align: center;
-        padding-bottom: 45px;
-        margin-bottom: 42px;
-        padding-left: 16px;
-        /*padding-right: 1%;*/
-        width: 79%;
-        min-height: 350px;
-        box-sizing: border-box;
-        /*max-width: 709px;*/
+        width: 75%;
+        max-width: 760px;
+        min-width: 500px;
     }
 
     .title-column {
-        margin-right: 10px;
+        margin-right: 4%;
         vertical-align: top;
         height: 100%;
         letter-spacing: -0.8px;
-        width: 17%;
+        width: 20%;
         color: #373050;
         max-width: 250px;
+        min-width: 155px;
     }
 
     .summary-title {
@@ -106,48 +330,18 @@
         font-size: 16px;
         display: table-cell;
         vertical-align: middle;
-        width: 75%;
+        /*width: 75%;*/
     }
 
-    .graph-results {
+    .graph {
         position: relative;
-        max-width: 709px;
         text-align: left;
-        margin-right: 50px;
-    }
-
-    .threshold-exceeded-text {
-        color: #da2945;
-    }
-
-    .threshold-compliance-text {
-        color: #21bf3f;
+        line-height: 25px;
     }
 
     .graph-top {
         display: table;
         vertical-align: middle;
-    }
-
-    .threshold-exceeded-compliance {
-        display: table-cell;
-        vertical-align: middle;
-    }
-
-    .threshold-exceeded-text,
-    .threshold-compliance-text {
-        display: table-cell;
-        vertical-align: middle;
-    }
-
-    .threshold-exceeded-icon,
-    .threshold-compliance-icon {
-        display: table-cell;
-        line-height: 28px;
-        vertical-align: middle;
-        padding-right: 6px;
-        height: initial;
-        padding-top: 2px;
     }
 
     .detailed-report {
@@ -186,82 +380,6 @@
         color: #666;
     }
 
-    .chart {
-        display: table;
-        table-layout: fixed;
-        max-width: 709px;
-        min-width: 550px;
-        width: 100%;
-        height: 288px;
-        margin-top: 38px;
-        padding: 0;
-        background-image: linear-gradient(to top, #d5d5d5, #ffffff 2%);
-        background-size: 100% 70px;
-        background-position: left bottom;
-        border-bottom: solid #979797 2px;
-    }
-
-    .chart tr {
-        white-space: nowrap;
-    }
-
-    .chart li {
-        position: relative;
-        display: table-cell;
-        vertical-align: bottom;
-        height: 200px;
-    }
-
-    .chart span {
-        margin-left: 25%;
-        display: block;
-        background: #d1ecfa;
-        animation: draw 1s ease-in-out;
-    }
-
-    .chart .bar-count {
-        text-align: center;
-        font-size: 14px;
-        letter-spacing: -0.47px;
-        line-height: 40px;
-        width: 75%;
-    }
-
-    .chart .bar-title {
-        font-size: 16px;
-        padding: 0 18px;
-        color: #525055;
-    }
-
-    .chart .bar-title-container {
-        position: absolute;
-        padding-top: 21px;
-        display: inline-flex;
-        text-align: center;
-        word-wrap: break-word;
-        left: 40%;
-        transform: translate(-50%);
-    }
-
-    .chart .bar-1 {
-        position: relative;
-        background-color: #da2945;
-    }
-
-    .chart .bar-2 {
-        position: relative;
-        background-color: #ffb400;
-    }
-
-    .chart .bar-3 {
-        position: relative;
-        background-color: #efd412;
-    }
-
-    .chart li span {
-        max-width: 53px;
-    }
-
     .download-cx-report {
         font-size: 16px;
         padding-bottom: 5px;
@@ -276,126 +394,34 @@
         line-height: 28px;
     }
 
-    .libraries {
+    .full-start-end {
         display: inline-flex;
         text-align: left;
         width: 100%;
-        padding-top: 10px;
-    }
-
-    .libraries-vulnerable,
-    .libraries-ok {
-        width: 200px;
-        overflow: hidden;
-        margin-bottom: 47px;
-        margin-right: 122px;
-    }
-
-    .libraries-vulnerable-number,
-    .libraries-ok-number {
-        display: inline-block;
-        font-size: 28px;
-        letter-spacing: -0.93px;
-    }
-
-    .libraries-vulnerable-icon,
-    .libraries-ok-icon {
-        display: inline-block;
-        margin-right: 9px;
-    }
-
-    .libraries-vulnerable-text,
-    .libraries-ok-text {
-        white-space: normal;
-        font-size: 16px;
-        letter-spacing: -0.53px;
+        font-size: 14px;
         color: #525055;
+        padding-top: 6px;
+    }
+
+    .full-start-end-icon {
+        margin: 4px 7px 0 0;
+    }
+
+    .full-start,
+    .full-end,
+    .full-files,
+    .full-loc {
+        display: inline-flex;
+        line-height: 18px;
+        margin-right: 63px;
+    }
+
+    .full-loc {
+        display: inline-block;
     }
 
     .full-loc > div {
         display: inline-block;
-    }
-
-    .threshold-icon-white {
-        position: relative;
-        display: table-cell;
-        vertical-align: middle;
-        padding-left: 7px;
-        padding-top: 2px;
-    }
-
-    .threshold-text {
-        position: relative;
-        color: white;
-        display: table-cell;
-        padding-right: 6px;
-        padding-left: 7px;
-        padding-bottom: 1px;
-        vertical-align: middle;
-        font-size: 13px;
-    }
-
-    .threshold-number {
-        position: relative;
-        color: white;
-        display: table-cell;
-        vertical-align: middle;
-        padding-right: 7px;
-    }
-
-    .tooltip-container {
-        position: absolute;
-        display: inline-flex;
-    }
-
-    .threshold-tooltip {
-        text-align: right;
-        transform: translate(0, 50%);
-        flex-shrink: 0;
-    }
-
-    .threshold-line {
-        width: 53px;
-        border-bottom: dashed white 1px;
-        padding-right: 3px;
-        flex-shrink: 0;
-    }
-
-    .threshold-tooltip-background {
-        position: relative;
-        display: table;
-        vertical-align: middle;
-        padding: 0 12px;
-        margin: 0;
-        margin-left: 4px;
-        background: #373050;
-        border-radius: 5px;
-    }
-
-    .threshold-tooltip-background::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        left: -5px;
-        border: 5px solid transparent;
-        border-right-color: #373050;
-    }
-
-    .threshold-exceeded,
-    .threshold-compliance {
-        display: table;
-        font-size: 15px;
-        font-weight: bold;
-        vertical-align: middle;
-    }
-
-    .threshold-exceeded {
-        color: #d82743;
-    }
-
-    .threshold-compliance {
-        color: #20be3d;
     }
 
     .osa-downloads a,
@@ -449,10 +475,27 @@
         padding: 11px 0;
     }
 
-    table.cve-table td > .sast-cve-table-high,
-    table.cve-table td .sast-cve-table-med,
-    table.cve-table td .sast-cve-table-low {
+    table.cve-table td.sast-cve-table-high,
+    table.cve-table td.sast-cve-table-med,
+    table.cve-table td.sast-cve-table-low {
         max-width: 19px;
+    }
+
+    table.cve-table.sast-cve-table td:last-child,
+    table.cve-table.sast-cve-table th:last-child {
+        padding-right: 20px;
+        text-align: right;
+    }
+
+    table.cve-table.osa-cve-table td:last-child,
+    table.cve-table.osa-cve-table th:last-child {
+        width: 32%;
+    }
+
+    .summary-row {
+        display: flex;
+        border-bottom: solid 2px #373050;
+        padding: 35px 47px 80px 85px;
     }
 
     #onSastError {
@@ -468,238 +511,109 @@
 
 </style>
 
-<div class="cx-title">Checkmarx</div>
-<table class="summary-section">
-    <!--sast row-->
+<div class="results-report">
+    <div class="report-title">
+        <!--<img class="cx-icon" id="cx-icon-main" src=""/>-->
+        <div class="cx-report-title">Checkmarx Report</div>
+    </div>
 
+    <div class="summary-section">
 
-    <tr id="onSastError" class="summary-table-row cxsast">
-        <td class="title-column">
-            <div class="summary-title">
-                <div class="sum1">CxSAST</div>
-                <div class="sum2">Summary</div>
-            </div>
-            <div id="scanErrorMessage" class="aui-message error">
-                <p class="title">
-                    <span class="aui-icon icon-error"></span>
-                    <strong>An error has occurred during the scan. Please check the scan logs for more
-                        information</strong>
-                </p>
-            </div>
-        </td>
-    </tr>
-
-    <tr id="cxsast-info" class="summary-table-row cxsast">
-        <td class="title-column">
-            <div class="summary-title">
-                <div class="sum1">CxSAST</div>
-                <div class="sum2">Summary</div>
-            </div>
-
-            <div class="detailed-report sast-downloads">
-                <div class="download-txt">
-                    <div class="download-cx-report">Checkmarx Report</div>
-
-                    <div>
-                        <a id="html-report-link" class="html-report">
-                            <div class="html-report download-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xmlns:svgjs="http://www.w3.org/2000/svg"
-                                     id="SvgjsSvg1054" version="1.1" width="14" height="17.20710678118644"
-                                     viewBox="0 0 14 17.20710678118644"><title>HTML
-                                    Icon</title>
-                                    <desc>Created with Avocode.</desc>
-                                    <defs id="SvgjsDefs1055"/>
-                                    <path id="SvgjsPath1056"
-                                          d="M279.12 796L284 796L284 806L271 806L271 796L271 796L275.92 796 "
-                                          fill-opacity="0" fill="#ffffff"
-                                          stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="butt"
-                                          stroke-opacity="1" stroke="#373050"
-                                          stroke-miterlimit="50" stroke-width="1"
-                                          transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                    <path id="SvgjsPath1057" d="M277.5 790.5L277.5 797.57 " fill-opacity="0"
-                                          fill="#ffffff" stroke-dasharray="0"
-                                          stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1"
-                                          stroke="#373050" stroke-miterlimit="50"
-                                          stroke-width="1" transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                    <path id="SvgjsPath1058" d="M277.5 790.5L280.5 793.5 " fill-opacity="0"
-                                          fill="#ffffff" stroke-dasharray="0"
-                                          stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1"
-                                          stroke="#373050" stroke-miterlimit="50"
-                                          stroke-width="1" transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                    <path id="SvgjsPath1059" d="M277.5 790.5L274.5 793.5 " fill-opacity="0"
-                                          fill="#ffffff" stroke-dasharray="0"
-                                          stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1"
-                                          stroke="#373050" stroke-miterlimit="50"
-                                          stroke-width="1" transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                </svg>
-                            </div>
-                            <div class="html-report download-txt">
-                                <div class="detailed-report-ttl">Summary Report</div>
-                            </div>
-                        </a>
-                    </div>
+        <div id="onSastError" class="error-msg">
+            <div class="title-column">
+                <div id="scanErrorMessage" class="aui-message error">
+                    <p class="title">
+                        <span class="aui-icon icon-error"></span>
+                        <strong>
+                            An error has occurred during the scan. Please check the scan logs for more information</strong>
+                    </p>
                 </div>
             </div>
-        </td>
-        <td class="main-column">
-            <div class="graph-results">
-                <div class="graph-top">
-                    <div class="graph-title">Vulnerabilities Status</div>
-                    <div id="threshold-exceeded-compliance"></div>
-                </div>
+        </div>
+
+
+        <div class="sast-summary" id="sast-summary">
+            <div class="summary-report-title sast">
+                <div class="summary-title-text sast">CxSAST Vulnerabilities Status</div>
+            </div>
+            <div class="summary-chart">
+                <div class="threshold-exceeded-compliance" id="threshold-exceeded-compliance"></div>
                 <ul class="chart">
 
                     <!--high-->
                     <li>
-                        <div id="bar-count-high" class="bar-count"></div>
-                        <span id="bar-high" class="bar-1">
-                            <div id="tooltip-high"></div>
-                        </span>
-
+                        <div class="bar-count" id="bar-count-high"></div>
+                                <span class="bar-1" id="bar-high">
+                                    <div id="tooltip-high"></div>
+                                </span>
                         <div class="bar-title-container">
                             <div class="bar-title">High</div>
-                            <div class="severity-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     width="23px" height="21px" viewBox="0 0 23 21"
-                                     version="1.1">
-                                    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                                    <title>high</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs>
-                                        <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733"
-                                              id="path-1"/>
-                                        <mask id="mask-1" maskContentUnits="userSpaceOnUse"
-                                              maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19"
-                                              fill="white">
-                                            <use xlink:href="#path-1"/>
-                                        </mask>
-                                    </defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g id="Jenkins" transform="translate(-602.000000, -537.000000)">
-                                            <g id="SAST" transform="translate(272.000000, 180.000000)">
-                                                <g id="Vulnerabilities-Stat"
-                                                   transform="translate(246.082552, 0.000000)">
-                                                    <g id="High" transform="translate(22.425880, 105.921935)">
-                                                        <g id="high" transform="translate(62.000000, 252.000000)">
-                                                            <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z"
-                                                                  id="Combined-Shape" fill="#F5F5F5"/>
-                                                            <use id="Rectangle-40-Copy" stroke="#666666"
-                                                                 mask="url(#mask-1)" stroke-width="4"
-                                                                 xlink:href="#path-1"/>
-                                                            <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z"
-                                                                  id="Page-1" fill="#DA2945"/>
-                                                            <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12"
-                                                                  width="2" height="4"/>
-                                                            <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17"
-                                                                  width="2" height="2"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </div>
                         </div>
                     </li>
 
                     <!--medium-->
                     <li>
-                        <div id="bar-count-med" class="bar-count"></div>
-                        <span id="bar-med" class="bar-2">
-                            <div id="tooltip-med"></div>
-                        </span>
+                        <div class="bar-count" id="bar-count-med"></div>
+                                <span class="bar-2" id="bar-med">
+                                    <div id="tooltip-med"></div>
+                                </span>
                         <div class="bar-title-container">
                             <div class="bar-title">Medium</div>
-                            <div class="severity-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     width="23px" height="21px" viewBox="0 0 23 21"
-                                     version="1.1">
-                                    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                                    <title>medium</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs>
-                                        <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733"
-                                              id="path-2"/>
-                                        <mask id="mask-2" maskContentUnits="userSpaceOnUse"
-                                              maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19"
-                                              fill="white">
-                                            <use xlink:href="#path-2"/>
-                                        </mask>
-                                    </defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g id="Jenkins" transform="translate(-680.000000, -537.000000)">
-                                            <g id="SAST" transform="translate(272.000000, 180.000000)">
-                                                <g id="Vulnerabilities-Stat"
-                                                   transform="translate(246.082552, 0.000000)">
-                                                    <g id="High" transform="translate(22.425880, 105.921935)">
-                                                        <g id="med" transform="translate(140.000000, 252.000000)">
-                                                            <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z"
-                                                                  id="Combined-Shape" fill="#F5F5F5"/>
-                                                            <use id="Rectangle-40-Copy" stroke="#666666"
-                                                                 mask="url(#mask-2)" stroke-width="4"
-                                                                 xlink:href="#path-2"/>
-                                                            <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z"
-                                                                  id="Page-1" fill="#FFB400"/>
-                                                            <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12"
-                                                                  width="2" height="4"/>
-                                                            <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17"
-                                                                  width="2" height="2"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </div>
                         </div>
                     </li>
 
                     <!--low-->
                     <li>
-                        <div id="bar-count-low" class="bar-count"></div>
-                        <span id="bar-low" class="bar-3">
-                            <div id="tooltip-low"></div>
-                        </span>
-
+                        <div class="bar-count" id="bar-count-low"></div>
+                                <span class="bar-3" id="bar-low">
+                                    <div id="tooltip-low"></div>
+                                </span>
                         <div class="bar-title-container">
                             <div class="bar-title">Low</div>
-                            <div class="severity-icon">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="osa-summary" id="osa-summary">
+            <div class="summary-report-title osa">
+                <div class="summary-title-text osa">CxOSA Vulnerabilities & Libraries</div>
+            </div>
+            <div class="osa-results">
+                <div class="osa-libraries">
+                    <div class="osa-libraries-title">Libraries:</div>
+                    <div class="libraries-vulnerable">
+                        <div class="libraries-icon-number">
+                            <div class="libraries-vulnerable-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     width="23px" height="21px" viewBox="0 0 23 21"
-                                     version="1.1">
-                                    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                                    <title>low</title>
+                                     height="31px" version="1.1" viewBox="0 0 47 31" width="47px">
+                                    <title>lib
+                                        Vulnerabilities Icon</title>
                                     <desc>Created with Sketch.</desc>
                                     <defs>
-                                        <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733"
-                                              id="path-3"/>
-                                        <mask id="mask-3" maskContentUnits="userSpaceOnUse"
-                                              maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19"
-                                              fill="white">
-                                            <use xlink:href="#path-3"/>
+                                        <path id="path-4"
+                                              d="M25,31 L4,31 C1.94360167,31 0,29.0245324 0,27 L0,8 L0,3 C0,1.48550257 1.46424259,0 3,0 L9,0 C9.88514832,0 11.1635669,0.937415809 12,2 L12,4 L34,4 C36.0604107,4.42857143 38,6.41548071 38,9 L38,11"/>
+                                        <mask height="31" maskUnits="objectBoundingBox" id="mask-4" width="38"
+                                              maskContentUnits="userSpaceOnUse" fill="white" x="0" y="0">
+                                            <use xlink:href="#path-4"/>
                                         </mask>
                                     </defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g id="Jenkins" transform="translate(-641.000000, -537.000000)">
-                                            <g id="SAST" transform="translate(272.000000, 180.000000)">
-                                                <g id="Vulnerabilities-Stat"
-                                                   transform="translate(246.082552, 0.000000)">
-                                                    <g id="High" transform="translate(22.425880, 105.921935)">
-                                                        <g id="low" transform="translate(101.000000, 252.000000)">
-                                                            <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z"
-                                                                  id="Combined-Shape" fill="#F5F5F5"/>
-                                                            <use id="Rectangle-40-Copy" stroke="#666666"
-                                                                 mask="url(#mask-3)" stroke-width="4"
-                                                                 xlink:href="#path-3"/>
-                                                            <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z"
-                                                                  id="Page-1" fill="#EFD412"/>
-                                                            <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12"
-                                                                  width="2" height="4"/>
-                                                            <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17"
-                                                                  width="2" height="2"/>
+                                    <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                        <g transform="translate(-518.000000, -646.000000)" id="Jenkins">
+                                            <g transform="translate(270.000000, 646.000000)" id="OSA">
+                                                <g transform="translate(248.000000, 0.000000)" id="Lib-Vulnerabilities">
+                                                    <g id="lib-Vulnerabilities-Icon">
+                                                        <use mask="url(#mask-4)" stroke-width="4" id="Combined-Shape"
+                                                             stroke="#362F53" xlink:href="#path-4"/>
+                                                        <g transform="translate(26.600000, 14.233021)" id="Alert">
+                                                            <path id="Page-1"
+                                                                  d="M9.71486676,1.21470909 C10.3018963,0.274949219 11.2197722,0.29932009 11.7612462,1.26246584 L19.4943093,15.0176364 C20.037464,15.9837716 19.5847058,16.7669789 18.4769973,16.7669789 L2.0007805,16.7669789 C0.895779941,16.7669789 0.477014275,16.0033396 1.06291102,15.0653932 L9.71486676,1.21470909 Z"
+                                                                  fill="#DA2945"/>
+                                                            <rect height="5" id="Rectangle-5" width="2" fill="#FFFFFF"
+                                                                  x="9.4" y="5.76697892"/>
+                                                            <rect height="2" id="Rectangle-6" width="2" fill="#FFFFFF"
+                                                                  x="9.4" y="11.7669789"/>
                                                         </g>
                                                     </g>
                                                 </g>
@@ -708,108 +622,421 @@
                                     </g>
                                 </svg>
                             </div>
+                            <div class="libraries-vulnerable-number" id="vulnerable-libraries"></div>
                         </div>
-                    </li>
-                </ul>
-            </div>
-        </td>
-    </tr>
+                        <div class="libraries-vulnerable-text">
+                            Vulnerabilities & Outdated
+                        </div>
+                    </div>
+                    <div class="libraries-ok">
+                        <div class="libraries-icon-number">
+                            <div class="libraries-ok-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     height="31px" version="1.1" viewBox="0 0 47 31" width="47px">
+                                    <title>
+                                        Icon</title>
+                                    <desc>Created with Sketch.</desc>
+                                    <defs>
+                                        <path id="path-5"
+                                              d="M28,31 L4,31 C1.99474908,31 0,29.0245324 0,27 L0,8 L0,3 C0,1.48550257 1.50277529,0 3,0 L9,0 C10.1452838,0 11.457345,0.937415809 12,2 L13,4 L35,4 C37.0093689,4.42857143 39,6.41548071 39,9 L39,11"/>
+                                        <mask height="31" maskUnits="objectBoundingBox" id="mask-5" width="39"
+                                              maskContentUnits="userSpaceOnUse" fill="white" x="0" y="0">
+                                            <use xlink:href="#path-5"/>
+                                        </mask>
+                                    </defs>
+                                    <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                        <g transform="translate(-848.000000, -651.000000)" id="Jenkins">
+                                            <g transform="translate(270.000000, 646.000000)" id="OSA">
+                                                <g transform="translate(578.000000, 5.000000)" id="Lib-OK">
+                                                    <g id="Icon">
+                                                        <use mask="url(#mask-5)" stroke-width="4"
+                                                             id="Combined-Shape-Copy"
+                                                             stroke="#362F53" xlink:href="#path-5"/>
+                                                        <path id="Combined-Shape"
+                                                              d="M46.4529784,18.9030304 C46.8068562,19.8686359 47,20.9117624 47,22 C47,26.9705627 42.9705627,31 38,31 C33.0294373,31 29,26.9705627 29,22 C29,17.0294373 33.0294373,13 38,13 C40.393622,13 42.5689975,13.934425 44.1812437,15.4583924 L37.6904269,21.8965709 L35.079173,19.3040452 L32.1948583,22.1475069 L37.6899611,27.6031981 L46.4529784,18.9030304 Z"
+                                                              fill="#8EBE15"/>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="libraries-vulnerable-number" id="ok-libraries"></div>
+                        </div>
+                        <div class="libraries-ok-text">
+                            No Vulnerabilities
+                        </div>
+                    </div>
+                </div>
+                <div class="osa-chart">
+                    <div class="threshold-exceeded-compliance" id="osa-threshold-exceeded-compliance"></div>
+                    <ul class="osa-chart chart">
+                        <li>
+                            <div class="bar-count" id="osa-bar-count-high">
 
-    <!--osa row-->
-    <tr id="osa-info" class="summary-table-row cxosa">
-        <td class="title-column">
+                            </div>
+                                    <span class="bar-1" id="osa-bar-high">
+                                        <div id="osa-tooltip-high"></div>
+                                    </span>
+                            <div class="bar-title-container">
+                                <div class="bar-title">High</div>
+                            </div>
+                        </li>
+
+                        <!--osa medium-->
+                        <li>
+                            <div class="bar-count" id="osa-bar-count-med">
+
+                            </div>
+                                    <span class="bar-2" id="osa-bar-med"><div id="osa-tooltip-med">
+
+                                    </div></span>
+                            <div class="bar-title-container">
+                                <div class="bar-title">Medium</div>
+                            </div>
+                        </li>
+
+                        <!--osa low-->
+                        <li>
+                            <div class="bar-count" id="osa-bar-count-low">
+
+                            </div>
+                                    <span class="bar-3" id="osa-bar-low"><div id="osa-tooltip-low">
+
+                                    </div></span>
+                            <div class="bar-title-container">
+                                <div class="bar-title">Low</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="sast-full" class="sast-full full-results-section">
+    <div class="summary-table-row cxsast-full">
+        <div class="title-column">
+            <div class="summary-title">
+                <div class="sum1">CxSAST</div>
+                <div class="sum1">Full Report</div>
+            </div>
+            <div class="detailed-report">
+                <div class="sast-downloads">
+                    <div class="report-link"><a class="html-report" id="sast-html-link">
+                        <div class="html-report download-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16px" version="1.1" viewBox="0 0 13 16"
+                                 width="13px"><title>
+                                Analize</title>
+                                <desc>Created with Sketch.</desc>
+                                <defs/>
+                                <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                    <g transform="translate(-286.000000, -1439.000000)" id="Jenkins">
+                                        <g transform="translate(272.000000, 1290.000000)" id="CxSAST">
+                                            <g transform="translate(14.000000, 148.000000)" id="Group">
+                                                <g transform="translate(1.000000, 2.000000)" id="Analize">
+                                                    <circle cy="5" stroke-width="2" id="Oval-3" r="5" stroke="#373050" cx="5"/>
+                                                    <rect transform="translate(8.866025, 11.696152) rotate(-30.000000) translate(-8.866025, -11.696152) "
+                                                          height="6.53589838"
+                                                          id="Rectangle-9" width="2" fill="#373050" x="7.8660254" y="8.42820323"/>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="html-report download-txt">
+                            <div class="detailed-report-ttl">Analyzed results</div>
+                        </div>
+                    </a></div>
+                    <!--pdf-->
+                    <div class="report-link"><a class="pdf-report" id="sast-pdf-link">
+                        <div style="display: none;">h</div>
+                    </a></div>
+                    <div class="report-link"><a class="pdf-report" id="sast-code-viewer-link">
+                        <div class="pdf-report download-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" height="13"
+                                 id="SvgjsSvg1041"
+                                 version="1.1" viewBox="0 0 15 13" width="15"><title>Icon</title>
+                                <desc>Created with Avocode.</desc>
+                                <defs id="SvgjsDefs1042"/>
+                                <path stroke-miterlimit="50" transform="matrix(1,0,0,1,-285.5,-841.5)" stroke-width="1" id="SvgjsPath1043" fill-opacity="0"
+                                      stroke-dasharray="0"
+                                      d="M296 843L299.53 847.78L296 852.56 " stroke-opacity="1" fill="#ffffff" stroke="#373050" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path stroke-miterlimit="50" transform="matrix(1,0,0,1,-285.5,-841.5)" stroke-width="1" id="SvgjsPath1044" fill-opacity="0"
+                                      stroke-dasharray="0"
+                                      d="M289.53 843L286 847.78L289.53 852.56 " stroke-opacity="1" fill="#ffffff" stroke="#373050" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path stroke-miterlimit="50" transform="matrix(1,0,0,1,-285.5,-841.5)" stroke-width="1" id="SvgjsPath1045" fill-opacity="0"
+                                      stroke-dasharray="0"
+                                      d="M293.61 842L291 853.79 " stroke-opacity="1" fill="#ffffff" stroke="#373050" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="pdf-report download-txt">
+                            <div class="pdf-report detailed-report-ttl">Open Code Viewer</div>
+                        </div>
+                    </a></div>
+                </div>
+            </div>
+        </div>
+        <div class="main-column">
+            <div class="full-start-end">
+
+                <!--start-->
+                <div class="full-start">
+                    <div class="full-start-end-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="26px" version="1.1" viewBox="0 0 23 26" width="23px">
+                            <title>
+                                Icon</title>
+                            <desc>Created with Sketch.</desc>
+                            <defs>
+                                <rect height="23" rx="1.6" id="full-start-path" width="23" x="0" y="2"/>
+                                <mask height="23" maskUnits="objectBoundingBox" id="full-start-mask" width="23" maskContentUnits="userSpaceOnUse" fill="white" x="0"
+                                      y="0">
+                                    <use xlink:href="#full-start-path"/>
+                                </mask>
+                            </defs>
+                            <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                <g transform="translate(-684.000000, -708.000000)" id="Jenkins" stroke="#373050">
+                                    <g transform="translate(273.000000, 695.000000)" id="CxSAST">
+                                        <g transform="translate(411.000000, 9.000000)" id="Group-2-Copy">
+                                            <g transform="translate(0.000000, 5.000000)" id="Icon">
+                                                <use mask="url(#full-start-mask)" stroke-width="4" id="Rectangle-22" xlink:href="#full-start-path"/>
+                                                <path stroke-width="2" id="Line" d="M5,0 L5,2.99971994" stroke-linecap="square"/>
+                                                <path stroke-width="2" id="Line-Copy" d="M18,0 L18,2.99971994" stroke-linecap="square"/>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="full-start-end-text-date">
+                        <div class="full-start-end-text">
+                            Start:
+                        </div>
+                        <div class="full-start-end-date" id="sast-full-start-date">
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--end-->
+                <div class="full-end">
+                    <div class="full-start-end-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="26px" version="1.1" viewBox="0 0 23 26" width="23px">
+                            <title>
+                                Icon</title>
+                            <desc>Created with Sketch.</desc>
+                            <defs>
+                                <rect height="23" rx="1.6" id="full-start-path" width="23" x="0" y="2"/>
+                                <mask height="23" maskUnits="objectBoundingBox" id="full-start-mask" width="23" maskContentUnits="userSpaceOnUse" fill="white" x="0"
+                                      y="0">
+                                    <use xlink:href="#full-start-path"/>
+                                </mask>
+                            </defs>
+                            <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                <g transform="translate(-684.000000, -708.000000)" id="Jenkins" stroke="#373050">
+                                    <g transform="translate(273.000000, 695.000000)" id="CxSAST">
+                                        <g transform="translate(411.000000, 9.000000)" id="Group-2-Copy">
+                                            <g transform="translate(0.000000, 5.000000)" id="Icon">
+                                                <use mask="url(#full-start-mask)" stroke-width="4" id="Rectangle-22" xlink:href="#full-start-path"/>
+                                                <path stroke-width="2" id="Line" d="M5,0 L5,2.99971994" stroke-linecap="square"/>
+                                                <path stroke-width="2" id="Line-Copy" d="M18,0 L18,2.99971994" stroke-linecap="square"/>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="full-start-end-text-date">
+                        <div class="full-start-end-text">
+                            End:
+                        </div>
+                        <div class="full-start-end-date" id="sast-full-end-date">
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--sast files-->
+                <div class="full-files">
+                    <div class="full-start-end-icon files-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="26px" version="1.1" viewBox="0 0 21 26" width="21px">
+                            <title>
+                                file</title>
+                            <desc>Created with Sketch.</desc>
+                            <defs>
+                                <path id="files-path"
+                                      d="M15.5147186,0 L1.99456145,0 C0.90234375,0 0,0.89408944 0,1.99700466 L0,24.0029953 C0,25.1050211 0.892995579,26 1.99456145,26 L19.0054385,26 C20.0976562,26 21,25.1059106 21,24.0029953 L21,5.43446766 L20.9745931,5.45987452 L15.5147186,5.55111512e-16 Z"/>
+                                <mask height="26" maskUnits="objectBoundingBox" id="files-mask" width="21" maskContentUnits="userSpaceOnUse" fill="white" x="0" y="0">
+                                    <use xlink:href="#files-path"/>
+                                </mask>
+                            </defs>
+                            <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                <g transform="translate(-847.000000, -709.000000)" id="Jenkins">
+                                    <g transform="translate(273.000000, 695.000000)" id="CxSAST">
+                                        <g transform="translate(574.000000, 9.000000)" id="Group-3">
+                                            <g transform="translate(0.000000, 5.000000)" id="file">
+                                                <use mask="url(#files-mask)" stroke-width="4" id="Combined-Shape" stroke="#373050" xlink:href="#files-path"/>
+                                                <path id="Combined-Shape" d="M13.8888889,0 L14.7777778,0 L21,7 L21,7.5 L21,8 L13,8 L13,0 L13.8888889,0 Z"
+                                                      fill="#373050"/>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="full-start-end-text-date">
+                        <div class="full-start-end-text">
+                            Files:
+                        </div>
+                        <div class="full-start-end-date" id="sast-full-files">
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--sast loc-->
+                <div class="full-loc">
+                    <div class="full-start-end-icon loc-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:svgjs="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="29"
+                             id="SvgjsSvg1018"
+                             version="1.1" viewBox="0 0 29 29" width="29"><title>Icon</title>
+                            <desc>Created with Avocode.</desc>
+                            <defs id="SvgjsDefs1019"/>
+                            <path stroke-miterlimit="50" transform="matrix(1,0,0,1,-1012,-1365)" stroke-width="2" id="SvgjsPath1020" fill-opacity="0"
+                                  stroke-dasharray="0"
+                                  d="M1032 1368L1039.95 1378.76L1032 1389.51 " stroke-opacity="1" fill="#ffffff" stroke="#373050" stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                            <path stroke-miterlimit="50" transform="matrix(1,0,0,1,-1012,-1365)" stroke-width="2" id="SvgjsPath1021" fill-opacity="0"
+                                  stroke-dasharray="0"
+                                  d="M1020.95 1368L1013 1378.76L1020.95 1389.51 " stroke-opacity="1" fill="#ffffff" stroke="#373050" stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                            <path stroke-miterlimit="50" transform="matrix(1,0,0,1,-1012,-1365)" stroke-width="2" id="SvgjsPath1022" fill-opacity="0"
+                                  stroke-dasharray="0"
+                                  d="M1028.86 1366L1022.9999999999999 1392.54 " stroke-opacity="1" fill="#ffffff" stroke="#373050" stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="full-start-end-text-date">
+                        <div class="full-start-end-text">
+                            Code Lines:
+                        </div>
+                        <div class="full-start-end-date" id="sast-full-loc">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="sast-cve-table-high-container">
+
+            </div>
+            <div id="sast-cve-table-med-container">
+
+            </div>
+            <div id="sast-cve-table-low-container">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="osa-full full-results-section">
+    <div class="summary-table-row cxosa-full" id="osa-full">
+        <div class="title-column">
             <div class="summary-title">
                 <div class="sum1">CxOSA</div>
-                <div class="sum2">Summary</div>
+                <div class="sum1">Full Report</div>
             </div>
-
             <div class="detailed-report">
-                <div class="download-cx-report">Checkmarx Report</div>
-
-                <div class="osa-downloads">
-                    <div>
-                        <a id="osa-html-report-link" class="html-report">
-                            <div class="html-report download-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xmlns:svgjs="http://www.w3.org/2000/svg"
-                                     id="SvgjsSvg1054"
-                                     version="1.1"
-                                     width="14" height="17.20710678118644" viewBox="0 0 14 17.20710678118644"><title>
-                                    HTML Icon</title>
-                                    <desc>Created with Avocode.</desc>
-                                    <defs id="SvgjsDefs1055"/>
-                                    <path id="SvgjsPath1056"
-                                          d="M279.12 796L284 796L284 806L271 806L271 796L271 796L275.92 796 "
-                                          fill-opacity="0" fill="#ffffff"
-                                          stroke-dasharray="0"
-                                          stroke-linejoin="miter" stroke-linecap="butt" stroke-opacity="1"
-                                          stroke="#373050" stroke-miterlimit="50" stroke-width="1"
-                                          transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                    <path id="SvgjsPath1057" d="M277.5 790.5L277.5 797.57 " fill-opacity="0"
-                                          fill="#ffffff" stroke-dasharray="0"
-                                          stroke-linejoin="miter"
-                                          stroke-linecap="square" stroke-opacity="1" stroke="#373050"
-                                          stroke-miterlimit="50" stroke-width="1"
-                                          transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                    <path id="SvgjsPath1058" d="M277.5 790.5L280.5 793.5 " fill-opacity="0"
-                                          fill="#ffffff" stroke-dasharray="0"
-                                          stroke-linejoin="miter"
-                                          stroke-linecap="square" stroke-opacity="1" stroke="#373050"
-                                          stroke-miterlimit="50" stroke-width="1"
-                                          transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                    <path id="SvgjsPath1059" d="M277.5 790.5L274.5 793.5 " fill-opacity="0"
-                                          fill="#ffffff" stroke-dasharray="0"
-                                          stroke-linejoin="miter"
-                                          stroke-linecap="square" stroke-opacity="1" stroke="#373050"
-                                          stroke-miterlimit="50" stroke-width="1"
-                                          transform="matrix(1,0,0,1,-270.5,-789.2928932188136)"/>
-                                </svg>
-                            </div>
-                            <div class="html-report download-txt">
-                                <div class="detailed-report-ttl">Summary Report</div>
-                            </div>
-                        </a>
-                    </div>
+                <div class="sast-downloads osa-downloads">
+                    <div class="report-link"><a class="pdf-report" id="osa-pdf-link">
+                        <div class="pdf-report download-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:svgjs="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16"
+                                 id="SvgjsSvg1022" version="1.1" viewBox="0 0 13 16" width="13"><title>PDF icon</title>
+                                <desc>Created with Avocode.</desc>
+                                <defs id="SvgjsDefs1023">
+                                    <clipPath id="SvgjsClipPath1027">
+                                        <path id="SvgjsPath1026" d="M271 763L280.1 763L284 767L284 779L271 779Z " fill="#ffffff"/>
+                                    </clipPath>
+                                </defs>
+                                <path transform="matrix(1,0,0,1,-271,-763)" id="SvgjsPath1024" fill-opacity="1" d="M279 768L279 763L280.1 763L284 767L284 768Z "
+                                      fill="#373050"/>
+                                <path stroke-dasharray="0" d="M271 763L280.1 763L284 767L284 779L271 779Z " stroke-opacity="1" stroke="#373050" stroke-linecap="butt"
+                                      stroke-linejoin="miter" stroke-miterlimit="50" transform="matrix(1,0,0,1,-271,-763)" stroke-width="2" id="SvgjsPath1025"
+                                      fill-opacity="0"
+                                      fill="#ffffff" clip-path="url(&quot;#SvgjsClipPath1027&quot;)"/>
+                            </svg>
+                        </div>
+                        <div class="pdf-report download-txt">
+                            <div class="pdf-report detailed-report-ttl">PDF Report</div>
+                        </div>
+                    </a></div>
+                    <div class="report-link"><a class="html-report" id="osa-html-link">
+                        <div class="html-report download-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16px" version="1.1" viewBox="0 0 13 16"
+                                 width="13px"><title>
+                                Analize</title>
+                                <desc>Created with Sketch.</desc>
+                                <defs/>
+                                <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                    <g transform="translate(-286.000000, -1439.000000)" id="Jenkins">
+                                        <g transform="translate(272.000000, 1290.000000)" id="CxSAST">
+                                            <g transform="translate(14.000000, 148.000000)" id="Group">
+                                                <g transform="translate(1.000000, 2.000000)" id="Analize">
+                                                    <circle cy="5" stroke-width="2" id="Oval-3" r="5" stroke="#373050" cx="5"/>
+                                                    <rect transform="translate(8.866025, 11.696152) rotate(-30.000000) translate(-8.866025, -11.696152) "
+                                                          height="6.53589838"
+                                                          id="Rectangle-9" width="2" fill="#373050" x="7.8660254" y="8.42820323"/>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="html-report download-txt">
+                            <div class="detailed-report-ttl">Analyzed results</div>
+                        </div>
+                    </a></div>
                 </div>
-
             </div>
+        </div>
+        <div class="main-column">
+            <div class="full-start-end">
 
-
-        </td>
-        <td class="main-column">
-            <div class="libraries">
-
-                <div class="libraries-vulnerable">
-                    <div class="libraries-vulnerable-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="47px"
-                             height="31px" viewBox="0 0 47 31"
-                             version="1.1">
-                            <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                            <title>lib Vulnerabilities Icon</title>
+                <!--osa start-->
+                <div class="full-start">
+                    <div class="full-start-end-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="26px" version="1.1" viewBox="0 0 23 26" width="23px">
+                            <title>
+                                Icon</title>
                             <desc>Created with Sketch.</desc>
                             <defs>
-                                <path d="M25,31 L4,31 C1.94360167,31 0,29.0245324 0,27 L0,8 L0,3 C0,1.48550257 1.46424259,0 3,0 L9,0 C9.88514832,0 11.1635669,0.937415809 12,2 L12,4 L34,4 C36.0604107,4.42857143 38,6.41548071 38,9 L38,11"
-                                      id="path-4"/>
-                                <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0"
-                                      y="0" width="38" height="31" fill="white">
-                                    <use xlink:href="#path-4"/>
+                                <rect height="23" rx="1.6" id="full-start-path" width="23" x="0" y="2"/>
+                                <mask height="23" maskUnits="objectBoundingBox" id="full-start-mask" width="23" maskContentUnits="userSpaceOnUse" fill="white" x="0"
+                                      y="0">
+                                    <use xlink:href="#full-start-path"/>
                                 </mask>
                             </defs>
-                            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g id="Jenkins" transform="translate(-518.000000, -646.000000)">
-                                    <g id="OSA" transform="translate(270.000000, 646.000000)">
-                                        <g id="Lib-Vulnerabilities" transform="translate(248.000000, 0.000000)">
-                                            <g id="lib-Vulnerabilities-Icon">
-                                                <use id="Combined-Shape" stroke="#362F53" mask="url(#mask-4)"
-                                                     stroke-width="4" xlink:href="#path-4"/>
-                                                <g id="Alert" transform="translate(26.600000, 14.233021)">
-                                                    <path d="M9.71486676,1.21470909 C10.3018963,0.274949219 11.2197722,0.29932009 11.7612462,1.26246584 L19.4943093,15.0176364 C20.037464,15.9837716 19.5847058,16.7669789 18.4769973,16.7669789 L2.0007805,16.7669789 C0.895779941,16.7669789 0.477014275,16.0033396 1.06291102,15.0653932 L9.71486676,1.21470909 Z"
-                                                          id="Page-1" fill="#DA2945"/>
-                                                    <rect id="Rectangle-5" fill="#FFFFFF" x="9.4" y="5.76697892"
-                                                          width="2" height="5"/>
-                                                    <rect id="Rectangle-6" fill="#FFFFFF" x="9.4" y="11.7669789"
-                                                          width="2" height="2"/>
-                                                </g>
+                            <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                <g transform="translate(-684.000000, -708.000000)" id="Jenkins" stroke="#373050">
+                                    <g transform="translate(273.000000, 695.000000)" id="CxSAST">
+                                        <g transform="translate(411.000000, 9.000000)" id="Group-2-Copy">
+                                            <g transform="translate(0.000000, 5.000000)" id="Icon">
+                                                <use mask="url(#full-start-mask)" stroke-width="4" id="Rectangle-22" xlink:href="#full-start-path"/>
+                                                <path stroke-width="2" id="Line" d="M5,0 L5,2.99971994" stroke-linecap="square"/>
+                                                <path stroke-width="2" id="Line-Copy" d="M18,0 L18,2.99971994" stroke-linecap="square"/>
                                             </g>
                                         </g>
                                     </g>
@@ -817,37 +1044,38 @@
                             </g>
                         </svg>
                     </div>
-                    <div id="vulnerable-libraries" class="libraries-vulnerable-number"></div>
-                    <div class="libraries-vulnerable-text">
-                        Vulnerable and outdated libraries
+                    <div class="full-start-end-text-date">
+                        <div class="full-start-end-text">
+                            Start:
+                        </div>
+                        <div class="full-start-end-date" id="osa-full-start-date">
+
+                        </div>
                     </div>
                 </div>
 
-                <div class="libraries-ok">
-                    <div class="libraries-ok-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="47px"
-                             height="31px" viewBox="0 0 47 31"
-                             version="1.1">
-                            <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                            <title>Icon</title>
+                <!--osa end-->
+                <div class="full-end">
+                    <div class="full-start-end-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="26px" version="1.1" viewBox="0 0 23 26" width="23px">
+                            <title>
+                                Icon</title>
                             <desc>Created with Sketch.</desc>
                             <defs>
-                                <path d="M28,31 L4,31 C1.99474908,31 0,29.0245324 0,27 L0,8 L0,3 C0,1.48550257 1.50277529,0 3,0 L9,0 C10.1452838,0 11.457345,0.937415809 12,2 L13,4 L35,4 C37.0093689,4.42857143 39,6.41548071 39,9 L39,11"
-                                      id="path-5"/>
-                                <mask id="mask-5" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0"
-                                      y="0" width="39" height="31" fill="white">
-                                    <use xlink:href="#path-5"/>
+                                <rect height="23" rx="1.6" id="full-start-path" width="23" x="0" y="2"/>
+                                <mask height="23" maskUnits="objectBoundingBox" id="full-start-mask" width="23" maskContentUnits="userSpaceOnUse" fill="white" x="0"
+                                      y="0">
+                                    <use xlink:href="#full-start-path"/>
                                 </mask>
                             </defs>
-                            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g id="Jenkins" transform="translate(-848.000000, -651.000000)">
-                                    <g id="OSA" transform="translate(270.000000, 646.000000)">
-                                        <g id="Lib-OK" transform="translate(578.000000, 5.000000)">
-                                            <g id="Icon">
-                                                <use id="Combined-Shape-Copy" stroke="#362F53" mask="url(#mask-5)"
-                                                     stroke-width="4" xlink:href="#path-5"/>
-                                                <path d="M46.4529784,18.9030304 C46.8068562,19.8686359 47,20.9117624 47,22 C47,26.9705627 42.9705627,31 38,31 C33.0294373,31 29,26.9705627 29,22 C29,17.0294373 33.0294373,13 38,13 C40.393622,13 42.5689975,13.934425 44.1812437,15.4583924 L37.6904269,21.8965709 L35.079173,19.3040452 L32.1948583,22.1475069 L37.6899611,27.6031981 L46.4529784,18.9030304 Z"
-                                                      id="Combined-Shape" fill="#8EBE15"/>
+                            <g stroke-width="1" fill-rule="evenodd" id="Page-1" stroke="none" fill="none">
+                                <g transform="translate(-684.000000, -708.000000)" id="Jenkins" stroke="#373050">
+                                    <g transform="translate(273.000000, 695.000000)" id="CxSAST">
+                                        <g transform="translate(411.000000, 9.000000)" id="Group-2-Copy">
+                                            <g transform="translate(0.000000, 5.000000)" id="Icon">
+                                                <use mask="url(#full-start-mask)" stroke-width="4" id="Rectangle-22" xlink:href="#full-start-path"/>
+                                                <path stroke-width="2" id="Line" d="M5,0 L5,2.99971994" stroke-linecap="square"/>
+                                                <path stroke-width="2" id="Line-Copy" d="M18,0 L18,2.99971994" stroke-linecap="square"/>
                                             </g>
                                         </g>
                                     </g>
@@ -855,191 +1083,67 @@
                             </g>
                         </svg>
                     </div>
-                    <div id="ok-libraries" class="libraries-vulnerable-number"></div>
-                    <div class="libraries-ok-text">
-                        Libraries with no vulnerabilities
+                    <div class="full-start-end-text-date">
+                        <div class="full-start-end-text">
+                            End:
+                        </div>
+                        <div class="full-start-end-date" id="osa-full-end-date">
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--osa files-->
+                <div class="full-files">
+                    <div class="full-start-end-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" height="27"
+                             id="SvgjsSvg1029"
+                             version="1.1" viewBox="0 0 32 27" width="32"><title>Combined Shape</title>
+                            <desc>Created with Avocode.</desc>
+                            <defs id="SvgjsDefs1030">
+                                <clipPath id="SvgjsClipPath1033">
+                                    <path id="SvgjsPath1032"
+                                          d="M848 2095C848 2094.82964 848.0142 2094.6626 848.04148 2094.5C848.0142 2094.3374 848 2094.17036 848 2094V2091C848 2089.34315 849.34315 2088 851 2088H857C858.65685 2088 860.29137 2089.31116 860.65079 2090.92856L860.8888900000001 2092H877.0000000000001C878.6568500000001 2092 880.0000000000001 2093.34315 880.0000000000001 2095V2112C880.0000000000001 2113.65685 878.6568500000001 2115 877.0000000000001 2115H851.0000000000001C849.3431500000002 2115 848.0000000000001 2113.65685 848.0000000000001 2112Z "
+                                          fill="#ffffff"/>
+                                </clipPath>
+                            </defs>
+                            <path stroke-dasharray="0"
+                                  d="M848 2095C848 2094.82964 848.0142 2094.6626 848.04148 2094.5C848.0142 2094.3374 848 2094.17036 848 2094V2091C848 2089.34315 849.34315 2088 851 2088H857C858.65685 2088 860.29137 2089.31116 860.65079 2090.92856L860.8888900000001 2092H877.0000000000001C878.6568500000001 2092 880.0000000000001 2093.34315 880.0000000000001 2095V2112C880.0000000000001 2113.65685 878.6568500000001 2115 877.0000000000001 2115H851.0000000000001C849.3431500000002 2115 848.0000000000001 2113.65685 848.0000000000001 2112Z "
+                                  stroke-opacity="1" stroke="#373050" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="50"
+                                  transform="matrix(1,0,0,1,-848,-2088)"
+                                  stroke-width="4" id="SvgjsPath1031" fill-opacity="0" fill="#ffffff" clip-path="url(&quot;#SvgjsClipPath1033&quot;)"/>
+                        </svg>
+                    </div>
+                    <div class="full-start-end-text-date">
+                        <div class="full-start-end-text">
+                            Files:
+                        </div>
+                        <div class="full-start-end-date" id="osa-full-files">
+
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="graph-results">
-                <div class="graph-top">
+            <div id="osa-cve-table-high-container">
 
-                    <div class="graph-title">Vulnerabilities Status</div>
-                    <div id="osa-threshold-exceeded-compliance"></div>
-                </div>
-                <ul class="osa-chart chart">
-
-                    <!--osa high-->
-                    <li>
-                        <div id="osa-bar-count-high" class="bar-count"></div>
-                        <span id="osa-bar-high" class="bar-1">
-                            <div id="osa-tooltip-high"></div>
-                        </span>
-
-                        <div class="bar-title-container">
-                            <div class="bar-title">High</div>
-                            <div class="severity-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     width="23px" height="21px" viewBox="0 0 23 21"
-                                     version="1.1">
-                                    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                                    <title>high</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs>
-                                        <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733"
-                                              id="path-1"/>
-                                        <mask id="mask-1" maskContentUnits="userSpaceOnUse"
-                                              maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19"
-                                              fill="white">
-                                            <use xlink:href="#path-1"/>
-                                        </mask>
-                                    </defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g id="Jenkins" transform="translate(-602.000000, -537.000000)">
-                                            <g id="SAST" transform="translate(272.000000, 180.000000)">
-                                                <g id="Vulnerabilities-Stat"
-                                                   transform="translate(246.082552, 0.000000)">
-                                                    <g id="High" transform="translate(22.425880, 105.921935)">
-                                                        <g id="high" transform="translate(62.000000, 252.000000)">
-                                                            <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z"
-                                                                  id="Combined-Shape" fill="#F5F5F5"/>
-                                                            <use id="Rectangle-40-Copy" stroke="#666666"
-                                                                 mask="url(#mask-1)" stroke-width="4"
-                                                                 xlink:href="#path-1"/>
-                                                            <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z"
-                                                                  id="Page-1" fill="#DA2945"/>
-                                                            <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12"
-                                                                  width="2" height="4"/>
-                                                            <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17"
-                                                                  width="2" height="2"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!--osa medium-->
-                    <li>
-                        <div id="osa-bar-count-med" class="bar-count"></div>
-                        <span id="osa-bar-med" class="bar-2">
-                            <div id="osa-tooltip-med"></div>
-                        </span>
-                        <div class="bar-title-container">
-                            <div class="bar-title">Medium</div>
-                            <div class="severity-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     width="23px" height="21px" viewBox="0 0 23 21"
-                                     version="1.1">
-                                    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                                    <title>medium</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs>
-                                        <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733"
-                                              id="path-2"/>
-                                        <mask id="mask-2" maskContentUnits="userSpaceOnUse"
-                                              maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19"
-                                              fill="white">
-                                            <use xlink:href="#path-2"/>
-                                        </mask>
-                                    </defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g id="Jenkins" transform="translate(-680.000000, -537.000000)">
-                                            <g id="SAST" transform="translate(272.000000, 180.000000)">
-                                                <g id="Vulnerabilities-Stat"
-                                                   transform="translate(246.082552, 0.000000)">
-                                                    <g id="High" transform="translate(22.425880, 105.921935)">
-                                                        <g id="med" transform="translate(140.000000, 252.000000)">
-                                                            <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z"
-                                                                  id="Combined-Shape" fill="#F5F5F5"/>
-                                                            <use id="Rectangle-40-Copy" stroke="#666666"
-                                                                 mask="url(#mask-2)" stroke-width="4"
-                                                                 xlink:href="#path-2"/>
-                                                            <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z"
-                                                                  id="Page-1" fill="#FFB400"/>
-                                                            <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12"
-                                                                  width="2" height="4"/>
-                                                            <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17"
-                                                                  width="2" height="2"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!--osa low-->
-                    <li>
-                        <div id="osa-bar-count-low" class="bar-count"></div>
-                        <span id="osa-bar-low" class="bar-3">
-                            <div id="osa-tooltip-low"></div>
-                        </span>
-
-                        <div class="bar-title-container">
-                            <div class="bar-title">Low</div>
-                            <div class="severity-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     width="23px" height="21px" viewBox="0 0 23 21"
-                                     version="1.1">
-                                    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
-                                    <title>low</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs>
-                                        <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733"
-                                              id="path-3"/>
-                                        <mask id="mask-3" maskContentUnits="userSpaceOnUse"
-                                              maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19"
-                                              fill="white">
-                                            <use xlink:href="#path-3"/>
-                                        </mask>
-                                    </defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                        <g id="Jenkins" transform="translate(-641.000000, -537.000000)">
-                                            <g id="SAST" transform="translate(272.000000, 180.000000)">
-                                                <g id="Vulnerabilities-Stat"
-                                                   transform="translate(246.082552, 0.000000)">
-                                                    <g id="High" transform="translate(22.425880, 105.921935)">
-                                                        <g id="low" transform="translate(101.000000, 252.000000)">
-                                                            <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z"
-                                                                  id="Combined-Shape" fill="#F5F5F5"/>
-                                                            <use id="Rectangle-40-Copy" stroke="#666666"
-                                                                 mask="url(#mask-3)" stroke-width="4"
-                                                                 xlink:href="#path-3"/>
-                                                            <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z"
-                                                                  id="Page-1" fill="#EFD412"/>
-                                                            <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12"
-                                                                  width="2" height="4"/>
-                                                            <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17"
-                                                                  width="2" height="2"/>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
             </div>
-        </td>
-    </tr>
+            <div id="osa-cve-table-med-container">
 
-</table>
+            </div>
+            <div id="osa-cve-table-low-container">
+
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    //-------------------------- sast vars --------------------------------------
+    //---------------------------------------------------------- vars ---------------------------------------------------------------
+    //    var cxIconPath = "/cxReport/src/img/CxIcon48x48.png";
 
+    //-------------------------- sast vars --------------------------------------
     var sastResultsReady = cx.sastResultsReady;
+    var pdfReportReady = true;
 
     //thresholds
     var thresholdsEnabled = cx.thresholdEnabled;
@@ -1056,8 +1160,6 @@
 
 
     //-------------------------- osa vars --------------------------------------
-
-
     var osaEnabled = cx.osaEnabled;
 
     //libraries
@@ -1077,8 +1179,275 @@
     var osaMedCount = cx.osaMediumResults;
     var osaLowCount = cx.osaLowResults;
 
-    //---------------------------------------------------------- other vars ---------------------------------------------------------------
 
+    //-------------------------- full reports vars --------------------------------------
+    var sastPdfPath = 'path/pdf';
+    var sastHtmlPath = 'path/pdf';
+    //    http://localhost/CxWebClient/ViewerMain.aspx?scanid=1030692&projectid=40565
+    var sastCodeViewerPath = 'path/pdf';
+
+    var osaHtmlPath = 'path/pdf';
+    var osaPdfPath = 'path/pdf';
+
+    var sastStartDate = 28 / 06 / 2016;
+    var sastEndtDate = 28 / 06 / 2016;
+    var sastNumFiles = 1023;
+    var sastLoc = 5632;
+
+    var osaStartDate = 28 / 06 / 2016;
+    var osaEndtDate = 28 / 06 / 2016;
+    var osaNumFiles = 1023;
+
+
+    //cve lists
+    var highCveList = [{"prettyName": "SQL Injection", "name": "SQL_Injection", "severity": "3", "count": 1}
+    ];
+    var medCveList = [{"prettyName": "Parameter Tampering", "name": "Parameter_Tampering", "severity": "2", "count": 1}
+    ];
+    var lowCveList = [{
+        "prettyName": "Improper Exception Handling",
+        "name": "Improper_Exception_Handling",
+        "severity": "1",
+        "count": 3
+    }, {"prettyName": "Improper Resource Access Authorization", "name": "Improper_Resource_Access_Authorization", "severity": "1", "count": 1}
+    ];
+
+    //cve lists
+    var osaHighCveList = [{
+        "id": "98DDAFAF9DED4A98AC13A788477D557057125E0E",
+        "cveName": "CVE-2015-4852",
+        "score": 7.5,
+        "severity": {
+            "id": 2,
+            "name": "High"
+        },
+        "publishDate": "18-11-2015",
+        "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-4852",
+        "description": "The WLS Security component in Oracle WebLogic Server 10.3.6.0, 12.1.2.0, 12.1.3.0, and 12.2.1.0 allows remote attackers to execute arbitrary commands via a crafted serialized Java object in T3 protocol traffic to TCP port 7001, related to oracle_common/modules/com.bea.core.apache.commons.collections.jar. NOTE: the scope of this CVE is limited to the WebLogic Server product.",
+        "recommendations": null,
+        "sourceFileName": null,
+        "libraryId": "B346B1CA8CCDC8DC9336D2B5D34E960C256853F3",
+        "libraryName": "commons-collections-2.1.jar"
+    },
+        {
+            "id": "65BD9AD939FECC46A50FE34E4255CDD26983E376",
+            "cveName": "CVE-2015-6420",
+            "score": 7.5,
+            "severity": {
+                "id": 2,
+                "name": "High"
+            },
+            "publishDate": "15-12-2015",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-6420",
+            "description": "Serialized-object interfaces in certain Cisco Collaboration and Social Media; Endpoint Clients and Client Software; Network Application, Service, and Acceleration; Network and Content Security Devices; Network Management and Provisioning; Routing and Switching - Enterprise and Service Provider; Unified Computing; Voice and Unified Communications Devices; Video, Streaming, TelePresence, and Transcoding Devices; Wireless; and Cisco Hosted Services products allow remote attackers to execute arbitrary commands via a crafted serialized Java object, related to the Apache Commons Collections (ACC) library.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "B346B1CA8CCDC8DC9336D2B5D34E960C256853F3",
+            "libraryName": "commons-collections-2.1.jar"
+        },
+        {
+            "id": "BF8210DC9D1188413951C56A9A1AB8A0F69AA982",
+            "cveName": "CVE-2015-7501",
+            "score": 7.3,
+            "severity": {
+                "id": 2,
+                "name": "High"
+            },
+            "publishDate": "09-11-2015",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7501",
+            "description": "It was found that the Apache commons-collections library permitted code execution when deserializing objects involving a specially constructed chain of classes. A remote attacker could use this flaw to execute arbitrary code with the permissions of the application using the commons-collections library.",
+            "recommendations": "Upgrade to version apache-commons-collections 4.1, apache-commons-collections 3.2.2 or greater",
+            "sourceFileName": null,
+            "libraryId": "B346B1CA8CCDC8DC9336D2B5D34E960C256853F3",
+            "libraryName": "commons-collections-2.1.jar"
+        }, {
+            "id": "8286F1306CB21C7E71E0B5AD77A1AE7335CC185C",
+            "cveName": "CVE-2014-0114",
+            "score": 7.5,
+            "severity": {
+                "id": 2,
+                "name": "High"
+            },
+            "publishDate": "30-04-2014",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0114",
+            "description": "Apache Commons BeanUtils, as distributed in lib/commons-beanutils-1.8.0.jar in Apache Struts 1.x through 1.3.10 and in other products requiring commons-beanutils through 1.9.2, does not suppress the class property, which allows remote attackers to \"manipulate\" the ClassLoader and execute arbitrary code via the class parameter, as demonstrated by the passing of this parameter to the getClass method of the ActionForm object in Struts 1.",
+            "recommendations": "All Commons BeanUtils users should upgrade to the latest version >= commons-beanutils-1.9.2\n",
+            "sourceFileName": null,
+            "libraryId": "CD0C64BA7869B39D2204ECF37AE200D0240FAD94",
+            "libraryName": "commons-beanutils-1.8.3.jar"
+        }
+    ];
+    var osaMedCveList = [
+        {
+            "id": "B8F450A0D0077E0481D3273896F34F6E38BFFCD0",
+            "cveName": "CVE-2012-4529",
+            "score": 4.3,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "28-10-2013",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-4529",
+            "description": "The org.apache.catalina.connector.Response.encodeURL method in Red Hat JBoss Web 7.1.x and earlier, when the tracking mode is set to COOKIE, sends the jsessionid in the URL of the first response of a session, which allows remote attackers to obtain the session id (1) via a man-in-the-middle attack or (2) by reading a log.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "B33765B1BBE4E1E256162963C668C8B24E878D3A",
+            "cveName": "CVE-2013-4590",
+            "score": 4.3,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "26-02-2014",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-4590",
+            "description": "Apache Tomcat before 6.0.39, 7.x before 7.0.50, and 8.x before 8.0.0-RC10 allows attackers to obtain \"Tomcat internals\" information by leveraging the presence of an untrusted web application with a context.xml, web.xml, *.jspx, *.tagx, or *.tld XML document containing an external entity declaration in conjunction with an entity reference, related to an XML External Entity (XXE) issue.",
+            "recommendations": "All Tomcat 6.0.x users should upgrade to the latest version >= tomcat-6.0.41\nAll Tomcat 7.0.x users should upgrade to the latest version >= tomcat-7.0.56\n",
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "5AED226E0483837167DFAAADF8155354E41CC8C6",
+            "cveName": "CVE-2014-0096",
+            "score": 4.3,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "31-05-2014",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0096",
+            "description": "java/org/apache/catalina/servlets/DefaultServlet.java in the default servlet in Apache Tomcat before 6.0.40, 7.x before 7.0.53, and 8.x before 8.0.4 does not properly restrict XSLT stylesheets, which allows remote attackers to bypass security-manager restrictions and read arbitrary files via a crafted web application that provides an XML external entity declaration in conjunction with an entity reference, related to an XML External Entity (XXE) issue.",
+            "recommendations": "All Tomcat 6.0.x users should upgrade to the latest version >= tomcat-6.0.41\nAll Tomcat 7.0.x users should upgrade to the latest version >= tomcat-7.0.56\n",
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "CC538F3F9090BB857CC7435F45855BBCB3F573E5",
+            "cveName": "CVE-2014-0119",
+            "score": 4.3,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "31-05-2014",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0119",
+            "description": "Apache Tomcat before 6.0.40, 7.x before 7.0.54, and 8.x before 8.0.6 does not properly constrain the class loader that accesses the XML parser used with an XSLT stylesheet, which allows remote attackers to (1) read arbitrary files via a crafted web application that provides an XML external entity declaration in conjunction with an entity reference, related to an XML External Entity (XXE) issue, or (2) read files associated with different web applications on a single Tomcat instance via a crafted web application.",
+            "recommendations": "All Tomcat 6.0.x users should upgrade to the latest version >= tomcat-6.0.41\nAll Tomcat 7.0.x users should upgrade to the latest version >= tomcat-7.0.56\n",
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "A3868B78EE949AA133B6F4E4705D0D999D1C0DFF",
+            "cveName": "CVE-2015-5345",
+            "score": 5.0,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "24-02-2016",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5345",
+            "description": "The Mapper component in Apache Tomcat 6.x before 6.0.45, 7.x before 7.0.67, 8.x before 8.0.30, and 9.x before 9.0.0.M2 processes redirects before considering security constraints and Filters, which allows remote attackers to determine the existence of a directory via a URL that lacks a trailing / (slash) character.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "C32CA80DA2A3306F8EDF5BBBF09F23F7B96CB9C6",
+            "cveName": "CVE-2015-5346",
+            "score": 6.8,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "24-02-2016",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5346",
+            "description": "Session fixation vulnerability in Apache Tomcat 7.x before 7.0.66, 8.x before 8.0.30, and 9.x before 9.0.0.M2, when different session settings are used for deployments of multiple versions of the same web application, might allow remote attackers to hijack web sessions by leveraging use of a requestedSessionSSL field for an unintended request, related to CoyoteAdapter.java and Request.java.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "0CB2A6BEB3146D6FB18121F4C68101D29DC56BA0",
+            "cveName": "CVE-2015-5351",
+            "score": 6.8,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "24-02-2016",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5351",
+            "description": "The (1) Manager and (2) Host Manager applications in Apache Tomcat 7.x before 7.0.68, 8.x before 8.0.31, and 9.x before 9.0.0.M2 establish sessions and send CSRF tokens for arbitrary new requests, which allows remote attackers to bypass a CSRF protection mechanism by using a token.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "4F078C4F6AFE11FE22717CB9508282F60C412B9B",
+            "cveName": "CVE-2016-0706",
+            "score": 4.0,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "24-02-2016",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-0706",
+            "description": "Apache Tomcat 6.x before 6.0.45, 7.x before 7.0.68, 8.x before 8.0.31, and 9.x before 9.0.0.M2 does not place org.apache.catalina.manager.StatusManagerServlet on the org/apache/catalina/core/RestrictedServlets.properties list, which allows remote authenticated users to bypass intended SecurityManager restrictions and read arbitrary HTTP requests, and consequently discover session ID values, via a crafted web application.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "A34F2E92DC0206A8E730961CF1AFD3C3EE5CBAC8",
+            "cveName": "CVE-2016-0714",
+            "score": 6.5,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "24-02-2016",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-0714",
+            "description": "The session-persistence implementation in Apache Tomcat 6.x before 6.0.45, 7.x before 7.0.68, 8.x before 8.0.31, and 9.x before 9.0.0.M2 mishandles session attributes, which allows remote authenticated users to bypass intended SecurityManager restrictions and execute arbitrary code in a privileged context via a web application that places a crafted object in a session.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }, {
+            "id": "8057BEBF533E1502AE86384BDC26CEDAD1B89F4A",
+            "cveName": "CVE-2016-0763",
+            "score": 6.5,
+            "severity": {
+                "id": 1,
+                "name": "Medium"
+            },
+            "publishDate": "24-02-2016",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-0763",
+            "description": "The setGlobalContext method in org/apache/naming/factory/ResourceLinkFactory.java in Apache Tomcat 7.x before 7.0.68, 8.x before 8.0.31, and 9.x before 9.0.0.M3 does not consider whether ResourceLinkFactory.setGlobalContext callers are authorized, which allows remote authenticated users to bypass intended SecurityManager restrictions and read or write to arbitrary application data, or cause a denial of service (application disruption), via a web application that sets a crafted global context.",
+            "recommendations": null,
+            "sourceFileName": null,
+            "libraryId": "56DAEE4E3186AEA248E88A59CDB6615B157424D8",
+            "libraryName": "tomcat-catalina-7.0.47.jar"
+        }
+    ];
+    var osaLowCveList = [
+        {
+            "id": "E99D85B04F1D2639C7F9F0314D3E684C14FA3FBE",
+            "cveName": "CVE-2012-2672",
+            "score": 2.1,
+            "severity": {
+                "id": 0,
+                "name": "Low"
+            },
+            "publishDate": "16-06-2012",
+            "url": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-2672",
+            "description": "Oracle Mojarra 2.1.7 does not properly \"clean up\" the FacesContext reference during startup, which allows local users to obtain context information an access resources from another WAR file by calling the FacesContext.getCurrentInstance function.",
+            "recommendations": "Apply the appropriate patch for your system. See References.",
+            "sourceFileName": null,
+            "libraryId": "7EE88C9A2CF1225A2B779FC86F25E4959A965AB1",
+            "libraryName": "jsf-api-2.1.7.jar"
+        }
+    ];
 
     var thresholdExceededHtml =
             '<div class="threshold-exceeded">' +
@@ -1100,6 +1469,7 @@
             '</div>' +
             '</div>';
 
+
     var SEVERITY = {
         HIGH: {value: 0, name: "high"},
         MED: {value: 1, name: "medium"},
@@ -1109,23 +1479,30 @@
         OSA_LOW: {value: 5, name: "low"}
     };
 
+    //    document.getElementById("cx-icon-main").setAttribute("src", cxIconPath);
     //---------------------------------------------------------- sast ---------------------------------------------------------------
+    //todo - catch exceptions?
     //set bars height and count
     if (sastResultsReady) {
-        document.getElementById("onSastError").setAttribute("style", "display:none");
-        document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
+        try {
+            document.getElementById("onSastError").setAttribute("style", "display:none");
+            document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
 
-        document.getElementById("bar-count-high").innerHTML = highCount;
-        document.getElementById("bar-count-med").innerHTML = medCount;
-        document.getElementById("bar-count-low").innerHTML = lowCount;
+            document.getElementById("bar-count-high").innerHTML = highCount;
+            document.getElementById("bar-count-med").innerHTML = medCount;
+            document.getElementById("bar-count-low").innerHTML = lowCount;
 
-        document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / (highCount + medCount + lowCount) + "%");
-        document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / (highCount + medCount + lowCount) + "%");
-        document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / (highCount + medCount + lowCount) + "%");
-
-        if (sastSummaryResultsLink) {
-            document.getElementById("html-report-link").setAttribute("href", sastSummaryResultsLink);
+            document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / (highCount + medCount + lowCount) + "%");
+            document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / (highCount + medCount + lowCount) + "%");
+            document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / (highCount + medCount + lowCount) + "%");
+        } catch(e) {
+            console.log(e.message);
         }
+
+
+//        if (sastSummaryResultsLink) {
+//            document.getElementById("html-report-link").setAttribute("href", sastSummaryResultsLink);
+//        }
 
 
         //if threshold is enabled
@@ -1162,12 +1539,12 @@
             }
         }
     } else {
-        document.getElementById("cxsast-info").setAttribute("style", "display:none");
+        document.getElementById("sast-summary").setAttribute("style", "display:none");
     }
 
     //---------------------------------------------------------- osa ---------------------------------------------------------------
     if (osaEnabled) {
-
+        //todo - catch exceptions?
         //set bars height and count
         document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
         document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
@@ -1177,10 +1554,8 @@
         document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
         document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
 
-        document.getElementById("vulnerable-libraries").innerHTML = osaVulnerableAndOutdatedLibs;
-        document.getElementById("ok-libraries").innerHTML = okLibraries;
-        document.getElementById("osa-html-report-link").setAttribute("href", osaSummaryResultsLink);
-
+        document.getElementById("vulnerable-libraries").innerHTML = numberWithCommas(osaVulnerableAndOutdatedLibs);
+        document.getElementById("ok-libraries").innerHTML = numberWithCommas(okLibraries);
 
         //if threshold is enabled
         if (osaThresholdsEnabled) {
@@ -1218,13 +1593,88 @@
         }
     }
     else {
-        document.getElementById("osa-info").setAttribute("style", "display:none");
+        document.getElementById("osa-summary").setAttribute("style", "display:none");
+        document.getElementById("sast-summary").setAttribute("class", "sast-summary chart-large");
     }
 
+    //---------------------------------------------------------- full reports ---------------------------------------------------------------
+    //sast links
+    try {
+        document.getElementById("sast-html-link").setAttribute("href", sastHtmlPath);
+
+        //sastPdfPath only if pdfReportReady
+        if (pdfReportReady) {
+            document.getElementById("sast-pdf-link").innerHTML =
+
+                    '<a class="pdf-report" href="' + sastPdfPath + '">' +
+                    '<div class="download-icon">' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1022" version="1.1" width="13" height="16" viewBox="0 0 13 16"><title>PDF icon</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1023"><clipPath id="SvgjsClipPath1027"><path id="SvgjsPath1026" d="M271 763L280.1 763L284 767L284 779L271 779Z " fill="#ffffff"/></clipPath></defs><path id="SvgjsPath1024" d="M279 768L279 763L280.1 763L284 767L284 768Z " fill="#373050" fill-opacity="1" transform="matrix(1,0,0,1,-271,-763)"/><path id="SvgjsPath1025" d="M271 763L280.1 763L284 767L284 779L271 779Z " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="butt" stroke-opacity="1" stroke="#373050" stroke-miterlimit="50" stroke-width="2" clip-path="url(&quot;#SvgjsClipPath1027&quot;)" transform="matrix(1,0,0,1,-271,-763)"/></svg>' +
+                    '</div>' +
+                    '<div class="download-txt">' +
+                    'PDF Report' +
+                    '</div>' +
+                    '</a>';
+        }
+
+        document.getElementById("sast-code-viewer-link").setAttribute("href", sastCodeViewerPath);
+
+        //osa links
+        document.getElementById("osa-html-link").setAttribute("href", osaHtmlPath);
+        document.getElementById("osa-pdf-link").setAttribute("href", osaPdfPath);
+
+        //sast info
+        document.getElementById("sast-full-start-date").innerHTML = sastStartDate;
+        document.getElementById("sast-full-end-date").innerHTML = sastEndtDate;
+        document.getElementById("sast-full-files").innerHTML = numberWithCommas(sastNumFiles);
+        document.getElementById("sast-full-loc").innerHTML = numberWithCommas(sastLoc);
+
+        //osa info
+        document.getElementById("osa-full-start-date").innerHTML = osaStartDate;
+        document.getElementById("osa-full-end-date").innerHTML = osaEndtDate;
+        document.getElementById("osa-full-files").innerHTML = numberWithCommas(osaNumFiles);
+    } catch(e) {
+        console.log(e.message);
+    }
+
+
+
+    //generate full reports
+    if (highCount == 0 && medCount == 0 && lowCount == 0) {
+        document.getElementById("sast-full").setAttribute("style", "display: none");
+    } else {
+        if (highCount > 0) {
+            generateCveTable(SEVERITY.HIGH);
+        }
+        if (medCount > 0) {
+            generateCveTable(SEVERITY.MED);
+        }
+        if (lowCount > 0) {
+            generateCveTable(SEVERITY.LOW);
+        }
+    }
+
+    if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
+        document.getElementById("osa-full").setAttribute("style", "display: none");
+    } else {
+        if (osaHighCount > 0) {
+            generateCveTable(SEVERITY.OSA_HIGH);
+        }
+        if (osaMedCount > 0) {
+            generateCveTable(SEVERITY.OSA_MED);
+        }
+        if (osaLowCount > 0) {
+            generateCveTable(SEVERITY.OSA_LOW);
+        }
+    }
+
+    //functions
     function tooltipGenerator(severity) {
         var threshold = 0;
         var count = 0;
         var thresholdHeight = 0;
+        //if severity high - threshold = highThreshold and count = highCount
+        //if med - ...
+        //if low - ...
 
         switch (severity) {
             case SEVERITY.HIGH:
@@ -1255,24 +1705,213 @@
         }
 
         //calculate visual height
-        thresholdHeight = threshold * 100 / count;
+        thresholdHeight = threshold * 100 / count; //todo- exception?
 
 
         return '' +
 
                 '<div class="tooltip-container" style="bottom:calc(' + thresholdHeight + '% - 1px)">' +
-                '<div class="threshold-line"></div>' +
+                '<div class="threshold-line">' +
+                ' ' +
+                '</div>' +
                 '<div class="threshold-tooltip">' +
-                '<div class="threshold-tooltip-background">' +
-                '<div class="threshold-icon-white">' +
-                '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" id="SvgjsSvg1044" version="1.1" width="9.400000000000091" height="12.399999999999977" viewBox="0 0 9.400000000000091 12.399999999999977"><title>threshold ICON</title><desc>Created with Avocode.</desc><defs id="SvgjsDefs1045"/><path id="SvgjsPath1046" d="M638 360L642.29 360L642.29 365.6L638 365.6Z " fill="#ffffff" fill-opacity="1" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1047" d="M638.71 355.1L641.57 355.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1048" d="M638.71 358.1L641.57 358.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/><path id="SvgjsPath1049" d="M636.42 365.1L643.64 365.1 " fill-opacity="0" fill="#ffffff" stroke-dasharray="0" stroke-linejoin="miter" stroke-linecap="square" stroke-opacity="1" stroke="#ffffff" stroke-miterlimit="50" stroke-width="1.4" transform="matrix(1,0,0,1,-635.3,-354.3)"/></svg>' +
-                '</div>' +
-                '<div class="threshold-text">Threshold</div>' +
-                '<div class="threshold-number">' + threshold + '</div>' +
-                '</div>' +
+                '<div>Threshold</div>' +
+                '<div>' + threshold + '</div>' +
                 '</div>' +
                 '</div>';
 
     }
 
+    function generateCveTableTitle(severity) {
+        var svgIcon;
+        var severityNameTtl;
+        var severityCountTtl;
+
+        var svgHighIcon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23px" height="21px" viewBox="0 0 23 21" version="1.1"> <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch --> <title>high</title> <desc>Created with Sketch.</desc> <defs> <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733" id="path-1"></path> <mask id="mask-1" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19" fill="white"> <use xlink:href="#path-1"></use> </mask> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Jenkins" transform="translate(-602.000000, -537.000000)"> <g id="SAST" transform="translate(272.000000, 180.000000)"> <g id="Vulnerabilities-Stat" transform="translate(246.082552, 0.000000)"> <g id="High" transform="translate(22.425880, 105.921935)"> <g id="high" transform="translate(62.000000, 252.000000)"> <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z" id="Combined-Shape" fill="#F5F5F5"></path> <use id="Rectangle-40-Copy" stroke="#666666" mask="url(#mask-1)" stroke-width="4" xlink:href="#path-1"></use> <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z" id="Page-1" fill="#DA2945"></path> <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12" width="2" height="4"></rect> <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17" width="2" height="2"></rect> </g> </g> </g> </g> </g> </g> </svg>';
+        var svgMedIcon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23px" height="21px" viewBox="0 0 23 21" version="1.1"> <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch --> <title>medium</title> <desc>Created with Sketch.</desc> <defs> <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733" id="path-2"/> <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19" fill="white"> <use xlink:href="#path-2"/> </mask> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Jenkins" transform="translate(-680.000000, -537.000000)"> <g id="SAST" transform="translate(272.000000, 180.000000)"> <g id="Vulnerabilities-Stat" transform="translate(246.082552, 0.000000)"> <g id="High" transform="translate(22.425880, 105.921935)"> <g id="med" transform="translate(140.000000, 252.000000)"> <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z" id="Combined-Shape" fill="#F5F5F5"/> <use id="Rectangle-40-Copy" stroke="#666666" mask="url(#mask-2)" stroke-width="4" xlink:href="#path-2"/> <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z" id="Page-1" fill="#FFB400"/> <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12" width="2" height="4"/> <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17" width="2" height="2"/> </g> </g> </g> </g> </g> </g> </svg>';
+        var svgLowIcon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23px" height="21px" viewBox="0 0 23 21" version="1.1"> <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch --> <title>low</title> <desc>Created with Sketch.</desc> <defs> <path d="M6.54299421,19 C6.54299421,19 6.05426879,18.5188806 5.34871978,17.7129773 C3.86123349,16.0139175 1.41001114,12.8712609 0.542994209,9.75 C-0.678742762,5.3517469 0.542994209,1 0.542994209,1 L8.04299421,0 L15.5429942,1 C15.5429942,1 16.3322418,3.81124806 16.0076778,7.19836733" id="path-3"></path> <mask id="mask-3" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="16.0859884" height="19" fill="white"> <use xlink:href="#path-3"></use> </mask> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Jenkins" transform="translate(-641.000000, -537.000000)"> <g id="SAST" transform="translate(272.000000, 180.000000)"> <g id="Vulnerabilities-Stat" transform="translate(246.082552, 0.000000)"> <g id="High" transform="translate(22.425880, 105.921935)"> <g id="low" transform="translate(101.000000, 252.000000)"> <path d="M8.00483672,16.8625579 L8.04299421,0 L0.542994209,1 C0.542994209,1 -0.678742762,5.3517469 0.542994209,9.75 C1.70821884,13.9448087 5.73482423,18.178262 6.4378676,18.8941974 L8.00483672,16.8625579 Z" id="Combined-Shape" fill="#F5F5F5"></path> <use id="Rectangle-40-Copy" stroke="#666666" mask="url(#mask-3)" stroke-width="4" xlink:href="#path-3"></use> <path d="M14.4965773,8.86301041 C14.77461,8.38638292 15.2249744,8.38567036 15.5034227,8.86301041 L21.4965773,19.1369896 C21.77461,19.6136171 21.5500512,20 20.9931545,20 L9.00684547,20 C8.45078007,20 8.22497438,19.6143296 8.50342274,19.1369896 L14.4965773,8.86301041 Z" id="Page-1" fill="#EFD412"></path> <rect id="Rectangle-5" fill="#FFFFFF" x="14" y="12" width="2" height="4"></rect> <rect id="Rectangle-6" fill="#FFFFFF" x="14" y="17" width="2" height="2"></rect> </g> </g> </g> </g> </g> </g> </svg>';
+
+        switch (severity) {
+            case SEVERITY.HIGH:
+                svgIcon = svgHighIcon;
+                severityNameTtl = "High";
+                severityCountTtl = highCount;
+                break;
+
+            case SEVERITY.OSA_HIGH:
+                svgIcon = svgHighIcon;
+                severityNameTtl = "High";
+                severityCountTtl = osaHighCount;
+                break;
+
+            case SEVERITY.MED:
+                svgIcon = svgMedIcon;
+                severityNameTtl = "Medium";
+                severityCountTtl = medCount;
+                break;
+
+            case SEVERITY.OSA_MED:
+                svgIcon = svgMedIcon;
+                severityNameTtl = "Medium";
+                severityCountTtl = osaMedCount;
+                break;
+
+            case SEVERITY.LOW:
+                svgIcon = svgLowIcon;
+                severityNameTtl = "Low";
+                severityCountTtl = lowCount;
+                break;
+
+            case SEVERITY.OSA_LOW:
+                svgIcon = svgLowIcon;
+                severityNameTtl = "Low";
+                severityCountTtl = osaLowCount;
+                break;
+        }
+
+        return '' +
+                '<div class="full-severity-title">' +
+                '<div class="severity-icon">' +
+                svgIcon +
+                '</div>' +
+                '<div class="severity-title-name">' + severityNameTtl + '</div>' +
+                '<div class="severity-count">' + severityCountTtl + '</div>' +
+                '</div>';
+    }
+
+    function generateSastCveTable(severity) {
+        var severityCount;
+        var severityCveList;
+        var tableElementId = "";
+
+        switch (severity) {
+            case SEVERITY.HIGH:
+                severityCount = highCount;
+                severityCveList = highCveList;
+                tableElementId = "sast-cve-table-high";
+                break;
+
+            case SEVERITY.MED:
+                severityCount = medCount;
+                severityCveList = medCveList;
+                tableElementId = "sast-cve-table-med";
+                break;
+
+            case SEVERITY.LOW:
+                severityCount = lowCount;
+                severityCveList = lowCveList;
+                tableElementId = "sast-cve-table-low";
+                break;
+        }
+
+        //generate table title
+        var severityTitle = generateCveTableTitle(severity);
+
+        //generate table headers
+        var tableHeadersNames = {h1: "Vulnerability Type", h2: "##"};
+        var tableHeadersElement = generateCveTableHeaders(tableHeadersNames);
+
+        //get container and create table element in it
+        document.getElementById(tableElementId + '-container').innerHTML =
+                severityTitle +
+                '<table id="' + tableElementId + '" class="cve-table sast-cve-table ' + tableElementId + '">' +
+                tableHeadersElement +
+                '</table>';
+
+        //get the created table
+        var table = document.getElementById(tableElementId);
+
+        //add rows to table
+        var row;
+        for (i = 0; i < severityCveList.length; i++) {
+            row = table.insertRow(i + 1);
+            row.insertCell(0).innerHTML = severityCveList[i].name;
+            row.insertCell(1).innerHTML = severityCveList[i].count;
+
+        }
+    }
+
+    function generateOsaCveTable(severity) {
+        var severityCount;
+        var severityCveList;
+        var tableElementId = "";
+
+        switch (severity) {
+            case SEVERITY.OSA_HIGH:
+                severityCount = osaHighCount;
+                severityCveList = osaHighCveList;
+                tableElementId = "osa-cve-table-high";
+                break;
+
+            case SEVERITY.OSA_MED:
+                severityCount = osaMedCount;
+                severityCveList = osaMedCveList;
+                tableElementId = "osa-cve-table-med";
+                break;
+
+            case SEVERITY.OSA_LOW:
+                severityCount = osaLowCount;
+                severityCveList = osaLowCveList;
+                tableElementId = "osa-cve-table-low";
+                break;
+        }
+
+        //generate table title
+        var severityTitle = generateCveTableTitle(severity);
+
+        //generate table headers
+        var tableHeadersNames = {h1: "Vulnerability Type", h2: "Publish Date", h3: "Library"};
+        var tableHeadersElement = generateCveTableHeaders(tableHeadersNames);
+
+        //get container and create table element in it
+        document.getElementById(tableElementId + '-container').innerHTML =
+                severityTitle +
+                '<table id="' + tableElementId + '" class="cve-table osa-cve-table ' + tableElementId + '">' +
+                tableHeadersElement +
+                '</table>';
+
+        //get the created table
+        var table = document.getElementById(tableElementId);
+
+        //add rows to table
+        var row;
+        for (i = 0; i < severityCveList.length; i++) {
+            row = table.insertRow(i + 1);
+            row.insertCell(0).innerHTML = severityCveList[i].cveName;
+            row.insertCell(1).innerHTML = severityCveList[i].publishDate;
+            row.insertCell(2).innerHTML = severityCveList[i].libraryName;
+
+        }
+    }
+
+    function generateCveTableHeaders(headers) {
+        var ret = "<tr>";
+
+        for (h in headers) {
+            ret += '<th>' + headers[h] + '</th>';
+        }
+
+        ret += "</tr>";
+        return ret;
+    }
+
+    function generateCveTable(severity) {
+        switch (severity) {
+            case SEVERITY.HIGH:
+            case SEVERITY.MED:
+            case SEVERITY.LOW:
+                generateSastCveTable(severity);
+                break;
+
+            case SEVERITY.OSA_HIGH:
+            case SEVERITY.OSA_MED:
+            case SEVERITY.OSA_LOW:
+                generateOsaCveTable(severity);
+                break;
+        }
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 </script>
