@@ -20,6 +20,8 @@ public class ScanResults {
 
     private int infoSeverityResults;
 
+    private String scanDetailedReport;
+
     public long getProjectId() {
         return projectId;
     }
@@ -74,5 +76,13 @@ public class ScanResults {
 
     public void setInfoSeverityResults(int infoSeverityResults) {
         this.infoSeverityResults = infoSeverityResults;
+    }
+
+    public void setScanDetailedReport(String scanDetailedReport) {
+        this.scanDetailedReport = scanDetailedReport;
+    }
+
+    public String getScanDetailedReport() {
+        return scanDetailedReport;
     }
 }

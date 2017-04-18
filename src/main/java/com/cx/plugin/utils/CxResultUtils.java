@@ -33,7 +33,8 @@ public abstract class CxResultUtils {
                         .replace(THRESHOLD_ENABLED, String.valueOf(customBuildData.get(THRESHOLD_ENABLED)))
                         .replace(HIGH_THRESHOLD, String.valueOf(customBuildData.get(HIGH_THRESHOLD)))
                         .replace(MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(MEDIUM_THRESHOLD)))
-                        .replace(LOW_THRESHOLD, String.valueOf(customBuildData.get(LOW_THRESHOLD)));
+                        .replace(LOW_THRESHOLD, String.valueOf(customBuildData.get(LOW_THRESHOLD)))
+                        .replace(SCAN_DETAILED_REPORT, String.valueOf(customBuildData.get(SCAN_DETAILED_REPORT)));
 
 
                 if (customBuildData.get(OSA_RESULTS_READY) != null) {

@@ -20,6 +20,10 @@ public abstract class CxResultsConst {
 
     public static final String SAST_SUMMARY_RESULTS_LINK = "cx.sastSummaryResultsLink";
 
+    public static final String SCAN_DETAILED_REPORT = "cx.scanDetailedReport";
+
+    public static final String OSA_DETAILED_REPORT = "cx.osaDetailedReport";
+
 
     public static final String OSA_RESULTS_READY = "cx.osaResultsReady";
     public static final String OSA_ENABLED = "cx.osaEnabled";
@@ -37,5 +41,7 @@ public abstract class CxResultsConst {
 
     public static final String OSA_VULNERABLE_LIBRARIES = "cx.osaVulnerableLibraries";
     public static final String OSA_OK_LIBRARIES = "cx.osaOkLibraries";
+
+
 
 }

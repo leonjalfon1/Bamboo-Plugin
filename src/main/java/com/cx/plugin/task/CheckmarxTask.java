@@ -26,6 +26,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,6 +148,7 @@ public class CheckmarxTask implements TaskType {
                 return taskResultBuilder.success().build();
             }
 
+//            SAST results
             try {
                 //wait for SAST scan to finish
                 ConsoleScanWaitHandler consoleScanWaitHandler = new ConsoleScanWaitHandler();
@@ -155,8 +158,21 @@ public class CheckmarxTask implements TaskType {
                 buildLoggerAdapter.info("Scan finished. Retrieving scan results");
                 //retrieve SAST scan results
                 scanResults = cxClientService.retrieveScanResults(createScanResponse.getProjectId());
+
                 scanResultsUrl = CxPluginHelper.composeScanLink(url.toString(), scanResults);
                 printResultsToConsole(scanResults);
+
+
+                //            SAST detailed report
+                byte[] cxReport = cxClientService.getScanReport(scanResults.getScanID(), ReportType.XML);
+                String scanReport = new String(cxReport);
+                JSONObject scanDetailedReport = XML.toJSONObject(scanReport);
+
+
+                scanResults.setScanDetailedReport(scanDetailedReport.toString());
+
+
+
                 addSASTResults(results, scanResults, config);
 
                 if (config.isGeneratePDFReport()) {
@@ -176,6 +192,7 @@ public class CheckmarxTask implements TaskType {
                 sastWaitException = new Exception("Fail to perform CxSAST scan: ", e);
             }
 
+//            OSA results
             if (config.isOsaEnabled()) {
 
                 try {
@@ -229,9 +246,11 @@ public class CheckmarxTask implements TaskType {
                     throw osaException;
                 }
             }
+
             if (sastWaitException != null) {
                 throw sastWaitException;
             }
+
 
         } catch (MalformedURLException e) {
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
@@ -377,6 +396,11 @@ public class CheckmarxTask implements TaskType {
         return configurationMap;
     }
 
+    private void addSASTDetailedResults(Map<String, String> results, ScanResults scanResults, CxScanConfiguration config) {
+        results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
+
+    }
+
     private void addSASTResults(Map<String, String> results, ScanResults scanResults, CxScanConfiguration config) {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
@@ -395,6 +419,7 @@ public class CheckmarxTask implements TaskType {
         }
 
         results.put(CxResultsConst.SAST_RESULTS_READY, OPTION_TRUE);
+        results.put(CxResultsConst.SCAN_DETAILED_REPORT, String.valueOf(scanResults.getScanDetailedReport()));
     }
 
     private void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, CxScanConfiguration config) {
@@ -406,6 +431,7 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
         results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
         results.put(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(config.isOSAThresholdEnabled()));
+        results.put(CxResultsConst.OSA_DETAILED_REPORT, String.valueOf(osaSummaryResults.getOsaDetailedReport()));
 
         if (config.isOSAThresholdEnabled()) {
 

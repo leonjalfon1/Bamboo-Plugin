@@ -1130,6 +1130,14 @@
 <script>
     //---------------------------------------------------------- vars ---------------------------------------------------------------
     //    var cxIconPath = "/cxReport/src/img/CxIcon48x48.png";
+    var SEVERITY = {
+        HIGH: {value: 0, name: "high"},
+        MED: {value: 1, name: "medium"},
+        LOW: {value: 2, name: "low"},
+        OSA_HIGH: {value: 3, name: "high"},
+        OSA_MED: {value: 4, name: "medium"},
+        OSA_LOW: {value: 5, name: "low"}
+    };
 
     //-------------------------- sast vars --------------------------------------
     var sastResultsReady = cx.sastResultsReady;
@@ -1171,6 +1179,8 @@
 
 
     //-------------------------- full reports vars --------------------------------------
+    var sastDetailedReport = cx.scanDetailedReport;
+
     var sastPdfPath = 'path/pdf';
     var sastHtmlPath = 'path/pdf';
     //    http://localhost/CxWebClient/ViewerMain.aspx?scanid=1030692&projectid=40565
@@ -1188,19 +1198,12 @@
     var osaEndtDate = 28 / 06 / 2016;
     var osaNumFiles = 1023;
 
+    var queryList = sastDetailedReport.CxXMLResults.Query;
 
     //cve lists
-    var highCveList = [{"prettyName": "SQL Injection", "name": "SQL_Injection", "severity": "3", "count": 1}
-    ];
-    var medCveList = [{"prettyName": "Parameter Tampering", "name": "Parameter_Tampering", "severity": "2", "count": 1}
-    ];
-    var lowCveList = [{
-        "prettyName": "Improper Exception Handling",
-        "name": "Improper_Exception_Handling",
-        "severity": "1",
-        "count": 3
-    }, {"prettyName": "Improper Resource Access Authorization", "name": "Improper_Resource_Access_Authorization", "severity": "1", "count": 1}
-    ];
+    var highCveList = generateQueryList(SEVERITY.HIGH);
+    var medCveList = generateQueryList(SEVERITY.MED);
+    var lowCveList = generateQueryList(SEVERITY.LOW);
 
     //cve lists
     var osaHighCveList = [{
@@ -1460,14 +1463,7 @@
             '</div>';
 
 
-    var SEVERITY = {
-        HIGH: {value: 0, name: "high"},
-        MED: {value: 1, name: "medium"},
-        LOW: {value: 2, name: "low"},
-        OSA_HIGH: {value: 3, name: "high"},
-        OSA_MED: {value: 4, name: "medium"},
-        OSA_LOW: {value: 5, name: "low"}
-    };
+
 
     //    document.getElementById("cx-icon-main").setAttribute("src", cxIconPath);
     //---------------------------------------------------------- sast ---------------------------------------------------------------
@@ -1528,7 +1524,8 @@
                 thresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
             }
         }
-    } else {
+    }
+    else {
         document.getElementById("sast-summary").setAttribute("style", "display:none");
     }
 
@@ -1813,10 +1810,10 @@
 
         //add rows to table
         var row;
-        for (i = 0; i < severityCveList.length; i++) {
-            row = table.insertRow(i + 1);
-            row.insertCell(0).innerHTML = severityCveList[i].name;
-            row.insertCell(1).innerHTML = severityCveList[i].count;
+        for (cve in severityCveList) {
+            row = table.insertRow();
+            row.insertCell(0).innerHTML = cve;
+            row.insertCell(1).innerHTML = severityCveList[cve];
 
         }
     }
@@ -1904,4 +1901,18 @@
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
+
+    //query lists
+    function generateQueryList(severity) {
+        var severityQueryList = {};
+        for (var i = 0; i < queryList.length; i++) {
+            if(queryList[i].Severity.toLowerCase() == severity.name) {
+
+                severityQueryList[queryList[i].name] = queryList[i].Result.length ? queryList[i].Result.length : 1;
+            }
+        }
+
+        return severityQueryList;
+    }
+
 </script>
