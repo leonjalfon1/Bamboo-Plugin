@@ -49,7 +49,11 @@ public abstract class CxResultUtils {
                             .replace(OSA_MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(OSA_MEDIUM_THRESHOLD)))
                             .replace(OSA_LOW_THRESHOLD, String.valueOf(customBuildData.get(OSA_LOW_THRESHOLD)))
                             .replace(OSA_VULNERABLE_LIBRARIES, String.valueOf(customBuildData.get(OSA_VULNERABLE_LIBRARIES)))
-                            .replace(OSA_OK_LIBRARIES, String.valueOf(customBuildData.get(OSA_OK_LIBRARIES)));
+                            .replace(OSA_OK_LIBRARIES, String.valueOf(customBuildData.get(OSA_OK_LIBRARIES)))
+                            .replace(OSA_CVE_LIST, String.valueOf(customBuildData.get(OSA_CVE_LIST)))
+                            .replace(OSA_LIBRARIES, String.valueOf(customBuildData.get(OSA_LIBRARIES)))
+                            .replace(OSA_START_TIME, String.valueOf(customBuildData.get(OSA_START_TIME)))
+                            .replace(OSA_END_TIME, String.valueOf(customBuildData.get(OSA_END_TIME)));
                 } else {
                     ret = ret
                             .replace(OSA_ENABLED, OPTION_FALSE)
@@ -62,7 +66,11 @@ public abstract class CxResultUtils {
                             .replace(OSA_MEDIUM_THRESHOLD, "0")
                             .replace(OSA_LOW_THRESHOLD, "0")
                             .replace(OSA_VULNERABLE_LIBRARIES, "0")
-                            .replace(OSA_OK_LIBRARIES, "0");
+                            .replace(OSA_OK_LIBRARIES, "0")
+                            .replace(OSA_CVE_LIST, "")
+                            .replace(OSA_LIBRARIES, "")
+                            .replace(OSA_START_TIME, "")
+                            .replace(OSA_END_TIME, "");
                 }
             }
 

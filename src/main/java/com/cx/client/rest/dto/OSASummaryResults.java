@@ -20,7 +20,6 @@ public class OSASummaryResults {
     private int totalHighVulnerabilities;
     private int totalMediumVulnerabilities;
     private int totalLowVulnerabilities;
-    private String osaDetailedReport;
 
     public int getTotalLibraries() {
         return totalLibraries;
@@ -108,9 +107,5 @@ public class OSASummaryResults {
 
     public void setTotalLowVulnerabilities(int totalLowVulnerabilities) {
         this.totalLowVulnerabilities = totalLowVulnerabilities;
-    }
-
-    public String getOsaDetailedReport() {
-        return osaDetailedReport;
     }
 }

@@ -13,10 +13,7 @@ import com.atlassian.spring.container.ContainerManager;
 import com.cx.client.*;
 import com.cx.client.dto.*;
 import com.cx.client.exception.CxClientException;
-import com.cx.client.rest.dto.CVE;
-import com.cx.client.rest.dto.CreateOSAScanResponse;
-import com.cx.client.rest.dto.Library;
-import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.client.rest.dto.*;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxResultsConst;
 import com.cx.plugin.dto.CxScanConfiguration;
@@ -92,6 +89,7 @@ public class CheckmarxTask implements TaskType {
         ScanResults scanResults = null;
         CreateScanResponse createScanResponse = null;
         OSASummaryResults osaSummaryResults = null;
+        OSAScanStatus osaScanStatus = null;
         Exception osaException = null;
         Exception sastWaitException = null;
 
@@ -203,13 +201,14 @@ public class CheckmarxTask implements TaskType {
                     OSAConsoleScanWaitHandler osaConsoleScanWaitHandler = new OSAConsoleScanWaitHandler();
                     osaConsoleScanWaitHandler.setLogger(buildLoggerAdapter);
                     buildLoggerAdapter.info("Waiting for OSA scan to finish");
-                    cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, osaConsoleScanWaitHandler);
+                    osaScanStatus = cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, osaConsoleScanWaitHandler);
                     buildLoggerAdapter.info("OSA scan finished successfully");
                     buildLoggerAdapter.info("Creating OSA reports");
                     //retrieve OSA scan results
                     osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(osaScan.getScanId());
                     printOSAResultsToConsole(osaSummaryResults);
                     addOSAResults(results, osaSummaryResults, config);
+                    addOSAStatus(results, osaScanStatus);
 
                     //OSA PDF report
                     SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
@@ -241,16 +240,20 @@ public class CheckmarxTask implements TaskType {
                     objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDirectory + CX_REPORT_LOCATION, fileName), osaVulnerabilities);
                     buildLoggerAdapter.info("OSA vulnerabilities json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
 
+                    String osaJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(osaVulnerabilities);
+                    String osaLibrariesJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(libraries);
+
+
+                    addOsaCveAndLibLists(results, osaJson, osaLibrariesJson);
+
                 } catch (Exception e) {
                     osaException = e;
                     throw osaException;
                 }
             }
-
             if (sastWaitException != null) {
                 throw sastWaitException;
             }
-
 
         } catch (MalformedURLException e) {
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
@@ -296,6 +299,17 @@ public class CheckmarxTask implements TaskType {
         }
 
         return taskResultBuilder.success().build();
+    }
+
+    private void addOSAStatus(Map<String, String> results, OSAScanStatus osaScanStatus) {
+        results.put(CxResultsConst.OSA_START_TIME, osaScanStatus.getStartAnalyzeTime());
+        results.put(CxResultsConst.OSA_END_TIME, osaScanStatus.getEndAnalyzeTime());
+    }
+
+    private void addOsaCveAndLibLists(Map<String, String> results, String osaVulnerabilities, String osaLibraries) {
+        results.put(CxResultsConst.OSA_CVE_LIST, osaVulnerabilities);
+        results.put(CxResultsConst.OSA_LIBRARIES, osaLibraries);
+
     }
 
     private void deleteTempFiles() {
@@ -431,7 +445,6 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
         results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
         results.put(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(config.isOSAThresholdEnabled()));
-        results.put(CxResultsConst.OSA_DETAILED_REPORT, String.valueOf(osaSummaryResults.getOsaDetailedReport()));
 
         if (config.isOSAThresholdEnabled()) {
 

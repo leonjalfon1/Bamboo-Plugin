@@ -22,7 +22,8 @@ public abstract class CxResultsConst {
 
     public static final String SCAN_DETAILED_REPORT = "cx.scanDetailedReport";
 
-    public static final String OSA_DETAILED_REPORT = "cx.osaDetailedReport";
+    public static final String OSA_CVE_LIST = "cx.osaCveList";
+    public static final String OSA_LIBRARIES = "cx.osaLibraries";
 
 
     public static final String OSA_RESULTS_READY = "cx.osaResultsReady";
@@ -43,5 +44,6 @@ public abstract class CxResultsConst {
     public static final String OSA_OK_LIBRARIES = "cx.osaOkLibraries";
 
 
-
+    public static final String OSA_START_TIME = "cx.osaStartTime";
+    public static final String OSA_END_TIME = "cx.osaEndTime";
 }
