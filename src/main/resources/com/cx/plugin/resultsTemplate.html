@@ -886,7 +886,7 @@
                     </div>
                     <div class="full-start-end-text-date">
                         <div class="full-start-end-text">
-                            Libraries:
+                            Files:
                         </div>
                         <div class="full-start-end-date" id="sast-full-files">
 
@@ -1106,7 +1106,7 @@
                     </div>
                     <div class="full-start-end-text-date">
                         <div class="full-start-end-text">
-                            Files:
+                            Libraries:
                         </div>
                         <div class="full-start-end-date" id="osa-full-files">
 
@@ -1197,8 +1197,8 @@
     var sastNumFiles = sastDetailedReport.CxXMLResults.FilesScanned;
     var sastLoc = sastDetailedReport.CxXMLResults.LinesOfCodeScanned;
 
-    var osaStartDate = "cx.osaStartTime";
-    var osaEndDate = "cx.osaEndTime";
+    var osaStartDate = adjustDateFormat("cx.osaStartTime");
+    var osaEndDate = adjustDateFormat("cx.osaEndTime");
     var osaNumFiles = osaLibraries.length;
 
     var queryList = sastDetailedReport.CxXMLResults.Query;
@@ -1744,5 +1744,9 @@
 
         return new Date(start.getTime() + scanTimeMillis);
 
+    }
+
+    function adjustDateFormat(date) {
+        return date.substr(0,10) + " " + date.substr(11);
     }
 </script>
