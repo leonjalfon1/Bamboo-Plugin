@@ -2,7 +2,6 @@ package com.cx.client;
 
 import com.cx.client.exception.CxClientException;
 import com.cx.client.rest.dto.OSAScanStatus;
-import com.cx.client.rest.dto.OSAScanStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
