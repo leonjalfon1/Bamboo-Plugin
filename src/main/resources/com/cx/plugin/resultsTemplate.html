@@ -744,10 +744,12 @@
             <div class="detailed-report">
                 <div class="sast-downloads">
                     <!--pdf-->
-                    <div class="report-link"><a class="pdf-report" id="sast-pdf-link">
-                        <div style="display: none;">h</div>
-                    </a></div>
-                    <div class="report-link"><a class="pdf-report" id="sast-code-viewer-link">
+                    <div class="report-link">
+                        <a class="pdf-report" id="sast-pdf-link"></a>
+                    </div>
+                    <!--html-->
+                    <div class="report-link">
+                        <a class="pdf-report" id="sast-code-viewer-link"></a>
                         <div class="pdf-report download-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:svgjs="http://svgjs.com/svgjs" xmlns:xlink="http://www.w3.org/1999/xlink" height="13"
                                  id="SvgjsSvg1041"
@@ -770,7 +772,7 @@
                         <div class="pdf-report download-txt">
                             <div class="pdf-report detailed-report-ttl">Open Code Viewer</div>
                         </div>
-                    </a></div>
+                        </a></div>
                 </div>
             </div>
         </div>
@@ -1129,7 +1131,6 @@
 
 <script>
     //---------------------------------------------------------- vars ---------------------------------------------------------------
-    //    var cxIconPath = "/cxReport/src/img/CxIcon48x48.png";
     var SEVERITY = {
         HIGH: {value: 0, name: "high"},
         MED: {value: 1, name: "medium"},
@@ -1141,7 +1142,7 @@
 
     //-------------------------- sast vars --------------------------------------
     var sastResultsReady = cx.sastResultsReady;
-    var pdfReportReady = true;
+    var pdfReportReady = true; //todo - we don't have an indication if ready - need to find a way to create link to files in Bamboo
 
     //thresholds
     var thresholdsEnabled = cx.thresholdEnabled;
@@ -1149,6 +1150,7 @@
     var medThreshold = cx.mediumThreshold;
     var lowThreshold = cx.lowThreshold;
 
+    //links
     var sastSummaryResultsLink = 'cx.sastSummaryResultsLink';
 
     //counts
@@ -1170,6 +1172,7 @@
     var osaMedThreshold = cx.osaMediumThreshold;
     var osaLowThreshold = cx.osaLowThreshold;
 
+    //links
     var osaSummaryResultsLink = 'cx.osaSummaryResultsLink';
 
     //counts
@@ -1179,41 +1182,49 @@
 
 
     //-------------------------- full reports vars --------------------------------------
+    //-------------- sast ------------------
     var sastDetailedReport = cx.scanDetailedReport;
-    var osaCveList = cx.osaCveList;
-    var osaLibraries = cx.osaLibraries;
 
-    var sastPdfPath = 'path/pdf';
-    var sastHtmlPath = 'path/pdf';
+    //links
+    var sastPdfPath = 'path/pdf'; //todo - need to find a way to create link to files in Bamboo
+    var sastHtmlPath = osaSummaryResultsLink;
     //    http://localhost/CxWebClient/ViewerMain.aspx?scanid=1030692&projectid=40565
     var sastCodeViewerPath = 'path/pdf';
 
-    var osaHtmlPath = 'path/pdf';
-    var osaPdfPath = 'path/pdf';
-
+    //full report info
     var sastStartDate = sastDetailedReport.CxXMLResults.ScanStart;
-
     var sastEndDate = calculateEndDate(sastStartDate, sastDetailedReport.CxXMLResults.ScanTime);
     var sastNumFiles = sastDetailedReport.CxXMLResults.FilesScanned;
     var sastLoc = sastDetailedReport.CxXMLResults.LinesOfCodeScanned;
 
+    //lists
+    var queryList = sastDetailedReport.CxXMLResults.Query;
+    var highCveList = generateQueryList(SEVERITY.HIGH);
+    var medCveList = generateQueryList(SEVERITY.MED);
+    var lowCveList = generateQueryList(SEVERITY.LOW);
+
+    //-------------- osa ------------------
+    var osaCveList = cx.osaCveList;
+    var osaLibraries = cx.osaLibraries;
+
+    //links
+    var osaHtmlPath = osaSummaryResultsLink;
+    var osaPdfPath = 'path/pdf'; //todo - need to find a way to create link to files in Bamboo
+
+    //full report info
     var osaStartDate = adjustDateFormat("cx.osaStartTime");
     var osaEndDate = adjustDateFormat("cx.osaEndTime");
     var osaNumFiles = osaLibraries.length;
 
-    var queryList = sastDetailedReport.CxXMLResults.Query;
     var osaList = osaCveList;
-
-    //cve lists
-    var highCveList = generateQueryList(SEVERITY.HIGH);
-    var medCveList = generateQueryList(SEVERITY.MED);
-    var lowCveList = generateQueryList(SEVERITY.LOW);
 
     //cve lists
     var osaHighCveList = generateOsaCveList(SEVERITY.OSA_HIGH);
     var osaMedCveList = generateOsaCveList(SEVERITY.OSA_MED);
     var osaLowCveList = generateOsaCveList(SEVERITY.OSA_LOW);
 
+
+    //-------------------------- html vars --------------------------------------
     var thresholdExceededHtml =
             '<div class="threshold-exceeded">' +
             '<div class="threshold-exceeded-icon">' +
@@ -1235,9 +1246,7 @@
             '</div>';
 
 
-    //    document.getElementById("cx-icon-main").setAttribute("src", cxIconPath);
     //---------------------------------------------------------- sast ---------------------------------------------------------------
-    //todo - catch exceptions?
     //set bars height and count
     if (sastResultsReady) {
         try {
@@ -1252,46 +1261,49 @@
             document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / (highCount + medCount + lowCount) + "%");
             document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / (highCount + medCount + lowCount) + "%");
         } catch (e) {
-            console.log(e.message);
+            console.error("Element missing in SAST summary section " + e.message);
         }
 
 
-//        if (sastSummaryResultsLink) {
+//        //todo sast html link
+//        if (sastSummaryResultsLink != "") {
 //            document.getElementById("html-report-link").setAttribute("href", sastSummaryResultsLink);
 //        }
 
 
         //if threshold is enabled
         if (thresholdsEnabled) {
-            var isThresholdExceeded = false;
-            var thresholdExceededComplianceElement = document.getElementById("threshold-exceeded-compliance");
+            try {
+                var isThresholdExceeded = false;
+                var thresholdExceededComplianceElement = document.getElementById("threshold-exceeded-compliance");
+
+                if (highThreshold != null && highCount > highThreshold) {
+                    document.getElementById("tooltip-high").innerHTML = tooltipGenerator(SEVERITY.HIGH);
+                    isThresholdExceeded = true;
+                }
+
+                if (medThreshold != null && medCount > medThreshold) {
+                    document.getElementById("tooltip-med").innerHTML = tooltipGenerator(SEVERITY.MED);
+                    isThresholdExceeded = true;
+                }
+
+                if (lowThreshold != null && lowCount > lowThreshold) {
+                    document.getElementById("tooltip-low").innerHTML = tooltipGenerator(SEVERITY.LOW);
+                    isThresholdExceeded = true;
+                }
 
 
-            if (highThreshold != null && highCount > highThreshold) {
-                document.getElementById("tooltip-high").innerHTML = tooltipGenerator(SEVERITY.HIGH);
-                isThresholdExceeded = true;
-            }
+                //if threshold exceeded
+                if (isThresholdExceeded) {
+                    thresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
+                }
 
-            if (medThreshold != null && medCount > medThreshold) {
-                document.getElementById("tooltip-med").innerHTML = tooltipGenerator(SEVERITY.MED);
-                isThresholdExceeded = true;
-            }
-
-            if (lowThreshold != null && lowCount > lowThreshold) {
-                document.getElementById("tooltip-low").innerHTML = tooltipGenerator(SEVERITY.LOW);
-                isThresholdExceeded = true;
-            }
-
-
-            //if threshold exceeded
-            if (isThresholdExceeded) {
-                thresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
-            }
-
-            //else
-            //show threshold compliance element
-            else {
-                thresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+                //else show threshold compliance element
+                else {
+                    thresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+                }
+            } catch (e) {
+                console.error("Element missing in SAST threshold section " + e.message);
             }
         }
     }
@@ -1301,52 +1313,59 @@
 
     //---------------------------------------------------------- osa ---------------------------------------------------------------
     if (osaEnabled) {
-        //todo - catch exceptions?
-        //set bars height and count
-        document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
-        document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
-        document.getElementById("osa-bar-count-low").innerHTML = osaLowCount;
+        try {
+            //set bars height and count
+            document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
+            document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
+            document.getElementById("osa-bar-count-low").innerHTML = osaLowCount;
 
-        document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
-        document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
-        document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
+            document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
+            document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
+            document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
 
-        document.getElementById("vulnerable-libraries").innerHTML = numberWithCommas(osaVulnerableAndOutdatedLibs);
-        document.getElementById("ok-libraries").innerHTML = numberWithCommas(okLibraries);
+            document.getElementById("vulnerable-libraries").innerHTML = numberWithCommas(osaVulnerableAndOutdatedLibs);
+            document.getElementById("ok-libraries").innerHTML = numberWithCommas(okLibraries);
+        }
+        catch (e) {
+            console.error("Element missing in OSA summary section " + e.message);
+        }
 
         //if threshold is enabled
         if (osaThresholdsEnabled) {
-            var isOsaThresholdExceeded = false;
-            var osaThresholdExceededComplianceElement = document.getElementById("osa-threshold-exceeded-compliance");
+            try {
+                var isOsaThresholdExceeded = false;
+                var osaThresholdExceededComplianceElement = document.getElementById("osa-threshold-exceeded-compliance");
 
 
-            if (osaHighThreshold != null && osaHighCount > osaHighThreshold) {
-                document.getElementById("osa-tooltip-high").innerHTML = tooltipGenerator(SEVERITY.OSA_HIGH);
-                isOsaThresholdExceeded = true;
+                if (osaHighThreshold != null && osaHighCount > osaHighThreshold) {
+                    document.getElementById("osa-tooltip-high").innerHTML = tooltipGenerator(SEVERITY.OSA_HIGH);
+                    isOsaThresholdExceeded = true;
+                }
+
+                if (osaMedThreshold != null && osaMedCount > osaMedThreshold) {
+                    document.getElementById("osa-tooltip-med").innerHTML = tooltipGenerator(SEVERITY.OSA_MED);
+                    isOsaThresholdExceeded = true;
+                }
+
+                if (osaLowThreshold != null && osaLowCount > osaLowThreshold) {
+                    document.getElementById("osa-tooltip-low").innerHTML = tooltipGenerator(SEVERITY.OSA_LOW);
+                    isOsaThresholdExceeded = true;
+                }
+
+
+                //if threshold exceeded
+                if (isOsaThresholdExceeded) {
+                    osaThresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
+                }
+
+                //else
+                //show threshold compliance element
+                else {
+                    osaThresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+                }
+            } catch (e) {
+                console.error("Element missing in OSA threshold section " + e.message);
             }
-
-            if (osaMedThreshold != null && osaMedCount > osaMedThreshold) {
-                document.getElementById("osa-tooltip-med").innerHTML = tooltipGenerator(SEVERITY.OSA_MED);
-                isOsaThresholdExceeded = true;
-            }
-
-            if (osaLowThreshold != null && osaLowCount > osaLowThreshold) {
-                document.getElementById("osa-tooltip-low").innerHTML = tooltipGenerator(SEVERITY.OSA_LOW);
-                isOsaThresholdExceeded = true;
-            }
-
-
-            //if threshold exceeded
-            if (isOsaThresholdExceeded) {
-                osaThresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
-            }
-
-            //else
-            //show threshold compliance element
-            else {
-                osaThresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
-            }
-
         }
     }
     else {
@@ -1355,10 +1374,8 @@
     }
 
     //---------------------------------------------------------- full reports ---------------------------------------------------------------
-    //sast links
     try {
-//        document.getElementById("sast-html-link").setAttribute("href", sastHtmlPath);
-
+        //sast links
         //sastPdfPath only if pdfReportReady
         if (pdfReportReady) {
             document.getElementById("sast-pdf-link").innerHTML =
@@ -1390,39 +1407,41 @@
         document.getElementById("osa-full-end-date").innerHTML = formatDate(osaEndDate, "dd/mm/yy hh:mm");
         document.getElementById("osa-full-files").innerHTML = numberWithCommas(osaNumFiles);
     } catch (e) {
-        console.log(e.message);
+        console.error("Element missing in full report info section " + e.message);
     }
 
+    try {
+        //generate full reports
+        if (highCount == 0 && medCount == 0 && lowCount == 0) {
+            document.getElementById("sast-full").setAttribute("style", "display: none");
+        } else {
+            if (highCount > 0) {
+                generateCveTable(SEVERITY.HIGH);
+            }
+            if (medCount > 0) {
+                generateCveTable(SEVERITY.MED);
+            }
+            if (lowCount > 0) {
+                generateCveTable(SEVERITY.LOW);
+            }
+        }
 
-    //generate full reports
-    if (highCount == 0 && medCount == 0 && lowCount == 0) {
-        document.getElementById("sast-full").setAttribute("style", "display: none");
-    } else {
-        if (highCount > 0) {
-            generateCveTable(SEVERITY.HIGH);
+        if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
+            document.getElementById("osa-full").setAttribute("style", "display: none");
+        } else {
+            if (osaHighCount > 0) {
+                generateCveTable(SEVERITY.OSA_HIGH);
+            }
+            if (osaMedCount > 0) {
+                generateCveTable(SEVERITY.OSA_MED);
+            }
+            if (osaLowCount > 0) {
+                generateCveTable(SEVERITY.OSA_LOW);
+            }
         }
-        if (medCount > 0) {
-            generateCveTable(SEVERITY.MED);
-        }
-        if (lowCount > 0) {
-            generateCveTable(SEVERITY.LOW);
-        }
+    } catch (e) {
+        console.error("Element missing in full report detailed table section " + e.message);
     }
-
-    if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
-        document.getElementById("osa-full").setAttribute("style", "display: none");
-    } else {
-        if (osaHighCount > 0) {
-            generateCveTable(SEVERITY.OSA_HIGH);
-        }
-        if (osaMedCount > 0) {
-            generateCveTable(SEVERITY.OSA_MED);
-        }
-        if (osaLowCount > 0) {
-            generateCveTable(SEVERITY.OSA_LOW);
-        }
-    }
-
     //functions
     function tooltipGenerator(severity) {
         var threshold = 0;
@@ -1737,9 +1756,9 @@
         var start = new Date(startDate);
 
         //"00h:00m:00s"
-        var scanTimeHours = scanTime.substring(0,2);
-        var scanTimeMinutes = scanTime.substring(4,6);
-        var scanTimeSeconds = scanTime.substring(8,10);
+        var scanTimeHours = scanTime.substring(0, 2);
+        var scanTimeMinutes = scanTime.substring(4, 6);
+        var scanTimeSeconds = scanTime.substring(8, 10);
         var scanTimeMillis = scanTimeHours * 3600000 + scanTimeMinutes * 60000 + scanTimeSeconds * 1000;
 
         return new Date(start.getTime() + scanTimeMillis);
@@ -1747,6 +1766,6 @@
     }
 
     function adjustDateFormat(date) {
-        return date.substr(0,10) + " " + date.substr(11);
+        return date.substr(0, 10) + " " + date.substr(11);
     }
 </script>
