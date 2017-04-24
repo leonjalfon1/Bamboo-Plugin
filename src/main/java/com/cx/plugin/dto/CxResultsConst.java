@@ -19,6 +19,8 @@ public abstract class CxResultsConst {
     public static final String LOW_THRESHOLD = "cx.lowThreshold";
 
     public static final String SAST_SUMMARY_RESULTS_LINK = "cx.sastSummaryResultsLink";
+    public static final  String SAST_SCAN_RESULTS_LINK = "cx.sastScanResultsLink";
+
 
     public static final String SCAN_DETAILED_REPORT = "cx.scanDetailedReport";
 
