@@ -420,6 +420,7 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
         results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
         results.put(CxResultsConst.SAST_SUMMARY_RESULTS_LINK, StringUtils.defaultString(projectStateLink));
+        results.put(CxResultsConst.SAST_SCAN_RESULTS_LINK, StringUtils.defaultString(scanResultsUrl));
         results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
 
         if (config.isThresholdsEnabled()) {
