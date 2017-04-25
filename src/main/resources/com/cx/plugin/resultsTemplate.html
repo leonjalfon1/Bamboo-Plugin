@@ -50,7 +50,7 @@
         border-bottom: solid 1px #d5d5d5;
     }
 
-    .results-report .link-icon {
+    .link-icon {
         align-items: center;
         display: flex;
     }
@@ -597,17 +597,19 @@
                 <div class="summary-title-text sast">CxSAST Vulnerabilities Status</div>
 
                 <div class="summary-title-links">
-                    <div class="results-link summary-link">
-                        <div class="results-link-icon link-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14"><title>analize</title>
-                                <g fill="none" fill-rule="evenodd">
-                                    <circle stroke="#4A90E2" stroke-width="2" cx="5" cy="5" r="4"/>
-                                    <path fill="#4A90E2" d="M6.366 8.366l1.732-1 3.268 5.66-1.732 1z"/>
-                                </g>
-                            </svg>
+                    <a class="html-report" id="sast-summary-html-link">
+                        <div class="results-link summary-link">
+                            <div class="results-link-icon link-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="14" viewBox="0 0 12 14"><title>analize</title>
+                                    <g fill="none" fill-rule="evenodd">
+                                        <circle stroke="#4A90E2" stroke-width="2" cx="5" cy="5" r="4"/>
+                                        <path fill="#4A90E2" d="M6.366 8.366l1.732-1 3.268 5.66-1.732 1z"/>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="summary-link-text">Results</div>
                         </div>
-                        <div class="summary-link-text">Results</div>
-                    </div>
+                    </a>
                 </div>
 
 
@@ -1342,7 +1344,6 @@
 
     //-------------------------- sast vars --------------------------------------
     var sastResultsReady = cx.sastResultsReady;
-    var pdfReportReady = true; //todo - we don't have an indication if ready - need to find a way to create link to files in Bamboo
 
     //thresholds
     var thresholdsEnabled = cx.thresholdEnabled;
@@ -1351,7 +1352,6 @@
     var lowThreshold = cx.lowThreshold;
 
     //links
-    var sastSummaryResultsLink = 'cx.sastSummaryResultsLink';
     var sastScanResultsLink = 'cx.sastScanResultsLink';
 
     //counts
@@ -1387,10 +1387,7 @@
     var sastDetailedReport = cx.scanDetailedReport;
 
     //links
-    var sastPdfPath = 'path/pdf'; //todo - need to find a way to create link to files in Bamboo
     var sastHtmlPath = osaSummaryResultsLink;
-    //    http://localhost/CxWebClient/ViewerMain.aspx?scanid=1030692&projectid=40565
-    var sastCodeViewerPath = 'path/pdf';
 
     //full report info
     var sastStartDate = sastDetailedReport.CxXMLResults.ScanStart;
@@ -1405,12 +1402,12 @@
     var lowCveList = generateQueryList(SEVERITY.LOW);
 
     //-------------- osa ------------------
-    var osaCveList = cx.osaCveList;
-    var osaLibraries = cx.osaLibraries;
+    //this is a solution to the case scenario where OSA is disabled and cx.osaCveList returns null which crashes the javascript code
+    var osaCveList = [].concat(cx.osaCveList);
+    var osaLibraries = [].concat(cx.osaLibraries);
 
     //links
     var osaHtmlPath = osaSummaryResultsLink;
-    var osaPdfPath = 'path/pdf'; //todo - need to find a way to create link to files in Bamboo
 
     //full report info
     var osaStartDate = adjustDateFormat("cx.osaStartTime");
@@ -1451,6 +1448,10 @@
     //set bars height and count
     if (sastResultsReady) {
         try {
+            //link
+            document.getElementById("sast-summary-html-link").setAttribute("href", sastScanResultsLink);
+            document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
+
             document.getElementById("onSastError").setAttribute("style", "display:none");
             document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
 
@@ -1464,12 +1465,6 @@
         } catch (e) {
             console.error("Element missing in SAST summary section " + e.message);
         }
-
-
-//        //todo sast html link
-//        if (sastSummaryResultsLink != "") {
-//            document.getElementById("html-report-link").setAttribute("href", sastSummaryResultsLink);
-//        }
 
 
         //if threshold is enabled
@@ -1580,7 +1575,7 @@
     //---------------------------------------------------------- full reports ---------------------------------------------------------------
     try {
         //sast links
-        document.getElementById("sast-code-viewer-link").setAttribute("href", sastCodeViewerPath);
+        document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
 
         //osa links
         document.getElementById("osa-html-link").setAttribute("href", osaHtmlPath);
