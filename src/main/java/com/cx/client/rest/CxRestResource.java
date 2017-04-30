@@ -50,9 +50,6 @@ public class CxRestResource {
         result = "";
         URL url;
         String urlToCheck;
-        String useGlobal;
-        String username;
-        String pas;
         int statusCode = 400;
 
         urlToCheck = StringUtils.defaultString(credentials.get("url"));
@@ -70,15 +67,9 @@ public class CxRestResource {
             return Response.status(statusCode).entity(tcResponse).build();
         }
 
-        useGlobal = StringUtils.defaultString(credentials.get("global"));
-        username = StringUtils.defaultString(credentials.get("username"));
+        String username = StringUtils.defaultString(credentials.get("username"));
+        String pas = StringUtils.defaultString(credentials.get("pas"));
 
-        if (OPTION_TRUE.equals(useGlobal)) {
-            AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
-            pas = adminConfig.getSystemProperty(GLOBAL_PASSWORD);
-        } else {
-            pas = StringUtils.defaultString(credentials.get("pas"));
-        }
         try {
 
             if (loginToServer(url, username, CxEncryption.decrypt(pas))) {
@@ -95,7 +86,6 @@ public class CxRestResource {
                 if (result.equals("")) {
                     result = "Login failed";
                 }
-
                 presets = new ArrayList<CxClass>() {{
                     add(new CxClass(NO_PRESET, NO_PRESET_MESSAGE));
                 }};
@@ -131,7 +121,6 @@ public class CxRestResource {
                 result = res.getErrorMessage();
                 return false;
             }
-
             return true;
         } catch (Exception CxClientException) {
             result = CxClientException.getMessage();

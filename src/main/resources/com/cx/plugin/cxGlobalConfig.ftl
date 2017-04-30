@@ -204,8 +204,7 @@
                 return {
                     "url": url,
                     "username": username,
-                    "pas": pas,
-                    "global": 'false'
+                    "pas": pas
                 };
             }
 

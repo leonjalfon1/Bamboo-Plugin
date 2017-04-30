@@ -95,8 +95,6 @@
             [@ww.label labelKey="serverUrl.label"  id="globalServerUrl" name="globalServerUrl"/]
             [@ww.label labelKey="username.label" id="globalUsername" name="globalUsername" /]
             [@ww.label type="password" labelKey="password.label"/]
-            <button type="button" class="aui-button test-connection" id="global_test_connection">Connect to Server</button>
-            <div id="globalTestConnectionMessage" class="test-connection-message"></div>
         [/@ui.bambooSection]
 
         [@ww.textfield labelKey="projectName.label" name="projectName" required='true' descriptionKey='projectName.description' /]
