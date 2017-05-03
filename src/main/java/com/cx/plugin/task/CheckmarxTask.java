@@ -375,12 +375,14 @@ public class CheckmarxTask implements TaskType {
             configurationMap.put(FOLDER_EXCLUSION, configMap.get(FOLDER_EXCLUSION));
             configurationMap.put(FILTER_PATTERN, configMap.get(FILTER_PATTERN));
             configurationMap.put(SCAN_TIMEOUT_IN_MINUTES, configMap.get(SCAN_TIMEOUT_IN_MINUTES));
-            configurationMap.put(COMMENT, configMap.get(COMMENT));
+
         } else {
             configurationMap.put(FOLDER_EXCLUSION, getAdminConfig(GLOBAL_FOLDER_EXCLUSION));
             configurationMap.put(FILTER_PATTERN, getAdminConfig(GLOBAL_FILTER_PATTERN));
             configurationMap.put(SCAN_TIMEOUT_IN_MINUTES, getAdminConfig(GLOBAL_SCAN_TIMEOUT_IN_MINUTES));
         }
+
+        configurationMap.put(COMMENT, configMap.get(COMMENT));
         configurationMap.put(IS_INCREMENTAL, configMap.get(IS_INCREMENTAL));
         configurationMap.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         configurationMap.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
