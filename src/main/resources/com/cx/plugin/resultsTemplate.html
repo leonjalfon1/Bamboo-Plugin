@@ -1429,13 +1429,14 @@
             document.getElementById("bar-count-med").innerHTML = medCount;
             document.getElementById("bar-count-low").innerHTML = lowCount;
 
-            document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / (highCount + medCount + lowCount) + "%");
-            document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / (highCount + medCount + lowCount) + "%");
-            document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / (highCount + medCount + lowCount) + "%");
+            var maxCount = Math.max(highCount, medCount, lowCount);
+            var maxHeight = maxCount * 100 / 90;
+            document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / maxHeight + "%");
+            document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / maxHeight + "%");
+            document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / maxHeight + "%");
         } catch (e) {
             console.error("Element missing in SAST summary section " + e.message);
         }
-
 
         //if threshold is enabled
         if (thresholdsEnabled) {
@@ -1488,9 +1489,13 @@
             document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
             document.getElementById("osa-bar-count-low").innerHTML = osaLowCount;
 
-            document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
-            document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
-            document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / (osaHighCount + osaMedCount + osaLowCount) + "%");
+
+            var osaMaxCount = Math.max(osaHighCount, osaMedCount, osaLowCount);
+            var osaMaxHeight = osaMaxCount * 100 / 90;
+
+            document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / osaMaxHeight + "%");
+            document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / osaMaxHeight + "%");
+            document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / osaMaxHeight + "%");
 
             document.getElementById("vulnerable-libraries").innerHTML = numberWithCommas(osaVulnerableAndOutdatedLibs);
             document.getElementById("ok-libraries").innerHTML = numberWithCommas(okLibraries);
