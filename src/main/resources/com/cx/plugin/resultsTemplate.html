@@ -1412,19 +1412,20 @@
 
     //-------------------------- full reports vars --------------------------------------
     //-------------- sast ------------------
-    var sastDetailedReport = cx.scanDetailedReport;
-
     //links
     var sastHtmlPath = osaSummaryResultsLink;
 
     //full report info
-    var sastStartDate = sastDetailedReport.CxXMLResults.ScanStart;
-    var sastEndDate = calculateEndDate(sastStartDate, sastDetailedReport.CxXMLResults.ScanTime);
-    var sastNumFiles = sastDetailedReport.CxXMLResults.FilesScanned;
-    var sastLoc = sastDetailedReport.CxXMLResults.LinesOfCodeScanned;
+    var sastStartDate = "cx.scanStart";
+    var sastScanTime = "cx.scanTime";
+
+    var sastEndDate = calculateEndDate(sastStartDate, sastScanTime);
+    var sastNumFiles = cx.filesScanned;
+    var sastLoc = cx.locScanned;
 
     //lists
-    var queryList = sastDetailedReport.CxXMLResults.Query;
+    var queryList = cx.queryList;
+
     var highCveList = generateQueryList(SEVERITY.HIGH);
     var medCveList = generateQueryList(SEVERITY.MED);
     var lowCveList = generateQueryList(SEVERITY.LOW);
@@ -1942,8 +1943,8 @@
         var severityQueryList = {};
         //loop through queries and push the relevant query - by severity - to the new list (lookup table)
         for (var i = 0; i < queryList.length; i++) {
-            if (queryList[i].Severity.toLowerCase() == severity.name) {
-                severityQueryList[queryList[i].name] = queryList[i].Result.length ? queryList[i].Result.length : 1;
+            if (queryList[i].severity.toLowerCase() == severity.name) {
+                severityQueryList[queryList[i].name] = queryList[i].resultLength ? queryList[i].resultLength : 1;
             }
         }
         return severityQueryList;

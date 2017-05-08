@@ -1,7 +1,7 @@
 package com.cx.plugin.task;
 
 /**
- -* Created by galn on 18/12/2016.
+ * -* Created by galn on 18/12/2016.
  */
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
@@ -17,30 +17,26 @@ import com.cx.client.rest.dto.*;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxResultsConst;
 import com.cx.plugin.dto.CxScanConfiguration;
+import com.cx.plugin.dto.CxXMLResults;
 import com.cx.plugin.utils.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
-import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.cx.plugin.dto.CxParam.*;
 
@@ -78,7 +74,6 @@ public class CheckmarxTask implements TaskType {
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
-
         final TaskResultBuilder taskResultBuilder = TaskResultBuilder.newBuilder(taskContext);
         buildLogger = taskContext.getBuildLogger();
         buildLoggerAdapter = new CxBuildLoggerAdapter(buildLogger);
@@ -103,6 +98,8 @@ public class CheckmarxTask implements TaskType {
             cxClientService = new CxClientServiceImpl(url, config.getUsername(), CxEncryption.decrypt(config.getPassword()));
             cxClientService.setLogger(buildLoggerAdapter);
             cxClientService.checkServerConnectivity();
+
+
 
             //perform login to server
             buildLoggerAdapter.info("Logging into the Checkmarx service.");
@@ -163,12 +160,10 @@ public class CheckmarxTask implements TaskType {
 
                 //            SAST detailed report
                 byte[] cxReport = cxClientService.getScanReport(scanResults.getScanID(), ReportType.XML);
-                String scanReport = new String(cxReport);
-                JSONObject scanDetailedReport = XML.toJSONObject(scanReport);
 
+                CxXMLResults reportObj = convertToXMLResult(cxReport);
 
-                scanResults.setScanDetailedReport(scanDetailedReport.toString());
-
+                scanResults.setScanDetailedReport(reportObj);
 
 
                 addSASTResults(results, scanResults, config);
@@ -226,7 +221,7 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("");
 
                     //OSA json reports
-                    String fileName =  OSA_SUMMARY_NAME + "_" + now + ".json";
+                    String fileName = OSA_SUMMARY_NAME + "_" + now + ".json";
                     objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDirectory + CX_REPORT_LOCATION, fileName), osaSummaryResults);
                     buildLoggerAdapter.info("OSA summary json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
 
@@ -236,7 +231,7 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("OSA libraries json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
 
                     List<CVE> osaVulnerabilities = cxClientService.getOSAVulnerabilities(osaScan.getScanId());
-                    fileName =  OSA_VULNERABILITIES_NAME + "_" + now + ".json";
+                    fileName = OSA_VULNERABILITIES_NAME + "_" + now + ".json";
                     objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDirectory + CX_REPORT_LOCATION, fileName), osaVulnerabilities);
                     buildLoggerAdapter.info("OSA vulnerabilities json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
 
@@ -301,6 +296,22 @@ public class CheckmarxTask implements TaskType {
         return taskResultBuilder.success().build();
     }
 
+    private CxXMLResults convertToXMLResult(byte[] cxReport) throws IOException, JAXBException {
+
+        CxXMLResults reportObj = null;
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cxReport);
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(CxXMLResults.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+            reportObj = (CxXMLResults) unmarshaller.unmarshal(byteArrayInputStream);
+
+        } finally {
+            IOUtils.closeQuietly(byteArrayInputStream);
+        }
+        return reportObj;
+    }
+
     private void addOSAStatus(Map<String, String> results, OSAScanStatus osaScanStatus) {
         results.put(CxResultsConst.OSA_START_TIME, osaScanStatus.getStartAnalyzeTime());
         results.put(CxResultsConst.OSA_END_TIME, osaScanStatus.getEndAnalyzeTime());
@@ -324,7 +335,7 @@ public class CheckmarxTask implements TaskType {
     }
 
     private void closeClient(CxClientService cxClientService) {
-        if(cxClientService != null) {
+        if (cxClientService != null) {
             try {
                 cxClientService.close();
             } catch (Exception e) {
@@ -412,11 +423,6 @@ public class CheckmarxTask implements TaskType {
         return configurationMap;
     }
 
-    private void addSASTDetailedResults(Map<String, String> results, ScanResults scanResults, CxScanConfiguration config) {
-        results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
-
-    }
-
     private void addSASTResults(Map<String, String> results, ScanResults scanResults, CxScanConfiguration config) {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
@@ -436,7 +442,15 @@ public class CheckmarxTask implements TaskType {
         }
 
         results.put(CxResultsConst.SAST_RESULTS_READY, OPTION_TRUE);
-        results.put(CxResultsConst.SCAN_DETAILED_REPORT, String.valueOf(scanResults.getScanDetailedReport()));
+
+
+        results.put(CxResultsConst.SCAN_START_DATE, String.valueOf(scanResults.getScanStart()));
+        results.put(CxResultsConst.SCAN_TIME, String.valueOf(scanResults.getScanTime()));
+        results.put(CxResultsConst.SCAN_FILES_SCANNED, String.valueOf(scanResults.getFilesScanned()));
+        results.put(CxResultsConst.SCAN_LOC_SCANNED, String.valueOf(scanResults.getLinesOfCodeScanned()));
+        results.put(CxResultsConst.SCAN_QUERY_LIST, String.valueOf(scanResults.getQueryList()));
+
+
     }
 
     private void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, CxScanConfiguration config) {

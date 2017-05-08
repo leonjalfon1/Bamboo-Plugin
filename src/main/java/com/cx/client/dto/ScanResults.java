@@ -1,5 +1,9 @@
 package com.cx.client.dto;
 
+import com.cx.plugin.dto.CxXMLResults;
+
+import java.util.List;
+
 /**
  * Created by: Dorg.
  * Date: 15/09/2016.
@@ -21,6 +25,12 @@ public class ScanResults {
     private int infoSeverityResults;
 
     private String scanDetailedReport;
+
+    private String scanStart;
+    private String scanTime;
+    private Byte filesScanned;
+    private Short linesOfCodeScanned;
+    private List<CxXMLResults.Query> queryList;
 
     public long getProjectId() {
         return projectId;
@@ -84,5 +94,55 @@ public class ScanResults {
 
     public String getScanDetailedReport() {
         return scanDetailedReport;
+    }
+
+    public void setScanDetailedReport(CxXMLResults reportObj) {
+        this.scanStart = reportObj.getScanStart();
+        this.scanTime = reportObj.getScanTime();
+        this.linesOfCodeScanned = reportObj.getLinesOfCodeScanned();
+        this.filesScanned = reportObj.getFilesScanned();
+
+        this.queryList = reportObj.getQuery();
+
+    }
+
+    public void setScanStart(String scanStart) {
+        this.scanStart = scanStart;
+    }
+
+    public String getScanTime() {
+        return scanTime;
+    }
+
+    public void setScanTime(String scanTime) {
+        this.scanTime = scanTime;
+    }
+
+    public Byte getFilesScanned() {
+        return filesScanned;
+    }
+
+    public void setFilesScanned(Byte filesScanned) {
+        this.filesScanned = filesScanned;
+    }
+
+    public Short getLinesOfCodeScanned() {
+        return linesOfCodeScanned;
+    }
+
+    public void setLinesOfCodeScanned(Short linesOfCodeScanned) {
+        this.linesOfCodeScanned = linesOfCodeScanned;
+    }
+
+    public List<CxXMLResults.Query> getQueryList() {
+        return queryList;
+    }
+
+    public void setQueryList(List<CxXMLResults.Query> queryList) {
+        this.queryList = queryList;
+    }
+
+    public String getScanStart() {
+        return scanStart;
     }
 }

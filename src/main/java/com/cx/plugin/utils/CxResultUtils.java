@@ -35,7 +35,12 @@ public abstract class CxResultUtils {
                         .replace(HIGH_THRESHOLD, String.valueOf(customBuildData.get(HIGH_THRESHOLD)))
                         .replace(MEDIUM_THRESHOLD, String.valueOf(customBuildData.get(MEDIUM_THRESHOLD)))
                         .replace(LOW_THRESHOLD, String.valueOf(customBuildData.get(LOW_THRESHOLD)))
-                        .replace(SCAN_DETAILED_REPORT, String.valueOf(customBuildData.get(SCAN_DETAILED_REPORT)));
+                        .replace(SCAN_START_DATE, String.valueOf(customBuildData.get(SCAN_START_DATE)))
+                        .replace(SCAN_TIME, String.valueOf(customBuildData.get(SCAN_TIME)))
+                        .replace(SCAN_FILES_SCANNED, String.valueOf(customBuildData.get(SCAN_FILES_SCANNED)))
+                        .replace(SCAN_LOC_SCANNED, String.valueOf(customBuildData.get(SCAN_LOC_SCANNED)))
+                        .replace(SCAN_QUERY_LIST, String.valueOf(customBuildData.get(SCAN_QUERY_LIST)))
+                ;
 
 
                 if (customBuildData.get(OSA_RESULTS_READY) != null) {

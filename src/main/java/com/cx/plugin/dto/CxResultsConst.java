@@ -48,4 +48,9 @@ public abstract class CxResultsConst {
 
     public static final String OSA_START_TIME = "cx.osaStartTime";
     public static final String OSA_END_TIME = "cx.osaEndTime";
+    public static final String SCAN_START_DATE = "cx.scanStart";
+    public static final String SCAN_TIME = "cx.scanTime";
+    public static final String SCAN_FILES_SCANNED = "cx.filesScanned";
+    public static final String SCAN_LOC_SCANNED = "cx.locScanned";
+    public static final String SCAN_QUERY_LIST = "cx.queryList";
 }
