@@ -93,6 +93,12 @@ public abstract class CxResultUtils {
                     .replace(MEDIUM_THRESHOLD, "0")
                     .replace(LOW_THRESHOLD, "0")
 
+                    .replace(SCAN_START_DATE, "null")
+                    .replace(SCAN_TIME, "null")
+                    .replace(SCAN_FILES_SCANNED, "null")
+                    .replace(SCAN_LOC_SCANNED, "null")
+                    .replace(SCAN_QUERY_LIST, "null")
+
                     .replace(OSA_ENABLED, OPTION_TRUE)
                     .replace(OSA_HIGH_RESULTS, String.valueOf(customBuildData.get(OSA_HIGH_RESULTS)))
                     .replace(OSA_MEDIUM_RESULTS, String.valueOf(customBuildData.get(OSA_MEDIUM_RESULTS)))
