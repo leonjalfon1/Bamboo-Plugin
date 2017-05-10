@@ -2,7 +2,6 @@
 package com.cx.plugin.dto;
 
 import javax.xml.bind.annotation.*;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +37,12 @@ import java.util.List;
  *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                                               &lt;sequence>
  *                                                 &lt;element name="FileName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                 &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}short"/>
- *                                                 &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}byte"/>
- *                                                 &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+ *                                                 &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *                                                 &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *                                                 &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                                                 &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                                                 &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                 &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+ *                                                 &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                                                 &lt;element name="Snippet">
  *                                                   &lt;complexType>
  *                                                     &lt;complexContent>
@@ -54,7 +53,7 @@ import java.util.List;
  *                                                               &lt;complexContent>
  *                                                                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                                                                   &lt;sequence>
- *                                                                     &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}short"/>
+ *                                                                     &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                                                                     &lt;element name="Code" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *                                                                   &lt;/sequence>
  *                                                                 &lt;/restriction>
@@ -72,43 +71,43 @@ import java.util.List;
  *                                         &lt;/complexType>
  *                                       &lt;/element>
  *                                     &lt;/sequence>
- *                                     &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                                     &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}byte" />
- *                                     &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                                     &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *                                     &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *                                     &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                                   &lt;/restriction>
  *                                 &lt;/complexContent>
  *                               &lt;/complexType>
  *                             &lt;/element>
  *                           &lt;/sequence>
- *                           &lt;attribute name="NodeId" type="{http://www.w3.org/2001/XMLSchema}long" />
+ *                           &lt;attribute name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                           &lt;attribute name="FileName" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                           &lt;attribute name="Status" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                           &lt;attribute name="Line" type="{http://www.w3.org/2001/XMLSchema}short" />
- *                           &lt;attribute name="Column" type="{http://www.w3.org/2001/XMLSchema}byte" />
+ *                           &lt;attribute name="Line" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *                           &lt;attribute name="Column" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                           &lt;attribute name="FalsePositive" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                           &lt;attribute name="Severity" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                           &lt;attribute name="AssignToUser" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                           &lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}byte" />
+ *                           &lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                           &lt;attribute name="Remark" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                           &lt;attribute name="DeepLink" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
- *                           &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}byte" />
+ *                           &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                         &lt;/restriction>
  *                       &lt;/complexContent>
  *                     &lt;/complexType>
  *                   &lt;/element>
  *                 &lt;/sequence>
- *                 &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}short" />
+ *                 &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                 &lt;attribute name="categories" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="cweId" type="{http://www.w3.org/2001/XMLSchema}short" />
+ *                 &lt;attribute name="cweId" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                 &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                 &lt;attribute name="group" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                 &lt;attribute name="Severity" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                 &lt;attribute name="Language" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="LanguageHash" type="{http://www.w3.org/2001/XMLSchema}long" />
+ *                 &lt;attribute name="LanguageHash" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                 &lt;attribute name="LanguageChangeDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *                 &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}byte" />
+ *                 &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}string" />
  *                 &lt;attribute name="QueryPath" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="QueryVersionCode" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                 &lt;attribute name="QueryVersionCode" type="{http://www.w3.org/2001/XMLSchema}string" />
  *               &lt;/restriction>
  *             &lt;/complexContent>
  *           &lt;/complexType>
@@ -116,16 +115,16 @@ import java.util.List;
  *       &lt;/sequence>
  *       &lt;attribute name="InitiatorName" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="Owner" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="ScanId" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="ProjectId" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *       &lt;attribute name="ScanId" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="ProjectId" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="ProjectName" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="TeamFullPathOnReportDate" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="DeepLink" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
  *       &lt;attribute name="ScanStart" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="Preset" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="ScanTime" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="LinesOfCodeScanned" type="{http://www.w3.org/2001/XMLSchema}short" />
- *       &lt;attribute name="FilesScanned" type="{http://www.w3.org/2001/XMLSchema}byte" />
+ *       &lt;attribute name="LinesOfCodeScanned" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="FilesScanned" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="ReportCreationTime" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="Team" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="CheckmarxVersion" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -145,7 +144,8 @@ import java.util.List;
     "query"
 })
 @XmlRootElement(name = "CxXMLResults")
-public class CxXMLResults {
+public class CxXMLResults
+{
 
     @XmlElement(name = "Query")
     protected List<Query> query;
@@ -154,9 +154,9 @@ public class CxXMLResults {
     @XmlAttribute(name = "Owner")
     protected String owner;
     @XmlAttribute(name = "ScanId")
-    protected Integer scanId;
+    protected String scanId;
     @XmlAttribute(name = "ProjectId")
-    protected Integer projectId;
+    protected String projectId;
     @XmlAttribute(name = "ProjectName")
     protected String projectName;
     @XmlAttribute(name = "TeamFullPathOnReportDate")
@@ -171,9 +171,9 @@ public class CxXMLResults {
     @XmlAttribute(name = "ScanTime")
     protected String scanTime;
     @XmlAttribute(name = "LinesOfCodeScanned")
-    protected Short linesOfCodeScanned;
+    protected String linesOfCodeScanned;
     @XmlAttribute(name = "FilesScanned")
-    protected Byte filesScanned;
+    protected String filesScanned;
     @XmlAttribute(name = "ReportCreationTime")
     protected String reportCreationTime;
     @XmlAttribute(name = "Team")
@@ -271,10 +271,10 @@ public class CxXMLResults {
      * 
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public Integer getScanId() {
+    public String getScanId() {
         return scanId;
     }
 
@@ -283,10 +283,10 @@ public class CxXMLResults {
      * 
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public void setScanId(Integer value) {
+    public void setScanId(String value) {
         this.scanId = value;
     }
 
@@ -295,10 +295,10 @@ public class CxXMLResults {
      * 
      * @return
      *     possible object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public Integer getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 
@@ -307,10 +307,10 @@ public class CxXMLResults {
      * 
      * @param value
      *     allowed object is
-     *     {@link Integer }
+     *     {@link String }
      *     
      */
-    public void setProjectId(Integer value) {
+    public void setProjectId(String value) {
         this.projectId = value;
     }
 
@@ -463,10 +463,10 @@ public class CxXMLResults {
      * 
      * @return
      *     possible object is
-     *     {@link Short }
+     *     {@link String }
      *     
      */
-    public Short getLinesOfCodeScanned() {
+    public String getLinesOfCodeScanned() {
         return linesOfCodeScanned;
     }
 
@@ -475,10 +475,10 @@ public class CxXMLResults {
      * 
      * @param value
      *     allowed object is
-     *     {@link Short }
+     *     {@link String }
      *     
      */
-    public void setLinesOfCodeScanned(Short value) {
+    public void setLinesOfCodeScanned(String value) {
         this.linesOfCodeScanned = value;
     }
 
@@ -487,10 +487,10 @@ public class CxXMLResults {
      * 
      * @return
      *     possible object is
-     *     {@link Byte }
+     *     {@link String }
      *     
      */
-    public Byte getFilesScanned() {
+    public String getFilesScanned() {
         return filesScanned;
     }
 
@@ -499,10 +499,10 @@ public class CxXMLResults {
      * 
      * @param value
      *     allowed object is
-     *     {@link Byte }
+     *     {@link String }
      *     
      */
-    public void setFilesScanned(Byte value) {
+    public void setFilesScanned(String value) {
         this.filesScanned = value;
     }
 
@@ -701,12 +701,12 @@ public class CxXMLResults {
      *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *                                     &lt;sequence>
      *                                       &lt;element name="FileName" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                       &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}short"/>
-     *                                       &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-     *                                       &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+     *                                       &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}string"/>
+     *                                       &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}string"/>
+     *                                       &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *                                       &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *                                       &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                       &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+     *                                       &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *                                       &lt;element name="Snippet">
      *                                         &lt;complexType>
      *                                           &lt;complexContent>
@@ -717,7 +717,7 @@ public class CxXMLResults {
      *                                                     &lt;complexContent>
      *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *                                                         &lt;sequence>
-     *                                                           &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}short"/>
+     *                                                           &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *                                                           &lt;element name="Code" type="{http://www.w3.org/2001/XMLSchema}string"/>
      *                                                         &lt;/sequence>
      *                                                       &lt;/restriction>
@@ -735,43 +735,43 @@ public class CxXMLResults {
      *                               &lt;/complexType>
      *                             &lt;/element>
      *                           &lt;/sequence>
-     *                           &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *                           &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}byte" />
-     *                           &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *                           &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}string" />
+     *                           &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}string" />
+     *                           &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                         &lt;/restriction>
      *                       &lt;/complexContent>
      *                     &lt;/complexType>
      *                   &lt;/element>
      *                 &lt;/sequence>
-     *                 &lt;attribute name="NodeId" type="{http://www.w3.org/2001/XMLSchema}long" />
+     *                 &lt;attribute name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                 &lt;attribute name="FileName" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                 &lt;attribute name="Status" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *                 &lt;attribute name="Line" type="{http://www.w3.org/2001/XMLSchema}short" />
-     *                 &lt;attribute name="Column" type="{http://www.w3.org/2001/XMLSchema}byte" />
+     *                 &lt;attribute name="Line" type="{http://www.w3.org/2001/XMLSchema}string" />
+     *                 &lt;attribute name="Column" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                 &lt;attribute name="FalsePositive" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                 &lt;attribute name="Severity" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                 &lt;attribute name="AssignToUser" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *                 &lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}byte" />
+     *                 &lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                 &lt;attribute name="Remark" type="{http://www.w3.org/2001/XMLSchema}string" />
      *                 &lt;attribute name="DeepLink" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
-     *                 &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}byte" />
+     *                 &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}string" />
      *               &lt;/restriction>
      *             &lt;/complexContent>
      *           &lt;/complexType>
      *         &lt;/element>
      *       &lt;/sequence>
-     *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}short" />
+     *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
      *       &lt;attribute name="categories" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="cweId" type="{http://www.w3.org/2001/XMLSchema}short" />
+     *       &lt;attribute name="cweId" type="{http://www.w3.org/2001/XMLSchema}string" />
      *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
      *       &lt;attribute name="group" type="{http://www.w3.org/2001/XMLSchema}string" />
      *       &lt;attribute name="Severity" type="{http://www.w3.org/2001/XMLSchema}string" />
      *       &lt;attribute name="Language" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="LanguageHash" type="{http://www.w3.org/2001/XMLSchema}long" />
+     *       &lt;attribute name="LanguageHash" type="{http://www.w3.org/2001/XMLSchema}string" />
      *       &lt;attribute name="LanguageChangeDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
-     *       &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}byte" />
+     *       &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}string" />
      *       &lt;attribute name="QueryPath" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="QueryVersionCode" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *       &lt;attribute name="QueryVersionCode" type="{http://www.w3.org/2001/XMLSchema}string" />
      *     &lt;/restriction>
      *   &lt;/complexContent>
      * &lt;/complexType>
@@ -796,11 +796,11 @@ public class CxXMLResults {
         @XmlElement(name = "Result")
         protected List<Result> result;
         @XmlAttribute(name = "id")
-        protected Short id;
+        protected String id;
         @XmlAttribute(name = "categories")
         protected String categories;
         @XmlAttribute(name = "cweId")
-        protected Short cweId;
+        protected String cweId;
         @XmlAttribute(name = "name")
         protected String name;
         @XmlAttribute(name = "group")
@@ -810,16 +810,16 @@ public class CxXMLResults {
         @XmlAttribute(name = "Language")
         protected String language;
         @XmlAttribute(name = "LanguageHash")
-        protected Long languageHash;
+        protected String languageHash;
         @XmlAttribute(name = "LanguageChangeDate")
         @XmlSchemaType(name = "dateTime")
-        protected XMLGregorianCalendar languageChangeDate;
+        protected String languageChangeDate;
         @XmlAttribute(name = "SeverityIndex")
-        protected Byte severityIndex;
+        protected String severityIndex;
         @XmlAttribute(name = "QueryPath")
         protected String queryPath;
         @XmlAttribute(name = "QueryVersionCode")
-        protected Integer queryVersionCode;
+        protected String queryVersionCode;
 
         /**
          * Gets the value of the result property.
@@ -855,10 +855,10 @@ public class CxXMLResults {
          * 
          * @return
          *     possible object is
-         *     {@link Short }
+         *     {@link String }
          *     
          */
-        public Short getId() {
+        public String getId() {
             return id;
         }
 
@@ -867,10 +867,10 @@ public class CxXMLResults {
          * 
          * @param value
          *     allowed object is
-         *     {@link Short }
+         *     {@link String }
          *     
          */
-        public void setId(Short value) {
+        public void setId(String value) {
             this.id = value;
         }
 
@@ -903,10 +903,10 @@ public class CxXMLResults {
          * 
          * @return
          *     possible object is
-         *     {@link Short }
+         *     {@link String }
          *     
          */
-        public Short getCweId() {
+        public String getCweId() {
             return cweId;
         }
 
@@ -915,10 +915,10 @@ public class CxXMLResults {
          * 
          * @param value
          *     allowed object is
-         *     {@link Short }
+         *     {@link String }
          *     
          */
-        public void setCweId(Short value) {
+        public void setCweId(String value) {
             this.cweId = value;
         }
 
@@ -1023,10 +1023,10 @@ public class CxXMLResults {
          * 
          * @return
          *     possible object is
-         *     {@link Long }
+         *     {@link String }
          *     
          */
-        public Long getLanguageHash() {
+        public String getLanguageHash() {
             return languageHash;
         }
 
@@ -1035,10 +1035,10 @@ public class CxXMLResults {
          * 
          * @param value
          *     allowed object is
-         *     {@link Long }
+         *     {@link String }
          *     
          */
-        public void setLanguageHash(Long value) {
+        public void setLanguageHash(String value) {
             this.languageHash = value;
         }
 
@@ -1047,10 +1047,10 @@ public class CxXMLResults {
          * 
          * @return
          *     possible object is
-         *     {@link XMLGregorianCalendar }
+         *     {@link String }
          *     
          */
-        public XMLGregorianCalendar getLanguageChangeDate() {
+        public String getLanguageChangeDate() {
             return languageChangeDate;
         }
 
@@ -1059,10 +1059,10 @@ public class CxXMLResults {
          * 
          * @param value
          *     allowed object is
-         *     {@link XMLGregorianCalendar }
+         *     {@link String }
          *     
          */
-        public void setLanguageChangeDate(XMLGregorianCalendar value) {
+        public void setLanguageChangeDate(String value) {
             this.languageChangeDate = value;
         }
 
@@ -1071,10 +1071,10 @@ public class CxXMLResults {
          * 
          * @return
          *     possible object is
-         *     {@link Byte }
+         *     {@link String }
          *     
          */
-        public Byte getSeverityIndex() {
+        public String getSeverityIndex() {
             return severityIndex;
         }
 
@@ -1083,10 +1083,10 @@ public class CxXMLResults {
          * 
          * @param value
          *     allowed object is
-         *     {@link Byte }
+         *     {@link String }
          *     
          */
-        public void setSeverityIndex(Byte value) {
+        public void setSeverityIndex(String value) {
             this.severityIndex = value;
         }
 
@@ -1119,10 +1119,10 @@ public class CxXMLResults {
          * 
          * @return
          *     possible object is
-         *     {@link Integer }
+         *     {@link String }
          *     
          */
-        public Integer getQueryVersionCode() {
+        public String getQueryVersionCode() {
             return queryVersionCode;
         }
 
@@ -1131,10 +1131,10 @@ public class CxXMLResults {
          * 
          * @param value
          *     allowed object is
-         *     {@link Integer }
+         *     {@link String }
          *     
          */
-        public void setQueryVersionCode(Integer value) {
+        public void setQueryVersionCode(String value) {
             this.queryVersionCode = value;
         }
 
@@ -1160,12 +1160,12 @@ public class CxXMLResults {
          *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
          *                           &lt;sequence>
          *                             &lt;element name="FileName" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                             &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}short"/>
-         *                             &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-         *                             &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+         *                             &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}string"/>
+         *                             &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}string"/>
+         *                             &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string"/>
          *                             &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
          *                             &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                             &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+         *                             &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}string"/>
          *                             &lt;element name="Snippet">
          *                               &lt;complexType>
          *                                 &lt;complexContent>
@@ -1176,7 +1176,7 @@ public class CxXMLResults {
          *                                           &lt;complexContent>
          *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
          *                                               &lt;sequence>
-         *                                                 &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}short"/>
+         *                                                 &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}string"/>
          *                                                 &lt;element name="Code" type="{http://www.w3.org/2001/XMLSchema}string"/>
          *                                               &lt;/sequence>
          *                                             &lt;/restriction>
@@ -1194,26 +1194,26 @@ public class CxXMLResults {
          *                     &lt;/complexType>
          *                   &lt;/element>
          *                 &lt;/sequence>
-         *                 &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}int" />
-         *                 &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}byte" />
-         *                 &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}int" />
+         *                 &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *                 &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *                 &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}string" />
          *               &lt;/restriction>
          *             &lt;/complexContent>
          *           &lt;/complexType>
          *         &lt;/element>
          *       &lt;/sequence>
-         *       &lt;attribute name="NodeId" type="{http://www.w3.org/2001/XMLSchema}long" />
+         *       &lt;attribute name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string" />
          *       &lt;attribute name="FileName" type="{http://www.w3.org/2001/XMLSchema}string" />
          *       &lt;attribute name="Status" type="{http://www.w3.org/2001/XMLSchema}string" />
-         *       &lt;attribute name="Line" type="{http://www.w3.org/2001/XMLSchema}short" />
-         *       &lt;attribute name="Column" type="{http://www.w3.org/2001/XMLSchema}byte" />
+         *       &lt;attribute name="Line" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *       &lt;attribute name="Column" type="{http://www.w3.org/2001/XMLSchema}string" />
          *       &lt;attribute name="FalsePositive" type="{http://www.w3.org/2001/XMLSchema}string" />
          *       &lt;attribute name="Severity" type="{http://www.w3.org/2001/XMLSchema}string" />
          *       &lt;attribute name="AssignToUser" type="{http://www.w3.org/2001/XMLSchema}string" />
-         *       &lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}byte" />
+         *       &lt;attribute name="state" type="{http://www.w3.org/2001/XMLSchema}string" />
          *       &lt;attribute name="Remark" type="{http://www.w3.org/2001/XMLSchema}string" />
          *       &lt;attribute name="DeepLink" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
-         *       &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}byte" />
+         *       &lt;attribute name="SeverityIndex" type="{http://www.w3.org/2001/XMLSchema}string" />
          *     &lt;/restriction>
          *   &lt;/complexContent>
          * &lt;/complexType>
@@ -1230,15 +1230,15 @@ public class CxXMLResults {
             @XmlElement(name = "Path", required = true)
             protected Path path;
             @XmlAttribute(name = "NodeId")
-            protected Long nodeId;
+            protected String nodeId;
             @XmlAttribute(name = "FileName")
             protected String fileName;
             @XmlAttribute(name = "Status")
             protected String status;
             @XmlAttribute(name = "Line")
-            protected Short line;
+            protected String line;
             @XmlAttribute(name = "Column")
-            protected Byte column;
+            protected String column;
             @XmlAttribute(name = "FalsePositive")
             protected String falsePositive;
             @XmlAttribute(name = "Severity")
@@ -1246,14 +1246,14 @@ public class CxXMLResults {
             @XmlAttribute(name = "AssignToUser")
             protected String assignToUser;
             @XmlAttribute(name = "state")
-            protected Byte state;
+            protected String state;
             @XmlAttribute(name = "Remark")
             protected String remark;
             @XmlAttribute(name = "DeepLink")
             @XmlSchemaType(name = "anyURI")
             protected String deepLink;
             @XmlAttribute(name = "SeverityIndex")
-            protected Byte severityIndex;
+            protected String severityIndex;
 
             /**
              * Gets the value of the path property.
@@ -1284,10 +1284,10 @@ public class CxXMLResults {
              * 
              * @return
              *     possible object is
-             *     {@link Long }
+             *     {@link String }
              *     
              */
-            public Long getNodeId() {
+            public String getNodeId() {
                 return nodeId;
             }
 
@@ -1296,10 +1296,10 @@ public class CxXMLResults {
              * 
              * @param value
              *     allowed object is
-             *     {@link Long }
+             *     {@link String }
              *     
              */
-            public void setNodeId(Long value) {
+            public void setNodeId(String value) {
                 this.nodeId = value;
             }
 
@@ -1356,10 +1356,10 @@ public class CxXMLResults {
              * 
              * @return
              *     possible object is
-             *     {@link Short }
+             *     {@link String }
              *     
              */
-            public Short getLine() {
+            public String getLine() {
                 return line;
             }
 
@@ -1368,10 +1368,10 @@ public class CxXMLResults {
              * 
              * @param value
              *     allowed object is
-             *     {@link Short }
+             *     {@link String }
              *     
              */
-            public void setLine(Short value) {
+            public void setLine(String value) {
                 this.line = value;
             }
 
@@ -1380,10 +1380,10 @@ public class CxXMLResults {
              * 
              * @return
              *     possible object is
-             *     {@link Byte }
+             *     {@link String }
              *     
              */
-            public Byte getColumn() {
+            public String getColumn() {
                 return column;
             }
 
@@ -1392,10 +1392,10 @@ public class CxXMLResults {
              * 
              * @param value
              *     allowed object is
-             *     {@link Byte }
+             *     {@link String }
              *     
              */
-            public void setColumn(Byte value) {
+            public void setColumn(String value) {
                 this.column = value;
             }
 
@@ -1476,10 +1476,10 @@ public class CxXMLResults {
              * 
              * @return
              *     possible object is
-             *     {@link Byte }
+             *     {@link String }
              *     
              */
-            public Byte getState() {
+            public String getState() {
                 return state;
             }
 
@@ -1488,10 +1488,10 @@ public class CxXMLResults {
              * 
              * @param value
              *     allowed object is
-             *     {@link Byte }
+             *     {@link String }
              *     
              */
-            public void setState(Byte value) {
+            public void setState(String value) {
                 this.state = value;
             }
 
@@ -1548,10 +1548,10 @@ public class CxXMLResults {
              * 
              * @return
              *     possible object is
-             *     {@link Byte }
+             *     {@link String }
              *     
              */
-            public Byte getSeverityIndex() {
+            public String getSeverityIndex() {
                 return severityIndex;
             }
 
@@ -1560,10 +1560,10 @@ public class CxXMLResults {
              * 
              * @param value
              *     allowed object is
-             *     {@link Byte }
+             *     {@link String }
              *     
              */
-            public void setSeverityIndex(Byte value) {
+            public void setSeverityIndex(String value) {
                 this.severityIndex = value;
             }
 
@@ -1584,12 +1584,12 @@ public class CxXMLResults {
              *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
              *                 &lt;sequence>
              *                   &lt;element name="FileName" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                   &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}short"/>
-             *                   &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-             *                   &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+             *                   &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}string"/>
+             *                   &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}string"/>
+             *                   &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string"/>
              *                   &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
              *                   &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                   &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+             *                   &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}string"/>
              *                   &lt;element name="Snippet">
              *                     &lt;complexType>
              *                       &lt;complexContent>
@@ -1600,7 +1600,7 @@ public class CxXMLResults {
              *                                 &lt;complexContent>
              *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
              *                                     &lt;sequence>
-             *                                       &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}short"/>
+             *                                       &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}string"/>
              *                                       &lt;element name="Code" type="{http://www.w3.org/2001/XMLSchema}string"/>
              *                                     &lt;/sequence>
              *                                   &lt;/restriction>
@@ -1618,9 +1618,9 @@ public class CxXMLResults {
              *           &lt;/complexType>
              *         &lt;/element>
              *       &lt;/sequence>
-             *       &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}int" />
-             *       &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}byte" />
-             *       &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}int" />
+             *       &lt;attribute name="ResultId" type="{http://www.w3.org/2001/XMLSchema}string" />
+             *       &lt;attribute name="PathId" type="{http://www.w3.org/2001/XMLSchema}string" />
+             *       &lt;attribute name="SimilarityId" type="{http://www.w3.org/2001/XMLSchema}string" />
              *     &lt;/restriction>
              *   &lt;/complexContent>
              * &lt;/complexType>
@@ -1637,11 +1637,11 @@ public class CxXMLResults {
                 @XmlElement(name = "PathNode")
                 protected List<PathNode> pathNode;
                 @XmlAttribute(name = "ResultId")
-                protected Integer resultId;
+                protected String resultId;
                 @XmlAttribute(name = "PathId")
-                protected Byte pathId;
+                protected String pathId;
                 @XmlAttribute(name = "SimilarityId")
-                protected Integer similarityId;
+                protected String similarityId;
 
                 /**
                  * Gets the value of the pathNode property.
@@ -1677,10 +1677,10 @@ public class CxXMLResults {
                  * 
                  * @return
                  *     possible object is
-                 *     {@link Integer }
+                 *     {@link String }
                  *     
                  */
-                public Integer getResultId() {
+                public String getResultId() {
                     return resultId;
                 }
 
@@ -1689,10 +1689,10 @@ public class CxXMLResults {
                  * 
                  * @param value
                  *     allowed object is
-                 *     {@link Integer }
+                 *     {@link String }
                  *     
                  */
-                public void setResultId(Integer value) {
+                public void setResultId(String value) {
                     this.resultId = value;
                 }
 
@@ -1701,10 +1701,10 @@ public class CxXMLResults {
                  * 
                  * @return
                  *     possible object is
-                 *     {@link Byte }
+                 *     {@link String }
                  *     
                  */
-                public Byte getPathId() {
+                public String getPathId() {
                     return pathId;
                 }
 
@@ -1713,10 +1713,10 @@ public class CxXMLResults {
                  * 
                  * @param value
                  *     allowed object is
-                 *     {@link Byte }
+                 *     {@link String }
                  *     
                  */
-                public void setPathId(Byte value) {
+                public void setPathId(String value) {
                     this.pathId = value;
                 }
 
@@ -1725,10 +1725,10 @@ public class CxXMLResults {
                  * 
                  * @return
                  *     possible object is
-                 *     {@link Integer }
+                 *     {@link String }
                  *     
                  */
-                public Integer getSimilarityId() {
+                public String getSimilarityId() {
                     return similarityId;
                 }
 
@@ -1737,10 +1737,10 @@ public class CxXMLResults {
                  * 
                  * @param value
                  *     allowed object is
-                 *     {@link Integer }
+                 *     {@link String }
                  *     
                  */
-                public void setSimilarityId(Integer value) {
+                public void setSimilarityId(String value) {
                     this.similarityId = value;
                 }
 
@@ -1756,12 +1756,12 @@ public class CxXMLResults {
                  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
                  *       &lt;sequence>
                  *         &lt;element name="FileName" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *         &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}short"/>
-                 *         &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-                 *         &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+                 *         &lt;element name="Line" type="{http://www.w3.org/2001/XMLSchema}string"/>
+                 *         &lt;element name="Column" type="{http://www.w3.org/2001/XMLSchema}string"/>
+                 *         &lt;element name="NodeId" type="{http://www.w3.org/2001/XMLSchema}string"/>
                  *         &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
                  *         &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *         &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}byte"/>
+                 *         &lt;element name="Length" type="{http://www.w3.org/2001/XMLSchema}string"/>
                  *         &lt;element name="Snippet">
                  *           &lt;complexType>
                  *             &lt;complexContent>
@@ -1772,7 +1772,7 @@ public class CxXMLResults {
                  *                       &lt;complexContent>
                  *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
                  *                           &lt;sequence>
-                 *                             &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}short"/>
+                 *                             &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}string"/>
                  *                             &lt;element name="Code" type="{http://www.w3.org/2001/XMLSchema}string"/>
                  *                           &lt;/sequence>
                  *                         &lt;/restriction>
@@ -1808,17 +1808,17 @@ public class CxXMLResults {
                     @XmlElement(name = "FileName", required = true)
                     protected String fileName;
                     @XmlElement(name = "Line")
-                    protected short line;
+                    protected String line;
                     @XmlElement(name = "Column")
-                    protected byte column;
+                    protected String column;
                     @XmlElement(name = "NodeId")
-                    protected byte nodeId;
+                    protected String nodeId;
                     @XmlElement(name = "Name", required = true)
                     protected String name;
                     @XmlElement(name = "Type", required = true)
                     protected String type;
                     @XmlElement(name = "Length")
-                    protected byte length;
+                    protected String length;
                     @XmlElement(name = "Snippet", required = true)
                     protected Snippet snippet;
 
@@ -1850,7 +1850,7 @@ public class CxXMLResults {
                      * Gets the value of the line property.
                      * 
                      */
-                    public short getLine() {
+                    public String getLine() {
                         return line;
                     }
 
@@ -1858,7 +1858,7 @@ public class CxXMLResults {
                      * Sets the value of the line property.
                      * 
                      */
-                    public void setLine(short value) {
+                    public void setLine(String value) {
                         this.line = value;
                     }
 
@@ -1866,7 +1866,7 @@ public class CxXMLResults {
                      * Gets the value of the column property.
                      * 
                      */
-                    public byte getColumn() {
+                    public String getColumn() {
                         return column;
                     }
 
@@ -1874,7 +1874,7 @@ public class CxXMLResults {
                      * Sets the value of the column property.
                      * 
                      */
-                    public void setColumn(byte value) {
+                    public void setColumn(String value) {
                         this.column = value;
                     }
 
@@ -1882,7 +1882,7 @@ public class CxXMLResults {
                      * Gets the value of the nodeId property.
                      * 
                      */
-                    public byte getNodeId() {
+                    public String getNodeId() {
                         return nodeId;
                     }
 
@@ -1890,7 +1890,7 @@ public class CxXMLResults {
                      * Sets the value of the nodeId property.
                      * 
                      */
-                    public void setNodeId(byte value) {
+                    public void setNodeId(String value) {
                         this.nodeId = value;
                     }
 
@@ -1946,7 +1946,7 @@ public class CxXMLResults {
                      * Gets the value of the length property.
                      * 
                      */
-                    public byte getLength() {
+                    public String getLength() {
                         return length;
                     }
 
@@ -1954,7 +1954,7 @@ public class CxXMLResults {
                      * Sets the value of the length property.
                      * 
                      */
-                    public void setLength(byte value) {
+                    public void setLength(String value) {
                         this.length = value;
                     }
 
@@ -1998,7 +1998,7 @@ public class CxXMLResults {
                      *             &lt;complexContent>
                      *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
                      *                 &lt;sequence>
-                     *                   &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}short"/>
+                     *                   &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}string"/>
                      *                   &lt;element name="Code" type="{http://www.w3.org/2001/XMLSchema}string"/>
                      *                 &lt;/sequence>
                      *               &lt;/restriction>
@@ -2057,7 +2057,7 @@ public class CxXMLResults {
                          *   &lt;complexContent>
                          *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
                          *       &lt;sequence>
-                         *         &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}short"/>
+                         *         &lt;element name="Number" type="{http://www.w3.org/2001/XMLSchema}string"/>
                          *         &lt;element name="Code" type="{http://www.w3.org/2001/XMLSchema}string"/>
                          *       &lt;/sequence>
                          *     &lt;/restriction>
@@ -2075,7 +2075,7 @@ public class CxXMLResults {
                         public static class Line {
 
                             @XmlElement(name = "Number")
-                            protected short number;
+                            protected String number;
                             @XmlElement(name = "Code", required = true)
                             protected String code;
 
@@ -2083,7 +2083,7 @@ public class CxXMLResults {
                              * Gets the value of the number property.
                              * 
                              */
-                            public short getNumber() {
+                            public String getNumber() {
                                 return number;
                             }
 
@@ -2091,7 +2091,7 @@ public class CxXMLResults {
                              * Sets the value of the number property.
                              * 
                              */
-                            public void setNumber(short value) {
+                            public void setNumber(String value) {
                                 this.number = value;
                             }
 

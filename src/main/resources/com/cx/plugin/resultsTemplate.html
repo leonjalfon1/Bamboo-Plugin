@@ -4,6 +4,7 @@
         .aui-item.details {
             width: 530px;
         }
+
         .results-report {
             max-width: 1196px;
         }
@@ -20,10 +21,10 @@
             font-family: 'Roboto', sans-serif;
             margin-right: 35px;
             margin-left: 35px;
+            max-width: 1196px;
         }
 
         .report-title {
-            max-width: 1196px;
         }
 
         .cx-report .cx-report-title {
@@ -236,7 +237,7 @@
             text-align: left;
             margin-right: 35px;
             background-color: #f2f2f2;
-            width: 107px;
+            width: 138px;
             padding: 16px;
             padding-bottom: 39px;
             /*can be 30*/
@@ -590,8 +591,8 @@
         }
 
         .error-msg {
-            display: inline-block;
-            padding: 4%;
+            display: block;
+            padding: 4% 0;
         }
 
         .aui-message.error, .aui-message-error {
@@ -612,7 +613,7 @@
     <div id="onSastError" class="error-msg">
         <div id="scanErrorMessage" class="aui-message error">
             <span class="aui-icon icon-error"></span>
-            <strong>Currently scan results are not available</strong>
+            <strong>Currently scan results are not available. Please check the scan logs for more information</strong>
         </div>
     </div>
 
@@ -833,7 +834,7 @@
                                 <div class="libraries-vulnerable-number" id="vulnerable-libraries"></div>
                             </div>
                             <div class="libraries-vulnerable-text">
-                                Vulnerabilities & Outdated
+                                Vulnerable and Outdated Libraries
                             </div>
                         </div>
                         <div class="libraries-ok">
@@ -873,7 +874,7 @@
                                 <div class="libraries-vulnerable-number" id="ok-libraries"></div>
                             </div>
                             <div class="libraries-ok-text">
-                                No Vulnerabilities
+                                No Known Vulnerability Libraries
                             </div>
                         </div>
                     </div>
@@ -1415,8 +1416,7 @@
 
     //-------------------------- full reports vars --------------------------------------
     //-------------- sast ------------------
-    //links
-    var sastHtmlPath = osaSummaryResultsLink;
+
 
     //full report info
     var sastStartDate = "cx.scanStart";
@@ -1429,9 +1429,18 @@
     //lists
     var queryList = cx.queryList;
 
-    var highCveList = generateQueryList(SEVERITY.HIGH);
-    var medCveList = generateQueryList(SEVERITY.MED);
-    var lowCveList = generateQueryList(SEVERITY.LOW);
+    var isSastFullReady =
+            sastStartDate != null &&
+            sastScanTime != null &&
+            sastNumFiles != null &&
+            sastLoc != null &&
+            queryList != null;
+
+
+    var highCveList;
+    var medCveList;
+    var lowCveList;
+
 
     //-------------- osa ------------------
     //this is a solution to the case scenario where OSA is disabled and osaCveList returns null which crashes the javascript code
@@ -1444,14 +1453,20 @@
     //full report info
     var osaStartDate = adjustDateFormat("cx.osaStartTime");
     var osaEndDate = adjustDateFormat("cx.osaEndTime");
-    var osaNumFiles = osaLibraries.length;
-
     var osaList = osaCveList;
 
+    var isOsaFullReady =
+            osaStartDate != null &&
+            osaEndDate != null &&
+            osaLibraries != null &&
+            osaList != null;
+
+    var osaNumFiles;
+
     //cve lists
-    var osaHighCveList = generateOsaCveList(SEVERITY.OSA_HIGH);
-    var osaMedCveList = generateOsaCveList(SEVERITY.OSA_MED);
-    var osaLowCveList = generateOsaCveList(SEVERITY.OSA_LOW);
+    var osaHighCveList;
+    var osaMedCveList;
+    var osaLowCveList;
 
 
     //-------------------------- html vars --------------------------------------
@@ -1610,59 +1625,80 @@
     }
 
     //---------------------------------------------------------- full reports ---------------------------------------------------------------
-    try {
-        //sast links
-        document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
+    if (isSastFullReady && isOsaFullReady) {
 
-        //osa links
-        document.getElementById("osa-html-link").setAttribute("href", osaHtmlPath);
+        //queries lists
+        highCveList = generateQueryList(SEVERITY.HIGH);
+        medCveList = generateQueryList(SEVERITY.MED);
+        lowCveList = generateQueryList(SEVERITY.LOW);
 
-        //sast info
-        document.getElementById("sast-full-start-date").innerHTML = formatDate(sastStartDate, "dd/mm/yy hh:mm");
-        document.getElementById("sast-full-end-date").innerHTML = formatDate(sastEndDate, "dd/mm/yy hh:mm");
-        document.getElementById("sast-full-files").innerHTML = numberWithCommas(sastNumFiles);
-        document.getElementById("sast-full-loc").innerHTML = numberWithCommas(sastLoc);
+        //cve lists
+        osaHighCveList = generateOsaCveList(SEVERITY.OSA_HIGH);
+        osaMedCveList = generateOsaCveList(SEVERITY.OSA_MED);
+        osaLowCveList = generateOsaCveList(SEVERITY.OSA_LOW);
 
-        //osa info
-        document.getElementById("osa-full-start-date").innerHTML = formatDate(osaStartDate, "dd/mm/yy hh:mm");
-        document.getElementById("osa-full-end-date").innerHTML = formatDate(osaEndDate, "dd/mm/yy hh:mm");
-        document.getElementById("osa-full-files").innerHTML = numberWithCommas(osaNumFiles);
-    } catch (e) {
-        console.error("Element missing in full report info section " + e.message);
-    }
+        osaNumFiles = osaLibraries.length;
 
-    try {
-        //generate full reports
-        if (highCount == 0 && medCount == 0 && lowCount == 0) {
-            document.getElementById("sast-full").setAttribute("style", "display: none");
-        } else {
-            if (highCount > 0) {
-                generateCveTable(SEVERITY.HIGH);
-            }
-            if (medCount > 0) {
-                generateCveTable(SEVERITY.MED);
-            }
-            if (lowCount > 0) {
-                generateCveTable(SEVERITY.LOW);
-            }
+        try {
+            //sast links
+            document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
+
+            //osa links
+            document.getElementById("osa-html-link").setAttribute("href", osaHtmlPath);
+
+            //sast info
+            document.getElementById("sast-full-start-date").innerHTML = formatDate(sastStartDate, "dd/mm/yy hh:mm");
+            document.getElementById("sast-full-end-date").innerHTML = formatDate(sastEndDate, "dd/mm/yy hh:mm");
+            document.getElementById("sast-full-files").innerHTML = numberWithCommas(sastNumFiles);
+            document.getElementById("sast-full-loc").innerHTML = numberWithCommas(sastLoc);
+
+            //osa info
+            document.getElementById("osa-full-start-date").innerHTML = formatDate(osaStartDate, "dd/mm/yy hh:mm");
+            document.getElementById("osa-full-end-date").innerHTML = formatDate(osaEndDate, "dd/mm/yy hh:mm");
+            document.getElementById("osa-full-files").innerHTML = numberWithCommas(osaNumFiles);
+        } catch (e) {
+            console.error("Element missing in full report info section " + e.message);
         }
 
-        if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
-            document.getElementById("osa-full").setAttribute("style", "display: none");
-        } else {
-            if (osaHighCount > 0) {
-                generateCveTable(SEVERITY.OSA_HIGH);
+        try {
+            //generate full reports
+            if (highCount == 0 && medCount == 0 && lowCount == 0) {
+                document.getElementById("sast-full").setAttribute("style", "display: none");
+            } else {
+                if (highCount > 0) {
+                    generateCveTable(SEVERITY.HIGH);
+                }
+                if (medCount > 0) {
+                    generateCveTable(SEVERITY.MED);
+                }
+                if (lowCount > 0) {
+                    generateCveTable(SEVERITY.LOW);
+                }
             }
-            if (osaMedCount > 0) {
-                generateCveTable(SEVERITY.OSA_MED);
+
+            if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
+                document.getElementById("osa-full").setAttribute("style", "display: none");
+            } else {
+                if (osaHighCount > 0) {
+                    generateCveTable(SEVERITY.OSA_HIGH);
+                }
+                if (osaMedCount > 0) {
+                    generateCveTable(SEVERITY.OSA_MED);
+                }
+                if (osaLowCount > 0) {
+                    generateCveTable(SEVERITY.OSA_LOW);
+                }
             }
-            if (osaLowCount > 0) {
-                generateCveTable(SEVERITY.OSA_LOW);
-            }
+        } catch (e) {
+            console.error("Element missing in full report detailed table section " + e.message);
         }
-    } catch (e) {
-        console.error("Element missing in full report detailed table section " + e.message);
     }
+    else {
+        document.getElementById("sast-full").setAttribute("style", "display: none");
+        document.getElementById("osa-full").setAttribute("style", "display: none");
+    }
+
+
     //functions
     function tooltipGenerator(severity) {
         var threshold = 0;
@@ -1944,10 +1980,12 @@
     //query lists
     function generateQueryList(severity) {
         var severityQueryList = {};
-        //loop through queries and push the relevant query - by severity - to the new list (lookup table)
-        for (var i = 0; i < queryList.length; i++) {
-            if (queryList[i].severity.toLowerCase() == severity.name) {
-                severityQueryList[queryList[i].name] = queryList[i].resultLength ? queryList[i].resultLength : 1;
+        if (queryList != null) {
+            //loop through queries and push the relevant query - by severity - to the new list (lookup table)
+            for (var i = 0; i < queryList.length; i++) {
+                if (queryList[i].severity.toLowerCase() == severity.name) {
+                    severityQueryList[queryList[i].name] = queryList[i].resultLength ? queryList[i].resultLength : 1;
+                }
             }
         }
         return severityQueryList;
@@ -1956,10 +1994,12 @@
     //osa list
     function generateOsaCveList(severity) {
         var severityOsaList = [];
-        //loop through queries and push the relevant query - by severity - to the new list
-        for (var i = 0; i < osaList.length; i++) {
-            if (osaList[i].severity.name.toLowerCase() == severity.name) {
-                severityOsaList.push(osaList[i]);
+        if (osaList != null) {
+            //loop through queries and push the relevant query - by severity - to the new list
+            for (var i = 0; i < osaList.length; i++) {
+                if (osaList[i].severity.name.toLowerCase() == severity.name) {
+                    severityOsaList.push(osaList[i]);
+                }
             }
         }
         return severityOsaList;

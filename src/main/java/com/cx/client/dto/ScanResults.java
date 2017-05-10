@@ -28,8 +28,8 @@ public class ScanResults {
 
     private String scanStart;
     private String scanTime;
-    private Byte filesScanned;
-    private Short linesOfCodeScanned;
+    private String filesScanned;
+    private String linesOfCodeScanned;
     private List<CxXMLResults.Query> queryList;
 
     public long getProjectId() {
@@ -118,19 +118,19 @@ public class ScanResults {
         this.scanTime = scanTime;
     }
 
-    public Byte getFilesScanned() {
+    public String getFilesScanned() {
         return filesScanned;
     }
 
-    public void setFilesScanned(Byte filesScanned) {
+    public void setFilesScanned(String filesScanned) {
         this.filesScanned = filesScanned;
     }
 
-    public Short getLinesOfCodeScanned() {
+    public String getLinesOfCodeScanned() {
         return linesOfCodeScanned;
     }
 
-    public void setLinesOfCodeScanned(Short linesOfCodeScanned) {
+    public void setLinesOfCodeScanned(String linesOfCodeScanned) {
         this.linesOfCodeScanned = linesOfCodeScanned;
     }
 
