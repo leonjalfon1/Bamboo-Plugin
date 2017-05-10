@@ -441,7 +441,6 @@ public class CheckmarxTask implements TaskType {
             results.put(CxResultsConst.LOW_THRESHOLD, lowThreshold);
         }
 
-        results.put(CxResultsConst.SAST_RESULTS_READY, OPTION_TRUE);
 
 
         results.put(CxResultsConst.SCAN_START_DATE, String.valueOf(scanResults.getScanStart()));
@@ -450,6 +449,7 @@ public class CheckmarxTask implements TaskType {
         results.put(CxResultsConst.SCAN_LOC_SCANNED, String.valueOf(scanResults.getLinesOfCodeScanned()));
         results.put(CxResultsConst.SCAN_QUERY_LIST, String.valueOf(scanResults.getQueryList()));
 
+        results.put(CxResultsConst.SAST_RESULTS_READY, OPTION_TRUE);
 
     }
 
