@@ -32,6 +32,7 @@ public abstract class CxResultUtils {
             //SAST: fill html with results
             ret = ret
                     .replace(SAST_RESULTS_READY, OPTION_TRUE)
+                    .replace(SAST_SYNC_MODE, String.valueOf(customBuildData.get(SAST_SYNC_MODE)))
                     .replaceAll(HIGH_RESULTS, String.valueOf(customBuildData.get(HIGH_RESULTS)))
                     .replace(MEDIUM_RESULTS, String.valueOf(customBuildData.get(MEDIUM_RESULTS)))
                     .replace(LOW_RESULTS, String.valueOf(customBuildData.get(LOW_RESULTS)))
@@ -51,6 +52,8 @@ public abstract class CxResultUtils {
             //SAST: fill html with empty values
             ret = ret
                     .replace(SAST_RESULTS_READY, OPTION_FALSE)
+                    .replace(SAST_SYNC_MODE, String.valueOf(customBuildData.get(SAST_SYNC_MODE)))
+                    .replace(SAST_SUMMARY_RESULTS_LINK, String.valueOf(customBuildData.get(SAST_SUMMARY_RESULTS_LINK)))
                     .replaceAll(HIGH_RESULTS, "0")
                     .replace(MEDIUM_RESULTS, "0")
                     .replace(LOW_RESULTS, "0")
