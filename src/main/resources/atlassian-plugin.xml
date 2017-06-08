@@ -47,11 +47,13 @@
 
     <web-panel key="checkmarx-planchainresult-summary" name="Checkmarx Plan Result Summary Panel"
                location="chainresult.summary" class="com.cx.plugin.results.CxPlanResultsWebPanel">
+        <condition class="com.cx.plugin.conditions.DisplayResultsCondition"/>
     </web-panel>
 
 
     <web-panel key="checkmarx-jobchainresult-summary" name="Checkmarx Job Result Summary Panel"
                location="jobresult.summary.right" class="com.cx.plugin.results.CxJobResultsWebPanel">
+        <condition class="com.cx.plugin.conditions.DisplayResultsCondition"/>
     </web-panel>
 
     <!-- Web Resources -->

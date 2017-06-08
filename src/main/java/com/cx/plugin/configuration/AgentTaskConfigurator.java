@@ -44,7 +44,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private static AdministrationConfiguration adminConfig;
 
     private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
-    private final static String SPECIFIC_SETTING_LABEL = "Specific Task Setting";
+    private final static String SPECIFIC_SETTING_LABEL = "Use Specific Setting";
     private final static String DEFAULT_SERVER_URL = "http://";
     private final static int MAX_PROJECT_NAME_LENGTH = 200;
 
