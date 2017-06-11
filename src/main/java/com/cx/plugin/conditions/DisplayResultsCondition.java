@@ -32,18 +32,17 @@ public class DisplayResultsCondition implements Condition {
     public boolean shouldDisplay(final Map<String, Object> context) {
 
         AbstractResultsSummary a = (AbstractResultsSummary) context.get("resultSummary");
-        boolean buildFinished =  "Finished".equals(a.getLifeCycleState().toString());
+        boolean buildFinished = "Finished".equals(a.getLifeCycleState().toString());
 
-        return buildFinished && hasCxTask(((ImmutablePlan)context.get("plan")),  new IsCxTaskPredicate<TaskDefinition>());
+        return buildFinished && hasCxTask(((ImmutablePlan) context.get("plan")), new IsCxTaskPredicate<TaskDefinition>());
     }
 
 
     public static boolean hasCxTask(ImmutablePlan plan, Predicate<TaskDefinition> predicate) {
         if (plan instanceof ImmutableChain) {
-            for (ImmutableJob job : ((ImmutableChain) plan).getAllJobs()) {
-                if (Iterables.any(job.getBuildDefinition().getTaskDefinitions(), predicate)) {
-                    return true;
-                }
+            ImmutableJob job = ((ImmutableChain) plan).getAllJobs().get(0);
+            if (Iterables.any(job.getBuildDefinition().getTaskDefinitions(), predicate)) {
+                return true;
             }
         } else if (plan instanceof ImmutableBuildable) {
             ImmutableJob job = (ImmutableJob) plan;
