@@ -622,7 +622,7 @@
     <div id="onAsyncMode" class="error-msg">
         <div id="asyncMessage" class="aui-message warning">
             <span class="aui-icon icon-warning"></span>
-         <strong id="dd">CxSAST scan was run in Asynchronous mode </strong>
+            <strong id="dd">CxSAST scan was run in Asynchronous mode </strong>
         </div>
     </div>
 
@@ -1577,7 +1577,7 @@
 
 
     //---------------------------------------------------------- sast ---------------------------------------------------------------
-    if (syncMode) {
+    if (syncMode != false) {
         if (sastResultsReady) {
             try {
                 //link
@@ -1807,15 +1807,24 @@
     }
     else {  //AsyncMode
         var asyncModeMessage = "CxSAST scan was run in Asynchronous mode";
-        if (sastSummaryResultsLink){
-            asyncModeMessage +=  ". Refer to the " +  sastSummaryResultsLink + " for the scan results"
+        var asyncDiv = document.getElementById("asyncMessage");
+
+        if (sastSummaryResultsLink) {
+            asyncModeMessage += ". Refer to the ";
+            var resultLink = document.createElement('a');
+            resultLink.setAttribute('href', sastSummaryResultsLink);
+            resultLink.innerHTML = sastSummaryResultsLink;
+            asyncDiv.innerHTML = asyncModeMessage;
+            asyncDiv.appendChild(resultLink);
+            asyncDiv.appendChild(document.createTextNode(" for the scan results"));
+
         }
-        var async = document.getElementById("asyncMessage");
-        async.innerHTML = asyncModeMessage;
+        else {
+            asyncDiv.innerHTML = asyncModeMessage;
+        }
 
         document.getElementById("asyncMessage").setAttribute("style", "display:block");
         document.getElementById("onAsyncMode").setAttribute("style", "display:block");
-
         document.getElementById("onSastError").setAttribute("style", "display:none");
         document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
         document.getElementById("results-report").setAttribute("style", "display:none");
