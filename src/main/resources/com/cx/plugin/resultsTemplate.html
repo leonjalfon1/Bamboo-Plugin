@@ -6,6 +6,7 @@
 
     .results-report {
         max-width: 1196px;
+        display: none
     }
 
     .results-report .cx-icon {
@@ -602,6 +603,11 @@
         display: none;
         font-weight: bold;
     }
+
+    #onSastError , #osa-summary, #osa-full, #sast-full  {
+        display: none;
+    }
+
 
 
 </style>
@@ -1577,15 +1583,14 @@
 
 
     //---------------------------------------------------------- sast ---------------------------------------------------------------
-    if (syncMode != false) {
+    if (syncMode != false) { //Synchronous Mode
         if (sastResultsReady) {
             try {
+                document.getElementById("results-report").setAttribute("style", "display:block");
+
                 //link
                 document.getElementById("sast-summary-html-link").setAttribute("href", sastScanResultsLink);
                 document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
-
-                document.getElementById("onSastError").setAttribute("style", "display:none");
-                document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
 
                 //set bars height and count
                 document.getElementById("bar-count-high").innerHTML = highCount;
@@ -1638,12 +1643,14 @@
             }
         }
         else {
-            document.getElementById("results-report").setAttribute("style", "display:none");
+            document.getElementById("onSastError").setAttribute("style", "display:block");
+            document.getElementById("scanErrorMessage").setAttribute("style", "display:block");
         }
 
         //---------------------------------------------------------- osa ---------------------------------------------------------------
         if (osaEnabled) {
             try {
+                document.getElementById("osa-summary").setAttribute("style", "display:block");
                 //link
                 document.getElementById("osa-summary-html-link").setAttribute("href", osaHtmlPath);
 
@@ -1706,12 +1713,12 @@
             }
         }
         else {
-            document.getElementById("osa-summary").setAttribute("style", "display:none");
             document.getElementById("sast-summary").setAttribute("class", "sast-summary chart-large");
         }
 
         //---------------------------------------------------------- full reports ---------------------------------------------------------------
         if (isSastFullReady) {
+            document.getElementById("sast-full").setAttribute("style", "display: block");
 
             //queries lists
             highCveList = generateQueryList(SEVERITY.HIGH);
@@ -1754,12 +1761,9 @@
                 console.error("Element missing in full report detailed table section " + e.message);
             }
         }
-        else {
-            document.getElementById("sast-full").setAttribute("style", "display: none");
-        }
 
         if (isOsaFullReady) {
-
+            document.getElementById("osa-full").setAttribute("style", "display: block");
             //cve lists
             osaHighCveList = generateOsaCveList(SEVERITY.OSA_HIGH);
             osaMedCveList = generateOsaCveList(SEVERITY.OSA_MED);
@@ -1801,23 +1805,18 @@
                 console.error("Element missing in full report detailed table section " + e.message);
             }
         }
-        else {
-            document.getElementById("osa-full").setAttribute("style", "display: none");
-        }
     }
     else {  //AsyncMode
         var asyncModeMessage = "CxSAST scan was run in Asynchronous mode";
         var asyncDiv = document.getElementById("asyncMessage");
 
         if (sastSummaryResultsLink) {
-            asyncModeMessage += ". Refer to the ";
+            asyncDiv.innerHTML = asyncModeMessage + ". Refer to the ";
             var resultLink = document.createElement('a');
             resultLink.setAttribute('href', sastSummaryResultsLink);
             resultLink.innerHTML = sastSummaryResultsLink;
-            asyncDiv.innerHTML = asyncModeMessage;
             asyncDiv.appendChild(resultLink);
-            asyncDiv.appendChild(document.createTextNode(" for the scan results"));
-
+            asyncDiv.appendChild(document.createTextNode(" for scan results"));
         }
         else {
             asyncDiv.innerHTML = asyncModeMessage;
@@ -1825,12 +1824,6 @@
 
         document.getElementById("asyncMessage").setAttribute("style", "display:block");
         document.getElementById("onAsyncMode").setAttribute("style", "display:block");
-        document.getElementById("onSastError").setAttribute("style", "display:none");
-        document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
-        document.getElementById("results-report").setAttribute("style", "display:none");
-        document.getElementById("osa-summary").setAttribute("style", "display:none");
-        document.getElementById("sast-full").setAttribute("style", "display: none");
-        document.getElementById("osa-full").setAttribute("style", "display: none");
     }
 
 
