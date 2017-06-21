@@ -90,6 +90,7 @@ public class CheckmarxTask implements TaskType {
 
         try {
             config = new CxScanConfiguration(configurationMap);
+            results.put(CxResultsConst.SAST_SYNC_MODE, String.valueOf(config.isSynchronous()));
             url = new URL(config.getUrl());
             printConfiguration(config);
 
@@ -140,6 +141,8 @@ public class CheckmarxTask implements TaskType {
                     throw osaException;
                 }
                 buildLoggerAdapter.info("Running in Asynchronous mode. Not waiting for scan to finish");
+                results.put(CxResultsConst.SAST_SUMMARY_RESULTS_LINK, StringUtils.defaultString(projectStateLink));
+                buildContext.getBuildResult().getCustomBuildData().putAll(results);
                 return taskResultBuilder.success().build();
             }
 

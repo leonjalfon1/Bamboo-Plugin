@@ -9,6 +9,8 @@ public abstract class CxResultsConst {
 
     public static final String SAST_RESULTS_READY = "cx.sastResultsReady";
 
+    public static final String SAST_SYNC_MODE = "cx.syncMode";
+
     public static final String HIGH_RESULTS = "cx.highResults";
     public static final String MEDIUM_RESULTS = "cx.mediumResults";
     public static final String LOW_RESULTS = "cx.lowResults";

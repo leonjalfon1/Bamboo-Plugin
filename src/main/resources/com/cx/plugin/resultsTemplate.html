@@ -6,6 +6,7 @@
 
     .results-report {
         max-width: 1196px;
+        display: none
     }
 
     .results-report .cx-icon {
@@ -598,6 +599,16 @@
         display: block;
     }
 
+    #asyncMessage {
+        display: none;
+        font-weight: bold;
+    }
+
+    #onSastError , #osa-summary, #osa-full, #sast-full  {
+        display: none;
+    }
+
+
 
 </style>
 <div class="cx-report">
@@ -611,6 +622,13 @@
         <div id="scanErrorMessage" class="aui-message error">
             <span class="aui-icon icon-error"></span>
             <strong>Currently scan results are not available. Please check the scan logs for more information</strong>
+        </div>
+    </div>
+
+    <div id="onAsyncMode" class="error-msg">
+        <div id="asyncMessage" class="aui-message warning">
+            <span class="aui-icon icon-warning"></span>
+            <strong id="dd">CxSAST scan was run in Asynchronous mode </strong>
         </div>
     </div>
 
@@ -1452,7 +1470,13 @@
     var lowThreshold = cx.lowThreshold;
 
     //links
+
     var sastScanResultsLink = 'cx.sastScanResultsLink';
+    var sastSummaryResultsLink = 'cx.sastSummaryResultsLink';
+
+    //AsyncMode
+    var syncMode = cx.syncMode;
+
 
     //counts
     var highCount = cx.highResults;
@@ -1559,231 +1583,247 @@
 
 
     //---------------------------------------------------------- sast ---------------------------------------------------------------
-    if (sastResultsReady) {
-        try {
-            //link
-            document.getElementById("sast-summary-html-link").setAttribute("href", sastScanResultsLink);
-            document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
+    if (syncMode != false) { //Synchronous Mode
+        if (sastResultsReady) {
+            try {
+                document.getElementById("results-report").setAttribute("style", "display:block");
 
-            document.getElementById("onSastError").setAttribute("style", "display:none");
-            document.getElementById("scanErrorMessage").setAttribute("style", "display:none");
+                //link
+                document.getElementById("sast-summary-html-link").setAttribute("href", sastScanResultsLink);
+                document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
 
-            //set bars height and count
-            document.getElementById("bar-count-high").innerHTML = highCount;
-            document.getElementById("bar-count-med").innerHTML = medCount;
-            document.getElementById("bar-count-low").innerHTML = lowCount;
+                //set bars height and count
+                document.getElementById("bar-count-high").innerHTML = highCount;
+                document.getElementById("bar-count-med").innerHTML = medCount;
+                document.getElementById("bar-count-low").innerHTML = lowCount;
 
-            var maxCount = Math.max(highCount, medCount, lowCount);
-            var maxHeight = maxCount * 100 / 90;
-            document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / maxHeight + "%");
-            document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / maxHeight + "%");
-            document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / maxHeight + "%");
-        } catch (e) {
-            console.error("Element missing in SAST summary section " + e.message);
+                var maxCount = Math.max(highCount, medCount, lowCount);
+                var maxHeight = maxCount * 100 / 90;
+                document.getElementById("bar-high").setAttribute("style", "height:" + highCount * 100 / maxHeight + "%");
+                document.getElementById("bar-med").setAttribute("style", "height:" + medCount * 100 / maxHeight + "%");
+                document.getElementById("bar-low").setAttribute("style", "height:" + lowCount * 100 / maxHeight + "%");
+            } catch (e) {
+                console.error("Element missing in SAST summary section " + e.message);
+            }
+
+            //if threshold is enabled
+            if (thresholdsEnabled) {
+                try {
+                    var isThresholdExceeded = false;
+                    var thresholdExceededComplianceElement = document.getElementById("threshold-exceeded-compliance");
+
+                    if (highThreshold != null && highCount > highThreshold) {
+                        document.getElementById("tooltip-high").innerHTML = tooltipGenerator(SEVERITY.HIGH);
+                        isThresholdExceeded = true;
+                    }
+
+                    if (medThreshold != null && medCount > medThreshold) {
+                        document.getElementById("tooltip-med").innerHTML = tooltipGenerator(SEVERITY.MED);
+                        isThresholdExceeded = true;
+                    }
+
+                    if (lowThreshold != null && lowCount > lowThreshold) {
+                        document.getElementById("tooltip-low").innerHTML = tooltipGenerator(SEVERITY.LOW);
+                        isThresholdExceeded = true;
+                    }
+
+
+                    //if threshold exceeded
+                    if (isThresholdExceeded) {
+                        thresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
+                    }
+
+                    //else show threshold compliance element
+                    else {
+                        thresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+                    }
+                } catch (e) {
+                    console.error("Element missing in SAST threshold section " + e.message);
+                }
+            }
+        }
+        else {
+            document.getElementById("onSastError").setAttribute("style", "display:block");
+            document.getElementById("scanErrorMessage").setAttribute("style", "display:block");
         }
 
-        //if threshold is enabled
-        if (thresholdsEnabled) {
+        //---------------------------------------------------------- osa ---------------------------------------------------------------
+        if (osaEnabled) {
             try {
-                var isThresholdExceeded = false;
-                var thresholdExceededComplianceElement = document.getElementById("threshold-exceeded-compliance");
+                document.getElementById("osa-summary").setAttribute("style", "display:block");
+                //link
+                document.getElementById("osa-summary-html-link").setAttribute("href", osaHtmlPath);
 
-                if (highThreshold != null && highCount > highThreshold) {
-                    document.getElementById("tooltip-high").innerHTML = tooltipGenerator(SEVERITY.HIGH);
-                    isThresholdExceeded = true;
+                //set bars height and count
+                document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
+                document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
+                document.getElementById("osa-bar-count-low").innerHTML = osaLowCount;
+
+
+                var osaMaxCount = Math.max(osaHighCount, osaMedCount, osaLowCount);
+                var osaMaxHeight = osaMaxCount * 100 / 90;
+
+                document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / osaMaxHeight + "%");
+                document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / osaMaxHeight + "%");
+                document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / osaMaxHeight + "%");
+
+                document.getElementById("vulnerable-libraries").innerHTML = numberWithCommas(osaVulnerableAndOutdatedLibs);
+                document.getElementById("ok-libraries").innerHTML = numberWithCommas(okLibraries);
+            }
+            catch (e) {
+                console.error("Element missing in OSA summary section " + e.message);
+            }
+
+            //if threshold is enabled
+            if (osaThresholdsEnabled) {
+                try {
+                    var isOsaThresholdExceeded = false;
+                    var osaThresholdExceededComplianceElement = document.getElementById("osa-threshold-exceeded-compliance");
+
+
+                    if (osaHighThreshold != null && osaHighCount > osaHighThreshold) {
+                        document.getElementById("osa-tooltip-high").innerHTML = tooltipGenerator(SEVERITY.OSA_HIGH);
+                        isOsaThresholdExceeded = true;
+                    }
+
+                    if (osaMedThreshold != null && osaMedCount > osaMedThreshold) {
+                        document.getElementById("osa-tooltip-med").innerHTML = tooltipGenerator(SEVERITY.OSA_MED);
+                        isOsaThresholdExceeded = true;
+                    }
+
+                    if (osaLowThreshold != null && osaLowCount > osaLowThreshold) {
+                        document.getElementById("osa-tooltip-low").innerHTML = tooltipGenerator(SEVERITY.OSA_LOW);
+                        isOsaThresholdExceeded = true;
+                    }
+
+
+                    //if threshold exceeded
+                    if (isOsaThresholdExceeded) {
+                        osaThresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
+                    }
+
+                    //else
+                    //show threshold compliance element
+                    else {
+                        osaThresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+                    }
+                } catch (e) {
+                    console.error("Element missing in OSA threshold section " + e.message);
+                }
+            }
+        }
+        else {
+            document.getElementById("sast-summary").setAttribute("class", "sast-summary chart-large");
+        }
+
+        //---------------------------------------------------------- full reports ---------------------------------------------------------------
+        if (isSastFullReady) {
+            document.getElementById("sast-full").setAttribute("style", "display: block");
+
+            //queries lists
+            highCveList = generateQueryList(SEVERITY.HIGH);
+            medCveList = generateQueryList(SEVERITY.MED);
+            lowCveList = generateQueryList(SEVERITY.LOW);
+
+
+            try {
+                //sast links
+                document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
+
+
+                //sast info
+                document.getElementById("sast-full-start-date").innerHTML = formatDate(sastStartDate, "dd/mm/yy hh:mm");
+                document.getElementById("sast-full-end-date").innerHTML = formatDate(sastEndDate, "dd/mm/yy hh:mm");
+                document.getElementById("sast-full-files").innerHTML = numberWithCommas(sastNumFiles);
+                document.getElementById("sast-full-loc").innerHTML = numberWithCommas(sastLoc);
+
+            } catch (e) {
+                console.error("Element missing in full report info section " + e.message);
+            }
+
+            try {
+                //generate full reports
+                if (highCount == 0 && medCount == 0 && lowCount == 0) {
+                    document.getElementById("sast-full").setAttribute("style", "display: none");
+                } else {
+                    if (highCount > 0) {
+                        generateCveTable(SEVERITY.HIGH);
+                    }
+                    if (medCount > 0) {
+                        generateCveTable(SEVERITY.MED);
+                    }
+                    if (lowCount > 0) {
+                        generateCveTable(SEVERITY.LOW);
+                    }
                 }
 
-                if (medThreshold != null && medCount > medThreshold) {
-                    document.getElementById("tooltip-med").innerHTML = tooltipGenerator(SEVERITY.MED);
-                    isThresholdExceeded = true;
-                }
+            } catch (e) {
+                console.error("Element missing in full report detailed table section " + e.message);
+            }
+        }
 
-                if (lowThreshold != null && lowCount > lowThreshold) {
-                    document.getElementById("tooltip-low").innerHTML = tooltipGenerator(SEVERITY.LOW);
-                    isThresholdExceeded = true;
-                }
+        if (isOsaFullReady) {
+            document.getElementById("osa-full").setAttribute("style", "display: block");
+            //cve lists
+            osaHighCveList = generateOsaCveList(SEVERITY.OSA_HIGH);
+            osaMedCveList = generateOsaCveList(SEVERITY.OSA_MED);
+            osaLowCveList = generateOsaCveList(SEVERITY.OSA_LOW);
+
+            osaNumFiles = osaLibraries.length;
+
+            try {
 
 
-                //if threshold exceeded
-                if (isThresholdExceeded) {
-                    thresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
-                }
+                //osa links
+                document.getElementById("osa-html-link").setAttribute("href", osaHtmlPath);
 
-                //else show threshold compliance element
-                else {
-                    thresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
+
+                //osa info
+                document.getElementById("osa-full-start-date").innerHTML = formatDate(osaStartDate, "dd/mm/yy hh:mm");
+                document.getElementById("osa-full-end-date").innerHTML = formatDate(osaEndDate, "dd/mm/yy hh:mm");
+                document.getElementById("osa-full-files").innerHTML = numberWithCommas(osaNumFiles);
+            } catch (e) {
+                console.error("Element missing in full report info section " + e.message);
+            }
+
+            try {
+                //generate full reports
+                if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
+                    document.getElementById("osa-full").setAttribute("style", "display: none");
+                } else {
+                    if (osaHighCount > 0) {
+                        generateCveTable(SEVERITY.OSA_HIGH);
+                    }
+                    if (osaMedCount > 0) {
+                        generateCveTable(SEVERITY.OSA_MED);
+                    }
+                    if (osaLowCount > 0) {
+                        generateCveTable(SEVERITY.OSA_LOW);
+                    }
                 }
             } catch (e) {
-                console.error("Element missing in SAST threshold section " + e.message);
+                console.error("Element missing in full report detailed table section " + e.message);
             }
         }
     }
-    else {
-        document.getElementById("results-report").setAttribute("style", "display:none");
-    }
+    else {  //AsyncMode
+        var asyncModeMessage = "CxSAST scan was run in Asynchronous mode";
+        var asyncDiv = document.getElementById("asyncMessage");
 
-    //---------------------------------------------------------- osa ---------------------------------------------------------------
-    if (osaEnabled) {
-        try {
-            //link
-            document.getElementById("osa-summary-html-link").setAttribute("href", osaHtmlPath);
-
-            //set bars height and count
-            document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
-            document.getElementById("osa-bar-count-med").innerHTML = osaMedCount;
-            document.getElementById("osa-bar-count-low").innerHTML = osaLowCount;
-
-
-            var osaMaxCount = Math.max(osaHighCount, osaMedCount, osaLowCount);
-            var osaMaxHeight = osaMaxCount * 100 / 90;
-
-            document.getElementById("osa-bar-high").setAttribute("style", "height:" + osaHighCount * 100 / osaMaxHeight + "%");
-            document.getElementById("osa-bar-med").setAttribute("style", "height:" + osaMedCount * 100 / osaMaxHeight + "%");
-            document.getElementById("osa-bar-low").setAttribute("style", "height:" + osaLowCount * 100 / osaMaxHeight + "%");
-
-            document.getElementById("vulnerable-libraries").innerHTML = numberWithCommas(osaVulnerableAndOutdatedLibs);
-            document.getElementById("ok-libraries").innerHTML = numberWithCommas(okLibraries);
+        if (sastSummaryResultsLink) {
+            asyncDiv.innerHTML = asyncModeMessage + ". Refer to the ";
+            var resultLink = document.createElement('a');
+            resultLink.setAttribute('href', sastSummaryResultsLink);
+            resultLink.innerHTML = sastSummaryResultsLink;
+            asyncDiv.appendChild(resultLink);
+            asyncDiv.appendChild(document.createTextNode(" for scan results"));
         }
-        catch (e) {
-            console.error("Element missing in OSA summary section " + e.message);
+        else {
+            asyncDiv.innerHTML = asyncModeMessage;
         }
 
-        //if threshold is enabled
-        if (osaThresholdsEnabled) {
-            try {
-                var isOsaThresholdExceeded = false;
-                var osaThresholdExceededComplianceElement = document.getElementById("osa-threshold-exceeded-compliance");
-
-
-                if (osaHighThreshold != null && osaHighCount > osaHighThreshold) {
-                    document.getElementById("osa-tooltip-high").innerHTML = tooltipGenerator(SEVERITY.OSA_HIGH);
-                    isOsaThresholdExceeded = true;
-                }
-
-                if (osaMedThreshold != null && osaMedCount > osaMedThreshold) {
-                    document.getElementById("osa-tooltip-med").innerHTML = tooltipGenerator(SEVERITY.OSA_MED);
-                    isOsaThresholdExceeded = true;
-                }
-
-                if (osaLowThreshold != null && osaLowCount > osaLowThreshold) {
-                    document.getElementById("osa-tooltip-low").innerHTML = tooltipGenerator(SEVERITY.OSA_LOW);
-                    isOsaThresholdExceeded = true;
-                }
-
-
-                //if threshold exceeded
-                if (isOsaThresholdExceeded) {
-                    osaThresholdExceededComplianceElement.innerHTML = thresholdExceededHtml;
-                }
-
-                //else
-                //show threshold compliance element
-                else {
-                    osaThresholdExceededComplianceElement.innerHTML = thresholdComplianceHtml;
-                }
-            } catch (e) {
-                console.error("Element missing in OSA threshold section " + e.message);
-            }
-        }
-    }
-    else {
-        document.getElementById("osa-summary").setAttribute("style", "display:none");
-        document.getElementById("sast-summary").setAttribute("class", "sast-summary chart-large");
-    }
-
-    //---------------------------------------------------------- full reports ---------------------------------------------------------------
-    if (isSastFullReady) {
-
-        //queries lists
-        highCveList = generateQueryList(SEVERITY.HIGH);
-        medCveList = generateQueryList(SEVERITY.MED);
-        lowCveList = generateQueryList(SEVERITY.LOW);
-
-
-        try {
-            //sast links
-            document.getElementById("sast-code-viewer-link").setAttribute("href", sastScanResultsLink);
-
-
-            //sast info
-            document.getElementById("sast-full-start-date").innerHTML = formatDate(sastStartDate, "dd/mm/yy hh:mm");
-            document.getElementById("sast-full-end-date").innerHTML = formatDate(sastEndDate, "dd/mm/yy hh:mm");
-            document.getElementById("sast-full-files").innerHTML = numberWithCommas(sastNumFiles);
-            document.getElementById("sast-full-loc").innerHTML = numberWithCommas(sastLoc);
-
-        } catch (e) {
-            console.error("Element missing in full report info section " + e.message);
-        }
-
-        try {
-            //generate full reports
-            if (highCount == 0 && medCount == 0 && lowCount == 0) {
-                document.getElementById("sast-full").setAttribute("style", "display: none");
-            } else {
-                if (highCount > 0) {
-                    generateCveTable(SEVERITY.HIGH);
-                }
-                if (medCount > 0) {
-                    generateCveTable(SEVERITY.MED);
-                }
-                if (lowCount > 0) {
-                    generateCveTable(SEVERITY.LOW);
-                }
-            }
-
-        } catch (e) {
-            console.error("Element missing in full report detailed table section " + e.message);
-        }
-    }
-    else {
-        document.getElementById("sast-full").setAttribute("style", "display: none");
-    }
-
-    if (isOsaFullReady) {
-
-        //cve lists
-        osaHighCveList = generateOsaCveList(SEVERITY.OSA_HIGH);
-        osaMedCveList = generateOsaCveList(SEVERITY.OSA_MED);
-        osaLowCveList = generateOsaCveList(SEVERITY.OSA_LOW);
-
-        osaNumFiles = osaLibraries.length;
-
-        try {
-
-
-            //osa links
-            document.getElementById("osa-html-link").setAttribute("href", osaHtmlPath);
-
-
-            //osa info
-            document.getElementById("osa-full-start-date").innerHTML = formatDate(osaStartDate, "dd/mm/yy hh:mm");
-            document.getElementById("osa-full-end-date").innerHTML = formatDate(osaEndDate, "dd/mm/yy hh:mm");
-            document.getElementById("osa-full-files").innerHTML = numberWithCommas(osaNumFiles);
-        } catch (e) {
-            console.error("Element missing in full report info section " + e.message);
-        }
-
-        try {
-            //generate full reports
-            if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
-                document.getElementById("osa-full").setAttribute("style", "display: none");
-            } else {
-                if (osaHighCount > 0) {
-                    generateCveTable(SEVERITY.OSA_HIGH);
-                }
-                if (osaMedCount > 0) {
-                    generateCveTable(SEVERITY.OSA_MED);
-                }
-                if (osaLowCount > 0) {
-                    generateCveTable(SEVERITY.OSA_LOW);
-                }
-            }
-        } catch (e) {
-            console.error("Element missing in full report detailed table section " + e.message);
-        }
-    }
-    else {
-        document.getElementById("osa-full").setAttribute("style", "display: none");
+        document.getElementById("asyncMessage").setAttribute("style", "display:block");
+        document.getElementById("onAsyncMode").setAttribute("style", "display:block");
     }
 
 
