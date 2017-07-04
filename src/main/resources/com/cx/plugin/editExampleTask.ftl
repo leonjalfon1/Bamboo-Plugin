@@ -120,7 +120,17 @@
     [/@ui.bambooSection]
 
     [@ww.textarea labelKey="comment.label"  name="comment" rows="3" description="Free text comment. May reference build parameters like $\{bamboo.variableName}"  cssClass="long-field"/]
-    [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='false' /]
+
+    [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='true' /]
+    [@ui.bambooSection dependsOn="isIncremental" showOn="true"]
+        [@ww.checkbox labelKey="isIntervals.label" name="isIntervals" toggle="true"/]
+        [@ui.bambooSection dependsOn="isIntervals" showOn="true"]
+          [@ww.select labelKey="intervalBegins.label" name="intervalBegins" list="intervalBeginsList" listKey="key" listValue="value" multiple="false"/]
+           [@ww.select labelKey="intervalEnds.label" name="intervalEnds" list="intervalEndsList" listKey="key" listValue="value" multiple="false"/]
+       [/@ui.bambooSection]
+ [/@ui.bambooSection]
+
+
     [@ww.checkbox labelKey="generatePDFReport.label" name="generatePDFReport" toggle='false' descriptionKey='generatePDFReport.description'/]
 [/@ui.bambooSection]
 

@@ -28,10 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +37,7 @@ import static com.cx.plugin.dto.CxParam.*;
 public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private static LinkedHashMap<String, String> presetList = new LinkedHashMap<String, String>();
     private static LinkedHashMap<String, String> teamPathList = new LinkedHashMap<String, String>();
+    private static LinkedHashMap<String, String> intervalList = new LinkedHashMap<String, String>();
     private CxClientService cxClientService = null;
     private static AdministrationConfiguration adminConfig;
 
@@ -47,6 +45,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private final static String SPECIFIC_SETTING_LABEL = "Use Specific Setting";
     private final static String DEFAULT_SERVER_URL = "http://";
     private final static int MAX_PROJECT_NAME_LENGTH = 200;
+    private static final String DEFAULT_INTERVAL_BEGINS = "01:00";
+    private static final String DEFAULT_INTERVAL_ENDS = "04:00";
 
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
     private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
@@ -69,6 +69,11 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         populateCxSASTFields(context, null, true);
 
         context.put(IS_INCREMENTAL, OPTION_FALSE);
+        context.put(IS_INTERVALS, OPTION_FALSE);
+        populateIntervals(context);
+        context.put(INTERVAL_BEGINS, DEFAULT_INTERVAL_BEGINS);
+        context.put(INTERVAL_ENDS, DEFAULT_INTERVAL_ENDS);
+
         populateScanControlFields(context, null, true);
 
         context.put(IS_SYNCHRONOUS, OPTION_TRUE);
@@ -155,6 +160,14 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         populateCxSASTFields(context, configMap, false);
         context.put(IS_INCREMENTAL, configMap.get(IS_INCREMENTAL));
+        final String isIntervals = configMap.get(IS_INTERVALS);
+        context.put(IS_INTERVALS, isIntervals);
+        populateIntervals(context);
+        if (OPTION_TRUE.equals(isIntervals)) {
+            context.put(INTERVAL_BEGINS, configMap.get(INTERVAL_BEGINS));
+            context.put(INTERVAL_ENDS, configMap.get(INTERVAL_ENDS));
+        }
+
         context.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         context.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
 
@@ -290,8 +303,12 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
 
         config.put(OSA_ENABLED, params.getString(OSA_ENABLED));
-        config.put(IS_INCREMENTAL, params.getString(IS_INCREMENTAL));
         config.put(IS_SYNCHRONOUS, params.getString(IS_SYNCHRONOUS));
+
+        config.put(IS_INCREMENTAL, params.getString(IS_INCREMENTAL));
+        config.put(IS_INTERVALS, params.getString(IS_INTERVALS));
+        config.put(INTERVAL_BEGINS, getDefaultString(params, INTERVAL_BEGINS));
+        config.put(INTERVAL_ENDS, getDefaultString(params, INTERVAL_ENDS));
 
         //save 'CxSAST Scan' fields
         config = generateCxSASTFields(params, config);
@@ -320,7 +337,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(FILTER_PATTERN, getDefaultString(params, FILTER_PATTERN));
         config.put(SCAN_TIMEOUT_IN_MINUTES, getDefaultString(params, SCAN_TIMEOUT_IN_MINUTES).trim());
         config.put(COMMENT, getDefaultString(params, COMMENT).trim());
-        
+
         return config;
     }
 
@@ -400,7 +417,11 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         containsIllegals(params, errorCollection, PROJECT_NAME);
         validateProjectNameLength(params, errorCollection, PROJECT_NAME);
 
-        useSpecific = params.getString(CXSAST_SECTION);
+        if (params.getString(INTERVAL_BEGINS).equals(params.getString(INTERVAL_ENDS))){
+            errorCollection.addError(INTERVAL_ENDS, ((ConfigureBuildTasks) errorCollection).getText("intervals.equals"));
+        }
+
+            useSpecific = params.getString(CXSAST_SECTION);
         if (CUSTOM_CONFIGURATION_CXSAST.equals(useSpecific)) {
             validatePositive(params, errorCollection, SCAN_TIMEOUT_IN_MINUTES);
         }
@@ -492,4 +513,35 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         }
         return StringUtils.defaultString(adminConfig.getSystemProperty(key));
     }
+
+    private void populateIntervals(@NotNull final Map<String, Object> context) {
+
+        intervalList.put("00:00", "12.00 am");
+        intervalList.put("01:00", "01.00 am");
+        intervalList.put("02:00", "02.00 am");
+        intervalList.put("03:00", "03.00 am");
+        intervalList.put("04:00", "04.00 am");
+        intervalList.put("05:00", "05.00 am");
+        intervalList.put("06:00", "06.00 am");
+        intervalList.put("08:00", "08.00 am");
+        intervalList.put("09:00", "09.00 am");
+        intervalList.put("10:00", "10.00 am");
+        intervalList.put("11:00", "11.00 am");
+        intervalList.put("12:00", "12.00 pm");
+        intervalList.put("13:00", "01.00 pm");
+        intervalList.put("14:00", "02.00 pm");
+        intervalList.put("15:00", "03.00 pm");
+        intervalList.put("16:00", "04.00 pm");
+        intervalList.put("17:00", "05.00 pm");
+        intervalList.put("18:00", "06.00 pm");
+        intervalList.put("19:00", "07.00 pm");
+        intervalList.put("20:00", "08.00 pm");
+        intervalList.put("21:00", "09.00 pm");
+        intervalList.put("22:00", "10.00 pm");
+        intervalList.put("23:00", "11.00 pm");
+
+        context.put(INTERVAL_BEGINS_LIST, intervalList);
+        context.put(INTERVAL_ENDS_LIST, intervalList);
+    }
+
 }

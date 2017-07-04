@@ -258,7 +258,9 @@ public class CxRestClient {
 
     private void validateResponse(HttpResponse response, int status, String message) throws CxClientException {
         if (response.getStatusLine().getStatusCode() != status) {
-            throw new CxClientException(message + ": " + "status code: " + response.getStatusLine().getStatusCode() + ". reason phrase: " + response.getStatusLine().getReasonPhrase());
+            String responseBody = response.getEntity().toString();
+            responseBody = responseBody.replace("{", "").replace("}", "").replace(System.getProperty("line.separator"), " ").replace("  ", "");
+            throw new CxClientException(message + ": " + "status code: " + response.getStatusLine() + ". error:" + responseBody);
         }
     }
 

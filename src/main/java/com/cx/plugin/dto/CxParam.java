@@ -22,6 +22,12 @@ public class CxParam {
     public static final String SCAN_TIMEOUT_IN_MINUTES = "scanTimeoutInMinutes";
     public static final String COMMENT = "comment";
     public static final String IS_INCREMENTAL = "isIncremental";
+    public static final String IS_INTERVALS = "isIntervals";
+    public static final String FORCE_FULL_SCAN = "forceFullScan";
+    public static final String INTERVAL_BEGINS = "intervalBegins";
+    public static final String INTERVAL_ENDS = "intervalEnds";
+    public static final String INTERVAL_BEGINS_LIST = "intervalBeginsList";
+    public static final String INTERVAL_ENDS_LIST = "intervalEndsList";
     public static final String GENERATE_PDF_REPORT = "generatePDFReport";
     public static final String OSA_ENABLED = "osaEnabled";
     public static final String IS_SYNCHRONOUS = "isSynchronous";

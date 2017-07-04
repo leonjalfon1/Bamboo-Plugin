@@ -35,6 +35,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -99,8 +100,6 @@ public class CheckmarxTask implements TaskType {
             cxClientService = new CxClientServiceImpl(url, config.getUsername(), CxEncryption.decrypt(config.getPassword()));
             cxClientService.setLogger(buildLoggerAdapter);
             cxClientService.checkServerConnectivity();
-
-
 
             //perform login to server
             buildLoggerAdapter.info("Logging into the Checkmarx service.");
@@ -240,7 +239,6 @@ public class CheckmarxTask implements TaskType {
 
                     String osaJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(osaVulnerabilities);
                     String osaLibrariesJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(libraries);
-
 
                     addOsaCveAndLibLists(results, osaJson, osaLibrariesJson);
 
@@ -397,7 +395,19 @@ public class CheckmarxTask implements TaskType {
         }
 
         configurationMap.put(COMMENT, configMap.get(COMMENT));
-        configurationMap.put(IS_INCREMENTAL, configMap.get(IS_INCREMENTAL));
+        String isIncremental = configMap.get(IS_INCREMENTAL);
+        configurationMap.put(IS_INCREMENTAL, isIncremental);
+
+        if (OPTION_FALSE.equals(isIncremental)) {
+            configurationMap.put(IS_INTERVALS, OPTION_FALSE);
+        } else {
+            String isIntervals = configMap.get(IS_INTERVALS);
+            configurationMap.put(IS_INTERVALS, isIntervals);
+            if (OPTION_TRUE.equals(isIntervals)) {
+                configurationMap = resolveIntervalFullScan(configMap.get(INTERVAL_BEGINS), configMap.get(INTERVAL_ENDS), configurationMap);
+            }
+        }
+
         configurationMap.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         configurationMap.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
 
@@ -426,6 +436,58 @@ public class CheckmarxTask implements TaskType {
         return configurationMap;
     }
 
+    private HashMap<String, String> resolveIntervalFullScan(String intervalBegins, String intervalEnds, HashMap<String, String> configMap) {
+
+        try {
+            final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+
+            final Calendar calendarBeginsHourMinute = Calendar.getInstance();
+            calendarBeginsHourMinute.setTime(dateFormat.parse(intervalBegins));
+            final Calendar calendarBegins = Calendar.getInstance();
+            calendarBegins.set(Calendar.HOUR_OF_DAY, calendarBeginsHourMinute.get(Calendar.HOUR_OF_DAY));
+            calendarBegins.set(Calendar.MINUTE, calendarBeginsHourMinute.get(Calendar.MINUTE));
+            calendarBegins.set(Calendar.SECOND, 0);
+            Date dateBegins = calendarBegins.getTime();
+
+            final Calendar calendarEndsHourMinute = Calendar.getInstance();
+            calendarEndsHourMinute.setTime(dateFormat.parse(intervalEnds));
+            final Calendar calendarEnds = Calendar.getInstance();
+            calendarEnds.set(Calendar.HOUR_OF_DAY, calendarEndsHourMinute.get(Calendar.HOUR_OF_DAY));
+            calendarEnds.set(Calendar.MINUTE, calendarEndsHourMinute.get(Calendar.MINUTE));
+            calendarEnds.set(Calendar.SECOND, 0);
+            Date dateEnds = calendarEnds.getTime();
+
+            final Calendar calendarNow = Calendar.getInstance();
+            final Date dateNow = calendarNow.getTime();
+
+            if (dateBegins.after(dateEnds)) {
+                if (dateBegins.after(dateNow)) {
+                    calendarBegins.add(Calendar.DATE, -1);
+                    dateBegins = calendarBegins.getTime();
+                } else {
+                    calendarEnds.add(Calendar.DATE, 1);
+                    dateEnds = calendarEnds.getTime();
+                }
+            }
+
+            configMap.put(INTERVAL_BEGINS, dateBegins.toString());
+            configMap.put(INTERVAL_ENDS, dateEnds.toString());
+
+            String forceFullScan = OPTION_FALSE;
+
+            if (dateNow.after(dateBegins) && dateNow.before(dateEnds)) {
+                forceFullScan = OPTION_TRUE;
+            }
+            configMap.put(FORCE_FULL_SCAN, forceFullScan);
+
+
+        } catch (final ParseException e) {
+            buildLoggerAdapter.error("Full scan interval parse exception");
+        }
+        return configMap;
+
+    }
+
     private void addSASTResults(Map<String, String> results, ScanResults scanResults, CxScanConfiguration config) {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
@@ -443,7 +505,6 @@ public class CheckmarxTask implements TaskType {
             results.put(CxResultsConst.MEDIUM_THRESHOLD, mediumThreshold);
             results.put(CxResultsConst.LOW_THRESHOLD, lowThreshold);
         }
-
 
 
         results.put(CxResultsConst.SCAN_START_DATE, String.valueOf(scanResults.getScanStart()));
@@ -524,7 +585,11 @@ public class CheckmarxTask implements TaskType {
         ret.setClientOrigin(ClientOrigin.BAMBOO);
         ret.setFolderExclusions(config.getFolderExclusions());
         ret.setFullTeamPath(config.getFullTeamPath());
-        ret.setIncrementalScan(config.isIncremental());
+        boolean isIncremental = config.isIncremental();
+        if (isIncremental && config.isForceFullScan()){
+            isIncremental = false;
+        }
+        ret.setIncrementalScan(isIncremental);
         ret.setPresetId(config.getPresetId());
         ret.setZippedSources(zippedSources);
         ret.setFileName(config.getProjectName());
@@ -557,6 +622,13 @@ public class CheckmarxTask implements TaskType {
         buildLoggerAdapter.info("Full team path: " + config.getFullTeamPath());
         buildLoggerAdapter.info("Preset: " + config.getPresetName());
         buildLoggerAdapter.info("Is incremental scan: " + config.isIncremental());
+        buildLoggerAdapter.info("Is interval full scans enabled: " + config.isIntervals());
+        if (config.isIntervals()) {
+            buildLoggerAdapter.info("Interval- begins: " + config.getIntervalBegins());
+            buildLoggerAdapter.info("Interval- ends: " + config.getIntervalEnds());
+            String forceScan = config.isForceFullScan() ? "" : " NOT";
+            buildLoggerAdapter.info("Force Full Scan: " + config.isForceFullScan() + " (Interval based full scan " + forceScan + "activated.)");
+        }
         buildLoggerAdapter.info("Folder exclusions: " + (config.getFolderExclusions()));
         buildLoggerAdapter.info("Is synchronous scan: " + config.isSynchronous());
         buildLoggerAdapter.info("Generate PDF report: " + config.isGeneratePDFReport());

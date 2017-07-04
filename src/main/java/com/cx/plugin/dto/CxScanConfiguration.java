@@ -37,6 +37,11 @@ public class CxScanConfiguration {
     private Integer scanTimeoutInMinutes;
     private String comment;
     private boolean isIncremental = false;
+    private boolean isIntervals = false;
+    private boolean forceFullScan = false;
+    private String intervalBegins;
+    private String intervalEnds;
+
     private boolean isSynchronous = false;
     private boolean thresholdsEnabled = false;
     @Nullable
@@ -82,6 +87,10 @@ public class CxScanConfiguration {
         setScanTimeoutInMinutes(configurationMap.get(SCAN_TIMEOUT_IN_MINUTES));
         setComment(configurationMap.get(COMMENT));
         setIncremental(Boolean.parseBoolean(configurationMap.get(IS_INCREMENTAL)));
+        setIntervals(Boolean.parseBoolean(configurationMap.get(IS_INTERVALS)));
+        setIntervalBegins(configurationMap.get(INTERVAL_BEGINS));
+        setIntervalEnds(configurationMap.get(INTERVAL_ENDS));
+        setForceFullScan(Boolean.parseBoolean(configurationMap.get(FORCE_FULL_SCAN)));
         setSynchronous(Boolean.parseBoolean(configurationMap.get(IS_SYNCHRONOUS)));
         setThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(THRESHOLDS_ENABLED)));
         setHighThreshold(configurationMap.get(HIGH_THRESHOLD));
@@ -165,6 +174,38 @@ public class CxScanConfiguration {
 
     public void setIncremental(boolean incremental) {
         isIncremental = incremental;
+    }
+
+    public boolean isIntervals() {
+        return isIntervals;
+    }
+
+    public boolean isForceFullScan() {
+        return forceFullScan;
+    }
+
+    public void setForceFullScan(boolean forceFullScan) {
+        this.forceFullScan = forceFullScan;
+    }
+
+    public void setIntervals(boolean intervals) {
+        isIntervals = intervals;
+    }
+
+    public String getIntervalBegins() {
+        return intervalBegins;
+    }
+
+    public void setIntervalBegins(String intervalBegins) {
+        this.intervalBegins = intervalBegins;
+    }
+
+    public String getIntervalEnds() {
+        return intervalEnds;
+    }
+
+    public void setIntervalEnds(String intervalEnds) {
+        this.intervalEnds = intervalEnds;
     }
 
     public boolean isSynchronous() {
