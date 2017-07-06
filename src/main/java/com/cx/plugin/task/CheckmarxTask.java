@@ -626,8 +626,8 @@ public class CheckmarxTask implements TaskType {
         if (config.isIntervals()) {
             buildLoggerAdapter.info("Interval- begins: " + config.getIntervalBegins());
             buildLoggerAdapter.info("Interval- ends: " + config.getIntervalEnds());
-            String forceScan = config.isForceFullScan() ? "" : " NOT";
-            buildLoggerAdapter.info("Force Full Scan: " + config.isForceFullScan() + " (Interval based full scan " + forceScan + "activated.)");
+        String forceScan = config.isForceFullScan() ? "" : "NOT ";
+            buildLoggerAdapter.info("Override full scan: " + config.isForceFullScan() + " (Interval based full scan " + forceScan + "activated.)");
         }
         buildLoggerAdapter.info("Folder exclusions: " + (config.getFolderExclusions()));
         buildLoggerAdapter.info("Is synchronous scan: " + config.isSynchronous());

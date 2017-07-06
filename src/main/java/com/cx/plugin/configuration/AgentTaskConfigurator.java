@@ -417,11 +417,12 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         containsIllegals(params, errorCollection, PROJECT_NAME);
         validateProjectNameLength(params, errorCollection, PROJECT_NAME);
 
-        if (params.getString(INTERVAL_BEGINS).equals(params.getString(INTERVAL_ENDS))){
-            errorCollection.addError(INTERVAL_ENDS, ((ConfigureBuildTasks) errorCollection).getText("intervals.equals"));
+        if (params.getBoolean(IS_INCREMENTAL) && params.getBoolean(IS_INTERVALS)) {
+            if (params.getString(INTERVAL_BEGINS).equals(params.getString(INTERVAL_ENDS))) {
+                errorCollection.addError(INTERVAL_ENDS, ((ConfigureBuildTasks) errorCollection).getText("intervals.equals"));
+            }
         }
-
-            useSpecific = params.getString(CXSAST_SECTION);
+        useSpecific = params.getString(CXSAST_SECTION);
         if (CUSTOM_CONFIGURATION_CXSAST.equals(useSpecific)) {
             validatePositive(params, errorCollection, SCAN_TIMEOUT_IN_MINUTES);
         }
