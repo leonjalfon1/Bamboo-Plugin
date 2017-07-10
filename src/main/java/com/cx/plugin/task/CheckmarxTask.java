@@ -41,7 +41,6 @@ import java.util.*;
 
 import static com.cx.plugin.dto.CxParam.*;
 
-//TODO add the ENV expansion
 public class CheckmarxTask implements TaskType {
 
     public static final Logger log = LoggerFactory.getLogger(CheckmarxTask.class);
@@ -61,7 +60,6 @@ public class CheckmarxTask implements TaskType {
     private BuildContext buildContext;
     private AdministrationConfiguration adminConfig;
     private ObjectMapper objectMapper = new ObjectMapper();
-
 
     private static final long MAX_ZIP_SIZE_BYTES = 209715200;
     private static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
@@ -108,9 +106,8 @@ public class CheckmarxTask implements TaskType {
             //prepare sources (zip it) and send it to scan
             createScanResponse = createScan();
 
-            CreateOSAScanResponse osaScan = null;
-
             //create OSA Scan
+            CreateOSAScanResponse osaScan = null;
             if (config.isOsaEnabled()) {
                 try {
                     buildLoggerAdapter.info("Creating OSA scan");
@@ -145,7 +142,7 @@ public class CheckmarxTask implements TaskType {
                 return taskResultBuilder.success().build();
             }
 
-//            SAST results
+            //SAST results
             try {
                 //wait for SAST scan to finish
                 ConsoleScanWaitHandler consoleScanWaitHandler = new ConsoleScanWaitHandler();
@@ -200,13 +197,15 @@ public class CheckmarxTask implements TaskType {
                     buildLoggerAdapter.info("Waiting for OSA scan to finish");
                     osaScanStatus = cxClientService.waitForOSAScanToFinish(osaScan.getScanId(), -1, osaConsoleScanWaitHandler);
                     buildLoggerAdapter.info("OSA scan finished successfully");
-                    buildLoggerAdapter.info("Creating OSA reports");
+
                     //retrieve OSA scan results
+                    buildLoggerAdapter.info("OSA scan finished. Retrieving OSA scan results");
                     osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(osaScan.getScanId());
                     printOSAResultsToConsole(osaSummaryResults);
                     addOSAResults(results, osaSummaryResults, config);
                     addOSAStatus(results, osaScanStatus);
 
+                    buildLoggerAdapter.info("Creating OSA reports");
                     //OSA PDF report
                     SimpleDateFormat ft = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss");
                     String now = ft.format(new Date());

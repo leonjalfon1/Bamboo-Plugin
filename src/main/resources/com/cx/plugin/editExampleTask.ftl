@@ -123,7 +123,7 @@
 
     [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='true' /]
     [@ui.bambooSection dependsOn="isIncremental" showOn="true"]
-        [@ww.checkbox labelKey="isIntervals.label" name="isIntervals" toggle="true"/]
+        [@ww.checkbox labelKey="isIntervals.label" name="isIntervals" descriptionKey="isIntervals.description" toggle="true"/]
         [@ui.bambooSection dependsOn="isIntervals" showOn="true"]
           [@ww.select labelKey="intervalBegins.label" name="intervalBegins" list="intervalBeginsList" listKey="key" listValue="value" multiple="false"/]
            [@ww.select labelKey="intervalEnds.label" name="intervalEnds" list="intervalEndsList" listKey="key" listValue="value" multiple="false"/]
