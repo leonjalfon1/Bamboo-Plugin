@@ -163,10 +163,12 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         final String isIntervals = configMap.get(IS_INTERVALS);
         context.put(IS_INTERVALS, isIntervals);
         populateIntervals(context);
-        if (OPTION_TRUE.equals(isIntervals)) {
-            context.put(INTERVAL_BEGINS, configMap.get(INTERVAL_BEGINS));
-            context.put(INTERVAL_ENDS, configMap.get(INTERVAL_ENDS));
-        }
+
+        String intervalBegins = StringUtils.isEmpty(configMap.get(INTERVAL_BEGINS))? DEFAULT_INTERVAL_BEGINS: configMap.get(INTERVAL_BEGINS);
+        String intervalEnds =  StringUtils.isEmpty(configMap.get(INTERVAL_ENDS))? DEFAULT_INTERVAL_ENDS: configMap.get(INTERVAL_ENDS);
+
+        context.put(INTERVAL_BEGINS, intervalBegins);
+        context.put(INTERVAL_ENDS, intervalEnds);
 
         context.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         context.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
