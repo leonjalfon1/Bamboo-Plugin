@@ -53,6 +53,8 @@ public class CxParam {
     public static final String NO_PRESET = "noPreset";
     public final static String NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
     public final static String NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
+    public final static String ERROR_OCCURRED = "errorOccurred";
+    public final static String ERROR_OCCURRED_MESSAGE = "Configuration settings were not saved. Please review your settings and try again";
 
     public static final String OPTION_TRUE = "true";
     public static final String OPTION_FALSE = "false";

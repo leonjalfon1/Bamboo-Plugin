@@ -438,6 +438,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             validateNotNegative(params, errorCollection, OSA_MEDIUM_THRESHOLD);
             validateNotNegative(params, errorCollection, OSA_LOW_THRESHOLD);
         }
+
+        if (errorCollection.hasAnyErrors()){
+            errorCollection.addError(ERROR_OCCURRED, ERROR_OCCURRED_MESSAGE);
+        }
     }
 
     private void validateNotEmpty(@NotNull ActionParametersMap params, @NotNull final ErrorCollection errorCollection, @NotNull String key) {

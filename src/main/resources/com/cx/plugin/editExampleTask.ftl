@@ -45,7 +45,7 @@
 
     form.aui .field-value {
         border-radius: 3.01px;
-        max-width: 225px;
+        max-width: 38%;
         max-height: 17px;
         width: 108%;
         border: 1px solid #cccccc;
@@ -57,6 +57,11 @@
         padding-top: 5px;
         padding-left: 10px;
     }
+
+    form.aui .text{
+        max-width: 40%;
+    }
+
 
     #panel-editor-config form.aui .long-field {
         max-width: 600px;
@@ -76,9 +81,12 @@
         top: 20%;
     }
 
+    #errorOccurred{
+        display:none;
+    }
 
 </style>
-
+[@ww.textfield labelKey="" id="errorOccurred" name="errorOccurred"  required='false' /]
 [@ui.bambooSection title='Checkmarx Server' cssClass="cx center"]
     [@ww.radio id = 'radioGroup' name='serverCredentialsSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesServer /]
 
