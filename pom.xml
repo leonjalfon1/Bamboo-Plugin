@@ -12,6 +12,12 @@
   <description>Checkmarx Plugin For Atlassian Bamboo</description>
   <packaging>atlassian-plugin</packaging>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>com.atlassian.maven.plugins</groupId>

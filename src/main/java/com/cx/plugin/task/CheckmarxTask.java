@@ -639,8 +639,16 @@ public class CheckmarxTask implements TaskType {
         return zipFileByte;
     }
 
-    private void printConfiguration(CxScanConfiguration config) {
+    private void printConfiguration(CxScanConfiguration config) throws IOException {
         buildLoggerAdapter.info("----------------------------Configurations:-----------------------------");
+
+        Properties properties = new Properties();
+        InputStream is = getClass().getClassLoader().getResourceAsStream("english.properties");
+        if (is != null){
+            properties.load(is);
+            buildLoggerAdapter.info("Bamboo plugin version: " + properties.getProperty("version"));
+        }
+
         buildLoggerAdapter.info("Username: " + config.getUsername());
         buildLoggerAdapter.info("URL: " + config.getUrl());
         buildLoggerAdapter.info("Project name: " + config.getProjectName());
