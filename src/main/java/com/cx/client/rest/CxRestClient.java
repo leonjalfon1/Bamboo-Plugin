@@ -46,6 +46,7 @@ public class CxRestClient {
     public static final String OSA_SCAN_STATUS_PATH = "osa/scans/{scanId}";
     public static final String OSA_SCAN_SUMMARY_PATH = "osa/reports";
     public static final String OSA_SCAN_LIBRARIES_PATH = "/osa/libraries";
+    public static final String OSA_LICENSE_PATH = "LicenseDetails";
     public static final String OSA_SCAN_VULNERABILITIES_PATH = "/osa/vulnerabilities";
     private static final String AUTHENTICATION_PATH = "auth/login";
     public static final String OSA_ZIPPED_FILE_KEY_NAME = "OSAZippedSourceCode";
@@ -152,6 +153,28 @@ public class CxRestClient {
             HttpClientUtils.closeQuietly(response);
         }
     }
+
+    public boolean isOSALicenseValid() throws IOException, CxClientException {
+        boolean ret = false;
+
+        HttpGet getRequest = new HttpGet(ROOT_PATH + OSA_LICENSE_PATH);
+        HttpResponse response = null;
+
+        try {
+            response = apacheClient.execute(getRequest);
+            validateResponse(response, 200, "Failed to validate OSA license details");
+
+            LicenseDetails lic =  convertToObject(response, LicenseDetails.class);
+            ret = lic.getOsaEnabled();
+        } finally {
+            getRequest.releaseConnection();
+            HttpClientUtils.closeQuietly(response);
+        }
+
+
+        return ret;
+    }
+
 
     public OSAScanStatus getOSAScanStatus(String scanId) throws CxClientException, IOException {
 

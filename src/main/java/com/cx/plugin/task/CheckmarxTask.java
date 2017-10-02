@@ -108,13 +108,18 @@ public class CheckmarxTask implements TaskType {
 
             //create OSA Scan
             CreateOSAScanResponse osaScan = null;
+
             if (config.isOsaEnabled()) {
                 try {
                     buildLoggerAdapter.info("Creating OSA scan");
+
+                    if (!cxClientService.isOSALicenseValid()){
+                      throw new CxClientException("OSA license is not enabled. Please contact your Checkmarx Administrator");
+                  }
                     buildLoggerAdapter.info("Zipping dependencies");
                     //prepare sources (zip it) for the OSA scan and send it to OSA scan
                     String patternExclusion = "!Checkmarx/Reports/*.*";
-                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);//TODO- lIRAN osa
+                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);
                     buildLoggerAdapter.info("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
                     osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
@@ -274,6 +279,28 @@ public class CheckmarxTask implements TaskType {
                 cxClientService.cancelScan(createScanResponse.getRunId());
             }
             throw new TaskException(e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            String errMsg = "";
+            if (e.getMessage().contains("interface com.sun.xml.internal.ws.developer.WSBindingProvider is not visible from class loader")) {
+                buildLoggerAdapter.error("");
+                buildLoggerAdapter.error("*****************************************************************************************************************************************");
+                buildLoggerAdapter.error("|  Please add the system property:                                                                                                      |");
+                buildLoggerAdapter.error("|  -Datlassian.org.osgi.framework.bootdelegation=javax.servlet,javax.servlet.*,sun.*,com.sun.*,org.w3c.dom.*,org.apache.xerces.         |");
+                buildLoggerAdapter.error("|  to the agent run command and restart it.                                                                                             |");
+                buildLoggerAdapter.error("|                                                                                                                                       |");
+                buildLoggerAdapter.error("|  if the agent is run via wrapper, add the property to the the wrapper.conf file:                                                      |");
+                buildLoggerAdapter.error("|  wrapper.java.additional.3=-Datlassian.org.osgi.framework.bootdelegation=javax.servlet,javax.servlet.*,sun.*,com.sun.*,org.w3c.dom.*  |");
+                buildLoggerAdapter.error("|  and restart it                                                                                                                       |");
+                buildLoggerAdapter.error("|                                                                                                                                       |");
+                buildLoggerAdapter.error("|  Please refer to the documentation: https://checkmarx.atlassian.net/wiki/spaces/KC/pages/127859917/Configuring+Remote+Agent+Support   |");
+                buildLoggerAdapter.error("*****************************************************************************************************************************************");
+                buildLoggerAdapter.error("");
+
+                errMsg = "Agent was not was not configured properly: ";
+            }
+
+            throw new IllegalArgumentException(errMsg, e);
 
         } catch (Exception e) {
             buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage());
@@ -585,7 +612,7 @@ public class CheckmarxTask implements TaskType {
         ret.setFolderExclusions(config.getFolderExclusions());
         ret.setFullTeamPath(config.getFullTeamPath());
         boolean isIncremental = config.isIncremental();
-        if (isIncremental && config.isForceFullScan()){
+        if (isIncremental && config.isForceFullScan()) {
             isIncremental = false;
         }
         ret.setIncrementalScan(isIncremental);
@@ -625,7 +652,7 @@ public class CheckmarxTask implements TaskType {
         if (config.isIntervals()) {
             buildLoggerAdapter.info("Interval- begins: " + config.getIntervalBegins());
             buildLoggerAdapter.info("Interval- ends: " + config.getIntervalEnds());
-        String forceScan = config.isForceFullScan() ? "" : "NOT ";
+            String forceScan = config.isForceFullScan() ? "" : "NOT ";
             buildLoggerAdapter.info("Override full scan: " + config.isForceFullScan() + " (Interval based full scan " + forceScan + "activated.)");
         }
         buildLoggerAdapter.info("Folder exclusions: " + (config.getFolderExclusions()));

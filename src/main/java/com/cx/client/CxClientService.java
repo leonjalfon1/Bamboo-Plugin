@@ -61,9 +61,10 @@ public interface CxClientService {
 
     List<CVE> getOSAVulnerabilities(String scanId) throws CxClientException, IOException;
 
-    byte[]  getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException;
+    byte[] getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException;
 
     ArrayOfGroup getAssociatedGroupsList();
+
     List<Preset> getPresetList();
 
     void close();//todo implement
@@ -74,4 +75,7 @@ public interface CxClientService {
 
     CxWSBasicRepsonse cancelScan(String runId);
 
+    boolean isOSALicenseValid() throws CxClientException, IOException;
+
 }
+

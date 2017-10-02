@@ -401,6 +401,11 @@ public class CxClientServiceImpl implements CxClientService {
         return restClient.createOSAScan(projectId, zipFile);
     }
 
+    public boolean isOSALicenseValid() throws CxClientException, IOException {
+        restClient.login();
+        return restClient.isOSALicenseValid();
+    }
+
 
     public OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException {
         //re login in case of session timed out
