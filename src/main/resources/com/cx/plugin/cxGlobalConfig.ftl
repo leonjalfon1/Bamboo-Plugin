@@ -94,6 +94,7 @@
         [@ww.textfield labelKey="folderExclusions.label" name="globalFolderExclusions" descriptionKey="folderExclusions.description"  cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4"  cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes" required='false'/]
+        [@ww.checkbox labelKey="globalDenyProject.label" name="globalDenyProject" descriptionKey="globalDenyProject.description" /]
     [/@ui.bambooSection]
 
     [@ui.bambooSection title='Control Checkmarx Scan' cssClass="cx center"]

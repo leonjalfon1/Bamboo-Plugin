@@ -45,7 +45,7 @@
 
     form.aui .field-value {
         border-radius: 3.01px;
-        max-width: 38%;
+        max-width: 60%;
         max-height: 17px;
         width: 108%;
         border: 1px solid #cccccc;
@@ -59,7 +59,7 @@
     }
 
     form.aui .text{
-        max-width: 40%;
+        max-width: 60%;
     }
 
 

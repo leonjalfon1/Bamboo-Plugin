@@ -13,12 +13,11 @@ import com.atlassian.bamboo.utils.error.ErrorCollection;
 import com.atlassian.bamboo.ww2.actions.build.admin.config.task.ConfigureBuildTasks;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.Nullable;
-import com.checkmarx.v7.ArrayOfGroup;
 import com.checkmarx.v7.Group;
 import com.cx.client.CxClientService;
 import com.cx.client.CxClientServiceImpl;
 import com.cx.client.exception.CxClientException;
-import com.cx.plugin.utils.CxEncryption;
+import com.cx.plugin.utils.CxEncryptionUtil;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -326,7 +328,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(SERVER_CREDENTIALS_SECTION, configType);
         config.put(SERVER_URL, getDefaultString(params, SERVER_URL));
         config.put(USER_NAME, getDefaultString(params, USER_NAME).trim());
-        config.put(PASSWORD, CxEncryption.encrypt(getDefaultString(params, PASSWORD)));
+        config.put(PASSWORD, CxEncryptionUtil.encrypt(getDefaultString(params, PASSWORD)));
 
         return config;
     }
@@ -370,7 +372,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(cxPass)) {
             try {
                 URL cxUrl = new URL(serverUrl);
-                cxClientService = new CxClientServiceImpl(cxUrl, username, CxEncryption.decrypt(cxPass), true);
+                cxClientService = new CxClientServiceImpl(cxUrl, username, CxEncryptionUtil.decrypt(cxPass), true);
                 cxClientService.checkServerConnectivity();
                 cxClientService.loginToServer();
                 return true;
@@ -396,9 +398,9 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return newType;
     }
 
-    private LinkedHashMap<String, String> convertTeamPathType(ArrayOfGroup oldType) {
+    private LinkedHashMap<String, String> convertTeamPathType(List<Group> oldType) {
         LinkedHashMap<String, String> newType = new LinkedHashMap<String, String>();
-        for (Group group : oldType.getGroup()) {
+        for (Group group : oldType) {
             newType.put(group.getID(), group.getGroupName());
         }
         return newType;

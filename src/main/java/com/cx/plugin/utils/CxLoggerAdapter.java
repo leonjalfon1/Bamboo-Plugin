@@ -12,13 +12,13 @@ import org.slf4j.helpers.MessageFormatter;
  * Created by: Dorg.
  * Date: 14/09/2016.
  */
-public class CxBuildLoggerAdapter extends MarkerIgnoringBase {
+public class CxLoggerAdapter extends MarkerIgnoringBase {
 
     private static final Logger log = LoggerFactory.getLogger("Checkmarx Build Logger");
 
     private BuildLogger buildLogger;
 
-    public CxBuildLoggerAdapter(BuildLogger log) {
+    public CxLoggerAdapter(BuildLogger log) {
         this.name = "Build Logger";
         this.buildLogger = log;
     }

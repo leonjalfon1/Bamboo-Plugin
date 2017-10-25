@@ -56,6 +56,10 @@ public class CxParam {
     public final static String ERROR_OCCURRED = "errorOccurred";
     public final static String ERROR_OCCURRED_MESSAGE = "Configuration settings were not saved. Please review your settings and try again";
 
+    public static final String TEMP_FILE_NAME_TO_ZIP = "CxZippedSource";
+    public static final long MAX_ZIP_SIZE_BYTES = 209715200;
+    public static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
+
     public static final String OPTION_TRUE = "true";
     public static final String OPTION_FALSE = "false";
 
@@ -74,6 +78,7 @@ public class CxParam {
     public static final String GLOBAL_OSA_HIGH_THRESHOLD = "globalOsaHighThreshold";
     public static final String GLOBAL_OSA_MEDIUM_THRESHOLD = "globalOsaMediumThreshold";
     public static final String GLOBAL_OSA_LOW_THRESHOLD = "globalOsaLowThreshold";
+    public static final String GLOBAL_DENY_PROJECT = "globalDenyProject";
     public static final String DEFAULT_FILTER_PATTERNS = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
             "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
             "!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u,   !**/*.mid,   !**/*.mp3,  " +

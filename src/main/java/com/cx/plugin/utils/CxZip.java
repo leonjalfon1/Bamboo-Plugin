@@ -25,19 +25,19 @@ public class CxZip {
         this.tempFileName = tempFileName;
     }
 
-    public File zipWorkspaceFolder(String baseDir, String filterPattern, final CxBuildLoggerAdapter buildLogger, boolean writeToLog)
+    public File zipWorkspaceFolder(String baseDir, String filterPattern, final CxLoggerAdapter log, boolean writeToLog)
             throws InterruptedException, IOException {
         if (baseDir == null || StringUtils.isEmpty(baseDir)) {
             throw new CxAbortException("Checkmarx Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
         }
-        buildLogger.info("Zipping workspace: '" + baseDir + "'");
+        log.info("Zipping workspace: '" + baseDir + "'");
 
         ZipListener zipListener;
         if (writeToLog) {
             zipListener = new ZipListener() {
                 public void updateProgress(String fileName, long size) {
                     numOfZippedFiles++;
-                    buildLogger.info("Zipping (" + FileUtils.byteCountToDisplaySize(size) + "): " + fileName);
+                    log.info("Zipping (" + FileUtils.byteCountToDisplaySize(size) + "): " + fileName);
                 }
             };
         } else {
@@ -60,9 +60,9 @@ public class CxZip {
             throw new IOException("No files to zip");
         }
 
-        buildLogger.info("Zipping complete with " + numOfZippedFiles + " files, total compressed size: " +
+        log.info("Zipping complete with " + numOfZippedFiles + " files, total compressed size: " +
                 FileUtils.byteCountToDisplaySize(tempFile.length() / 8 * 6)); // We print here the size of compressed sources before encoding to base 64
-        buildLogger.info("Temporary file with zipped sources was created at: '" + tempFile.getAbsolutePath() + "'");
+        log.info("Temporary file with zipped sources was created at: '" + tempFile.getAbsolutePath() + "'");
 
         return tempFile;
     }

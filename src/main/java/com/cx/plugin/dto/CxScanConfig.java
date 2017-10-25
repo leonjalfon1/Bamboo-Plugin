@@ -3,14 +3,16 @@ package com.cx.plugin.dto;
 import org.hsqldb.lib.StringUtil;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 
 import static com.cx.plugin.dto.CxParam.*;
 
 /**
  * Created by galn on 21/12/2016.
  */
-public class CxScanConfiguration {
+public class CxScanConfig {
 
     private String username;
     /**
@@ -30,6 +32,8 @@ public class CxScanConfiguration {
     private String fullTeamPath;
     private String folderExclusions;
     private String filterPattern;
+    private String version;
+    private boolean denyProject = false;
     /**
      * Define a timeout (in minutes) for the scan. If the specified time has passed, the build fails.
      * Set to 0 to run the scan with no time limit.
@@ -74,11 +78,13 @@ public class CxScanConfiguration {
 
 
     /**********   C-tor   ***************/
-    public CxScanConfiguration(HashMap<String, String> configurationMap) {
+    public CxScanConfig(HashMap<String, String> configurationMap) {
+        setVersion();
         setUsername(configurationMap.get(USER_NAME));
         setPassword(configurationMap.get(PASSWORD));
         setUrl(configurationMap.get(SERVER_URL));
         setProjectName(configurationMap.get(PROJECT_NAME));
+        setDenyProject(Boolean.parseBoolean(configurationMap.get(GLOBAL_DENY_PROJECT)));
         setPresetId(Long.parseLong(configurationMap.get(PRESET_ID)));
         setPresetName(configurationMap.get(PRESET_NAME));
         setFullTeamPath(configurationMap.get(TEAM_PATH_NAME));
@@ -370,5 +376,36 @@ public class CxScanConfiguration {
 
     public boolean isOSAThresholdEnabled() {
         return isOsaEnabled() && isOsaThresholdsEnabled() && (getOsaHighThreshold() != null || getOsaMediumThreshold() != null || getOsaLowThreshold() != null);
+    }
+
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setVersion() {
+        try {
+            Properties properties = new Properties();
+            java.io.InputStream is = getClass().getClassLoader().getResourceAsStream("english.properties");
+            if (is != null) {
+                properties.load(is);
+                this.version = properties.getProperty("version");
+            }
+        }catch (Exception e) {
+            this.version = "";
+        }
+    }
+
+
+    public boolean isDenyProject() {
+        return denyProject;
+    }
+
+    public void setDenyProject(boolean denyProject) {
+        this.denyProject = denyProject;
     }
 }

@@ -509,14 +509,14 @@ public class CxClientServiceImpl implements CxClientService {
         return presets;
     }
 
-    public ArrayOfGroup getAssociatedGroupsList() {
-        ArrayOfGroup group = new ArrayOfGroup();
+    public List<Group> getAssociatedGroupsList() {
+        List<Group> group = new ArrayList<Group>();
         CxWSResponseGroupList associatedGroupsList = client.getAssociatedGroupsList(sessionId);
         if (!associatedGroupsList.isIsSuccesfull()) {
             log.warn("Fail to retrieve group list: ", associatedGroupsList.getErrorMessage());
             return group;
         }
-        group = associatedGroupsList.getGroupList();
+        group = associatedGroupsList.getGroupList().getGroup();
         return group;
     }
 
@@ -528,5 +528,25 @@ public class CxClientServiceImpl implements CxClientService {
      */
     public CxWSBasicRepsonse cancelScan(String runId) {
         return client.cancelScan(sessionId, runId);
+    }
+
+    public boolean isNewProject(String projectName, String teamPath) throws CxClientException {
+        boolean ret = true;
+        CxWSResponseProjectsDisplayData projects = client.getProjectsDisplayData(sessionId);
+
+        if (projects != null && !projects.isIsSuccesfull()){
+            throw new CxClientException("Error occurred while getting projects from server");
+        }
+        if (projects != null && projects.isIsSuccesfull()) {
+            for (ProjectDisplayData serverProject : projects.getProjectList().getProjectDisplayData()) {
+                if (serverProject.getProjectName().equalsIgnoreCase(projectName)
+                        && serverProject.getGroup().equals(teamPath)) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+
+        return ret;
     }
 }

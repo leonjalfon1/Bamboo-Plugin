@@ -7,7 +7,7 @@ import com.atlassian.bamboo.security.EncryptionServiceImpl;
  * Created by: Galn
  * Date: 16/02/2017.
  */
-public abstract class CxEncryption {
+public abstract class CxEncryptionUtil {
     public static String decrypt(String str) {
         String encStr;
         if (isEncrypted(str)) {

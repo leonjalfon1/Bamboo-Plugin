@@ -1,10 +1,20 @@
 package com.cx.plugin.utils;
 
+import com.cx.client.dto.ScanResults;
+import com.cx.client.rest.dto.OSAScanStatus;
+import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.plugin.dto.CxResultsConst;
+import com.cx.plugin.dto.CxScanConfig;
+import com.cx.plugin.dto.CxXMLResults;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -131,5 +141,86 @@ public abstract class CxResultUtils {
         }
         return ret;
     }
+
+    public static void addSASTResults(Map<String, String> results, ScanResults scanResults, CxScanConfig config, String projectStateLink, String scanResultsUrl) {
+        results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
+        results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
+        results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
+        results.put(CxResultsConst.SAST_SUMMARY_RESULTS_LINK, org.apache.commons.lang.StringUtils.defaultString(projectStateLink));
+        results.put(CxResultsConst.SAST_SCAN_RESULTS_LINK, org.apache.commons.lang.StringUtils.defaultString(scanResultsUrl));
+        results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
+
+        if (config.isThresholdsEnabled()) {
+            String highThreshold = (config.getHighThreshold() == null ? "null" : String.valueOf(config.getHighThreshold()));
+            String mediumThreshold = (config.getMediumThreshold() == null ? "null" : String.valueOf(config.getMediumThreshold()));
+            String lowThreshold = (config.getLowThreshold() == null ? "null" : String.valueOf(config.getLowThreshold()));
+
+            results.put(CxResultsConst.HIGH_THRESHOLD, highThreshold);
+            results.put(CxResultsConst.MEDIUM_THRESHOLD, mediumThreshold);
+            results.put(CxResultsConst.LOW_THRESHOLD, lowThreshold);
+        }
+
+
+        results.put(CxResultsConst.SCAN_START_DATE, String.valueOf(scanResults.getScanStart()));
+        results.put(CxResultsConst.SCAN_TIME, String.valueOf(scanResults.getScanTime()));
+        results.put(CxResultsConst.SCAN_FILES_SCANNED, String.valueOf(scanResults.getFilesScanned()));
+        results.put(CxResultsConst.SCAN_LOC_SCANNED, String.valueOf(scanResults.getLinesOfCodeScanned()));
+        results.put(CxResultsConst.SCAN_QUERY_LIST, String.valueOf(scanResults.getQueryList()));
+
+        results.put(CxResultsConst.SAST_RESULTS_READY, OPTION_TRUE);
+
+    }
+
+    public static void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, CxScanConfig config, String osaProjectSummaryLink) {
+
+        results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getTotalHighVulnerabilities()));
+        results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getTotalMediumVulnerabilities()));
+        results.put(CxResultsConst.OSA_LOW_RESULTS, String.valueOf(osaSummaryResults.getTotalLowVulnerabilities()));
+        results.put(CxResultsConst.OSA_SUMMARY_RESULTS_LINK, org.apache.commons.lang.StringUtils.defaultString(osaProjectSummaryLink));
+        results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
+        results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
+        results.put(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(config.isOSAThresholdEnabled()));
+
+        if (config.isOSAThresholdEnabled()) {
+
+            String osaHighThreshold = (config.getOsaHighThreshold() == null ? "null" : String.valueOf(config.getOsaHighThreshold()));
+            String osaMediumThreshold = (config.getOsaMediumThreshold() == null ? "null" : String.valueOf(config.getOsaMediumThreshold()));
+            String osaLowThreshold = (config.getOsaLowThreshold() == null ? "null" : String.valueOf(config.getOsaLowThreshold()));
+
+            results.put(CxResultsConst.OSA_HIGH_THRESHOLD, osaHighThreshold);
+            results.put(CxResultsConst.OSA_MEDIUM_THRESHOLD, osaMediumThreshold);
+            results.put(CxResultsConst.OSA_LOW_THRESHOLD, osaLowThreshold);
+        }
+
+        results.put(CxResultsConst.OSA_RESULTS_READY, OPTION_TRUE);
+    }
+
+    public static void addOSAStatus(Map<String, String> results, OSAScanStatus osaScanStatus) {
+        results.put(CxResultsConst.OSA_START_TIME, osaScanStatus.getStartAnalyzeTime());
+        results.put(CxResultsConst.OSA_END_TIME, osaScanStatus.getEndAnalyzeTime());
+    }
+
+    public static void addOsaCveAndLibLists(Map<String, String> results, String osaVulnerabilities, String osaLibraries) {
+        results.put(CxResultsConst.OSA_CVE_LIST, osaVulnerabilities);
+        results.put(CxResultsConst.OSA_LIBRARIES, osaLibraries);
+
+    }
+
+    public static CxXMLResults convertToXMLResult(byte[] cxReport) throws IOException, JAXBException {
+
+        CxXMLResults reportObj = null;
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cxReport);
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(CxXMLResults.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+            reportObj = (CxXMLResults) unmarshaller.unmarshal(byteArrayInputStream);
+
+        } finally {
+            IOUtils.closeQuietly(byteArrayInputStream);
+        }
+        return reportObj;
+    }
+
 }
 

@@ -1,9 +1,6 @@
 package com.cx.client;
 
-import com.checkmarx.v7.ArrayOfGroup;
-import com.checkmarx.v7.CxWSBasicRepsonse;
-import com.checkmarx.v7.CxWSResponseScanStatus;
-import com.checkmarx.v7.Preset;
+import com.checkmarx.v7.*;
 import com.cx.client.dto.CreateScanResponse;
 import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
@@ -63,7 +60,7 @@ public interface CxClientService {
 
     byte[] getScanReport(long scanId, ReportType reportType) throws CxClientException, InterruptedException;
 
-    ArrayOfGroup getAssociatedGroupsList();
+    List<Group> getAssociatedGroupsList();
 
     List<Preset> getPresetList();
 
@@ -76,6 +73,8 @@ public interface CxClientService {
     CxWSBasicRepsonse cancelScan(String runId);
 
     boolean isOSALicenseValid() throws CxClientException, IOException;
+
+    boolean isNewProject(String projectName, String teamPath)throws CxClientException;
 
 }
 

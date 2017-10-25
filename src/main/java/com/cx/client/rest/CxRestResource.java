@@ -1,11 +1,9 @@
 package com.cx.client.rest;
 
-import com.atlassian.bamboo.configuration.AdministrationConfiguration;
-import com.atlassian.spring.container.ContainerManager;
 import com.checkmarx.v7.*;
 import com.cx.client.rest.dto.CxClass;
 import com.cx.client.rest.dto.TestConnectionResponse;
-import com.cx.plugin.utils.CxEncryption;
+import com.cx.plugin.utils.CxEncryptionUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import javax.ws.rs.Consumes;
@@ -72,7 +70,7 @@ public class CxRestResource {
 
         try {
 
-            if (loginToServer(url, username, CxEncryption.decrypt(pas))) {
+            if (loginToServer(url, username, CxEncryptionUtil.decrypt(pas))) {
                 presets = getPresets();
                 teams = getTeamPath();
                 if (presets == null || teams == null) {

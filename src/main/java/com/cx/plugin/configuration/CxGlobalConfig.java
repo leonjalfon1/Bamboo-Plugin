@@ -6,7 +6,7 @@ import com.atlassian.bamboo.configuration.GlobalAdminAction;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
 import com.cx.plugin.dto.CxParam;
-import com.cx.plugin.utils.CxEncryption;
+import com.cx.plugin.utils.CxEncryptionUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
@@ -39,6 +39,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
     private String globalOsaHighThreshold;
     private String globalOsaMediumThreshold;
     private String globalOsaLowThreshold;
+    private String globalDenyProject;
 
     @Override
     public String execute() {
@@ -64,6 +65,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
         globalOsaHighThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_HIGH_THRESHOLD);
         globalOsaMediumThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_MEDIUM_THRESHOLD);
         globalOsaLowThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_LOW_THRESHOLD);
+        globalDenyProject = adminConfig.getSystemProperty(GLOBAL_DENY_PROJECT);
         return INPUT;
     }
 
@@ -90,7 +92,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
         adminConfig.setSystemProperty(GLOBAL_SERVER_URL, globalServerUrl);
         adminConfig.setSystemProperty(GLOBAL_USER_NAME, globalUsername);
-        adminConfig.setSystemProperty(GLOBAL_PASSWORD, CxEncryption.encrypt(globalPassword));
+        adminConfig.setSystemProperty(GLOBAL_PASSWORD, CxEncryptionUtil.encrypt(globalPassword));
 
         adminConfig.setSystemProperty(GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
         adminConfig.setSystemProperty(GLOBAL_FILTER_PATTERN, globalFilterPatterns);
@@ -109,6 +111,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
         adminConfig.setSystemProperty(GLOBAL_OSA_HIGH_THRESHOLD, globalOsaHighThreshold);
         adminConfig.setSystemProperty(GLOBAL_OSA_MEDIUM_THRESHOLD, globalOsaMediumThreshold);
         adminConfig.setSystemProperty(GLOBAL_OSA_LOW_THRESHOLD, globalOsaLowThreshold);
+        adminConfig.setSystemProperty(GLOBAL_DENY_PROJECT, globalDenyProject);
         ((AdministrationConfigurationPersister) ContainerManager.getComponent("administrationConfigurationPersister")).saveAdministrationConfiguration(adminConfig);
 
         addActionMessage(getText("cxDefaultConfigSuccess.label"));
@@ -292,5 +295,13 @@ public class CxGlobalConfig extends GlobalAdminAction {
 
     public void setGlobalOsaLowThreshold(String globalOsaLowThreshold) {
         this.globalOsaLowThreshold = globalOsaLowThreshold;
+    }
+
+    public String getGlobalDenyProject() {
+        return globalDenyProject;
+    }
+
+    public void setGlobalDenyProject(String globalDenyProject) {
+        this.globalDenyProject = globalDenyProject;
     }
 }

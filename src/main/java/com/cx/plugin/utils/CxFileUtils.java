@@ -8,10 +8,21 @@ import java.io.FilenameFilter;
 /**
  * Created by Galn on 28/02/2017.
  */
-public abstract class CxFileChecker {
-    public static final Logger log = LoggerFactory.getLogger(CxFileChecker.class);
+public abstract class CxFileUtils {
+    public static final Logger log = LoggerFactory.getLogger(CxFileUtils.class);
 
-    public static void deleteFile(String folder, String prefix){
+    public static void deleteTempFiles(CxLoggerAdapter buildLoggerAdapter, String zipFileName) {
+
+        try {
+            String tempDir = System.getProperty("java.io.tmpdir");
+            deleteFile(tempDir, zipFileName);
+        } catch (Exception e) {
+            buildLoggerAdapter.error("Failed to delete temp files: " + e.getMessage());
+        }
+
+    }
+
+    public static void deleteFile(String folder, String prefix) {
 
         GenericPrefixFilter filter = new GenericPrefixFilter(prefix);
         File dir = new File(folder);
@@ -19,11 +30,11 @@ public abstract class CxFileChecker {
         //list out all the file name with prefix
         String[] list = dir.list(filter);
 
-        if (list==null || list.length == 0) return;
+        if (list == null || list.length == 0) return;
 
         File fileDelete;
 
-        for (String file : list){
+        for (String file : list) {
             String temp = folder + File.separator + file;
             fileDelete = new File(temp);
             boolean isDeleted = fileDelete.delete();
