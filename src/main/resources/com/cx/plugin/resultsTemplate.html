@@ -38,7 +38,7 @@
         color: #373050;
     }
 
-    .summary-title-text {
+    .cx-report .summary-title-text {
         white-space: nowrap;
         font-weight: bold;
     }
@@ -77,12 +77,12 @@
         display: flex;
     }
 
-    .summary-link {
+    .cx-report .summary-link {
         display: inline-flex;
         align-items: center;
     }
 
-    .summary-link-text {
+    .cx-report .summary-link-text {
         padding: 0 8px;
     }
 
@@ -207,7 +207,7 @@
         padding: 4px 9px;
     }
 
-    .threshold-exceeded {
+    .cx-report .threshold-exceeded {
         background-color: #DA2945;
         color: white;
         border-radius: 2px;
@@ -290,6 +290,10 @@
         padding-right: 3px;
     }
 
+    .results-report .chart-large .threshold-line {
+        width: 53px;
+    }
+
     .results-report .threshold-tooltip {
         display: flex;
         transform: translate(0, 50%);
@@ -328,56 +332,56 @@
         display: inline-flex;
     }
 
-    .full-results-section {
+    .cx-report .full-results-section {
         border-top: solid 2px #373050;
     }
 
-    .full-results-section,
-    .summary-section {
+    .cx-report .full-results-section,
+    .cx-report .summary-section {
     }
 
-    .summary-table-row {
+    .cx-report .summary-table-row {
         white-space: nowrap;
         display: inline-flex;
         width: 100%;
     }
 
-    .summary-table-row.cxosa,
-    .summary-table-row.cxsast {
+    .cx-report .summary-table-row.cxosa,
+    .cx-report .summary-table-row.cxsast {
         display: inline-flex;
     }
 
-    table {
+    .cx-report table {
         border-collapse: collapse;
     }
 
-    table td,
-    table th {
+    .cx-report table td,
+    .cx-report table th {
         border: solid transparent;
     }
 
-    .top-padding td {
+    .cx-report .top-padding td {
         padding-top: 59px;
     }
 
-    td {
+    .cx-report td {
         border-color: transparent;
     }
 
-    .title-column,
-    .main-column {
+    .cx-report .title-column,
+    .cx-report .main-column {
         padding: 59px 0;
         line-height: 25px;
         display: inline-block;
     }
 
-    .main-column {
+    .cx-report .main-column {
         width: 77%;
         /*max-width: 709px;*/
         min-width: 500px;
     }
 
-    .title-column {
+    .cx-report .title-column {
         margin-right: 4%;
         vertical-align: top;
         height: 100%;
@@ -387,7 +391,7 @@
         min-width: 155px;
     }
 
-    .summary-title {
+    .cx-report .summary-title {
         border-bottom: solid #979797 1px;
         color: white;
         background-color: #373050;
@@ -395,22 +399,22 @@
         padding: 5px 13px;
     }
 
-    .sum1 {
+    .cx-report .sum1 {
         font-size: 24px;
         font-weight: 500;
     }
 
-    .sum2 {
+    .cx-report .sum2 {
         font-size: 16px;
     }
 
-    .sum-line1 {
+    .cx-report .sum-line1 {
         width: 100%;
         height: 1px;
         background-color: #979797;
     }
 
-    .graph-title {
+    .cx-report .graph-title {
         font-weight: 500;
         font-size: 16px;
         display: table-cell;
@@ -418,70 +422,65 @@
         /*width: 75%;*/
     }
 
-    .graph {
+    .cx-report .graph {
         position: relative;
         text-align: left;
         line-height: 25px;
     }
 
-    .graph-top {
+    .cx-report .graph-top {
         display: table;
         vertical-align: middle;
     }
 
-    .detailed-report {
+    .cx-report .detailed-report {
         margin-top: 12px;
         display: block;
         /*padding: 0 11px;*/
     }
 
-    .detailed-report-ttl {
+    .cx-report .detailed-report-ttl {
         font-size: 14px;
     }
 
-    .download-detailed-report {
+    .cx-report .download-detailed-report {
         color: #9b9b9b;
         font-size: 14px;
     }
 
-    .download-icon,
-    .download-icon,
-    .download-txt {
+    .cx-report .download-icon,
+    .cx-report .download-icon,
+    .cx-report .download-txt {
         display: inline-block;
     }
 
-    .download-icon {
+    .cx-report .download-icon {
         margin-right: 9px;
     }
 
-    .download-icon > svg {
+    .cx-report .download-icon > svg {
         vertical-align: sub;
     }
 
-    body {
-        font: 13px/1.3 'Lucida Grande', sans-serif;
-        color: #666;
-    }
-
-    .download-cx-report {
+    .cx-report .download-cx-report {
         font-size: 16px;
         padding-bottom: 5px;
     }
 
-    .pdf-report.download-icon,
-    .html-report.download-icon {
+    .cx-report .pdf-report.download-icon,
+    .cx-report .html-report.download-icon {
         margin-right: 6px;
     }
 
-    a.html-report {
+    .cx-report a.html-report {
         color: #4A90E2;
     }
 
-    .report-link {
+    .cx-report .report-link {
         line-height: 28px;
     }
 
-    .full-start-end {
+    .cx-report .full-start-end {
         display: inline-flex;
         text-align: left;
         width: 100%;
@@ -490,34 +489,34 @@
         padding-top: 6px;
     }
 
-    .full-start-end-icon {
+    .cx-report .full-start-end-icon {
         margin: 4px 7px 0 0;
     }
 
-    .full-start,
-    .full-end,
-    .full-files,
-    .full-loc {
+    .cx-report .full-start,
+    .cx-report .full-end,
+    .cx-report .full-files,
+    .cx-report .full-loc {
         display: inline-flex;
         line-height: 18px;
         margin-right: 63px;
     }
 
-    .full-loc {
+    .cx-report .full-loc {
         display: inline-block;
     }
 
-    .full-loc > div {
+    .cx-report .full-loc > div {
         display: inline-block;
     }
 
-    .osa-downloads a,
-    .sast-downloads a {
+    .cx-report .osa-downloads a,
+    .cx-report .sast-downloads a {
         color: #4A90E2;
         text-decoration: none;
     }
 
-    .full-severity-title {
+    .cx-report .full-severity-title {
         display: flex;
         text-align: left;
         margin-top: 45px;
@@ -525,33 +524,33 @@
         font-size: 16px;
     }
 
-    .full-severity-title .severity-title-name {
+    .cx-report .full-severity-title .severity-title-name {
         display: inline-block;
         font-size: 16px;
         margin: 0 10px;
     }
 
-    .full-severity-title .severity-count {
+    .cx-report .full-severity-title .severity-count {
         display: inline-block;
     }
 
-    .full-severity-title .severity-icon {
+    .cx-report .full-severity-title .severity-icon {
         align-items: center;
         display: inline-flex;
     }
 
-    table.cve-table {
+    .cx-report table.cve-table {
         width: 100%;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.15);
     }
 
-    table.cve-table th,
-    table.cve-table td {
+    .cx-report table.cve-table th,
+    .cx-report table.cve-table td {
         border: 1px solid transparent;
         text-align: left;
     }
 
-    table.cve-table th {
+    .cx-report table.cve-table th {
         border-bottom: 1px solid #d5d5d5;
         font-size: 14px;
         color: #9b9b9b;
@@ -559,7 +558,7 @@
         padding: 2px 11px;
     }
 
-    table.cve-table td {
+    .cx-report table.cve-table td {
         font-weight: 500;
         font-size: 16px;
         color: #373050;
@@ -567,44 +566,45 @@
         padding: 11px;
     }
 
-    table.cve-table td.sast-cve-table-high,
-    table.cve-table td.sast-cve-table-med,
-    table.cve-table td.sast-cve-table-low {
+    .cx-report table.cve-table td.sast-cve-table-high,
+    .cx-report table.cve-table td.sast-cve-table-med,
+    .cx-report table.cve-table td.sast-cve-table-low {
         max-width: 19px;
     }
 
-    table.cve-table.sast-cve-table td:last-child,
-    table.cve-table.sast-cve-table th:last-child {
+    .cx-report table.cve-table.sast-cve-table td:last-child,
+    .cx-report table.cve-table.sast-cve-table th:last-child {
         padding-right: 20px;
         text-align: right;
     }
 
-    table.cve-table.osa-cve-table td:last-child,
-    table.cve-table.osa-cve-table th:last-child {
+    .cx-report  table.cve-table.osa-cve-table td:last-child,
+    .cx-report table.cve-table.osa-cve-table th:last-child {
         width: 32%;
     }
 
-    .summary-row {
+    .cx-report .summary-row {
         display: flex;
         border-bottom: solid 2px #373050;
         padding: 35px 47px 80px 85px;
     }
 
-    .error-msg {
+    .cx-report .error-msg {
         display: block;
-        padding: 4% 0;
+        margin: 4% 0;
     }
 
-    .aui-message.error, .aui-message-error {
+    .cx-report .aui-message.error, .aui-message-error {
         display: block;
     }
 
-    #asyncMessage {
+    .cx-report #asyncMessage {
         display: none;
         font-weight: bold;
+        margin: 4% 0;
     }
 
-    #onSastError , #osa-summary, #osa-full, #sast-full  {
+    .cx-report #onSastError , .cx-report #osa-summary, .cx-report #osa-full, .cx-report #sast-full  {
         display: none;
     }
 
