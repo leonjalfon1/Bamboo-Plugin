@@ -43,7 +43,7 @@ import static com.cx.plugin.dto.CxParam.*;
 
 public class CheckmarxTask implements TaskType {
 
-    public static final Logger log = LoggerFactory.getLogger(CheckmarxTask.class);
+    public final Logger log = LoggerFactory.getLogger(CheckmarxTask.class);
 
     private CxClientService cxClientService;
 

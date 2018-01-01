@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class CxClientServiceImpl implements CxClientService {
 
-    private static Logger log = LoggerFactory.getLogger(CxClientServiceImpl.class);
+    private Logger log = LoggerFactory.getLogger(CxClientServiceImpl.class);
     private String sessionId;
     private CxSDKWebServiceSoap client;
     private CxRestClient restClient;
@@ -70,7 +70,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
     public void setLogger(Logger log) {
-        CxClientServiceImpl.log = log;
+        this.log = log;
         restClient.setLogger(log);
     }
 

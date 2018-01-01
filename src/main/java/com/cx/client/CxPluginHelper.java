@@ -27,7 +27,6 @@ import java.security.cert.X509Certificate;
  */
 public abstract class CxPluginHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(CxPluginHelper.class);
 
     public static ScanResults genScanResponse(ProjectScannedDisplayData scanDisplayData) {
         ScanResults ret = new ScanResults();
@@ -49,7 +48,7 @@ public abstract class CxPluginHelper {
         try {
             cxClientType = CxClientType.valueOf(conf.getClientOrigin().name());
         } catch (Exception e) {
-            log.debug("Failed to convert client origin enum from value: {}. client origin set to SDK", conf.getClientOrigin().name());
+
         }
         cliScanArgs.setClientOrigin(cxClientType);
         cliScanArgs.setIsIncremental(conf.isIncrementalScan());
