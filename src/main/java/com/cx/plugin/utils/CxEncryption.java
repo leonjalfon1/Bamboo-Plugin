@@ -7,8 +7,8 @@ import com.atlassian.bamboo.security.EncryptionServiceImpl;
  * Created by: Galn
  * Date: 16/02/2017.
  */
-public abstract class CxEncryption {
-    public static String decrypt(String str) {
+public class CxEncryption {
+    public  String decrypt(String str) {
         String encStr;
         if (isEncrypted(str)) {
             try {
@@ -22,7 +22,7 @@ public abstract class CxEncryption {
         }
     }
 
-    public static String encrypt(String password) {
+    public String encrypt(String password) {
         String encPass;
         if (!isEncrypted(password)) {
             try {
@@ -36,7 +36,7 @@ public abstract class CxEncryption {
         }
     }
 
-    private static boolean isEncrypted(String encryptStr) {
+    private boolean isEncrypted(String encryptStr) {
         try {
              new EncryptionServiceImpl().decrypt(encryptStr);
         } catch (EncryptionException e) {

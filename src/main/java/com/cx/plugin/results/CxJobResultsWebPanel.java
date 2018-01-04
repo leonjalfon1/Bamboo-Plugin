@@ -17,10 +17,10 @@ public class CxJobResultsWebPanel implements WebPanel {
 
 
     public String getHtml(Map<String, Object> map) {
-
+        CxResultUtils resultsUtils = new CxResultUtils();
         BuildResultsSummaryImpl a = (BuildResultsSummaryImpl) map.get("resultSummary");
         Map<String, String> customBuildData = a.getCustomBuildData();
-        String ret = CxResultUtils.resolveCostumeBuildData(customBuildData);
+        String ret = resultsUtils.resolveCostumeBuildData(customBuildData);
         return ret;
     }
 

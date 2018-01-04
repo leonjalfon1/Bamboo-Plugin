@@ -29,7 +29,7 @@ public enum ClientOrigin {
         return value;
     }
 
-    public static ClientOrigin fromValue(String v) {
+    public ClientOrigin fromValue(String v) {
         for (ClientOrigin c: ClientOrigin.values()) {
             if (c.value.equals(v)) {
                 return c;

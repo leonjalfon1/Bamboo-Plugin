@@ -86,11 +86,11 @@ public class CxGlobalConfig extends GlobalAdminAction {
         if (error) {
             return ERROR;
         }
-
+        CxEncryption cxEncryption = new CxEncryption();
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
         adminConfig.setSystemProperty(GLOBAL_SERVER_URL, globalServerUrl);
         adminConfig.setSystemProperty(GLOBAL_USER_NAME, globalUsername);
-        adminConfig.setSystemProperty(GLOBAL_PASSWORD, CxEncryption.encrypt(globalPassword));
+        adminConfig.setSystemProperty(GLOBAL_PASSWORD, cxEncryption.encrypt(globalPassword));
 
         adminConfig.setSystemProperty(GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
         adminConfig.setSystemProperty(GLOBAL_FILTER_PATTERN, globalFilterPatterns);

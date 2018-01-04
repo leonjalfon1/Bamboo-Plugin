@@ -66,7 +66,7 @@ public enum CxClientType {
         return value;
     }
 
-    public static CxClientType fromValue(String v) {
+    public CxClientType fromValue(String v) {
         for (CxClientType c: CxClientType.values()) {
             if (c.value.equals(v)) {
                 return c;

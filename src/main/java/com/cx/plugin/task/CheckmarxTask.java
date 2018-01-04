@@ -86,6 +86,8 @@ public class CheckmarxTask implements TaskType {
         OSAScanStatus osaScanStatus = null;
         Exception osaException = null;
         Exception sastWaitException = null;
+        CxPluginHelper pluginHelper = new CxPluginHelper();
+        CxEncryption cxEncryption = new CxEncryption();
 
         try {
             config = new CxScanConfiguration(configurationMap);
@@ -95,7 +97,7 @@ public class CheckmarxTask implements TaskType {
 
             //initialize cx client
             buildLoggerAdapter.info("Initializing Cx client");
-            cxClientService = new CxClientServiceImpl(url, config.getUsername(), CxEncryption.decrypt(config.getPassword()));
+            cxClientService = new CxClientServiceImpl(url, config.getUsername(), cxEncryption.decrypt(config.getPassword()));
             cxClientService.setLogger(buildLoggerAdapter);
             cxClientService.checkServerConnectivity();
 
@@ -117,7 +119,7 @@ public class CheckmarxTask implements TaskType {
                     File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false);//TODO- lIRAN osa
                     buildLoggerAdapter.info("Sending OSA scan request");
                     osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
-                    osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
+                    osaProjectSummaryLink = pluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
                     buildLoggerAdapter.info("OSA scan created successfully");
                     if (zipForOSA.exists() && !zipForOSA.delete()) {
                         buildLoggerAdapter.info("Warning: failed to delete temporary zip file: " + zipForOSA.getAbsolutePath());
@@ -153,7 +155,7 @@ public class CheckmarxTask implements TaskType {
                 //retrieve SAST scan results
                 scanResults = cxClientService.retrieveScanResults(createScanResponse.getProjectId());
 
-                scanResultsUrl = CxPluginHelper.composeScanLink(url.toString(), scanResults);
+                scanResultsUrl = pluginHelper.composeScanLink(url.toString(), scanResults);
                 printResultsToConsole(scanResults);
 
 
@@ -326,8 +328,9 @@ public class CheckmarxTask implements TaskType {
     private void deleteTempFiles() {
 
         try {
+            CxFileUtils fileUtils = new CxFileUtils();
             String tempDir = System.getProperty("java.io.tmpdir");
-            CxFileChecker.deleteFile(tempDir, TEMP_FILE_NAME_TO_ZIP);
+            fileUtils.deleteFile(tempDir, TEMP_FILE_NAME_TO_ZIP);
         } catch (Exception e) {
             buildLoggerAdapter.error("Failed to delete temp files: " + e.getMessage());
         }
@@ -550,7 +553,8 @@ public class CheckmarxTask implements TaskType {
         byte[] zippedSources = getBytesFromZippedSources();
         LocalScanConfiguration conf = generateScanConfiguration(zippedSources);
         CreateScanResponse createScanResponse = cxClientService.createLocalScan(conf);
-        projectStateLink = CxPluginHelper.composeProjectStateLink(url.toString(), createScanResponse.getProjectId());
+        CxPluginHelper pluginHelper = new CxPluginHelper();
+        projectStateLink = pluginHelper.composeProjectStateLink(url.toString(), createScanResponse.getProjectId());
         buildLoggerAdapter.info("Scan created successfully. Link to project state: " + projectStateLink);
 
         if (zipTempFile.exists() && !zipTempFile.delete()) {
@@ -573,7 +577,8 @@ public class CheckmarxTask implements TaskType {
     }
 
     private File zipWorkspaceFolder(String baseZipDir, String folderExclusions, String filterPattern, long maxZipSizeInBytes, boolean writeToLog) throws IOException, InterruptedException {
-        final String combinedFilterPattern = CxFolderPattern.generatePattern(folderExclusions, filterPattern, buildLoggerAdapter);
+        CxFolderPattern folderPattern = new CxFolderPattern();
+        final String combinedFilterPattern = folderPattern.generatePattern(folderExclusions, filterPattern, buildLoggerAdapter);
         CxZip cxZip = new CxZip(TEMP_FILE_NAME_TO_ZIP).setMaxZipSizeInBytes(maxZipSizeInBytes);
         return cxZip.zipWorkspaceFolder(baseZipDir, combinedFilterPattern, buildLoggerAdapter, writeToLog);
     }
@@ -723,7 +728,7 @@ public class CheckmarxTask implements TaskType {
     private boolean isFail(int result, Integer threshold, StringBuilder res, String severity, String severityType) {
         boolean fail = false;
         if (threshold != null && result > threshold) {
-            res.append(severityType).append(severity).append(" severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
+            res.append(severityType).append(severity).append("severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
             fail = true;
         }
         return fail;

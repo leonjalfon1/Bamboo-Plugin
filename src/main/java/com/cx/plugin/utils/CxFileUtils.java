@@ -8,9 +8,9 @@ import java.io.FilenameFilter;
 /**
  * Created by Galn on 28/02/2017.
  */
-public abstract class CxFileChecker {
+public class CxFileUtils {
 
-    public static void deleteFile(String folder, String prefix){
+    public void deleteFile(String folder, String prefix){
 
         GenericPrefixFilter filter = new GenericPrefixFilter(prefix);
         File dir = new File(folder);
@@ -31,7 +31,7 @@ public abstract class CxFileChecker {
     }
 
     //inner class, generic prefix filter
-    public static class GenericPrefixFilter implements FilenameFilter {
+    public class GenericPrefixFilter implements FilenameFilter {
 
         private String prefix;
 

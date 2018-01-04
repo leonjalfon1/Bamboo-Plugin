@@ -10,8 +10,8 @@ import java.io.IOException;
  * CxFolderPattern generates the patterns used for zipping the workspace folder
  */
 
-public abstract class CxFolderPattern {
-    public static String generatePattern(String folderExclusions, String filterPattern, CxBuildLoggerAdapter buildLogger) throws IOException, InterruptedException {
+public class CxFolderPattern {
+    public String generatePattern(String folderExclusions, String filterPattern, CxBuildLoggerAdapter buildLogger) throws IOException, InterruptedException {
 
         String excludeFoldersPattern = processExcludeFolders(folderExclusions, buildLogger);
 
@@ -28,7 +28,7 @@ public abstract class CxFolderPattern {
 
 
     @NotNull
-    private static String processExcludeFolders(String folderExclusions, CxBuildLoggerAdapter buildLogger) {
+    private String processExcludeFolders(String folderExclusions, CxBuildLoggerAdapter buildLogger) {
         if (StringUtils.isEmpty(folderExclusions)) {
             return "";
         }

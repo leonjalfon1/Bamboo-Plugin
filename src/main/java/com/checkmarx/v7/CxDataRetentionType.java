@@ -39,7 +39,7 @@ public enum CxDataRetentionType {
         return value;
     }
 
-    public static CxDataRetentionType fromValue(String v) {
+    public CxDataRetentionType fromValue(String v) {
         for (CxDataRetentionType c: CxDataRetentionType.values()) {
             if (c.value.equals(v)) {
                 return c;

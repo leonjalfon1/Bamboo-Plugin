@@ -17,10 +17,10 @@ import static com.cx.plugin.dto.CxResultsConst.*;
 /**
  * Created by Galn on 23/02/2017.
  */
-public abstract class CxResultUtils {
-    public static final Logger log = LoggerFactory.getLogger(CxResultUtils.class);
+public class CxResultUtils {
+    public final Logger log = LoggerFactory.getLogger(CxResultUtils.class);
 
-    public static String resolveCostumeBuildData(Map<String, String> customBuildData) {
+    public  String resolveCostumeBuildData(Map<String, String> customBuildData) {
         String resultsTemplate = getResultsTemplate();
         if (resultsTemplate == null) {
             return "";
@@ -113,7 +113,7 @@ public abstract class CxResultUtils {
         return ret;
     }
 
-    private static String getResultsTemplate() {
+    private String getResultsTemplate() {
         String ret = null;
         InputStream resourceAsStream = CxResultUtils.class.getResourceAsStream("/com/cx/plugin/resultsTemplate.html");
         if (resourceAsStream != null) {
