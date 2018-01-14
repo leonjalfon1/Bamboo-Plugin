@@ -1,15 +1,17 @@
 package com.cx.client;
 
-import com.checkmarx.v7.*;
+import com.checkmarx.v7.CxWSBasicRepsonse;
+import com.checkmarx.v7.CxWSResponseScanStatus;
+import com.checkmarx.v7.Group;
+import com.checkmarx.v7.Preset;
 import com.cx.client.dto.CreateScanResponse;
 import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
 import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
-import com.cx.client.rest.dto.*;
+import com.cx.client.osa.dto.*;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public interface CxClientService {
 
     ScanResults retrieveScanResults(long projectId) throws CxClientException;
 
-    CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException, IOException;
+    CreateOSAScanResponse createOSAScan(long projectId, List<OSAFile> osaFileList) throws CxClientException, IOException;
 
     OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException;
 

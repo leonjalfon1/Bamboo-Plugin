@@ -56,6 +56,8 @@ public class CxScanConfig {
     private Integer lowThreshold;
     private boolean generatePDFReport = false;
     private boolean osaEnabled = false;
+    private String osaFilterPattern;
+    private String osaArchiveIncludePatterns;
     private boolean osaThresholdsEnabled = false;
     /**
      * Configure a threshold for the CxOSA High Severity Vulnerabilities.
@@ -105,6 +107,8 @@ public class CxScanConfig {
         setGeneratePDFReport(Boolean.parseBoolean(configurationMap.get(GENERATE_PDF_REPORT)));
 
         setOsaEnabled(Boolean.parseBoolean(configurationMap.get(OSA_ENABLED)));
+        setOsaFilterPattern(configurationMap.get(OSA_FILTER_PATTERNS));
+        setOsaArchiveIncludePatterns(configurationMap.get(OSA_ARCHIVE_INCLUDE_PATTERNS));
         setOsaThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(OSA_THRESHOLDS_ENABLED)));
         setOsaHighSeveritiesThreshold(configurationMap.get(OSA_HIGH_THRESHOLD));
         setOsaMediumSeveritiesThreshold(configurationMap.get(OSA_MEDIUM_THRESHOLD));
@@ -306,6 +310,24 @@ public class CxScanConfig {
         this.osaEnabled = osaEnabled;
     }
 
+    public String getOsaFilterPattern() {
+        return osaFilterPattern;
+    }
+
+    public void setOsaFilterPattern(String osaFilterPattern) {
+        this.osaFilterPattern = osaFilterPattern;
+    }
+
+    public String getOsaArchiveIncludePatterns() {
+        return osaArchiveIncludePatterns;
+    }
+
+    public void setOsaArchiveIncludePatterns(String osaArchiveIncludePatterns) {
+        this.osaArchiveIncludePatterns = osaArchiveIncludePatterns;
+    }
+
+
+
     public boolean isOsaThresholdsEnabled() {
         return osaThresholdsEnabled;
     }
@@ -370,11 +392,11 @@ public class CxScanConfig {
         this.presetName = presetName;
     }
 
-    public boolean isSASTThresholdEnabled() {
+    public boolean isSASTThresholdEffectivelyEnabled() {
         return isThresholdsEnabled() && (getLowThreshold() != null || getMediumThreshold() != null || getHighThreshold() != null);
     }
 
-    public boolean isOSAThresholdEnabled() {
+    public boolean isOSAThresholdEffectivelyEnabled() {
         return isOsaEnabled() && isOsaThresholdsEnabled() && (getOsaHighThreshold() != null || getOsaMediumThreshold() != null || getOsaLowThreshold() != null);
     }
 

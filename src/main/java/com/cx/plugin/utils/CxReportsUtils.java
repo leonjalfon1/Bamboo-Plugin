@@ -3,9 +3,9 @@ package com.cx.plugin.utils;
 import com.cx.client.CxClientService;
 import com.cx.client.dto.ReportType;
 import com.cx.client.exception.CxClientException;
-import com.cx.client.rest.dto.CVE;
-import com.cx.client.rest.dto.Library;
-import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.client.osa.dto.CVE;
+import com.cx.client.osa.dto.Library;
+import com.cx.client.osa.dto.OSASummaryResults;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 

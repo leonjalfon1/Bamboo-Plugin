@@ -8,16 +8,21 @@ import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
 import com.cx.client.*;
-import com.cx.client.dto.*;
+import com.cx.client.osa.dto.*;
+import com.cx.client.osa.utils.OSAScanner;
+import com.cx.client.dto.CreateScanResponse;
+import com.cx.client.dto.LocalScanConfiguration;
+import com.cx.client.dto.ReportType;
+import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
-import com.cx.client.rest.dto.*;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxResultsConst;
 import com.cx.plugin.dto.CxScanConfig;
 import com.cx.plugin.dto.CxXMLResults;
-import com.cx.plugin.utils.CxLoggerAdapter;
 import com.cx.plugin.utils.CxEncryptionUtil;
+import com.cx.plugin.utils.CxLoggerAdapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -27,12 +32,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.cx.plugin.dto.CxParam.*;
-import static com.cx.plugin.utils.CxConfigUtil.assertVulnerabilities;
-import static com.cx.plugin.utils.CxConfigUtil.generateScanConfiguration;
-import static com.cx.plugin.utils.CxConfigUtil.resolveConfigurationMap;
+import static com.cx.plugin.dto.CxParam.MAX_ZIP_SIZE_BYTES;
+import static com.cx.plugin.dto.CxParam.TEMP_FILE_NAME_TO_ZIP;
+import static com.cx.plugin.utils.CxConfigUtil.*;
 import static com.cx.plugin.utils.CxFileUtils.deleteTempFiles;
 import static com.cx.plugin.utils.CxPrintUtils.*;
 import static com.cx.plugin.utils.CxReportsUtils.*;
@@ -111,22 +117,9 @@ public class CheckmarxTask implements TaskType {
 
             if (config.isOsaEnabled()) {
                 try {
-                    loggerAdapter.info("Creating OSA scan");
-                   /* if (!cxClientService.isOSALicenseValid()){
-                      throw new CxClientException("Fail to create OSA Scan: OSA license is not enabled. Please contact your Checkmarx Administrator");
-                  }*/
-                    loggerAdapter.info("Zipping dependencies");
-                    //prepare sources (zip it) for the OSA scan and send it to OSA scan
-                    String patternExclusion = "!Checkmarx/Reports/*.*";
-                    File zipForOSA = zipWorkspaceFolder(workDirectory.getPath(), "", patternExclusion, MAX_OSA_ZIP_SIZE_BYTES, false, loggerAdapter);
-                    loggerAdapter.info("Sending OSA scan request");
-                    osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), zipForOSA);
-                    osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
-                    loggerAdapter.info("OSA scan created successfully");
-                    if (zipForOSA.exists() && !zipForOSA.delete()) {
-                        loggerAdapter.info("Warning: failed to delete temporary zip file: " + zipForOSA.getAbsolutePath());
-                    }
-                    loggerAdapter.info("Temporary file deleted");
+
+                    osaScan = createOSAScan(createScanResponse);
+
                 } catch (InterruptedException e) {
                     throw e;
                 } catch (Exception e) {
@@ -171,9 +164,9 @@ public class CheckmarxTask implements TaskType {
                 }
 
             } catch (CxClientException e) {
-                buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
+                buildLogger.addErrorLogEntry("Fail to perform SAST scan: " + e.getMessage());
                 log.error(e.getMessage(), e);
-                sastWaitException = new CxClientException("Fail to perform CxSAST scan: ", e);
+                sastWaitException = new CxClientException("Fail to perform SAST scan: ", e);
             } catch (InterruptedException e) {
                 throw e;
 
@@ -265,7 +258,7 @@ public class CheckmarxTask implements TaskType {
             throw new IllegalArgumentException(errMsg, e);
 
         } catch (Exception e) {
-            buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage());
+            buildLogger.addErrorLogEntry("Unexpected exception: " + e.toString());
             log.error("Unexpected exception: " + e.getMessage(), e);
             throw new TaskException(e.getMessage());
         } finally {
@@ -313,6 +306,36 @@ public class CheckmarxTask implements TaskType {
         }
         return createScanResponse;
     }
+
+    private CreateOSAScanResponse createOSAScan(CreateScanResponse createScanResponse) throws IOException, InterruptedException, CxClientException {
+        loggerAdapter.info("Creating OSA scan");
+        loggerAdapter.info("Scanning for CxOSA compatible files");
+        String osaPattern = config.getOsaFilterPattern() + ", !**/Checkmarx/Reports/**";
+        OSAScanner osaScanner = new OSAScanner(osaPattern, config.getOsaArchiveIncludePatterns(), loggerAdapter);
+        List<OSAFile> osaFiles = osaScanner.scanFiles(workDirectory, FileUtils.getTempDirectory(), 4);
+        loggerAdapter.info("Found " + osaFiles.size() + " Compatible Files for OSA Scan");
+        writeToOsaListToTemp(osaFiles);
+        loggerAdapter.info("Sending OSA scan request");
+        CreateOSAScanResponse osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), osaFiles);
+        osaProjectSummaryLink = CxPluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
+        loggerAdapter.info("OSA scan created successfully");
+
+        return osaScan;
+    }
+
+
+    private void writeToOsaListToTemp(List<OSAFile> osaFileList) {
+        try {
+            File temp = new File(FileUtils.getTempDirectory(), "CxOSAFileList.json");
+            ObjectMapper om = new ObjectMapper();
+            om.writeValue(temp, osaFileList);
+            loggerAdapter.info("OSA file list saved to file: ["+temp.getAbsolutePath()+"]");
+        } catch (Exception e) {
+            loggerAdapter.info("Failed to write OSA file list to temp directory: " + e.getMessage());
+        }
+
+    }
+
 
     private String getWorkspace() throws CxAbortException {
         final Map<Long, String> checkoutLocations = this.buildContext.getCheckoutLocation();

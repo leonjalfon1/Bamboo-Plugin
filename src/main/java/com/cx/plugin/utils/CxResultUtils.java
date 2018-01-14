@@ -1,8 +1,8 @@
 package com.cx.plugin.utils;
 
 import com.cx.client.dto.ScanResults;
-import com.cx.client.rest.dto.OSAScanStatus;
-import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.client.osa.dto.OSAScanStatus;
+import com.cx.client.osa.dto.OSASummaryResults;
 import com.cx.plugin.dto.CxResultsConst;
 import com.cx.plugin.dto.CxScanConfig;
 import com.cx.plugin.dto.CxXMLResults;
@@ -148,7 +148,7 @@ public abstract class CxResultUtils {
         results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
         results.put(CxResultsConst.SAST_SUMMARY_RESULTS_LINK, org.apache.commons.lang.StringUtils.defaultString(projectStateLink));
         results.put(CxResultsConst.SAST_SCAN_RESULTS_LINK, org.apache.commons.lang.StringUtils.defaultString(scanResultsUrl));
-        results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEnabled()));
+        results.put(CxResultsConst.THRESHOLD_ENABLED, String.valueOf(config.isSASTThresholdEffectivelyEnabled()));
 
         if (config.isThresholdsEnabled()) {
             String highThreshold = (config.getHighThreshold() == null ? "null" : String.valueOf(config.getHighThreshold()));
@@ -179,9 +179,9 @@ public abstract class CxResultUtils {
         results.put(CxResultsConst.OSA_SUMMARY_RESULTS_LINK, org.apache.commons.lang.StringUtils.defaultString(osaProjectSummaryLink));
         results.put(CxResultsConst.OSA_VULNERABLE_LIBRARIES, String.valueOf(osaSummaryResults.getHighVulnerabilityLibraries() + osaSummaryResults.getMediumVulnerabilityLibraries() + osaSummaryResults.getLowVulnerabilityLibraries()));
         results.put(CxResultsConst.OSA_OK_LIBRARIES, String.valueOf(osaSummaryResults.getNonVulnerableLibraries()));
-        results.put(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(config.isOSAThresholdEnabled()));
+        results.put(CxResultsConst.OSA_THRESHOLD_ENABLED, String.valueOf(config.isOSAThresholdEffectivelyEnabled()));
 
-        if (config.isOSAThresholdEnabled()) {
+        if (config.isOSAThresholdEffectivelyEnabled()) {
 
             String osaHighThreshold = (config.getOsaHighThreshold() == null ? "null" : String.valueOf(config.getOsaHighThreshold()));
             String osaMediumThreshold = (config.getOsaMediumThreshold() == null ? "null" : String.valueOf(config.getOsaMediumThreshold()));

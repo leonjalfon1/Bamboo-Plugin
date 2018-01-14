@@ -1,7 +1,7 @@
 package com.cx.plugin.utils;
 
 import com.cx.client.dto.ScanResults;
-import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.client.osa.dto.OSASummaryResults;
 import com.cx.plugin.dto.CxScanConfig;
 import org.slf4j.Logger;
 
@@ -40,6 +40,8 @@ public class CxPrintUtils {
         }
         buildLoggerAdapter.info("CxOSA enabled: " + config.isOsaEnabled());
         if (config.isOsaEnabled()) {
+            buildLoggerAdapter.info("CxOSA filter patterns: " + config.getOsaFilterPattern());
+            buildLoggerAdapter.info("CxOSA archive include patterns: " + config.getOsaArchiveIncludePatterns());
             buildLoggerAdapter.info("CxOSA thresholds enabled: " + config.isOsaThresholdsEnabled());
             if (config.isOsaThresholdsEnabled()) {
                 buildLoggerAdapter.info("CxOSA high threshold: " + (config.getOsaHighThreshold() == null ? "[No Threshold]" : config.getOsaHighThreshold()));

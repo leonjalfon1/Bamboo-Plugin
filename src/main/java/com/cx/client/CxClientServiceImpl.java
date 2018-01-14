@@ -6,15 +6,14 @@ import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
 import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
-import com.cx.client.rest.CxRestClient;
-import com.cx.client.rest.dto.*;
+import com.cx.client.osa.CxRestClient;
+import com.cx.client.osa.dto.*;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -396,9 +395,9 @@ public class CxClientServiceImpl implements CxClientService {
         }
     }
 
-    public CreateOSAScanResponse createOSAScan(long projectId, File zipFile) throws CxClientException, IOException {
+    public CreateOSAScanResponse createOSAScan(long projectId, List<OSAFile> osaFileList) throws CxClientException, IOException {
         restClient.login();
-        return restClient.createOSAScan(projectId, zipFile);
+        return restClient.createOSAScan(projectId, osaFileList);
     }
 
     public boolean isOSALicenseValid() throws CxClientException, IOException {
@@ -534,7 +533,7 @@ public class CxClientServiceImpl implements CxClientService {
         boolean ret = true;
         CxWSResponseProjectsDisplayData projects = client.getProjectsDisplayData(sessionId);
 
-        if (projects != null && !projects.isIsSuccesfull()){
+        if (projects != null && !projects.isIsSuccesfull()) {
             throw new CxClientException("Error occurred while getting projects from server");
         }
         if (projects != null && projects.isIsSuccesfull()) {

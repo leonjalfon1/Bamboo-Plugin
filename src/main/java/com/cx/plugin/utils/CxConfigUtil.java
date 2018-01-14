@@ -7,7 +7,7 @@ import com.atlassian.spring.container.ContainerManager;
 import com.cx.client.dto.ClientOrigin;
 import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ScanResults;
-import com.cx.client.rest.dto.OSASummaryResults;
+import com.cx.client.osa.dto.OSASummaryResults;
 import com.cx.plugin.dto.CxScanConfig;
 import org.apache.commons.lang.StringUtils;
 
@@ -201,12 +201,12 @@ public class CxConfigUtil {
     public static boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults, StringBuilder res,CxScanConfig config ) throws TaskException {
 
         boolean failByThreshold = false;
-        if (config.isSASTThresholdEnabled() && scanResults != null) {
+        if (config.isSASTThresholdEffectivelyEnabled() && scanResults != null) {
             failByThreshold = isFail(scanResults.getHighSeverityResults(), config.getHighThreshold(), res, "high", "CxSAST ");
             failByThreshold |= isFail(scanResults.getMediumSeverityResults(), config.getMediumThreshold(), res, "medium", "CxSAST ");
             failByThreshold |= isFail(scanResults.getLowSeverityResults(), config.getLowThreshold(), res, "low", "CxSAST ");
         }
-        if (config.isOSAThresholdEnabled() && osaSummaryResults != null) {
+        if (config.isOSAThresholdEffectivelyEnabled() && osaSummaryResults != null) {
             failByThreshold |= isFail(osaSummaryResults.getTotalHighVulnerabilities(), config.getOsaHighThreshold(), res, "high", "CxOSA ");
             failByThreshold |= isFail(osaSummaryResults.getTotalMediumVulnerabilities(), config.getOsaMediumThreshold(), res, "medium", "CxOSA ");
             failByThreshold |= isFail(osaSummaryResults.getTotalLowVulnerabilities(), config.getOsaLowThreshold(), res, "low", "CxOSA ");

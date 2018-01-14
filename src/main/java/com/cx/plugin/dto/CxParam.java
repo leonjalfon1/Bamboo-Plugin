@@ -29,12 +29,14 @@ public class CxParam {
     public static final String INTERVAL_BEGINS_LIST = "intervalBeginsList";
     public static final String INTERVAL_ENDS_LIST = "intervalEndsList";
     public static final String GENERATE_PDF_REPORT = "generatePDFReport";
-    public static final String OSA_ENABLED = "osaEnabled";
     public static final String IS_SYNCHRONOUS = "isSynchronous";
     public static final String THRESHOLDS_ENABLED = "thresholdsEnabled";
     public static final String HIGH_THRESHOLD = "highThreshold";
     public static final String MEDIUM_THRESHOLD = "mediumThreshold";
     public static final String LOW_THRESHOLD = "lowThreshold";
+    public static final String OSA_ENABLED = "osaEnabled";
+    public static final String OSA_FILTER_PATTERNS = "cxOsaFilterPatterns";
+    public static final String OSA_ARCHIVE_INCLUDE_PATTERNS = "cxOsaArchiveIncludePatterns";
     public static final String OSA_THRESHOLDS_ENABLED = "osaThresholdsEnabled";
     public static final String OSA_HIGH_THRESHOLD = "osaHighThreshold";
     public static final String OSA_MEDIUM_THRESHOLD = "osaMediumThreshold";
@@ -58,7 +60,6 @@ public class CxParam {
 
     public static final String TEMP_FILE_NAME_TO_ZIP = "CxZippedSource";
     public static final long MAX_ZIP_SIZE_BYTES = 209715200;
-    public static final long MAX_OSA_ZIP_SIZE_BYTES = 2146483647;
 
     public static final String OPTION_TRUE = "true";
     public static final String OPTION_FALSE = "false";
@@ -90,4 +91,6 @@ public class CxParam {
             "!**/*.hdml,    !**/*.hsql,      !**/*.ht,       !**/*.hta,      !**/*.htc,     !**/*.htd,   !**/*.war,   !**/*.ear,  " +
             "!**/*.htmls,   !**/*.ihtml,     !**/*.mht,      !**/*.mhtm,     !**/*.mhtml,   !**/*.ssi,   !**/*.stm,   " +
             "!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml,   !Checkmarx/Reports/*.*";
+
+    public static final String DEFAULT_OSA_ARCHIVE_INCLUDE_PATTERNS = "*.zip, *.tgz, *.war, *.ear";
 }
