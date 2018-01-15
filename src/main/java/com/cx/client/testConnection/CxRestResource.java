@@ -24,6 +24,7 @@ import static com.cx.plugin.dto.CxParam.*;
 /**
  * A resource of message.
  */
+@Path("/")
 public class CxRestResource {
 
 
