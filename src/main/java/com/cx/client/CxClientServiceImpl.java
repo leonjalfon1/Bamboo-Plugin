@@ -249,7 +249,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
     public void waitForScanToFinish(String runId, long scanTimeoutInMin, ScanWaitHandler<CxWSResponseScanStatus> waitHandler) throws CxClientException, InterruptedException {
-
+        loginToServer();
         long timeToStop = (System.currentTimeMillis() / 60000) + scanTimeoutInMin;
 
         CurrentStatusEnum currentStatus = null;

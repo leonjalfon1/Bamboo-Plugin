@@ -94,6 +94,8 @@ public class CxConfigUtil {
 
         configurationMap.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         configurationMap.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
+        configurationMap.put(OSA_ARCHIVE_INCLUDE_PATTERNS, configMap.get(OSA_ARCHIVE_INCLUDE_PATTERNS));
+        configurationMap.put(OSA_FILTER_PATTERNS, configMap.get(OSA_FILTER_PATTERNS));
 
         if (CUSTOM_CONFIGURATION_CONTROL.equals(configMap.get(SCAN_CONTROL_SECTION))) {
             configurationMap.put(IS_SYNCHRONOUS, configMap.get(IS_SYNCHRONOUS));
