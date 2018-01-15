@@ -1,8 +1,8 @@
-package com.cx.client.rest;
+package com.cx.client.testConnection;
 
 import com.checkmarx.v7.*;
-import com.cx.client.rest.dto.CxClass;
-import com.cx.client.rest.dto.TestConnectionResponse;
+import com.cx.client.osa.dto.CxClass;
+import com.cx.client.testConnection.dto.TestConnectionResponse;
 import com.cx.plugin.utils.CxEncryptionUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -24,7 +24,6 @@ import static com.cx.plugin.dto.CxParam.*;
 /**
  * A resource of message.
  */
-@Path("/")
 public class CxRestResource {
 
 

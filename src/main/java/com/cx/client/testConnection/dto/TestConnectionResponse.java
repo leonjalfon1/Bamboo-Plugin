@@ -1,4 +1,6 @@
-package com.cx.client.osa.dto;
+package com.cx.client.testConnection.dto;
+
+import com.cx.client.osa.dto.CxClass;
 
 import java.util.List;
 
