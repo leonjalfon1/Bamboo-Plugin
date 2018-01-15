@@ -64,7 +64,6 @@
         <context>atl.general</context>
     </web-resource>
 
-
     <rest name="CxRest Resource" key="cxrest-resource" path="/checkmarx" version="1.0">
         <description key="CxRest Resource Plugin">CxRest Resource Plugin</description>
     </rest>
