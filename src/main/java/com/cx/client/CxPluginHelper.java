@@ -25,11 +25,10 @@ import java.security.cert.X509Certificate;
  * Created by: Dorg.
  * Date: 15/09/2016.
  */
-public abstract class CxPluginHelper {
+public class CxPluginHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(CxPluginHelper.class);
 
-    public static ScanResults genScanResponse(ProjectScannedDisplayData scanDisplayData) {
+    public ScanResults genScanResponse(ProjectScannedDisplayData scanDisplayData) {
         ScanResults ret = new ScanResults();
         ret.setProjectId(scanDisplayData.getProjectID());
         ret.setScanID(scanDisplayData.getLastScanID());
@@ -42,14 +41,13 @@ public abstract class CxPluginHelper {
         return ret;
     }
 
-    public static CliScanArgs genCliScanArgs(BaseScanConfiguration conf) {
+    public CliScanArgs genCliScanArgs(BaseScanConfiguration conf) {
         CliScanArgs cliScanArgs = new CliScanArgs();
 
         CxClientType cxClientType = CxClientType.SDK;
         try {
             cxClientType = CxClientType.valueOf(conf.getClientOrigin().name());
         } catch (Exception e) {
-            log.debug("Failed to convert client origin enum from value: {}. client origin set to SDK", conf.getClientOrigin().name());
         }
         cliScanArgs.setClientOrigin(cxClientType);
         cliScanArgs.setIsIncremental(conf.isIncrementalScan());
@@ -71,23 +69,23 @@ public abstract class CxPluginHelper {
         return cliScanArgs;
     }
 
-    public static String composeScanLink(String url, ScanResults scanResults) {
+    public String composeScanLink(String url, ScanResults scanResults) {
         return String.format( url + "/CxWebClient/ViewerMain.aspx?scanId=%s&ProjectID=%s", scanResults.getScanID(), scanResults.getProjectId());
     }
 
-    public static String composeProjectStateLink(String url, long projectId) {
+    public String composeProjectStateLink(String url, long projectId) {
         return String.format( url + "/CxWebClient/portal#/projectState/%s/Summary", projectId);
     }
 
-    public static String composeProjectOSASummaryLink(String url, long projectId) {
+    public String composeProjectOSASummaryLink(String url, long projectId) {
         return String.format( url + "/CxWebClient/portal#/projectState/%s/OSA", projectId);
     }
 
-    public static String convertArrayToString(String[] array){
+    public String convertArrayToString(String[] array){
         return StringUtils.join(array, ',');
     }
 
-    public static void createEmptyZip(File zipFile) throws IOException {
+    public void createEmptyZip(File zipFile) throws IOException {
 
         FileOutputStream os = null;
         try {

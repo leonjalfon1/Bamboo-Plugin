@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus> {
 
-    private static Logger log = LoggerFactory.getLogger(OSAConsoleScanWaitHandler.class);
+    private Logger log = LoggerFactory.getLogger(OSAConsoleScanWaitHandler.class);
 
     private long startTime;
     private long scanTimeoutInMin;
@@ -30,7 +30,7 @@ public class OSAConsoleScanWaitHandler implements ScanWaitHandler<OSAScanStatus>
     }
 
     public void setLogger(Logger log) {
-        OSAConsoleScanWaitHandler.log = log;
+        this.log = log;
     }
 
     public void onFail(OSAScanStatus scanStatus) throws CxClientException {

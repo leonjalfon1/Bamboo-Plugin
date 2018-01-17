@@ -42,7 +42,7 @@ public enum ScanEventType {
         return value;
     }
 
-    public static ScanEventType fromValue(String v) {
+    public ScanEventType fromValue(String v) {
         for (ScanEventType c: ScanEventType.values()) {
             if (c.value.equals(v)) {
                 return c;

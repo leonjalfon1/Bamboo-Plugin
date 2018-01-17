@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class CxClientServiceImpl implements CxClientService {
 
-    private static Logger log = LoggerFactory.getLogger(CxClientServiceImpl.class);
+    private Logger log = LoggerFactory.getLogger(CxClientServiceImpl.class);
     private String sessionId;
     private CxSDKWebServiceSoap client;
     private CxRestClient restClient;
@@ -69,7 +69,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
     public void setLogger(Logger log) {
-        CxClientServiceImpl.log = log;
+        this.log = log;
         restClient.setLogger(log);
     }
 
@@ -106,8 +106,8 @@ public class CxClientServiceImpl implements CxClientService {
 
 
     public CreateScanResponse createLocalScan(LocalScanConfiguration conf) throws CxClientException {
-
-        CliScanArgs cliScanArgs = CxPluginHelper.genCliScanArgs(conf);
+        CxPluginHelper pluginHelper = new CxPluginHelper();
+        CliScanArgs cliScanArgs = pluginHelper.genCliScanArgs(conf);
 
         //todo do this (handler)
         //SourceCodeSettings srcCodeSettings = blah(conf);
@@ -317,6 +317,7 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
     public ScanResults retrieveScanResults(long projectId) throws CxClientException {
+        CxPluginHelper pluginHelper = new CxPluginHelper();
         CxWSResponseProjectScannedDisplayData scanDataResponse = client.getProjectScannedDisplayData(sessionId);
         if (!scanDataResponse.isIsSuccesfull()) {
             throw new CxClientException("Fail to get scan data: " + scanDataResponse.getErrorMessage());
@@ -325,7 +326,7 @@ public class CxClientServiceImpl implements CxClientService {
         List<ProjectScannedDisplayData> scanList = scanDataResponse.getProjectScannedList().getProjectScannedDisplayData();
         for (ProjectScannedDisplayData scan : scanList) {
             if (projectId == scan.getProjectID()) {
-                return CxPluginHelper.genScanResponse(scan);
+                return pluginHelper.genScanResponse(scan);
             }
         }
 
@@ -421,7 +422,7 @@ public class CxClientServiceImpl implements CxClientService {
         int retry = waitForScanToFinishRetry;
 
         while (scanTimeoutInMin <= 0 || (System.currentTimeMillis() / 60000) <= timeToStop) {
-            Thread.sleep(10000); //Get status every 10 sec
+            Thread.sleep(20000); //Get status every 20 sec
 
             try {
                 scanStatus = restClient.getOSAScanStatus(scanId);
@@ -476,19 +477,19 @@ public class CxClientServiceImpl implements CxClientService {
         return restClient.getOSAVulnerabilities(scanId);
     }
 
-    public static int getWaitForScanToFinishRetry() {
+    public int getWaitForScanToFinishRetry() {
         return waitForScanToFinishRetry;
     }
 
-    public static void setWaitForScanToFinishRetry(int waitForScanToFinishRetry) {
+    public void setWaitForScanToFinishRetry(int waitForScanToFinishRetry) {
         CxClientServiceImpl.waitForScanToFinishRetry = waitForScanToFinishRetry;
     }
 
-    public static int getGenerateReportTimeOutInSec() {
+    public int getGenerateReportTimeOutInSec() {
         return generateReportTimeOutInSec;
     }
 
-    public static void setGenerateReportTimeOutInSec(int generateReportTimeOutInSec) {
+    public void setGenerateReportTimeOutInSec(int generateReportTimeOutInSec) {
         CxClientServiceImpl.generateReportTimeOutInSec = generateReportTimeOutInSec;
     }
 

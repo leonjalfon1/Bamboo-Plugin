@@ -45,7 +45,7 @@ public enum SourceLocationType {
         return value;
     }
 
-    public static SourceLocationType fromValue(String v) {
+    public SourceLocationType fromValue(String v) {
         for (SourceLocationType c: SourceLocationType.values()) {
             if (c.value.equals(v)) {
                 return c;

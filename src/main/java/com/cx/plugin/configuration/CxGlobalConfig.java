@@ -6,7 +6,7 @@ import com.atlassian.bamboo.configuration.GlobalAdminAction;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
 import com.cx.plugin.dto.CxParam;
-import com.cx.plugin.utils.CxEncryptionUtil;
+import com.cx.plugin.utils.CxEncryption;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
@@ -88,11 +88,11 @@ public class CxGlobalConfig extends GlobalAdminAction {
         if (error) {
             return ERROR;
         }
-
+        CxEncryption cxEncryption = new CxEncryption();
         final AdministrationConfiguration adminConfig = (AdministrationConfiguration) ContainerManager.getComponent(ADMINISTRATION_CONFIGURATION);
         adminConfig.setSystemProperty(GLOBAL_SERVER_URL, globalServerUrl);
         adminConfig.setSystemProperty(GLOBAL_USER_NAME, globalUsername);
-        adminConfig.setSystemProperty(GLOBAL_PASSWORD, CxEncryptionUtil.encrypt(globalPassword));
+        adminConfig.setSystemProperty(GLOBAL_PASSWORD, cxEncryption.encrypt(globalPassword));
 
         adminConfig.setSystemProperty(GLOBAL_FOLDER_EXCLUSION, globalFolderExclusions);
         adminConfig.setSystemProperty(GLOBAL_FILTER_PATTERN, globalFilterPatterns);

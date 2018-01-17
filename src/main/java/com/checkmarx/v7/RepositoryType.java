@@ -46,7 +46,7 @@ public enum RepositoryType {
         return value;
     }
 
-    public static RepositoryType fromValue(String v) {
+    public RepositoryType fromValue(String v) {
         for (RepositoryType c: RepositoryType.values()) {
             if (c.value.equals(v)) {
                 return c;

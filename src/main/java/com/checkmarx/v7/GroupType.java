@@ -44,7 +44,7 @@ public enum GroupType {
         return value;
     }
 
-    public static GroupType fromValue(String v) {
+    public GroupType fromValue(String v) {
         for (GroupType c: GroupType.values()) {
             if (c.value.equals(v)) {
                 return c;

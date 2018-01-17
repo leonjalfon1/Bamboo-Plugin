@@ -3,7 +3,7 @@ package com.cx.client.testConnection;
 import com.checkmarx.v7.*;
 import com.cx.client.osa.dto.CxClass;
 import com.cx.client.testConnection.dto.TestConnectionResponse;
-import com.cx.plugin.utils.CxEncryptionUtil;
+import com.cx.plugin.utils.CxEncryption;
 import org.codehaus.plexus.util.StringUtils;
 
 import javax.ws.rs.Consumes;
@@ -31,11 +31,11 @@ public class CxRestResource {
     private static URL WSDL_LOCATION = CxSDKWebService.class.getClassLoader().getResource("WEB-INF/CxSDKWebService.wsdl");
     private static final QName SERVICE_NAME = new QName("http://Checkmarx.com/v7", "CxSDKWebService");
     private static String SDK_PATH = "/cxwebinterface/sdk/CxSDKWebService.asmx";
-    private static List<CxClass> presets;
-    private static List<CxClass> teams;
-    private static CxSDKWebServiceSoap client;
-    private static String sessionId;
-    private static String result = "";
+    private List<CxClass> presets;
+    private List<CxClass> teams;
+    private CxSDKWebServiceSoap client;
+    private String sessionId;
+    private String result = "";
 
 
     @POST
@@ -69,8 +69,8 @@ public class CxRestResource {
         String pas = StringUtils.defaultString(credentials.get("pas"));
 
         try {
-
-            if (loginToServer(url, username, CxEncryptionUtil.decrypt(pas))) {
+            CxEncryption cxEncryption = new CxEncryption();
+            if (loginToServer(url, username, cxEncryption.decrypt(pas))) {
                 presets = getPresets();
                 teams = getTeamPath();
                 if (presets == null || teams == null) {

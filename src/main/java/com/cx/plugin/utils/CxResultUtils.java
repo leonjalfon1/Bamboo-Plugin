@@ -27,10 +27,10 @@ import static com.cx.plugin.dto.CxResultsConst.*;
 /**
  * Created by Galn on 23/02/2017.
  */
-public abstract class CxResultUtils {
-    public static final Logger log = LoggerFactory.getLogger(CxResultUtils.class);
+public class CxResultUtils {
+    public final Logger log = LoggerFactory.getLogger(CxResultUtils.class);
 
-    public static String resolveCostumeBuildData(Map<String, String> customBuildData) {
+    public String resolveCostumeBuildData(Map<String, String> customBuildData) {
         String resultsTemplate = getResultsTemplate();
         if (resultsTemplate == null) {
             return "";
@@ -123,7 +123,7 @@ public abstract class CxResultUtils {
         return ret;
     }
 
-    private static String getResultsTemplate() {
+    private String getResultsTemplate() {
         String ret = null;
         InputStream resourceAsStream = CxResultUtils.class.getResourceAsStream("/com/cx/plugin/resultsTemplate.html");
         if (resourceAsStream != null) {
@@ -142,7 +142,7 @@ public abstract class CxResultUtils {
         return ret;
     }
 
-    public static void addSASTResults(Map<String, String> results, ScanResults scanResults, CxScanConfig config, String projectStateLink, String scanResultsUrl) {
+    public void addSASTResults(Map<String, String> results, ScanResults scanResults, CxScanConfig config, String projectStateLink, String scanResultsUrl) {
         results.put(CxResultsConst.HIGH_RESULTS, String.valueOf(scanResults.getHighSeverityResults()));
         results.put(CxResultsConst.MEDIUM_RESULTS, String.valueOf(scanResults.getMediumSeverityResults()));
         results.put(CxResultsConst.LOW_RESULTS, String.valueOf(scanResults.getLowSeverityResults()));
@@ -171,7 +171,7 @@ public abstract class CxResultUtils {
 
     }
 
-    public static void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, CxScanConfig config, String osaProjectSummaryLink) {
+    public void addOSAResults(Map<String, String> results, OSASummaryResults osaSummaryResults, CxScanConfig config, String osaProjectSummaryLink) {
 
         results.put(CxResultsConst.OSA_HIGH_RESULTS, String.valueOf(osaSummaryResults.getTotalHighVulnerabilities()));
         results.put(CxResultsConst.OSA_MEDIUM_RESULTS, String.valueOf(osaSummaryResults.getTotalMediumVulnerabilities()));
@@ -195,18 +195,18 @@ public abstract class CxResultUtils {
         results.put(CxResultsConst.OSA_RESULTS_READY, OPTION_TRUE);
     }
 
-    public static void addOSAStatus(Map<String, String> results, OSAScanStatus osaScanStatus) {
+    public void addOSAStatus(Map<String, String> results, OSAScanStatus osaScanStatus) {
         results.put(CxResultsConst.OSA_START_TIME, osaScanStatus.getStartAnalyzeTime());
         results.put(CxResultsConst.OSA_END_TIME, osaScanStatus.getEndAnalyzeTime());
     }
 
-    public static void addOsaCveAndLibLists(Map<String, String> results, String osaVulnerabilities, String osaLibraries) {
+    public void addOsaCveAndLibLists(Map<String, String> results, String osaVulnerabilities, String osaLibraries) {
         results.put(CxResultsConst.OSA_CVE_LIST, osaVulnerabilities);
         results.put(CxResultsConst.OSA_LIBRARIES, osaLibraries);
 
     }
 
-    public static CxXMLResults convertToXMLResult(byte[] cxReport) throws IOException, JAXBException {
+    public CxXMLResults convertToXMLResult(byte[] cxReport) throws IOException, JAXBException {
 
         CxXMLResults reportObj = null;
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cxReport);

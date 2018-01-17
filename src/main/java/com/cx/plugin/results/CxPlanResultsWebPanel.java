@@ -16,10 +16,10 @@ import java.util.Map;
 public class CxPlanResultsWebPanel implements WebPanel {
 
     public String getHtml(Map<String, Object> map) {
-
+        CxResultUtils resultsUtils = new CxResultUtils();
         ChainResultsSummaryImpl a = (ChainResultsSummaryImpl) map.get("resultSummary");
         Map<String, String> customBuildData = a.getOrderedJobResultSummaries().get(0).getCustomBuildData();
-        String ret = CxResultUtils.resolveCostumeBuildData(customBuildData);
+        String ret = resultsUtils.resolveCostumeBuildData(customBuildData);
         return ret;
     }
 

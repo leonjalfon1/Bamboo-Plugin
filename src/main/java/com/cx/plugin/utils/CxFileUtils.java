@@ -8,10 +8,10 @@ import java.io.FilenameFilter;
 /**
  * Created by Galn on 28/02/2017.
  */
-public abstract class CxFileUtils {
-    public static final Logger log = LoggerFactory.getLogger(CxFileUtils.class);
+public class CxFileUtils {
+    public final Logger log = LoggerFactory.getLogger(CxFileUtils.class);
 
-    public static void deleteTempFiles(CxLoggerAdapter buildLoggerAdapter, String zipFileName) {
+    public void deleteTempFiles(CxLoggerAdapter buildLoggerAdapter, String zipFileName) {
 
         try {
             String tempDir = System.getProperty("java.io.tmpdir");
@@ -22,7 +22,7 @@ public abstract class CxFileUtils {
 
     }
 
-    public static void deleteFile(String folder, String prefix) {
+    public void deleteFile(String folder, String prefix) {
 
         GenericPrefixFilter filter = new GenericPrefixFilter(prefix);
         File dir = new File(folder);
@@ -37,13 +37,12 @@ public abstract class CxFileUtils {
         for (String file : list) {
             String temp = folder + File.separator + file;
             fileDelete = new File(temp);
-            boolean isDeleted = fileDelete.delete();
-            log.warn("file : " + temp + " is deleted : " + isDeleted);
+            fileDelete.delete();
         }
     }
 
     //inner class, generic prefix filter
-    public static class GenericPrefixFilter implements FilenameFilter {
+    public class GenericPrefixFilter implements FilenameFilter {
 
         private String prefix;
 

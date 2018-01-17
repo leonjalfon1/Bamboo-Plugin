@@ -17,7 +17,7 @@ import com.checkmarx.v7.Group;
 import com.cx.client.CxClientService;
 import com.cx.client.CxClientServiceImpl;
 import com.cx.client.exception.CxClientException;
-import com.cx.plugin.utils.CxEncryptionUtil;
+import com.cx.plugin.utils.CxEncryption;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -37,11 +37,11 @@ import java.util.regex.Pattern;
 import static com.cx.plugin.dto.CxParam.*;
 
 public class AgentTaskConfigurator extends AbstractTaskConfigurator {
-    private static LinkedHashMap<String, String> presetList = new LinkedHashMap<String, String>();
-    private static LinkedHashMap<String, String> teamPathList = new LinkedHashMap<String, String>();
-    private static LinkedHashMap<String, String> intervalList = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> presetList = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> teamPathList = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> intervalList = new LinkedHashMap<String, String>();
     private CxClientService cxClientService = null;
-    private static AdministrationConfiguration adminConfig;
+    private AdministrationConfiguration adminConfig;
 
     private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
     private final static String SPECIFIC_SETTING_LABEL = "Use Specific Setting";
@@ -50,10 +50,10 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private static final String DEFAULT_INTERVAL_BEGINS = "01:00";
     private static final String DEFAULT_INTERVAL_ENDS = "04:00";
 
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
-    private static Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(GLOBAL_CONFIGURATION_CONTROL, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CONTROL, SPECIFIC_SETTING_LABEL);
-    public static final Logger log = LoggerFactory.getLogger(AgentTaskConfigurator.class);
+    private Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
+    private Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
+    private Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(GLOBAL_CONFIGURATION_CONTROL, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CONTROL, SPECIFIC_SETTING_LABEL);
+    public final Logger log = LoggerFactory.getLogger(AgentTaskConfigurator.class);
 
     //create task configuration
     @Override
@@ -330,11 +330,12 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     private Map<String, String> generateCredentialsFields(@NotNull final ActionParametersMap params, Map<String, String> config) {
+        CxEncryption cxEncryption = new CxEncryption();
         final String configType = getDefaultString(params, SERVER_CREDENTIALS_SECTION);
         config.put(SERVER_CREDENTIALS_SECTION, configType);
         config.put(SERVER_URL, getDefaultString(params, SERVER_URL));
         config.put(USER_NAME, getDefaultString(params, USER_NAME).trim());
-        config.put(PASSWORD, CxEncryptionUtil.encrypt(getDefaultString(params, PASSWORD)));
+        config.put(PASSWORD, cxEncryption.encrypt(getDefaultString(params, PASSWORD)));
 
         return config;
     }
@@ -378,7 +379,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(cxPass)) {
             try {
                 URL cxUrl = new URL(serverUrl);
-                cxClientService = new CxClientServiceImpl(cxUrl, username, CxEncryptionUtil.decrypt(cxPass), true);
+                CxEncryption cxEncryption = new CxEncryption();
+                cxClientService = new CxClientServiceImpl(cxUrl, username, cxEncryption.decrypt(cxPass), true);
                 cxClientService.checkServerConnectivity();
                 cxClientService.loginToServer();
                 return true;

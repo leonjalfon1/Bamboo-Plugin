@@ -28,7 +28,7 @@ public class CxConfigUtil {
     private static HashMap<String, String> configurationMap;
     private static AdministrationConfiguration adminConfig;
 
-    public static HashMap<String, String> resolveConfigurationMap(ConfigurationMap configMap, CxLoggerAdapter log) throws TaskException {
+    public HashMap<String, String> resolveConfigurationMap(ConfigurationMap configMap, CxLoggerAdapter log) throws TaskException {
 
         Object a = ContainerManager.getComponent("administrationConfigurationAccessor");
         try {
@@ -124,7 +124,7 @@ public class CxConfigUtil {
         return configurationMap;
     }
 
-    private static HashMap<String, String> resolveIntervalFullScan(String intervalBegins, String intervalEnds, HashMap<String, String> configMap, CxLoggerAdapter log) {
+    private HashMap<String, String> resolveIntervalFullScan(String intervalBegins, String intervalEnds, HashMap<String, String> configMap, CxLoggerAdapter log) {
 
         try {
             final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
@@ -177,11 +177,11 @@ public class CxConfigUtil {
     }
 
 
-    private static String getAdminConfig(String key) {
+    private String getAdminConfig(String key) {
         return StringUtils.defaultString(adminConfig.getSystemProperty(key));
     }
 
-    public static LocalScanConfiguration generateScanConfiguration(byte[] zippedSources, CxScanConfig config) {
+    public LocalScanConfiguration generateScanConfiguration(byte[] zippedSources, CxScanConfig config) {
         LocalScanConfiguration ret = new LocalScanConfiguration();
         ret.setProjectName(config.getProjectName());
         ret.setClientOrigin(ClientOrigin.BAMBOO);
@@ -200,7 +200,7 @@ public class CxConfigUtil {
         return ret;
     }
 
-    public static boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults, StringBuilder res,CxScanConfig config ) throws TaskException {
+    public boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults, StringBuilder res,CxScanConfig config ) throws TaskException {
 
         boolean failByThreshold = false;
         if (config.isSASTThresholdEffectivelyEnabled() && scanResults != null) {
@@ -216,10 +216,10 @@ public class CxConfigUtil {
         return failByThreshold;
     }
 
-    public static boolean isFail(int result, Integer threshold, StringBuilder res, String severity, String severityType) {
+    public boolean isFail(int result, Integer threshold, StringBuilder res, String severity, String severityType) {
         boolean fail = false;
         if (threshold != null && result > threshold) {
-            res.append(severityType).append(severity).append(" severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
+            res.append(severityType).append(severity).append("severity results are above threshold. Results: ").append(result).append(". Threshold: ").append(threshold).append("\n");
             fail = true;
         }
         return fail;

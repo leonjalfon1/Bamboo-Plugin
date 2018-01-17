@@ -42,7 +42,7 @@ public enum ScheduleType {
         return value;
     }
 
-    public static ScheduleType fromValue(String v) {
+    public ScheduleType fromValue(String v) {
         for (ScheduleType c: ScheduleType.values()) {
             if (c.value.equals(v)) {
                 return c;

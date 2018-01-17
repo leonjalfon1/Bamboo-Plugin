@@ -15,7 +15,7 @@ public enum ReportType {
         return name();
     }
 
-    public static ReportType fromValue(String v) {
+    public ReportType fromValue(String v) {
             return valueOf(v);
         }
 

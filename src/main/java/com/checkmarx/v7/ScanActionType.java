@@ -39,7 +39,7 @@ public enum ScanActionType {
         return value;
     }
 
-    public static ScanActionType fromValue(String v) {
+    public ScanActionType fromValue(String v) {
         for (ScanActionType c: ScanActionType.values()) {
             if (c.value.equals(v)) {
                 return c;

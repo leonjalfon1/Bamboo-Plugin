@@ -11,7 +11,7 @@ import java.io.IOException;
  * Created by Galn on 24/10/2017.
  */
 public class CxPrintUtils {
-    public static void printConfiguration(CxScanConfig config, CxLoggerAdapter buildLoggerAdapter) throws IOException {
+    public void printConfiguration(CxScanConfig config, CxLoggerAdapter buildLoggerAdapter) throws IOException {
         buildLoggerAdapter.info("----------------------------Configurations:-----------------------------");
         buildLoggerAdapter.info("Bamboo plugin version: " + config.getVersion());
         buildLoggerAdapter.info("Username: " + config.getUsername());
@@ -52,7 +52,7 @@ public class CxPrintUtils {
         buildLoggerAdapter.info("------------------------------------------------------------------------");
     }
 
-    public static void printResultsToConsole(ScanResults scanResults, CxLoggerAdapter buildLoggerAdapter, String scanResultsUrl) {
+    public void printResultsToConsole(ScanResults scanResults, CxLoggerAdapter buildLoggerAdapter, String scanResultsUrl) {
         buildLoggerAdapter.info("----------------------------Checkmarx Scan Results(CxSAST):-------------------------------");
         buildLoggerAdapter.info("High severity results: " + scanResults.getHighSeverityResults());
         buildLoggerAdapter.info("Medium severity results: " + scanResults.getMediumSeverityResults());
@@ -63,7 +63,7 @@ public class CxPrintUtils {
         buildLoggerAdapter.info("------------------------------------------------------------------------------------------\n");
     }
 
-    public static void printOSAResultsToConsole(OSASummaryResults osaSummaryResults, CxLoggerAdapter buildLoggerAdapter, String osaProjectSummaryLink) {
+    public void printOSAResultsToConsole(OSASummaryResults osaSummaryResults, CxLoggerAdapter buildLoggerAdapter, String osaProjectSummaryLink) {
         buildLoggerAdapter.info("----------------------------Checkmarx Scan Results(CxOSA):-------------------------------");
         buildLoggerAdapter.info("");
         buildLoggerAdapter.info("------------------------");
@@ -86,7 +86,7 @@ public class CxPrintUtils {
         buildLoggerAdapter.info("-----------------------------------------------------------------------------------------");
     }
 
-    public static void printBuildFailure(StringBuilder res, Exception sastBuildFailException, Exception osaBuildFailException, CxLoggerAdapter buildLoggerAdapter, Logger log) {
+    public void printBuildFailure(StringBuilder res, Exception sastBuildFailException, Exception osaBuildFailException, CxLoggerAdapter buildLoggerAdapter, Logger log) {
         buildLoggerAdapter.error("********************************************");
         buildLoggerAdapter.error(" The Build Failed for the Following Reasons: ");
         buildLoggerAdapter.error("********************************************");
@@ -107,7 +107,7 @@ public class CxPrintUtils {
         buildLoggerAdapter.error("");
     }
 
-    public static void printAgentConfigError(CxLoggerAdapter buildLoggerAdapter) {
+    public void printAgentConfigError(CxLoggerAdapter buildLoggerAdapter) {
         buildLoggerAdapter.error("");
         buildLoggerAdapter.error("*****************************************************************************************************************************************");
         buildLoggerAdapter.error("|  Please add the system property:                                                                                                      |");

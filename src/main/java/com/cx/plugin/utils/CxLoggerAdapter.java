@@ -14,7 +14,7 @@ import org.slf4j.helpers.MessageFormatter;
  */
 public class CxLoggerAdapter extends MarkerIgnoringBase {
 
-    private static final Logger log = LoggerFactory.getLogger("Checkmarx Build Logger");
+    private final Logger log = LoggerFactory.getLogger("Checkmarx Build Logger");
 
     private BuildLogger buildLogger;
 

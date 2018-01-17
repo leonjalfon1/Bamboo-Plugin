@@ -39,7 +39,7 @@ public enum ScanType {
         return name();
     }
 
-    public static ScanType fromValue(String v) {
+    public ScanType fromValue(String v) {
         return valueOf(v);
     }
 

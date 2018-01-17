@@ -43,7 +43,7 @@ public enum SourceControlProtocolType {
         return value;
     }
 
-    public static SourceControlProtocolType fromValue(String v) {
+    public SourceControlProtocolType fromValue(String v) {
         for (SourceControlProtocolType c: SourceControlProtocolType.values()) {
             if (c.value.equals(v)) {
                 return c;

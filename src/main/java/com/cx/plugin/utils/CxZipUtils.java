@@ -17,10 +17,10 @@ import static com.cx.plugin.dto.CxParam.TEMP_FILE_NAME_TO_ZIP;
  * CxZipUtils generates the patterns used for zipping the workspace folder
  */
 
-public abstract class CxZipUtils {
+public class CxZipUtils {
 
-    public static File zipWorkspaceFolder(String zipDir, String folderExclusions, String filterPattern, long maxZipBytes, boolean writeLog, CxLoggerAdapter log) throws IOException, InterruptedException {
-        final String combinedFilterPattern = CxZipUtils.generatePattern(folderExclusions, filterPattern, log);
+    public File zipWorkspaceFolder(String zipDir, String folderExclusions, String filterPattern, long maxZipBytes, boolean writeLog, CxLoggerAdapter log) throws IOException, InterruptedException {
+        final String combinedFilterPattern = generatePattern(folderExclusions, filterPattern, log);
         CxZip cxZip = new CxZip(TEMP_FILE_NAME_TO_ZIP).setMaxZipSizeInBytes(maxZipBytes);
         return cxZip.zipWorkspaceFolder(zipDir, combinedFilterPattern, log, writeLog);
     }
@@ -40,7 +40,7 @@ public abstract class CxZipUtils {
         return zipFileByte;
     }
 
-    public static String generatePattern(String folderExclusions, String filterPattern, CxLoggerAdapter buildLogger) throws IOException, InterruptedException {
+    public String generatePattern(String folderExclusions, String filterPattern, CxLoggerAdapter buildLogger) throws IOException, InterruptedException {
 
         String excludeFoldersPattern = processExcludeFolders(folderExclusions, buildLogger);
 
@@ -57,7 +57,7 @@ public abstract class CxZipUtils {
 
 
     @NotNull
-    private static String processExcludeFolders(String folderExclusions, CxLoggerAdapter buildLogger) {
+    private String processExcludeFolders(String folderExclusions, CxLoggerAdapter buildLogger) {
         if (StringUtils.isEmpty(folderExclusions)) {
             return "";
         }

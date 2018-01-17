@@ -60,7 +60,7 @@ public enum CurrentStatusEnum {
         return value;
     }
 
-    public static CurrentStatusEnum fromValue(String v) {
+    public CurrentStatusEnum fromValue(String v) {
         for (CurrentStatusEnum c: CurrentStatusEnum.values()) {
             if (c.value.equals(v)) {
                 return c;
