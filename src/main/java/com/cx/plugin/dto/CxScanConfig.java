@@ -1,9 +1,7 @@
 package com.cx.plugin.dto;
 
-import org.hsqldb.lib.StringUtil;
-
+import org.apache.commons.lang.StringUtils;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -375,7 +373,7 @@ public class CxScanConfig {
     private Integer getAsInteger(String number) {
         Integer inti = null;
         try {
-            if (!StringUtil.isEmpty(number)) {
+            if (!StringUtils.isEmpty(number)) {
                 inti = Integer.parseInt(number);
             }
         } catch (NumberFormatException e) {
