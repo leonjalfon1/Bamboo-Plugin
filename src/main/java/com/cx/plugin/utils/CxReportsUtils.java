@@ -11,7 +11,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.List;
 public class CxReportsUtils {
     private static final String PDF_REPORT_NAME = "CxSASTReport";
     private static final String CX_REPORT_LOCATION = File.separator + "Checkmarx" + File.separator + "Reports";
-    private static final String OSA_REPORT_NAME = "CxOSAReport";
     public static final String OSA_LIBRARIES_NAME = "CxOSALibraries";
     public static final String OSA_VULNERABILITIES_NAME = "CxOSAVulnerabilities";
     public static final String OSA_SUMMARY_NAME = "CxOSASummary";
@@ -45,49 +43,34 @@ public class CxReportsUtils {
         } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Fail to generate PDF report", e.getMessage());
+            log.error("Failed to generate PDF report", e.getMessage());
         }
     }
 
-    //OSA PDF report
-    public void createOSAPDFReport(File workDirectory, String scanId, CxLoggerAdapter log, CxClientService cxClientService) throws IOException, CxClientException {
-        byte[] osaPDF = cxClientService.retrieveOSAScanPDFResults(scanId);
-        String pdfFileName = OSA_REPORT_NAME + "_" + now + ".pdf";
-        FileUtils.writeByteArrayToFile(new File(workDirectory + CX_REPORT_LOCATION, pdfFileName), osaPDF);
-        log.info("OSA PDF report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + pdfFileName);
-    }
-
-
-    //OSA HTML report
-    public void createOSAHTMLReport(File workDirectory, String scanId, CxLoggerAdapter log, CxClientService cxClientService) throws IOException, CxClientException {
-        String osaHtml = cxClientService.retrieveOSAScanHtmlResults(scanId);
-        String htmlFileName = OSA_REPORT_NAME + "_" + now + ".html";
-        FileUtils.writeStringToFile(new File(workDirectory + CX_REPORT_LOCATION, htmlFileName), osaHtml, Charset.defaultCharset());
-        log.info("OSA HTML report location: " + workDirectory + CX_REPORT_LOCATION + File.separator + htmlFileName);
-        log.info("");
-    }
-
-    public void createOSASummaryJsonReport(File workDir, CxLoggerAdapter buildLoggerAdapter, OSASummaryResults osaSummaryResults) throws IOException, CxClientException {
-        String fileName = OSA_SUMMARY_NAME + "_" + now + ".json";
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDir + CX_REPORT_LOCATION, fileName), osaSummaryResults);
-        buildLoggerAdapter.info("OSA summary json location: " + workDir + CX_REPORT_LOCATION + File.separator + fileName);
+    public void createOSASummaryJsonReport(File workDirectory, CxLoggerAdapter log, OSASummaryResults osaSummaryResults) throws IOException, CxClientException {
+        writeJsonToFile(OSA_SUMMARY_NAME, osaSummaryResults, workDirectory, log);
     }
 
     public List<Library> createOSALibrariesJsonReport(File workDirectory, String scanId, CxLoggerAdapter log, CxClientService cxClientService) throws IOException, CxClientException {
         List<Library> libraries = cxClientService.getOSALibraries(scanId);
-        String fileName = OSA_LIBRARIES_NAME + "_" + now + ".json";
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDirectory + CX_REPORT_LOCATION, fileName), libraries);
-        log.info("OSA libraries json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
+        writeJsonToFile(OSA_LIBRARIES_NAME, libraries, workDirectory, log);
 
         return libraries;
     }
 
-    public List<CVE> createOSAVulnerabilitiesJsonReport(File workDir, String scanId, CxLoggerAdapter log, CxClientService cxClientService) throws IOException, CxClientException {
+    public List<CVE> createOSAVulnerabilitiesJsonReport(File workDirectory, String scanId, CxLoggerAdapter log, CxClientService cxClientService) throws IOException, CxClientException {
         List<CVE> osaVulnerabilities = cxClientService.getOSAVulnerabilities(scanId);
-        String fileName = OSA_VULNERABILITIES_NAME + "_" + now + ".json";
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(workDir + CX_REPORT_LOCATION, fileName), osaVulnerabilities);
-        log.info("OSA vulnerabilities json location: " + workDir + CX_REPORT_LOCATION + File.separator + fileName);
+        writeJsonToFile(OSA_VULNERABILITIES_NAME, osaVulnerabilities, workDirectory,log);
+
         return osaVulnerabilities;
+    }
+
+    private void writeJsonToFile(String name, Object jsonObj, File workDirectory, CxLoggerAdapter log) throws IOException {
+        String fileName = name + "_" + now + ".json";
+        File jsonFile = new File(workDirectory + CX_REPORT_LOCATION, fileName);
+        String json =  objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObj);
+        FileUtils.writeStringToFile(jsonFile, json);
+        log.info(name + " json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
 
     }
 

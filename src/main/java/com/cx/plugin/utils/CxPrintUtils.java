@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class CxPrintUtils {
     public void printConfiguration(CxScanConfig config, CxLoggerAdapter buildLoggerAdapter) throws IOException {
-        buildLoggerAdapter.info("----------------------------Configurations:-----------------------------");
+        buildLoggerAdapter.info("---------------------------------------Configurations:------------------------------------");
         buildLoggerAdapter.info("Bamboo plugin version: " + config.getVersion());
         buildLoggerAdapter.info("Username: " + config.getUsername());
         buildLoggerAdapter.info("URL: " + config.getUrl());
@@ -49,7 +49,6 @@ public class CxPrintUtils {
                 buildLoggerAdapter.info("CxOSA low threshold: " + (config.getOsaLowThreshold() == null ? "[No Threshold]" : config.getOsaLowThreshold()));
             }
         }
-        buildLoggerAdapter.info("------------------------------------------------------------------------");
     }
 
     public void printResultsToConsole(ScanResults scanResults, CxLoggerAdapter buildLoggerAdapter, String scanResultsUrl) {

@@ -13,7 +13,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -109,14 +108,15 @@ public class CxRestClient {
         HttpResponse loginResponse = null;
         //create login request
         HttpPost loginPost = new HttpPost(rootPath + AUTHENTICATION_PATH);
-        StringEntity requestEntity = new StringEntity(mapper.writeValueAsString(new LoginRequest(username, password)), ContentType.APPLICATION_JSON);
+        StringEntity requestEntity = new StringEntity(convertToJson(new LoginRequest(username, password)));
         loginPost.setEntity(requestEntity);
+        loginPost.addHeader("Content-type", "application/json;v=1");
         try {
             //send login request
             loginResponse = apacheClient.execute(loginPost);
 
             //validate login response
-            validateResponse(loginResponse, 200, "Fail to authenticate");
+            validateResponse(loginResponse, 200, "Failed to authenticate");
         } finally {
             loginPost.releaseConnection();
             HttpClientUtils.closeQuietly(loginResponse);
@@ -128,8 +128,8 @@ public class CxRestClient {
         HttpPost post = new HttpPost(rootPath + OSA_SCAN_PROJECT_PATH);
         CreateOSAScanRequest req = new CreateOSAScanRequest(projectId, ORIGIN, osaFileList);
         StringEntity entity = new StringEntity(convertToJson(req));
-        entity.setContentType("application/json");//todo make it const
         post.setEntity(entity);
+        post.addHeader("Content-type", "application/json;v=1");
         HttpResponse response = null;
 
         try {
@@ -145,32 +145,11 @@ public class CxRestClient {
         }
     }
 
-    public boolean isOSALicenseValid() throws IOException, CxClientException {
-        boolean ret = false;
-
-        HttpGet getRequest = new HttpGet(rootPath + OSA_LICENSE_PATH);
-        HttpResponse response = null;
-
-        try {
-            response = apacheClient.execute(getRequest);
-            validateResponse(response, 200, "Failed to validate OSA license details");
-
-            LicenseDetails lic =  convertToObject(response, LicenseDetails.class);
-            ret = lic.getOsaEnabled();
-        } finally {
-            getRequest.releaseConnection();
-            HttpClientUtils.closeQuietly(response);
-        }
-
-
-        return ret;
-    }
-
-
     public OSAScanStatus getOSAScanStatus(String scanId) throws CxClientException, IOException {
 
         String resolvedPath = rootPath + OSA_SCAN_STATUS_PATH.replace("{scanId}", String.valueOf(scanId));
         HttpGet getRequest = new HttpGet(resolvedPath);
+        getRequest.addHeader("Content-type", "application/json;v=1");
         HttpResponse response = null;
 
         try {
@@ -187,6 +166,7 @@ public class CxRestClient {
     public OSASummaryResults getOSAScanSummaryResults(String scanId) throws CxClientException, IOException {
         String relativePath = OSA_SCAN_SUMMARY_PATH + SCAN_ID_QUERY_PARAM + scanId;
         HttpGet getRequest = createHttpRequest(relativePath, "application/json");
+        getRequest.addHeader("Content-type", "application/json;v=1");
         HttpResponse response = null;
 
         try {
@@ -199,41 +179,11 @@ public class CxRestClient {
         }
     }
 
-    public String getOSAScanHtmlResults(String scanId) throws CxClientException, IOException {
-        String relativePath = OSA_SCAN_SUMMARY_PATH + SCAN_ID_QUERY_PARAM + scanId;
-        HttpGet getRequest = createHttpRequest(relativePath, "text/html");
-        HttpResponse response = null;
-        try {
-            response = apacheClient.execute(getRequest);
-            validateResponse(response, 200, "Failed to get OSA scan html results");
-
-            return IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset());
-
-        } finally {
-            getRequest.releaseConnection();
-            HttpClientUtils.closeQuietly(response);
-        }
-    }
-
-    public byte[] getOSAScanPDFResults(String scanId) throws CxClientException, IOException {
-        String relativePath = OSA_SCAN_SUMMARY_PATH + SCAN_ID_QUERY_PARAM + scanId;
-        HttpGet getRequest = createHttpRequest(relativePath, "application/pdf");
-        HttpResponse response = null;
-
-        try {
-            response = apacheClient.execute(getRequest);
-            validateResponse(response, 200, "Failed to get OSA scan pdf results");
-            return IOUtils.toByteArray(response.getEntity().getContent());
-        } finally {
-            getRequest.releaseConnection();
-            HttpClientUtils.closeQuietly(response);
-        }
-    }
-
     public List<Library> getOSALibraries(String scanId) throws CxClientException, IOException {
 
         String relativePath = OSA_SCAN_LIBRARIES_PATH + SCAN_ID_QUERY_PARAM + scanId + ITEM_PER_PAGE_QUERY_PARAM + MAX_ITEMS;
         HttpGet getRequest = createHttpRequest(relativePath, "application/json");
+        getRequest.addHeader("Content-type", "application/json;v=1");
         HttpResponse response = null;
         try {
             response = apacheClient.execute(getRequest);
@@ -248,6 +198,7 @@ public class CxRestClient {
     public List<CVE> getOSAVulnerabilities(String scanId) throws CxClientException, IOException {
         String relativePath = OSA_SCAN_VULNERABILITIES_PATH + SCAN_ID_QUERY_PARAM + scanId + ITEM_PER_PAGE_QUERY_PARAM + MAX_ITEMS;
         HttpGet getRequest = createHttpRequest(relativePath, "application/json");
+        getRequest.addHeader("Content-type", "application/json;v=1");
         HttpResponse response = null;
         try {
             response = apacheClient.execute(getRequest);

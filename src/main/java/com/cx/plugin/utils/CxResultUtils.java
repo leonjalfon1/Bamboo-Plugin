@@ -83,6 +83,7 @@ public class CxResultUtils {
         if (customBuildData.get(OSA_RESULTS_READY) != null) {
             //OSA: fill html with results
             ret = ret
+                    .replace(OSA_RESULTS_READY, OPTION_TRUE)
                     .replace(OSA_ENABLED, OPTION_TRUE)
                     .replace(OSA_HIGH_RESULTS, String.valueOf(customBuildData.get(OSA_HIGH_RESULTS)))
                     .replace(OSA_MEDIUM_RESULTS, String.valueOf(customBuildData.get(OSA_MEDIUM_RESULTS)))
@@ -103,6 +104,7 @@ public class CxResultUtils {
 
             //SAST: fill html with empty values
             ret = ret
+                    .replace(OSA_RESULTS_READY, OPTION_FALSE)
                     .replace(OSA_ENABLED, OPTION_FALSE)
                     .replace(OSA_HIGH_RESULTS, "0")
                     .replace(OSA_MEDIUM_RESULTS, "0")

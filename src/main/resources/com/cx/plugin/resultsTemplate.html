@@ -608,6 +608,10 @@
         display: none;
     }
 
+    .osa-cve-strike > td {
+        text-decoration: line-through;
+    }
+
 
 
 </style>
@@ -660,7 +664,11 @@
 
 
                 </div>
-                <div class="summary-chart">
+                <div id="onlySastErrorMessage" class="aui-message error">
+                    <span class="aui-icon icon-error"></span>
+                    <strong>Currently SAST scan results are not available. Please check the scan logs for more information</strong>
+                </div>
+                <div class="summary-chart" id="sast_summary-chart">
                     <div class="threshold-exceeded-compliance" id="threshold-exceeded-compliance"></div>
                     <ul class="chart">
 
@@ -1485,6 +1493,7 @@
 
 
     //-------------------------- osa vars --------------------------------------
+    var osaResultsReady = cx.osaResultsReady;
     var osaEnabled = cx.osaEnabled;
 
     //libraries
@@ -1539,9 +1548,6 @@
     var osaList = cx.osaCveList;
     var osaLibraries = cx.osaLibraries;
 
-    //links
-    var osaHtmlPath = osaSummaryResultsLink;
-
     //full report info
     var osaStartDate = adjustDateFormat('cx.osaStartTime');
     var osaEndDate = adjustDateFormat('cx.osaEndTime');
@@ -1587,6 +1593,7 @@
         if (sastResultsReady) {
             try {
                 document.getElementById("results-report").setAttribute("style", "display:block");
+                document.getElementById("onlySastErrorMessage").setAttribute("style", "display:none");
 
                 //link
                 document.getElementById("sast-summary-html-link").setAttribute("href", sastScanResultsLink);
@@ -1642,17 +1649,25 @@
                 }
             }
         }
-        else {
+        else if(!osaResultsReady){
             document.getElementById("onSastError").setAttribute("style", "display:block");
             document.getElementById("scanErrorMessage").setAttribute("style", "display:block");
         }
 
         //---------------------------------------------------------- osa ---------------------------------------------------------------
-        if (osaEnabled) {
+        if (osaResultsReady) {
             try {
+                if (!sastResultsReady){
+                    document.getElementById("results-report").setAttribute("style", "display:block");
+                    document.getElementById("sast-summary-html-link").setAttribute("style", "display:none");
+                    document.getElementById("sast_summary-chart").setAttribute("style", "display:none");
+                    document.getElementById("onlySastErrorMessage").setAttribute("style", "display:block");
+                    document.getElementById("onlySastErrorMessage").setAttribute("style", "font-size:14px");
+                }
+
                 document.getElementById("osa-summary").setAttribute("style", "display:block");
                 //link
-                document.getElementById("osa-summary-html-link").setAttribute("href", osaHtmlPath);
+                document.getElementById("osa-summary-html-link").setAttribute("href", osaSummaryResultsLink);
 
                 //set bars height and count
                 document.getElementById("osa-bar-count-high").innerHTML = osaHighCount;
@@ -1775,7 +1790,7 @@
 
 
                 //osa links
-                document.getElementById("osa-html-link").setAttribute("href", osaHtmlPath);
+                document.getElementById("osa-html-link").setAttribute("href", osaSummaryResultsLink);
 
 
                 //osa info
@@ -2046,6 +2061,12 @@
 
         var libraryIdToName = libraryDictionary(osaLibraries);
 
+        //create uniquness by key: cve + libraryId
+        var osaCveMap = {};
+        for (var i = 0; i < severityCveList.length; i++) {
+            osaCveMap[severityCveList[i].cveName + "," + severityCveList[i].libraryId] = severityCveList[i];
+        }
+
         //generate table title
         var severityTitle = generateCveTableTitle(severity);
 
@@ -2065,12 +2086,16 @@
 
         //add rows to table
         var row;
-        for (i = 0; i < severityCveList.length; i++) {
-            row = table.insertRow(i + 1);
-            row.insertCell(0).innerHTML = severityCveList[i].cveName;
-            row.insertCell(1).innerHTML = formatDate(severityCveList[i].publishDate, "dd-mm-yyyy");
-            row.insertCell(2).innerHTML = libraryIdToName[severityCveList[i].libraryId];
-
+        var i = 1;
+        for (var key in osaCveMap) {
+            row = table.insertRow(i);
+            row.insertCell(0).innerHTML = osaCveMap[key].cveName;
+            row.insertCell(1).innerHTML = formatDate(osaCveMap[key].publishDate, "dd-mm-yyyy");
+            row.insertCell(2).innerHTML = libraryIdToName[osaCveMap[key].libraryId];
+            if(osaCveMap[key].state != null && 'NOT_EXPLOITABLE' === osaCveMap[key].state.name) {
+                row.classList.add('osa-cve-strike');
+            }
+            i++;
         }
     }
 

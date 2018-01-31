@@ -79,7 +79,7 @@ public class CheckmarxTask implements TaskType {
         CreateScanResponse createScanResponse = null;
         OSASummaryResults osaSummaryResults = null;
         OSAScanStatus osaScanStatus;
-        Exception osaException = null;
+        CxClientException osaException = null;
         Exception sastWaitException = null;
 
         try {
@@ -88,6 +88,7 @@ public class CheckmarxTask implements TaskType {
             url = new URL(config.getUrl());
             printUtils.printConfiguration(config, loggerAdapter);
 
+            loggerAdapter.info("-----------------------------------Create CxSAST Scan:------------------------------------");
             //initialize cx client
             loggerAdapter.info("Initializing Cx client");
             cxClientService = new CxClientServiceImpl(url, config.getUsername(), encryption.decrypt(config.getPassword()));
@@ -111,13 +112,12 @@ public class CheckmarxTask implements TaskType {
 
             //prepare sources (zip it) and send it to scan
             createScanResponse = createScan();
-
             //create OSA Scan
             CreateOSAScanResponse osaScan = null;
 
             if (config.isOsaEnabled()) {
                 try {
-
+                    loggerAdapter.info("------------------------------------Create CxOSA Scan:------------------------------------");
                     osaScan = createOSAScan(createScanResponse);
 
                 } catch (InterruptedException e) {
@@ -125,7 +125,7 @@ public class CheckmarxTask implements TaskType {
                 } catch (Exception e) {
                     buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
                     log.error("Fail to create OSA Scan: " + e.getMessage(), e);
-                    osaException = e;
+                    osaException = new CxClientException(e);
                 }
             }
             //Asynchronous MODE
@@ -141,6 +141,7 @@ public class CheckmarxTask implements TaskType {
 
             //SAST Results
             try {
+                loggerAdapter.info("------------------------------------Get CxSAST Results:-----------------------------------");
                 //wait for SAST scan to finish
                 ConsoleScanWaitHandler consoleScanWaitHandler = new ConsoleScanWaitHandler();
                 consoleScanWaitHandler.setLogger(loggerAdapter);
@@ -164,9 +165,9 @@ public class CheckmarxTask implements TaskType {
                 }
 
             } catch (CxClientException e) {
-                buildLogger.addErrorLogEntry("Fail to perform SAST scan: " + e.getMessage());
+                buildLogger.addErrorLogEntry(" Failed to perform CxSAST scan: " + e.getMessage());
                 log.error(e.getMessage(), e);
-                sastWaitException = new CxClientException("Fail to perform SAST scan: ", e);
+                sastWaitException = new CxClientException(" Failed to perform CxSAST scan: ", e);
             } catch (InterruptedException e) {
                 throw e;
 
@@ -182,6 +183,7 @@ public class CheckmarxTask implements TaskType {
                     if (osaException != null) {
                         throw osaException;
                     }
+                    loggerAdapter.info("-------------------------------------Get CxOSA Results:-----------------------------------");
                     //wait for OSA scan to finish
                     OSAConsoleScanWaitHandler osaConsoleScanWaitHandler = new OSAConsoleScanWaitHandler();
                     osaConsoleScanWaitHandler.setLogger(loggerAdapter);
@@ -198,11 +200,6 @@ public class CheckmarxTask implements TaskType {
 
                     loggerAdapter.info("Creating OSA reports");
                     String osaScanId = osaScan.getScanId();
-                    //OSA PDF report
-                    reportsUtils.createOSAPDFReport(workDirectory, osaScanId, loggerAdapter, cxClientService);
-
-                    //OSA HTML report
-                    reportsUtils.createOSAHTMLReport(workDirectory, osaScanId, loggerAdapter, cxClientService);
 
                     //OSA json reports
                     reportsUtils.createOSASummaryJsonReport(workDirectory, loggerAdapter, osaSummaryResults);
@@ -215,7 +212,7 @@ public class CheckmarxTask implements TaskType {
                     resultUtils.addOsaCveAndLibLists(results, osaJson, osaLibrariesJson);
 
                 } catch (Exception e) {
-                    osaException = e;
+                    osaException = new CxClientException(e);
                     throw osaException;
                 }
             }
@@ -225,7 +222,7 @@ public class CheckmarxTask implements TaskType {
 
         } catch (MalformedURLException e) {
             log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
-            osaException = e;
+            osaException = new CxClientException(e);
 
         } catch (CxClientException e) { //TODO redesign the exceptions
             log.error(e.getMessage(), e);
@@ -236,7 +233,7 @@ public class CheckmarxTask implements TaskType {
 
         } catch (NumberFormatException e) {
             log.error("Invalid preset id: " + e.getMessage(), e);
-            osaException = e;
+            osaException = new CxClientException(e);
 
         } catch (InterruptedException e) {
             buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());

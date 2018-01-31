@@ -401,12 +401,6 @@ public class CxClientServiceImpl implements CxClientService {
         return restClient.createOSAScan(projectId, osaFileList);
     }
 
-    public boolean isOSALicenseValid() throws CxClientException, IOException {
-        restClient.login();
-        return restClient.isOSALicenseValid();
-    }
-
-
     public OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException {
         //re login in case of session timed out
         restClient.login();
@@ -459,14 +453,6 @@ public class CxClientServiceImpl implements CxClientService {
 
     public OSASummaryResults retrieveOSAScanSummaryResults(String scanId) throws CxClientException, IOException {
         return restClient.getOSAScanSummaryResults(scanId);
-    }
-
-    public String retrieveOSAScanHtmlResults(String scanId) throws CxClientException, IOException {
-        return restClient.getOSAScanHtmlResults(scanId);
-    }
-
-    public byte[] retrieveOSAScanPDFResults(String scanId) throws CxClientException, IOException {
-        return restClient.getOSAScanPDFResults(scanId);
     }
 
     public List<Library> getOSALibraries(String scanId) throws CxClientException, IOException {
