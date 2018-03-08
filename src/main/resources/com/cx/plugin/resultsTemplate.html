@@ -1758,13 +1758,13 @@
 
             try {
                 //generate full reports
-                if (osaHighCveList.length == 0 && osaMedCveList.length == 0 && osaLowCveList.length == 0) {
+                if (highCount == 0 && medCount == 0 && lowCount == 0) {
                     document.getElementById("sast-full").setAttribute("style", "display: none");
                 } else {
-                    if (osaHighCveList.length > 0) {
+                    if (highCount > 0) {
                         generateCveTable(SEVERITY.HIGH);
                     }
-                    if (osaLowCveList.length.length > 0) {
+                    if (medCount > 0) {
                         generateCveTable(SEVERITY.MED);
                     }
                     if (lowCount > 0) {
@@ -1803,16 +1803,16 @@
 
             try {
                 //generate full reports
-                if (osaHighCount == 0 && osaMedCount == 0 && osaLowCount == 0) {
+                if (osaHighCveList.length == 0 && osaMedCveList.length == 0 && osaLowCveList.length == 0) {
                     document.getElementById("osa-full").setAttribute("style", "display: none");
                 } else {
-                    if (osaHighCount > 0) {
+                    if (osaHighCveList.length > 0) {
                         generateCveTable(SEVERITY.OSA_HIGH);
                     }
-                    if (osaMedCount > 0) {
+                    if (osaMedCveList.length > 0) {
                         generateCveTable(SEVERITY.OSA_MED);
                     }
-                    if (osaLowCount > 0) {
+                    if (osaLowCveList.length > 0) {
                         generateCveTable(SEVERITY.OSA_LOW);
                     }
                 }
