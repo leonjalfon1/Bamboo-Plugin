@@ -194,7 +194,7 @@
                     messageElement.style.color = "#d22020";
                     return false;
                 } else if (pas.length < 1) {
-                    messageElement.textContent = "Username must not be empty";
+                    messageElement.textContent = "Password must not be empty";
                     messageElement.style.color = "#d22020";
                     return false;
                 }
