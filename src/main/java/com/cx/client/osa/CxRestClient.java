@@ -36,11 +36,10 @@ public class CxRestClient {
     private final String password;
     private String rootPath = "{hostName}/CxRestAPI/";
 
-    public static final String OSA_SCAN_PROJECT_PATH = "osa/scans";
+    public static final String OSA_SCAN_PROJECT_PATH = "osa/inventory";
     public static final String OSA_SCAN_STATUS_PATH = "osa/scans/{scanId}";
     public static final String OSA_SCAN_SUMMARY_PATH = "osa/reports";
     public static final String OSA_SCAN_LIBRARIES_PATH = "/osa/libraries";
-    public static final String OSA_LICENSE_PATH = "LicenseDetails";
     public static final String OSA_SCAN_VULNERABILITIES_PATH = "/osa/vulnerabilities";
     private static final String AUTHENTICATION_PATH = "auth/login";
     public static final String CSRF_TOKEN_HEADER = "CXCSRFToken";
@@ -48,7 +47,7 @@ public class CxRestClient {
     public static final String ITEM_PER_PAGE_QUERY_PARAM = "&itemsPerPage=";
     public static final long MAX_ITEMS = 1000000;
     public static final String ORIGIN = "Bamboo";
-
+    public static final String ORIGIN_HEADER = "cxOrigin";
 
     private HttpClient apacheClient;
     private CookieStore cookieStore;
@@ -59,6 +58,7 @@ public class CxRestClient {
 
     private final HttpRequestInterceptor requestFilter = new HttpRequestInterceptor() {
         public void process(HttpRequest httpRequest, HttpContext httpContext) throws HttpException, IOException {
+            httpRequest.addHeader(ORIGIN_HEADER, ORIGIN);
             if (csrfToken != null) {
                 httpRequest.addHeader(CSRF_TOKEN_HEADER, csrfToken);
             }
@@ -123,10 +123,10 @@ public class CxRestClient {
         }
     }
 
-    public CreateOSAScanResponse createOSAScan(long projectId, List<OSAFile> osaFileList) throws IOException, CxClientException {
+    public CreateOSAScanResponse createOSAScan(long projectId, String osaDependenciesJson) throws IOException, CxClientException {
         //create scan request
         HttpPost post = new HttpPost(rootPath + OSA_SCAN_PROJECT_PATH);
-        CreateOSAScanRequest req = new CreateOSAScanRequest(projectId, ORIGIN, osaFileList);
+        CreateOSAScanRequest req = new CreateOSAScanRequest(projectId, osaDependenciesJson);
         StringEntity entity = new StringEntity(convertToJson(req));
         post.setEntity(entity);
         post.addHeader("Content-type", "application/json;v=1");
@@ -136,7 +136,7 @@ public class CxRestClient {
             //send scan request
             response = apacheClient.execute(post);
             //verify scan request
-            validateResponse(response, 202, "Failed to create OSA scan");
+            validateResponse(response, 201, "Failed to create OSA scan");
             //extract response as object and return the link
             return convertToObject(response, CreateOSAScanResponse.class);
         } finally {

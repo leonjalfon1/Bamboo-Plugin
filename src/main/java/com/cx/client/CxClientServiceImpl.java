@@ -20,6 +20,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cx.client.CxPluginHelper.genCliScanArgs;
+import static com.cx.client.CxPluginHelper.genScanResponse;
+
 /**
  * Created by: Dorg.
  * Date: 18/08/2016.
@@ -106,8 +109,7 @@ public class CxClientServiceImpl implements CxClientService {
 
 
     public CreateScanResponse createLocalScan(LocalScanConfiguration conf) throws CxClientException {
-        CxPluginHelper pluginHelper = new CxPluginHelper();
-        CliScanArgs cliScanArgs = pluginHelper.genCliScanArgs(conf);
+        CliScanArgs cliScanArgs = genCliScanArgs(conf);
 
         //todo do this (handler)
         //SourceCodeSettings srcCodeSettings = blah(conf);
@@ -317,7 +319,6 @@ public class CxClientServiceImpl implements CxClientService {
     }
 
     public ScanResults retrieveScanResults(long projectId) throws CxClientException {
-        CxPluginHelper pluginHelper = new CxPluginHelper();
         CxWSResponseProjectScannedDisplayData scanDataResponse = client.getProjectScannedDisplayData(sessionId);
         if (!scanDataResponse.isIsSuccesfull()) {
             throw new CxClientException("Fail to get scan data: " + scanDataResponse.getErrorMessage());
@@ -326,7 +327,7 @@ public class CxClientServiceImpl implements CxClientService {
         List<ProjectScannedDisplayData> scanList = scanDataResponse.getProjectScannedList().getProjectScannedDisplayData();
         for (ProjectScannedDisplayData scan : scanList) {
             if (projectId == scan.getProjectID()) {
-                return pluginHelper.genScanResponse(scan);
+                return genScanResponse(scan);
             }
         }
 
@@ -396,9 +397,9 @@ public class CxClientServiceImpl implements CxClientService {
         }
     }
 
-    public CreateOSAScanResponse createOSAScan(long projectId, List<OSAFile> osaFileList) throws CxClientException, IOException {
+    public CreateOSAScanResponse createOSAScan(long projectId, String osaDependenciesJson) throws CxClientException, IOException {
         restClient.login();
-        return restClient.createOSAScan(projectId, osaFileList);
+        return restClient.createOSAScan(projectId, osaDependenciesJson);
     }
 
     public OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException {

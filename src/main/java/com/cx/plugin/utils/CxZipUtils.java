@@ -2,15 +2,16 @@ package com.cx.plugin.utils;
 
 import com.atlassian.bamboo.task.TaskException;
 import com.atlassian.util.concurrent.NotNull;
+import com.checkmarx.components.zipper.ZipListener;
+import com.checkmarx.components.zipper.Zipper;
+import com.cx.plugin.dto.CxAbortException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import static com.cx.plugin.dto.CxParam.TEMP_FILE_NAME_TO_ZIP;
+import static com.cx.plugin.utils.CxParam.TEMP_FILE_NAME_TO_ZIP;
 
 
 /**
@@ -18,12 +19,49 @@ import static com.cx.plugin.dto.CxParam.TEMP_FILE_NAME_TO_ZIP;
  */
 
 public class CxZipUtils {
+    private int numOfZippedFiles = 0;
 
-    public File zipWorkspaceFolder(String zipDir, String folderExclusions, String filterPattern, long maxZipBytes, boolean writeLog, CxLoggerAdapter log) throws IOException, InterruptedException {
+    public File zipWorkspaceFolder(String baseDir, String folderExclusions, String filterPattern, long maxZipBytes, boolean writeToLog, final CxLoggerAdapter log) throws IOException, InterruptedException {
         final String combinedFilterPattern = generatePattern(folderExclusions, filterPattern, log);
-        CxZip cxZip = new CxZip(TEMP_FILE_NAME_TO_ZIP).setMaxZipSizeInBytes(maxZipBytes);
-        return cxZip.zipWorkspaceFolder(zipDir, combinedFilterPattern, log, writeLog);
+        if (baseDir == null || StringUtils.isEmpty(baseDir)) {
+            throw new CxAbortException("Checkmarx Scan Failed: cannot acquire Bamboo workspace location. It can be due to workspace residing on a disconnected slave.");
+        }
+        log.info("Zipping workspace: '" + baseDir + "'");
+        ZipListener zipListener;
+        if (writeToLog) {
+            zipListener = new ZipListener() {
+                public void updateProgress(String fileName, long size) {
+                    numOfZippedFiles++;
+                    log.info("Zipping (" + FileUtils.byteCountToDisplaySize(size) + "): " + fileName);
+                }
+            };
+        } else {
+            zipListener = new ZipListener() {
+                public void updateProgress(String fileName, long size) {
+                    numOfZippedFiles++;
+                }
+            };
+        }
+        File tempFile = File.createTempFile(TEMP_FILE_NAME_TO_ZIP, ".bin");
+        OutputStream fileOutputStream = new FileOutputStream(tempFile);
+
+        File folder = new File(baseDir);
+        try {
+            new Zipper().zip(folder, combinedFilterPattern, fileOutputStream, maxZipBytes, zipListener);
+        } catch (Zipper.MaxZipSizeReached e) {
+            tempFile.delete();
+            throw new IOException("Reached maximum upload size limit of " + FileUtils.byteCountToDisplaySize(maxZipBytes));
+        } catch (Zipper.NoFilesToZip e) {
+            throw new IOException("No files to zip");
+        }
+
+        log.info("Zipping complete with " + numOfZippedFiles + " files, total compressed size: " +
+                FileUtils.byteCountToDisplaySize(tempFile.length()));
+        log.info("Temporary file with zipped sources was created at: '" + tempFile.getAbsolutePath() + "'");
+
+        return tempFile;
     }
+
 
     public static byte[] getBytesFromZippedSources(File zipTempFile, CxLoggerAdapter log) throws TaskException {
         log.info("Converting zipped sources to byte array");
@@ -40,7 +78,7 @@ public class CxZipUtils {
         return zipFileByte;
     }
 
-    public String generatePattern(String folderExclusions, String filterPattern, CxLoggerAdapter buildLogger) throws IOException, InterruptedException {
+    private String generatePattern(String folderExclusions, String filterPattern, CxLoggerAdapter buildLogger) throws IOException, InterruptedException {
 
         String excludeFoldersPattern = processExcludeFolders(folderExclusions, buildLogger);
 

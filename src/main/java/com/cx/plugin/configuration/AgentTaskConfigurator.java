@@ -17,7 +17,6 @@ import com.checkmarx.v7.Group;
 import com.cx.client.CxClientService;
 import com.cx.client.CxClientServiceImpl;
 import com.cx.client.exception.CxClientException;
-import com.cx.plugin.utils.CxEncryption;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.cx.plugin.dto.CxParam.*;
+import static com.cx.plugin.utils.CxEncryption.*;
+import static com.cx.plugin.utils.CxParam.*;
+
 
 public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private LinkedHashMap<String, String> presetList = new LinkedHashMap<String, String>();
@@ -330,12 +331,11 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     }
 
     private Map<String, String> generateCredentialsFields(@NotNull final ActionParametersMap params, Map<String, String> config) {
-        CxEncryption cxEncryption = new CxEncryption();
         final String configType = getDefaultString(params, SERVER_CREDENTIALS_SECTION);
         config.put(SERVER_CREDENTIALS_SECTION, configType);
         config.put(SERVER_URL, getDefaultString(params, SERVER_URL));
         config.put(USER_NAME, getDefaultString(params, USER_NAME).trim());
-        config.put(PASSWORD, cxEncryption.encrypt(getDefaultString(params, PASSWORD)));
+        config.put(PASSWORD, encrypt(getDefaultString(params, PASSWORD)));
 
         return config;
     }
@@ -379,8 +379,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(cxPass)) {
             try {
                 URL cxUrl = new URL(serverUrl);
-                CxEncryption cxEncryption = new CxEncryption();
-                cxClientService = new CxClientServiceImpl(cxUrl, username, cxEncryption.decrypt(cxPass), true);
+                cxClientService = new CxClientServiceImpl(cxUrl, username, decrypt(cxPass), true);
                 cxClientService.checkServerConnectivity();
                 cxClientService.loginToServer();
                 return true;

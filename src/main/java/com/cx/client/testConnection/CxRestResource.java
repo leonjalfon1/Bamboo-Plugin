@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.cx.plugin.dto.CxParam.*;
+import static com.cx.plugin.utils.CxEncryption.decrypt;
+import static com.cx.plugin.utils.CxParam.*;
 
 /**
  * A resource of message.
@@ -69,8 +70,7 @@ public class CxRestResource {
         String pas = StringUtils.defaultString(credentials.get("pas"));
 
         try {
-            CxEncryption cxEncryption = new CxEncryption();
-            if (loginToServer(url, username, cxEncryption.decrypt(pas))) {
+            if (loginToServer(url, username, decrypt(pas))) {
                 presets = getPresets();
                 teams = getTeamPath();
                 if (presets == null || teams == null) {

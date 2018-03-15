@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-import static com.cx.plugin.dto.CxParam.OPTION_FALSE;
-import static com.cx.plugin.dto.CxParam.OPTION_TRUE;
 import static com.cx.plugin.dto.CxResultsConst.*;
+import static com.cx.plugin.utils.CxParam.OPTION_FALSE;
+import static com.cx.plugin.utils.CxParam.OPTION_TRUE;
 
 /**
  * Created by Galn on 23/02/2017.

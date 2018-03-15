@@ -18,8 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import static com.cx.plugin.dto.CxParam.*;
-import static com.cx.plugin.dto.CxParam.GLOBAL_DENY_PROJECT;
+import static com.cx.plugin.utils.CxParam.*;
 
 /**
  * Created by Galn on 25/10/2017.
@@ -200,7 +199,7 @@ public class CxConfigUtil {
         return ret;
     }
 
-    public boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults, StringBuilder res,CxScanConfig config ) throws TaskException {
+    public boolean assertVulnerabilities(ScanResults scanResults, OSASummaryResults osaSummaryResults, StringBuilder res, CxScanConfig config) throws TaskException {
 
         boolean failByThreshold = false;
         if (config.isSASTThresholdEffectivelyEnabled() && scanResults != null) {

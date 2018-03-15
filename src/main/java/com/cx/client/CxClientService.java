@@ -46,7 +46,7 @@ public interface CxClientService {
 
     ScanResults retrieveScanResults(long projectId) throws CxClientException;
 
-    CreateOSAScanResponse createOSAScan(long projectId, List<OSAFile> osaFileList) throws CxClientException, IOException;
+    CreateOSAScanResponse createOSAScan(long projectId, String osaDependenciesJson) throws CxClientException, IOException;
 
     OSAScanStatus waitForOSAScanToFinish(String scanId, long scanTimeoutInMin, ScanWaitHandler<OSAScanStatus> waitHandler) throws CxClientException, InterruptedException, IOException;
 
@@ -70,7 +70,7 @@ public interface CxClientService {
 
     CxWSBasicRepsonse cancelScan(String runId);
 
-    boolean isNewProject(String projectName, String teamPath)throws CxClientException;
+    boolean isNewProject(String projectName, String teamPath) throws CxClientException;
 
 }
 

@@ -1,4 +1,4 @@
-package com.cx.plugin.dto;
+package com.cx.plugin.utils;
 
 /**
  * Created by galn
@@ -37,6 +37,7 @@ public class CxParam {
     public static final String OSA_ENABLED = "osaEnabled";
     public static final String OSA_FILTER_PATTERNS = "cxOsaFilterPatterns";
     public static final String OSA_ARCHIVE_INCLUDE_PATTERNS = "cxOsaArchiveIncludePatterns";
+    public static final String OSA_INSTALL_BEFORE_SCAN = "cxOsaInstallBeforeScan";
     public static final String OSA_THRESHOLDS_ENABLED = "osaThresholdsEnabled";
     public static final String OSA_HIGH_THRESHOLD = "osaHighThreshold";
     public static final String OSA_MEDIUM_THRESHOLD = "osaMediumThreshold";

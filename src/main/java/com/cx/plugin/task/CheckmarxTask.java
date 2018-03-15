@@ -7,25 +7,26 @@ package com.cx.plugin.task;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
-import com.cx.client.*;
+import com.cx.client.ConsoleScanWaitHandler;
+import com.cx.client.CxClientService;
+import com.cx.client.CxClientServiceImpl;
+import com.cx.client.OSAConsoleScanWaitHandler;
 import com.cx.client.dto.CreateScanResponse;
 import com.cx.client.dto.LocalScanConfiguration;
 import com.cx.client.dto.ReportType;
 import com.cx.client.dto.ScanResults;
 import com.cx.client.exception.CxClientException;
 import com.cx.client.osa.dto.*;
-import com.cx.client.osa.utils.OSAScanner;
 import com.cx.plugin.dto.CxAbortException;
 import com.cx.plugin.dto.CxResultsConst;
 import com.cx.plugin.dto.CxScanConfig;
 import com.cx.plugin.dto.CxXMLResults;
 import com.cx.plugin.utils.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.whitesource.fs.ComponentScan;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,46 +35,41 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
-import static com.cx.plugin.dto.CxParam.MAX_ZIP_SIZE_BYTES;
-import static com.cx.plugin.dto.CxParam.TEMP_FILE_NAME_TO_ZIP;
+import static com.cx.client.CxPluginHelper.*;
+import static com.cx.plugin.utils.CxEncryption.decrypt;
+import static com.cx.plugin.utils.CxFileUtils.deleteTempFiles;
+import static com.cx.plugin.utils.CxParam.MAX_ZIP_SIZE_BYTES;
+import static com.cx.plugin.utils.CxParam.TEMP_FILE_NAME_TO_ZIP;
+import static com.cx.plugin.utils.CxPrintUtils.*;
+import static com.cx.plugin.utils.CxReportsUtils.*;
+import static com.cx.plugin.utils.CxResultUtils.*;
+import static com.cx.plugin.utils.CxZipUtils.getBytesFromZippedSources;
 
 
 public class CheckmarxTask implements TaskType {
 
-    public final Logger log = LoggerFactory.getLogger(CheckmarxTask.class);
-
     private CxClientService cxClientService;
     protected java.net.URL url;
     private File workDirectory;
-    private File zipTempFile;
     private String projectStateLink;
     private String osaProjectSummaryLink;
     private CxScanConfig config;
-    private String scanResultsUrl;
-    private BuildLogger buildLogger;
     private CxLoggerAdapter loggerAdapter;
-    private HashMap<String, String> configurationMap;
-    private BuildContext buildContext;
 
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
 
-
         final TaskResultBuilder taskResultBuilder = TaskResultBuilder.newBuilder(taskContext);
-        buildLogger = taskContext.getBuildLogger();
+        BuildLogger buildLogger = taskContext.getBuildLogger();
         loggerAdapter = new CxLoggerAdapter(buildLogger);
-
-        CxPluginHelper pluginHelper = new CxPluginHelper();
-        CxEncryption encryption = new CxEncryption();
-        CxResultUtils resultUtils = new CxResultUtils();
         CxConfigUtil configUtil = new CxConfigUtil();
-        CxPrintUtils printUtils = new CxPrintUtils();
-        CxReportsUtils reportsUtils = new CxReportsUtils();
-
-        buildContext = taskContext.getBuildContext();
+        CxResultUtils resultUtils = new CxResultUtils();
+        BuildContext buildContext = taskContext.getBuildContext();
+        String buildId = buildContext.getBuildKey().getKey();
         Map<String, String> results = new HashMap<String, String>();
-        configurationMap = configUtil.resolveConfigurationMap(taskContext.getConfigurationMap(), loggerAdapter);//resolve the global configuration properties
+        HashMap<String, String> configurationMap = configUtil.resolveConfigurationMap(taskContext.getConfigurationMap(), loggerAdapter);
         workDirectory = taskContext.getWorkingDirectory();
         ScanResults scanResults = null;
         CreateScanResponse createScanResponse = null;
@@ -81,17 +77,17 @@ public class CheckmarxTask implements TaskType {
         OSAScanStatus osaScanStatus;
         CxClientException osaException = null;
         Exception sastWaitException = null;
-
+        String scanResultsUrl = "";
         try {
             config = new CxScanConfig(configurationMap);
             results.put(CxResultsConst.SAST_SYNC_MODE, String.valueOf(config.isSynchronous()));
             url = new URL(config.getUrl());
-            printUtils.printConfiguration(config, loggerAdapter);
+            printConfiguration(config, loggerAdapter);
 
             loggerAdapter.info("-----------------------------------Create CxSAST Scan:------------------------------------");
             //initialize cx client
             loggerAdapter.info("Initializing Cx client");
-            cxClientService = new CxClientServiceImpl(url, config.getUsername(), encryption.decrypt(config.getPassword()));
+            cxClientService = new CxClientServiceImpl(url, config.getUsername(), decrypt(config.getPassword()));
             cxClientService.setLogger(loggerAdapter);
 
             cxClientService.checkServerConnectivity();
@@ -101,11 +97,10 @@ public class CheckmarxTask implements TaskType {
 
             if (config.isDenyProject()) {
                 String projectName = config.getProjectName();
-                if (cxClientService.isNewProject(projectName, config.getFullTeamPath()))
-                {
+                if (cxClientService.isNewProject(projectName, config.getFullTeamPath())) {
                     StringBuilder str = new StringBuilder("Creation of the new project [" + projectName + "] is not authorized. Please use an existing project.");
                     str.append("\nYou can enable the creation of new projects by disabling the Deny new Checkmarx projects creation checkbox in the Checkmarx plugin global settings.\n");
-                    printUtils.printBuildFailure(str, null, null, loggerAdapter, log);
+                    printBuildFailure(str, null, null, loggerAdapter);
                     return taskResultBuilder.failed().build();
                 }
             }
@@ -118,13 +113,13 @@ public class CheckmarxTask implements TaskType {
             if (config.isOsaEnabled()) {
                 try {
                     loggerAdapter.info("------------------------------------Create CxOSA Scan:------------------------------------");
-                    osaScan = createOSAScan(createScanResponse);
+                    osaScan = createOSAScan(createScanResponse, buildId, buildLogger);
 
                 } catch (InterruptedException e) {
                     throw e;
                 } catch (Exception e) {
                     buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
-                    log.error("Fail to create OSA Scan: " + e.getMessage(), e);
+                    //  log.error("Fail to create OSA Scan: " + e.getMessage(), e);
                     osaException = new CxClientException(e);
                 }
             }
@@ -150,8 +145,8 @@ public class CheckmarxTask implements TaskType {
                 loggerAdapter.info("Scan finished. Retrieving scan results");
                 //retrieve SAST scan results
                 scanResults = cxClientService.retrieveScanResults(createScanResponse.getProjectId());
-                scanResultsUrl = pluginHelper.composeScanLink(url.toString(), scanResults);
-                printUtils.printResultsToConsole(scanResults, loggerAdapter, scanResultsUrl);
+                scanResultsUrl = composeScanLink(url.toString(), scanResults);
+                printResultsToConsole(scanResults, loggerAdapter, scanResultsUrl);
 
                 //SAST detailed report
                 byte[] cxReport = cxClientService.getScanReport(scanResults.getScanID(), ReportType.XML);
@@ -161,19 +156,18 @@ public class CheckmarxTask implements TaskType {
                 resultUtils.addSASTResults(results, scanResults, config, projectStateLink, scanResultsUrl);
 
                 if (config.isGeneratePDFReport()) {
-                    reportsUtils.createPDFReport(scanResults.getScanID(), getWorkspace(), loggerAdapter, cxClientService);
+                    createPDFReport(scanResults.getScanID(), getWorkspace(buildContext.getCheckoutLocation()), loggerAdapter, cxClientService);
                 }
 
             } catch (CxClientException e) {
                 buildLogger.addErrorLogEntry(" Failed to perform CxSAST scan: " + e.getMessage());
-                log.error(e.getMessage(), e);
+                // log.error(e.getMessage(), e);
                 sastWaitException = new CxClientException(" Failed to perform CxSAST scan: ", e);
             } catch (InterruptedException e) {
                 throw e;
 
             } catch (Exception e) {
-                buildLogger.addErrorLogEntry("Fail to perform CxSAST scan: " + e.getMessage());
-                log.error("Fail to perform CxSAST scan: " + e.getMessage(), e);
+                loggerAdapter.error("Fail to perform CxSAST scan: " + e.getMessage(), e);
                 sastWaitException = new Exception("Fail to perform CxSAST scan: ", e);
             }
 
@@ -194,7 +188,7 @@ public class CheckmarxTask implements TaskType {
                     //retrieve OSA scan results
                     loggerAdapter.info("OSA scan finished. Retrieving OSA scan results");
                     osaSummaryResults = cxClientService.retrieveOSAScanSummaryResults(osaScan.getScanId());
-                    printUtils.printOSAResultsToConsole(osaSummaryResults, loggerAdapter, osaProjectSummaryLink);
+                    printOSAResultsToConsole(osaSummaryResults, loggerAdapter, osaProjectSummaryLink);
                     resultUtils.addOSAResults(results, osaSummaryResults, config, osaProjectSummaryLink);
                     resultUtils.addOSAStatus(results, osaScanStatus);
 
@@ -202,9 +196,9 @@ public class CheckmarxTask implements TaskType {
                     String osaScanId = osaScan.getScanId();
 
                     //OSA json reports
-                    reportsUtils.createOSASummaryJsonReport(workDirectory, loggerAdapter, osaSummaryResults);
-                    List<Library> libraries = reportsUtils.createOSALibrariesJsonReport(workDirectory, osaScanId, loggerAdapter, cxClientService);
-                    List<CVE> osaVulnerabilities = reportsUtils.createOSAVulnerabilitiesJsonReport(workDirectory, osaScanId, loggerAdapter, cxClientService);
+                    createOSASummaryJsonReport(workDirectory, loggerAdapter, osaSummaryResults);
+                    List<Library> libraries = createOSALibrariesJsonReport(workDirectory, osaScanId, loggerAdapter, cxClientService);
+                    List<CVE> osaVulnerabilities = createOSAVulnerabilitiesJsonReport(workDirectory, osaScanId, loggerAdapter, cxClientService);
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     String osaJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(osaVulnerabilities);
@@ -221,26 +215,25 @@ public class CheckmarxTask implements TaskType {
             }
 
         } catch (MalformedURLException e) {
-            log.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
+            loggerAdapter.error("Invalid URL: " + config.getUrl() + ". Exception message: " + e.getMessage(), e);
             osaException = new CxClientException(e);
 
         } catch (CxClientException e) { //TODO redesign the exceptions
-            log.error(e.getMessage(), e);
+            loggerAdapter.error(e.getMessage(), e);
 
             if (osaException == null && sastWaitException == null) {
                 sastWaitException = e;
             }
 
         } catch (NumberFormatException e) {
-            log.error("Invalid preset id: " + e.getMessage(), e);
+            loggerAdapter.error("Invalid preset id: " + e.getMessage(), e);
             osaException = new CxClientException(e);
 
         } catch (InterruptedException e) {
-            buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage());
-            log.error("Interrupted exception: " + e.getMessage(), e);
+            buildLogger.addErrorLogEntry("Interrupted exception: " + e.getMessage(), e);
 
             if (cxClientService != null && createScanResponse != null) {
-                log.error("Canceling scan on the Checkmarx server...");
+                loggerAdapter.error("Canceling scan on the Checkmarx server...");
                 cxClientService.cancelScan(createScanResponse.getRunId());
             }
             throw new TaskException(e.getMessage());
@@ -248,19 +241,17 @@ public class CheckmarxTask implements TaskType {
         } catch (IllegalArgumentException e) {
             String errMsg = "";
             if (e.getMessage().contains("interface com.sun.xml.internal.ws.developer.WSBindingProvider is not visible from class loader")) {
-                printUtils.printAgentConfigError(loggerAdapter);
+                printAgentConfigError(loggerAdapter);
                 errMsg = "Agent was not was not configured properly: ";
             }
 
             throw new IllegalArgumentException(errMsg, e);
 
         } catch (Exception e) {
-            buildLogger.addErrorLogEntry("Unexpected exception: " + e.toString());
-            log.error("Unexpected exception: " + e.getMessage(), e);
+            buildLogger.addErrorLogEntry("Unexpected exception: " + e.getMessage(), e);
             throw new TaskException(e.getMessage());
         } finally {
-            CxFileUtils fileUtils = new CxFileUtils();
-            fileUtils.deleteTempFiles(loggerAdapter, TEMP_FILE_NAME_TO_ZIP);
+            deleteTempFiles(loggerAdapter, TEMP_FILE_NAME_TO_ZIP);
             closeClient(cxClientService);
         }
 
@@ -269,7 +260,7 @@ public class CheckmarxTask implements TaskType {
         //assert if expected exception is thrown  OR when vulnerabilities under threshold
         StringBuilder res = new StringBuilder("");
         if (configUtil.assertVulnerabilities(scanResults, osaSummaryResults, res, config) || sastWaitException != null || osaException != null) {
-            printUtils.printBuildFailure(res, sastWaitException, osaException, loggerAdapter, log);
+            printBuildFailure(res, sastWaitException, osaException, loggerAdapter);
             return taskResultBuilder.failed().build();
         }
 
@@ -278,26 +269,22 @@ public class CheckmarxTask implements TaskType {
 
     private void closeClient(CxClientService cxClientService) {
         if (cxClientService != null) {
-            try {
-                cxClientService.close();
-            } catch (Exception e) {
-            }
+            cxClientService.close();
         }
     }
 
     private CreateScanResponse createScan() throws CxClientException, TaskException, IOException, InterruptedException {
-        CxPluginHelper pluginHelper = new CxPluginHelper();
         CxZipUtils zipUtils = new CxZipUtils();
         CxConfigUtil configUtil = new CxConfigUtil();
         //prepare sources to scan (zip them)
         loggerAdapter.info("Zipping sources");
-        zipTempFile = zipUtils.zipWorkspaceFolder(workDirectory.getPath(), config.getFolderExclusions(), config.getFilterPattern(), MAX_ZIP_SIZE_BYTES, true, loggerAdapter);
+        File zipTempFile = zipUtils.zipWorkspaceFolder(workDirectory.getPath(), config.getFolderExclusions(), config.getFilterPattern(), MAX_ZIP_SIZE_BYTES, true, loggerAdapter);
 
         //send sources to scan
-        byte[] zippedSources = zipUtils.getBytesFromZippedSources(zipTempFile, loggerAdapter);
+        byte[] zippedSources = getBytesFromZippedSources(zipTempFile, loggerAdapter);
         LocalScanConfiguration conf = configUtil.generateScanConfiguration(zippedSources, config);
         CreateScanResponse createScanResponse = cxClientService.createLocalScan(conf);
-        projectStateLink = pluginHelper.composeProjectStateLink(url.toString(), createScanResponse.getProjectId());
+        projectStateLink = composeProjectStateLink(url.toString(), createScanResponse.getProjectId());
         loggerAdapter.info("Scan created successfully. Link to project state: " + projectStateLink);
 
         if (zipTempFile.exists() && !zipTempFile.delete()) {
@@ -308,46 +295,44 @@ public class CheckmarxTask implements TaskType {
         return createScanResponse;
     }
 
-    private CreateOSAScanResponse createOSAScan(CreateScanResponse createScanResponse) throws IOException, InterruptedException, CxClientException {
-        CxPluginHelper pluginHelper = new CxPluginHelper();
+    private CreateOSAScanResponse createOSAScan(CreateScanResponse createScanResponse, String buildId, BuildLogger buildLogger) throws IOException, InterruptedException, CxClientException {
         loggerAdapter.info("Creating OSA scan");
         loggerAdapter.info("Scanning for CxOSA compatible files");
-        String osaPattern = config.getOsaFilterPattern() + ", !**/Checkmarx/Reports/**";
-        OSAScanner osaScanner = new OSAScanner(osaPattern, config.getOsaArchiveIncludePatterns(), loggerAdapter);
-        List<OSAFile> osaFiles = osaScanner.scanFiles(workDirectory, FileUtils.getTempDirectory(), 4);
-        loggerAdapter.info("Found " + osaFiles.size() + " Compatible Files for OSA Scan");
-        writeToOsaListToTemp(osaFiles);
+
+        String osaFilterPattern = StringUtils.isEmpty(config.getOsaFilterPattern()) ? " !**/Checkmarx/Reports/**" : config.getOsaFilterPattern() + ", !**/Checkmarx/Reports/**";
+        Properties scannerProperties = generateOSAScanConfiguration(osaFilterPattern,
+                config.getOsaArchiveIncludePatterns(),
+                workDirectory.getAbsolutePath(), config.isOsaInstallBeforeScan());
+
+        //we do this in order to redirect the logs from the filesystem agent component to the build console
+        String appenderName = "cxAppender_" + buildId;
+        Logger.getRootLogger().addAppender(new CxAppender(buildLogger, appenderName));
+
+        ComponentScan componentScan = new ComponentScan(scannerProperties);
+        String osaDependenciesJson;
+        try {
+            osaDependenciesJson = componentScan.scan();
+        } finally {
+            Logger.getRootLogger().removeAppender(appenderName);
+        }
+
+        publishOsaDependenciesJson(osaDependenciesJson, workDirectory, loggerAdapter);
         loggerAdapter.info("Sending OSA scan request");
-        CreateOSAScanResponse osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), osaFiles);
-        osaProjectSummaryLink = pluginHelper.composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
+        CreateOSAScanResponse osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), osaDependenciesJson);
+        osaProjectSummaryLink = composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());
         loggerAdapter.info("OSA scan created successfully");
 
         return osaScan;
     }
 
 
-    private void writeToOsaListToTemp(List<OSAFile> osaFileList) {
-        try {
-            File temp = new File(FileUtils.getTempDirectory(), "CxOSAFileList.json");
-            ObjectMapper om = new ObjectMapper();
-            om.writeValue(temp, osaFileList);
-            loggerAdapter.info("OSA file list saved to file: ["+temp.getAbsolutePath()+"]");
-        } catch (Exception e) {
-            loggerAdapter.info("Failed to write OSA file list to temp directory: " + e.getMessage());
-        }
-
-    }
-
-
-    private String getWorkspace() throws CxAbortException {
-        final Map<Long, String> checkoutLocations = this.buildContext.getCheckoutLocation();
-        if (checkoutLocations.isEmpty()) {
+    private String getWorkspace(Map<Long, String> checkoutLocation) throws CxAbortException {
+        if (checkoutLocation.isEmpty()) {
             throw new CxAbortException("No source code repository found");
         }
-        if (checkoutLocations.size() > 1) {
+        if (checkoutLocation.size() > 1) {
             loggerAdapter.warn("Warning: more than one workspace found. Using the first one.");
         }
-        return checkoutLocations.entrySet().iterator().next().getValue();
+        return checkoutLocation.entrySet().iterator().next().getValue();
     }
-
 }

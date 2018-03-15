@@ -55,7 +55,7 @@ public class CxLoggerAdapter extends MarkerIgnoringBase {
     public void debug(String s, Object o) {
         FormattingTuple ft = MessageFormatter.format(s, o);
         buildLogger.addBuildLogEntry(ft.getMessage());
-        log.debug(s,o);
+        log.debug(s, o);
     }
 
     public void debug(String s, Object o, Object o1) {
@@ -135,7 +135,7 @@ public class CxLoggerAdapter extends MarkerIgnoringBase {
     public void warn(String s, Object o, Object o1) {
         FormattingTuple ft = MessageFormatter.format(s, o, o1);
         buildLogger.addBuildLogEntry(ft.getMessage());
-        log.warn(s, o ,o1);
+        log.warn(s, o, o1);
     }
 
     public void warn(String s, Throwable throwable) {
@@ -161,7 +161,7 @@ public class CxLoggerAdapter extends MarkerIgnoringBase {
     public void error(String s, Object o, Object o1) {
         FormattingTuple ft = MessageFormatter.format(s, o, o1);
         buildLogger.addErrorLogEntry(ft.getMessage(), ft.getThrowable());
-        log.error(s, o ,o1);
+        log.error(s, o, o1);
     }
 
     public void error(String s, Object... objects) {

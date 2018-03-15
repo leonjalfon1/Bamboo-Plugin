@@ -154,6 +154,7 @@
     [@ui.bambooSection dependsOn="osaEnabled" showOn="true"]
         [@ww.textarea labelKey="cxOsaFilterPatterns.label" name="cxOsaFilterPatterns" descriptionKey="cxOsaFilterPatterns.description" rows="4" cssClass="long-field"/]
         [@ww.textfield labelKey="cxOsaArchiveIncludePatterns.label" name="cxOsaArchiveIncludePatterns" descriptionKey="cxOsaArchiveIncludePatterns.description"/]
+        [@ww.checkbox labelKey="cxOsaInstallBeforeScan.label" name="cxOsaInstallBeforeScan" descriptionKey="cxOsaInstallBeforeScan.description" toggle='true' /]
     [/@ui.bambooSection]
 [/@ui.bambooSection]
 

@@ -8,27 +8,22 @@ import com.cx.client.dto.BaseScanConfiguration;
 import com.cx.client.dto.ScanResults;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by: Dorg.
  * Date: 15/09/2016.
  */
-public class CxPluginHelper {
+public abstract class CxPluginHelper {
 
 
-    public ScanResults genScanResponse(ProjectScannedDisplayData scanDisplayData) {
+    public static ScanResults genScanResponse(ProjectScannedDisplayData scanDisplayData) {
         ScanResults ret = new ScanResults();
         ret.setProjectId(scanDisplayData.getProjectID());
         ret.setScanID(scanDisplayData.getLastScanID());
@@ -41,7 +36,7 @@ public class CxPluginHelper {
         return ret;
     }
 
-    public CliScanArgs genCliScanArgs(BaseScanConfiguration conf) {
+    public static CliScanArgs genCliScanArgs(BaseScanConfiguration conf) {
         CliScanArgs cliScanArgs = new CliScanArgs();
 
         CxClientType cxClientType = CxClientType.SDK;
@@ -56,7 +51,7 @@ public class CxPluginHelper {
         cliScanArgs.setComment(conf.getComment());
 
         ProjectSettings prjSettings = new ProjectSettings();
-        String projectName = StringUtils.isEmpty(conf.getFullTeamPath()) ? conf.getProjectName() : conf.getFullTeamPath() + "\\" +conf.getProjectName();
+        String projectName = StringUtils.isEmpty(conf.getFullTeamPath()) ? conf.getProjectName() : conf.getFullTeamPath() + "\\" + conf.getProjectName();
         prjSettings.setProjectName(projectName);
         prjSettings.setPresetID(conf.getPresetId());
         prjSettings.setAssociatedGroupID(conf.getGroupId());
@@ -69,19 +64,74 @@ public class CxPluginHelper {
         return cliScanArgs;
     }
 
-    public String composeScanLink(String url, ScanResults scanResults) {
-        return String.format( url + "/CxWebClient/ViewerMain.aspx?scanId=%s&ProjectID=%s", scanResults.getScanID(), scanResults.getProjectId());
+    public static String composeScanLink(String url, ScanResults scanResults) {
+        return String.format(url + "/CxWebClient/ViewerMain.aspx?scanId=%s&ProjectID=%s", scanResults.getScanID(), scanResults.getProjectId());
     }
 
-    public String composeProjectStateLink(String url, long projectId) {
-        return String.format( url + "/CxWebClient/portal#/projectState/%s/Summary", projectId);
+    public static String composeProjectStateLink(String url, long projectId) {
+        return String.format(url + "/CxWebClient/portal#/projectState/%s/Summary", projectId);
     }
 
-    public String composeProjectOSASummaryLink(String url, long projectId) {
+    public static String composeProjectOSASummaryLink(String url, long projectId) {
         return String.format(url + "/CxWebClient/SPA/#/viewer/project/%s", projectId);
     }
 
-    public String convertArrayToString(String[] array){
+    public static Properties generateOSAScanConfiguration(String filterPatterns, String archiveIncludes, String scanFolder, boolean installBeforeScan) {
+        Properties ret = new Properties();
+        filterPatterns = StringUtils.defaultString(filterPatterns);
+        archiveIncludes = StringUtils.defaultString(archiveIncludes);
+
+        List<String> inclusions = new ArrayList<String>();
+        List<String> exclusions = new ArrayList<String>();
+        String[] filters = filterPatterns.split("\\s*,\\s*"); //split by comma and trim (spaces + newline)
+        for (String filter : filters) {
+            if (StringUtils.isNotEmpty(filter)) {
+                if (!filter.startsWith("!")) {
+                    inclusions.add(filter);
+                } else if (filter.length() > 1) {
+                    filter = filter.substring(1); // Trim the "!"
+                    exclusions.add(filter);
+                }
+            }
+        }
+
+        String includesString = StringUtils.join(inclusions, ",");
+        String excludesString = StringUtils.join(exclusions, ",");
+
+        if (StringUtils.isNotEmpty(includesString)) {
+            ret.put("includes", includesString);
+        }
+
+        if (StringUtils.isNotEmpty(excludesString)) {
+            ret.put("excludes", excludesString);
+        }
+
+        if (StringUtils.isNotEmpty(archiveIncludes)) {
+            String[] archivePatterns = archiveIncludes.split("\\s*,\\s*"); //split by comma and trim (spaces + newline)
+            for (int i = 0; i < archivePatterns.length; i++) {
+                if (StringUtils.isNotEmpty(archivePatterns[i]) && archivePatterns[i].startsWith("*.")) {
+                    archivePatterns[i] = "**/" + archivePatterns[i];
+                }
+            }
+            archiveIncludes = StringUtils.join(archivePatterns, ",");
+            ret.put("archiveIncludes", archiveIncludes);
+        } else {
+            ret.put("archiveIncludes", "**/.*jar,**/*.war,**/*.ear,**/*.sca,**/*.gem,**/*.whl,**/*.egg,**/*.tar,**/*.tar.gz,**/*.tgz,**/*.zip,**/*.rar");
+        }
+
+        ret.put("archiveExtractionDepth", "4");
+
+        if (installBeforeScan) {
+            ret.put("npm.runPreStep", "true");
+            ret.put("bower.runPreStep", "true");
+        }
+
+        ret.put("d", scanFolder);
+
+        return ret;
+    }
+
+    public String convertArrayToString(String[] array) {
         return StringUtils.join(array, ',');
     }
 

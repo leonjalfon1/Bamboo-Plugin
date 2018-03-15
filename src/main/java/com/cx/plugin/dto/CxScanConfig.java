@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Properties;
 
-import static com.cx.plugin.dto.CxParam.*;
+import static com.cx.plugin.utils.CxParam.*;
 
 /**
  * Created by galn on 21/12/2016.
@@ -56,6 +56,7 @@ public class CxScanConfig {
     private boolean osaEnabled = false;
     private String osaFilterPattern;
     private String osaArchiveIncludePatterns;
+    private boolean osaInstallBeforeScan;
     private boolean osaThresholdsEnabled = false;
     /**
      * Configure a threshold for the CxOSA High Severity Vulnerabilities.
@@ -107,6 +108,7 @@ public class CxScanConfig {
         setOsaEnabled(Boolean.parseBoolean(configurationMap.get(OSA_ENABLED)));
         setOsaFilterPattern(configurationMap.get(OSA_FILTER_PATTERNS));
         setOsaArchiveIncludePatterns(configurationMap.get(OSA_ARCHIVE_INCLUDE_PATTERNS));
+        setOsaInstallBeforeScan(Boolean.parseBoolean(configurationMap.get(OSA_INSTALL_BEFORE_SCAN)));
         setOsaThresholdsEnabled(Boolean.parseBoolean(configurationMap.get(OSA_THRESHOLDS_ENABLED)));
         setOsaHighSeveritiesThreshold(configurationMap.get(OSA_HIGH_THRESHOLD));
         setOsaMediumSeveritiesThreshold(configurationMap.get(OSA_MEDIUM_THRESHOLD));
@@ -324,7 +326,13 @@ public class CxScanConfig {
         this.osaArchiveIncludePatterns = osaArchiveIncludePatterns;
     }
 
+    public boolean isOsaInstallBeforeScan() {
+        return osaInstallBeforeScan;
+    }
 
+    public void setOsaInstallBeforeScan(boolean osaInstallBeforeScan) {
+        this.osaInstallBeforeScan = osaInstallBeforeScan;
+    }
 
     public boolean isOsaThresholdsEnabled() {
         return osaThresholdsEnabled;

@@ -1,17 +1,14 @@
 package com.cx.plugin.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FilenameFilter;
 
 /**
  * Created by Galn on 28/02/2017.
  */
-public class CxFileUtils {
-    public final Logger log = LoggerFactory.getLogger(CxFileUtils.class);
+public abstract class CxFileUtils {
 
-    public void deleteTempFiles(CxLoggerAdapter buildLoggerAdapter, String zipFileName) {
+    public static void deleteTempFiles(CxLoggerAdapter buildLoggerAdapter, String zipFileName) {
 
         try {
             String tempDir = System.getProperty("java.io.tmpdir");
@@ -22,7 +19,7 @@ public class CxFileUtils {
 
     }
 
-    public void deleteFile(String folder, String prefix) {
+    private static void deleteFile(String folder, String prefix) {
 
         GenericPrefixFilter filter = new GenericPrefixFilter(prefix);
         File dir = new File(folder);
@@ -42,11 +39,11 @@ public class CxFileUtils {
     }
 
     //inner class, generic prefix filter
-    public class GenericPrefixFilter implements FilenameFilter {
+    private static class GenericPrefixFilter implements FilenameFilter {
 
         private String prefix;
 
-        public GenericPrefixFilter(String prefix) {
+        private GenericPrefixFilter(String prefix) {
             this.prefix = prefix;
         }
 
