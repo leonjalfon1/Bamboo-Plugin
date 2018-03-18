@@ -121,11 +121,6 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
-                <!--todo maybe we dont need this exclusion. try w/ and w/o-->
-                <!--<exclusion>-->
-                <!--<artifactId>commons-lang3</artifactId>-->
-                <!--<groupId>org.apache.commons</groupId>-->
-                <!--</exclusion>-->
             </exclusions>
         </dependency>
         <dependency>

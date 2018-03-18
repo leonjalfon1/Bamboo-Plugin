@@ -74,7 +74,7 @@ public abstract class CxReportsUtils {
         log.info(name + " json location: " + workDirectory + CX_REPORT_LOCATION + File.separator + fileName);
     }
 
-    public static void publishOsaDependenciesJson(String osaDependenciesJson, File workDirectory, CxLoggerAdapter log) {
+    public static void writeOsaDependenciesJson(String osaDependenciesJson, File workDirectory, CxLoggerAdapter log) {
         try {
             File file = new File(workDirectory + CX_REPORT_LOCATION , "CxOSADependencies.json");
             FileUtils.writeStringToFile(file, osaDependenciesJson, Charset.defaultCharset());

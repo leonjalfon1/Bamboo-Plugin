@@ -44,7 +44,6 @@ import static com.cx.plugin.utils.CxParam.MAX_ZIP_SIZE_BYTES;
 import static com.cx.plugin.utils.CxParam.TEMP_FILE_NAME_TO_ZIP;
 import static com.cx.plugin.utils.CxPrintUtils.*;
 import static com.cx.plugin.utils.CxReportsUtils.*;
-import static com.cx.plugin.utils.CxResultUtils.*;
 import static com.cx.plugin.utils.CxZipUtils.getBytesFromZippedSources;
 
 
@@ -118,8 +117,7 @@ public class CheckmarxTask implements TaskType {
                 } catch (InterruptedException e) {
                     throw e;
                 } catch (Exception e) {
-                    buildLogger.addErrorLogEntry("Fail to create OSA Scan: " + e.getMessage());
-                    //  log.error("Fail to create OSA Scan: " + e.getMessage(), e);
+                    loggerAdapter.error("Fail to create OSA Scan: " + e.getMessage());
                     osaException = new CxClientException(e);
                 }
             }
@@ -160,8 +158,7 @@ public class CheckmarxTask implements TaskType {
                 }
 
             } catch (CxClientException e) {
-                buildLogger.addErrorLogEntry(" Failed to perform CxSAST scan: " + e.getMessage());
-                // log.error(e.getMessage(), e);
+                loggerAdapter.error(" Failed to perform CxSAST scan: " + e.getMessage());
                 sastWaitException = new CxClientException(" Failed to perform CxSAST scan: ", e);
             } catch (InterruptedException e) {
                 throw e;
@@ -316,7 +313,7 @@ public class CheckmarxTask implements TaskType {
             Logger.getRootLogger().removeAppender(appenderName);
         }
 
-        publishOsaDependenciesJson(osaDependenciesJson, workDirectory, loggerAdapter);
+        writeOsaDependenciesJson(osaDependenciesJson, workDirectory, loggerAdapter);
         loggerAdapter.info("Sending OSA scan request");
         CreateOSAScanResponse osaScan = cxClientService.createOSAScan(createScanResponse.getProjectId(), osaDependenciesJson);
         osaProjectSummaryLink = composeProjectOSASummaryLink(config.getUrl(), createScanResponse.getProjectId());

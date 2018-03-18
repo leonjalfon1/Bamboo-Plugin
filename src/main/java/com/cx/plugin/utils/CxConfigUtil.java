@@ -24,8 +24,8 @@ import static com.cx.plugin.utils.CxParam.*;
  * Created by Galn on 25/10/2017.
  */
 public class CxConfigUtil {
-    private static HashMap<String, String> configurationMap;
-    private static AdministrationConfiguration adminConfig;
+    private HashMap<String, String> configurationMap;
+    private AdministrationConfiguration adminConfig;
 
     public HashMap<String, String> resolveConfigurationMap(ConfigurationMap configMap, CxLoggerAdapter log) throws TaskException {
 
