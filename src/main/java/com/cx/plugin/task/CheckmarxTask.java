@@ -296,8 +296,7 @@ public class CheckmarxTask implements TaskType {
         loggerAdapter.info("Creating OSA scan");
         loggerAdapter.info("Scanning for CxOSA compatible files");
 
-        String osaFilterPattern = StringUtils.isEmpty(config.getOsaFilterPattern()) ? " !**/Checkmarx/Reports/**" : config.getOsaFilterPattern() + ", !**/Checkmarx/Reports/**";
-        Properties scannerProperties = generateOSAScanConfiguration(osaFilterPattern,
+        Properties scannerProperties = generateOSAScanConfiguration(config.getOsaFilterPattern(),
                 config.getOsaArchiveIncludePatterns(),
                 workDirectory.getAbsolutePath(), config.isOsaInstallBeforeScan());
 
