@@ -177,6 +177,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         context.put(GENERATE_PDF_REPORT, configMap.get(GENERATE_PDF_REPORT));
         context.put(OSA_ENABLED, configMap.get(OSA_ENABLED));
+        context.put(OSA_INSTALL_BEFORE_SCAN, configMap.get(OSA_INSTALL_BEFORE_SCAN));
         context.put(OSA_FILTER_PATTERNS, configMap.get(OSA_FILTER_PATTERNS));
         context.put(OSA_ARCHIVE_INCLUDE_PATTERNS, configMap.get(OSA_ARCHIVE_INCLUDE_PATTERNS));
 
@@ -315,6 +316,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(OSA_FILTER_PATTERNS, params.getString(OSA_FILTER_PATTERNS));
         config.put(OSA_ARCHIVE_INCLUDE_PATTERNS, params.getString(OSA_ARCHIVE_INCLUDE_PATTERNS));
         config.put(IS_SYNCHRONOUS, params.getString(IS_SYNCHRONOUS));
+        config.put(OSA_INSTALL_BEFORE_SCAN, params.getString(OSA_INSTALL_BEFORE_SCAN));
+
 
         config.put(IS_INCREMENTAL, params.getString(IS_INCREMENTAL));
         config.put(IS_INTERVALS, params.getString(IS_INTERVALS));
