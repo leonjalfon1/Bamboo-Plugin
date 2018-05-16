@@ -82,7 +82,7 @@ public class CxRestResource {
 
             } else {
 
-                result = "Login failed. " + result;
+                result = result.startsWith("Login failed.")? result: "Login failed. " + result;
                 presets = new ArrayList<CxClass>() {{
                     add(new CxClass(NO_PRESET, NO_PRESET_MESSAGE));
                 }};
