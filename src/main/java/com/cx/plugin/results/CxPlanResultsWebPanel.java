@@ -2,11 +2,12 @@ package com.cx.plugin.results;
 
 import com.atlassian.bamboo.chains.ChainResultsSummaryImpl;
 import com.atlassian.plugin.web.model.WebPanel;
-import com.cx.plugin.utils.CxResultUtils;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
+
+import static com.cx.plugin.utils.CxParam.HTML_REPORT;
 
 /**
  * Created by: dorg.
@@ -16,11 +17,10 @@ import java.util.Map;
 public class CxPlanResultsWebPanel implements WebPanel {
 
     public String getHtml(Map<String, Object> map) {
-        CxResultUtils resultsUtils = new CxResultUtils();
         ChainResultsSummaryImpl a = (ChainResultsSummaryImpl) map.get("resultSummary");
-        Map<String, String> customBuildData = a.getOrderedJobResultSummaries().get(0).getCustomBuildData();
-        String ret = resultsUtils.resolveCostumeBuildData(customBuildData);
-        return ret;
+        Map<String, String> results = a.getOrderedJobResultSummaries().get(0).getCustomBuildData();
+
+        return results.get(HTML_REPORT);
     }
 
     public void writeHtml(Writer writer, Map<String, Object> map) throws IOException {

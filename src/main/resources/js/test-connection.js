@@ -39,8 +39,8 @@
             var parsed = JSON.parse(xhr.responseText);
             if (xhr.status == 200) {
                 $('#testConnectionMessage').css('color', 'green');
-                populateDropdownList(parsed.presetList, "#presetListId", "id", "value");
-                populateDropdownList(parsed.teamPathList, "#teamPathListId", "id", "value");
+                populateDropdownList(parsed.presetList, "#presetListId");
+                populateDropdownList(parsed.teamPathList, "#teamPathListId");
             }
             else {
                 $('#testConnectionMessage').css('color', '#d22020');
@@ -90,20 +90,23 @@
         var NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
         var noPresetList = [{id: 'noPreset', value: NO_PRESET_MESSAGE}];
         var noTeamList = [{id: 'noTeamPath', value: NO_TEAM_MESSAGE}];
-        populateDropdownList(noPresetList, "#presetListId", "id", "value");
-        populateDropdownList(noTeamList, "#teamPathListId", "id", "value");
+        populateDropdownList(noPresetList, "#presetListId");
+        populateDropdownList(noTeamList, "#teamPathListId");
         return;
 
     }
 
 
-    function populateDropdownList(data, selector, key, name) {
+    function populateDropdownList(data, selector) {
         $(selector).empty();
         for (var i in data) {
+            var name = data[i].name;
+            if (name == null)
+                name = data[i].fullname;
             if (i == 0) // select first item
-                var itemval = '<option value="' + data[i][key] + '" selected>' + data[i][name] + '</option>';
+                var itemval = '<option value="' + data[i].id + '" selected>' + name + '</option>';
             else
-                var itemval = '<option value="' + data[i][key] + '">' + data[i][name] + '</option>';
+                var itemval = '<option value="' + data[i].id + '">' +name + '</option>';
             $(selector).append(itemval);
         }
     }

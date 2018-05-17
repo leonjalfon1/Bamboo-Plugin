@@ -5,15 +5,14 @@ import com.atlassian.bamboo.configuration.AdministrationConfigurationPersister;
 import com.atlassian.bamboo.configuration.GlobalAdminAction;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.NotNull;
-import com.cx.plugin.utils.CxEncryption;
 import com.cx.plugin.utils.CxParam;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.cx.plugin.utils.CxEncryption.encrypt;
 import static com.cx.plugin.utils.CxParam.*;
+import static com.cx.plugin.utils.CxPluginUtils.encrypt;
 
 
 /**
@@ -173,7 +172,6 @@ public class CxGlobalConfig extends GlobalAdminAction {
         }
         return ret;
     }
-
 
 
     /*************** Setters & Getters  ****************************/

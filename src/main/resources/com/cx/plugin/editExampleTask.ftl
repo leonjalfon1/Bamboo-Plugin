@@ -165,7 +165,7 @@
         The thresholds will define the minimal criteria to fail the build.
     </small>
 </p>
-    [@ww.radio id = 'radioGroup' name='scanControlSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesControl /]
+    [@ww.radio id  = 'radioGroup' name='scanControlSection' listKey='key' listValue='value' toggle='true' list=configurationModeTypesControl /]
     [@ui.bambooSection dependsOn='scanControlSection' showOn='customConfigurationControl']
         [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" descriptionKey="isSynchronous.description" toggle='true' /]
 

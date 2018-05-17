@@ -1,12 +1,16 @@
 package com.cx.plugin.utils;
 
+import java.io.File;
+
 /**
  * Created by galn
  * Date: 22/09/2016.
  */
 
 public class CxParam {
+    public static final String CX_REPORT_LOCATION = File.separator + "Checkmarx" + File.separator + "Reports";
 
+    public static final String CX_ORIGIN = "Bamboo";
     public static final String USER_NAME = "username";
     public static final String PASSWORD = "password";
     public static final String SERVER_URL = "serverUrl";
@@ -54,13 +58,13 @@ public class CxParam {
     public static final String CUSTOM_CONFIGURATION_CONTROL = "customConfigurationControl";
     public static final String NO_TEAM_PATH = "noTeamPath";
     public static final String NO_PRESET = "noPreset";
+    public static final int NO_PRESET_ID = -1;
     public final static String NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
     public final static String NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
     public final static String ERROR_OCCURRED = "errorOccurred";
-    public final static String ERROR_OCCURRED_MESSAGE = "Configuration settings were not saved. Please review your settings and try again";
+    public final static String HTML_REPORT = "htmlReport";
 
-    public static final String TEMP_FILE_NAME_TO_ZIP = "CxZippedSource";
-    public static final long MAX_ZIP_SIZE_BYTES = 209715200;
+    public final static String ERROR_OCCURRED_MESSAGE = "Configuration settings were not saved. Please review your settings and try again";
 
     public static final String OPTION_TRUE = "true";
     public static final String OPTION_FALSE = "false";

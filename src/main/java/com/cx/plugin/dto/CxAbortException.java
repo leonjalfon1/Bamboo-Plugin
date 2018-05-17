@@ -9,7 +9,9 @@ import java.io.IOException;
  */
 
 public final class CxAbortException extends IOException {
-    public CxAbortException() {}
+    public CxAbortException() {
+    }
+
     public CxAbortException(String message) {
         super(message);
     }
