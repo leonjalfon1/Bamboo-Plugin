@@ -13,10 +13,9 @@ import com.atlassian.bamboo.utils.error.ErrorCollection;
 import com.atlassian.bamboo.ww2.actions.build.admin.config.task.ConfigureBuildTasks;
 import com.atlassian.spring.container.ContainerManager;
 import com.atlassian.util.concurrent.Nullable;
-import com.checkmarx.v7.Group;
-import com.cx.client.CxClientService;
-import com.cx.client.CxClientServiceImpl;
-import com.cx.client.exception.CxClientException;
+import com.cx.restclient.CxShragaClient;
+import com.cx.restclient.dto.Team;
+import com.cx.restclient.sast.dto.Preset;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -33,15 +32,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.cx.plugin.utils.CxEncryption.*;
 import static com.cx.plugin.utils.CxParam.*;
-
+import static com.cx.plugin.utils.CxPluginUtils.decrypt;
+import static com.cx.plugin.utils.CxPluginUtils.encrypt;
 
 public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private LinkedHashMap<String, String> presetList = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> teamPathList = new LinkedHashMap<String, String>();
     private LinkedHashMap<String, String> intervalList = new LinkedHashMap<String, String>();
-    private CxClientService cxClientService = null;
+    private CxShragaClient shraga = null;
     private AdministrationConfiguration adminConfig;
 
     private final static String DEFAULT_SETTING_LABEL = "Use Global Setting";
@@ -54,7 +53,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private Map<String, String> CONFIGURATION_MODE_TYPES_MAP_SERVER = ImmutableMap.of(GLOBAL_CONFIGURATION_SERVER, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_SERVER, SPECIFIC_SETTING_LABEL);
     private Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CXSAST = ImmutableMap.of(GLOBAL_CONFIGURATION_CXSAST, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CXSAST, SPECIFIC_SETTING_LABEL);
     private Map<String, String> CONFIGURATION_MODE_TYPES_MAP_CONTROL = ImmutableMap.of(GLOBAL_CONFIGURATION_CONTROL, DEFAULT_SETTING_LABEL, CUSTOM_CONFIGURATION_CONTROL, SPECIFIC_SETTING_LABEL);
-    public final Logger log = LoggerFactory.getLogger(AgentTaskConfigurator.class);
+    private final Logger log = LoggerFactory.getLogger(AgentTaskConfigurator.class);
 
     //create task configuration
     @Override
@@ -119,7 +118,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
             //the method initialized the CxClient service
             if (tryLogin(username, password, serverUrl)) {
 
-                presetList = convertPresetType(cxClientService.getPresetList());
+                presetList = convertPresetToMap(shraga.getPresetList());
                 context.put(PRESET_LIST, presetList);
                 if (!StringUtils.isEmpty(preset)) {
                     context.put(PRESET_ID, preset);
@@ -127,7 +126,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
                     context.put(PRESET_ID, presetList.entrySet().iterator().next());
                 }
 
-                teamPathList = convertTeamPathType(cxClientService.getAssociatedGroupsList());
+                teamPathList = convertTeamPathToMap(shraga.getTeamList());
                 context.put(TEAM_PATH_LIST, teamPathList);
                 if (!StringUtils.isEmpty(teamPath)) {
                     context.put(TEAM_PATH_ID, teamPath);
@@ -169,8 +168,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(IS_INTERVALS, isIntervals);
         populateIntervals(context);
 
-        String intervalBegins = StringUtils.isEmpty(configMap.get(INTERVAL_BEGINS))? DEFAULT_INTERVAL_BEGINS: configMap.get(INTERVAL_BEGINS);
-        String intervalEnds =  StringUtils.isEmpty(configMap.get(INTERVAL_ENDS))? DEFAULT_INTERVAL_ENDS: configMap.get(INTERVAL_ENDS);
+        String intervalBegins = StringUtils.isEmpty(configMap.get(INTERVAL_BEGINS)) ? DEFAULT_INTERVAL_BEGINS : configMap.get(INTERVAL_BEGINS);
+        String intervalEnds = StringUtils.isEmpty(configMap.get(INTERVAL_ENDS)) ? DEFAULT_INTERVAL_ENDS : configMap.get(INTERVAL_ENDS);
 
         context.put(INTERVAL_BEGINS, intervalBegins);
         context.put(INTERVAL_ENDS, intervalEnds);
@@ -289,8 +288,13 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!(NO_PRESET).equals(presetId)) {
             config.put(PRESET_ID, presetId);
             if (presetList.isEmpty()) {
-                if (cxClientService != null || tryLogin(params.getString(USER_NAME), params.getString(PASSWORD), params.getString(SERVER_URL))) {
-                    presetName = cxClientService.resolvePresetNameFromId(presetId);
+                if (shraga != null || tryLogin(params.getString(USER_NAME), params.getString(PASSWORD), params.getString(SERVER_URL))) {
+                    try {
+                        Preset preset = shraga.getPresetById(Integer.parseInt(presetId));
+                        presetName = preset.getName();
+                    } catch (Exception e) {
+                        presetName = "";
+                    }
                 }
             } else {
                 presetName = presetList.get(presetId);
@@ -303,8 +307,12 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (!NO_TEAM_PATH.equals(teamId)) {
             config.put(TEAM_PATH_ID, teamId);
             if (teamPathList.isEmpty()) {
-                if (cxClientService != null || tryLogin(params.getString(USER_NAME), params.getString(PASSWORD), params.getString(SERVER_URL))) {
-                    teaName = cxClientService.resolveTeamNameFromTeamId(teamId);
+                if (shraga != null || tryLogin(params.getString(USER_NAME), params.getString(PASSWORD), params.getString(SERVER_URL))) {
+                    try {
+                        teaName = shraga.getTeamNameById(teamId);
+                    } catch (Exception e) {
+                        teaName = "";
+                    }
                 }
             } else {
                 teaName = teamPathList.get(teamId);
@@ -317,7 +325,6 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(OSA_ARCHIVE_INCLUDE_PATTERNS, params.getString(OSA_ARCHIVE_INCLUDE_PATTERNS));
         config.put(IS_SYNCHRONOUS, params.getString(IS_SYNCHRONOUS));
         config.put(OSA_INSTALL_BEFORE_SCAN, params.getString(OSA_INSTALL_BEFORE_SCAN));
-
 
         config.put(IS_INCREMENTAL, params.getString(IS_INCREMENTAL));
         config.put(IS_INTERVALS, params.getString(IS_INTERVALS));
@@ -336,7 +343,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
     private Map<String, String> generateCredentialsFields(@NotNull final ActionParametersMap params, Map<String, String> config) {
         final String configType = getDefaultString(params, SERVER_CREDENTIALS_SECTION);
         config.put(SERVER_CREDENTIALS_SECTION, configType);
-        config.put(SERVER_URL, getDefaultString(params, SERVER_URL));
+        config.put(SERVER_URL, getDefaultString(params, SERVER_URL).trim());
         config.put(USER_NAME, getDefaultString(params, USER_NAME).trim());
         config.put(PASSWORD, encrypt(getDefaultString(params, PASSWORD)));
 
@@ -347,8 +354,8 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         final String configType = getDefaultString(params, CXSAST_SECTION);
         config.put(CXSAST_SECTION, configType);
-        config.put(FOLDER_EXCLUSION, getDefaultString(params, FOLDER_EXCLUSION));
-        config.put(FILTER_PATTERN, getDefaultString(params, FILTER_PATTERN));
+        config.put(FOLDER_EXCLUSION, getDefaultString(params, FOLDER_EXCLUSION).trim());
+        config.put(FILTER_PATTERN, getDefaultString(params, FILTER_PATTERN).trim());
         config.put(SCAN_TIMEOUT_IN_MINUTES, getDefaultString(params, SCAN_TIMEOUT_IN_MINUTES).trim());
         config.put(COMMENT, getDefaultString(params, COMMENT).trim());
 
@@ -375,43 +382,37 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         return StringUtils.defaultString(params.getString(key));
     }
 
-    //the method initialized the CxClient service
+    //the method initialized shraga client
     private boolean tryLogin(String username, String cxPass, String serverUrl) {
         log.debug("tryLogin: server URL: " + serverUrl + " username" + username);
 
         if (!StringUtils.isEmpty(serverUrl) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(cxPass)) {
             try {
                 URL cxUrl = new URL(serverUrl);
-                cxClientService = new CxClientServiceImpl(cxUrl, username, decrypt(cxPass), true);
-                cxClientService.checkServerConnectivity();
-                cxClientService.loginToServer();
+                shraga = new CxShragaClient(cxUrl.toString().trim(), username, decrypt(cxPass), CX_ORIGIN, false, log);
+                shraga.login();
+
                 return true;
-            } catch (MalformedURLException e) {
-                log.debug("Failed to login to retrieve data from server. " + e.getMessage(), e);
-            } catch (CxClientException e) {
-                log.debug("Failed to login to retrieve data from server. " + e.getMessage(), e);
-                cxClientService = null;
             } catch (Exception e) {
                 log.debug("Failed to login to retrieve data from server. " + e.getMessage(), e);
-                cxClientService = null;
+                shraga = null;
             }
         }
         return false;
     }
 
-    private LinkedHashMap<String, String> convertPresetType(List<com.checkmarx.v7.Preset> oldType) {
+    private LinkedHashMap<String, String> convertPresetToMap(List<Preset> oldType) {
         LinkedHashMap<String, String> newType = new LinkedHashMap<String, String>();
-        for (com.checkmarx.v7.Preset preset : oldType) {
-            newType.put(Long.toString(preset.getID()), preset.getPresetName());
+        for (Preset preset : oldType) {
+            newType.put(Long.toString(preset.getId()), preset.getName());
         }
-
         return newType;
     }
 
-    private LinkedHashMap<String, String> convertTeamPathType(List<Group> oldType) {
+    private LinkedHashMap<String, String> convertTeamPathToMap(List<Team> oldType) {
         LinkedHashMap<String, String> newType = new LinkedHashMap<String, String>();
-        for (Group group : oldType) {
-            newType.put(group.getID(), group.getGroupName());
+        for (Team team : oldType) {
+            newType.put(team.getId(), team.getFullName());
         }
         return newType;
     }
