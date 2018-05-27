@@ -75,9 +75,10 @@ public class CxRestResource {
                 statusCode = 200;
 
             } else {
+                result = result.contains("Failed to authenticate")? "Failed to authenticate": result;
                 result = result.startsWith("Login failed.")? result: "Login failed. " + result;
-                presets = new ArrayList<Preset>() {{new Preset(NO_PRESET_ID, NO_PRESET_MESSAGE);}};
 
+                presets = new ArrayList<Preset>() {{new Preset(NO_PRESET_ID, NO_PRESET_MESSAGE);}};
                 teams = new ArrayList<Team>() {{new Team(NO_TEAM_PATH, NO_TEAM_MESSAGE);}};
 
                 tcResponse = new TestConnectionResponse(result, presets, teams);
