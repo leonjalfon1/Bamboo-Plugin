@@ -88,8 +88,8 @@
     function populateEmptyDropdownList() {
         var NO_PRESET_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see presets list";
         var NO_TEAM_MESSAGE = "Unable to connect to server. Make sure URL and Credentials are valid to see teams list";
-        var noPresetList = [{id: 'noPreset', value: NO_PRESET_MESSAGE}];
-        var noTeamList = [{id: 'noTeamPath', value: NO_TEAM_MESSAGE}];
+        var noPresetList = [{id: 'noPreset', name: NO_PRESET_MESSAGE}];
+        var noTeamList = [{id: 'noTeamPath', name: NO_TEAM_MESSAGE}];
         populateDropdownList(noPresetList, "#presetListId");
         populateDropdownList(noTeamList, "#teamPathListId");
         return;
@@ -102,7 +102,7 @@
         for (var i in data) {
             var name = data[i].name;
             if (name == null)
-                name = data[i].fullname;
+                name = data[i].fullName;
             if (i == 0) // select first item
                 var itemval = '<option value="' + data[i].id + '" selected>' + name + '</option>';
             else
