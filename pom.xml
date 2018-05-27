@@ -82,7 +82,7 @@
     <dependency>
       <groupId>com.checkmarx.client</groupId>
       <artifactId>checkmarx-client</artifactId>
-      <version>8.80.0-20180503.125612-1</version>
+      <version>8.80.0-20180524.134136-1</version>
     </dependency>
     <dependency>
       <groupId>com.atlassian.plugins.rest</groupId>

@@ -5,7 +5,6 @@ import com.cx.plugin.dto.TestConnectionResponse;
 import com.cx.restclient.CxShragaClient;
 import com.cx.restclient.dto.Team;
 import com.cx.restclient.sast.dto.Preset;
-import freemarker.template.TemplateMethodModelEx;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,19 +76,9 @@ public class CxRestResource {
 
             } else {
                 result = result.startsWith("Login failed.")? result: "Login failed. " + result;
-                presets = new ArrayList<Preset>() {{
-                    Preset preset = new Preset();
-                    preset.setId(NO_PRESET_ID);
-                    preset.setName(NO_PRESET_MESSAGE);
-                    add(preset);//TODO update the common client
-                }};
+                presets = new ArrayList<Preset>() {{new Preset(NO_PRESET_ID, NO_PRESET_MESSAGE);}};
 
-                teams = new ArrayList<Team>() {{
-                    Team team = new Team();
-                    team.setId(NO_TEAM_PATH);
-                    team.setFullName(NO_TEAM_MESSAGE);
-                    add(team);//TODO update the common client
-                }};
+                teams = new ArrayList<Team>() {{new Team(NO_TEAM_PATH, NO_TEAM_MESSAGE);}};
 
                 tcResponse = new TestConnectionResponse(result, presets, teams);
             }
