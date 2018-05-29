@@ -74,13 +74,14 @@ public abstract class CxPluginUtils {
         if (ret.getOsaWaitException() != null) {
             log.error(ret.getOsaWaitException().getMessage() + (ret.getOsaWaitException().getCause() == null ? "" : ret.getOsaWaitException().getCause().getMessage()));
         }
-
-        String[] lines = thDescription.split("\\n");
-        for (String s : lines) {
-            log.error(s);
+        if (thDescription != null) {
+            String[] lines = thDescription.split("\\n");
+            for (String s : lines) {
+                log.error(s);
+            }
+            log.error("-----------------------------------------------------------------------------------------\n");
+            log.error("");
         }
-        log.error("-----------------------------------------------------------------------------------------\n");
-        log.error("");
     }
 
     public static void printAgentConfigError(CxLoggerAdapter log) {

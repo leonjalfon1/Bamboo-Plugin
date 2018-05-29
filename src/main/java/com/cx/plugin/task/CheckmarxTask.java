@@ -89,11 +89,14 @@ public class CheckmarxTask implements TaskType {
             //Asynchronous MODE
             if (!config.getSynchronous()) {
                 log.info("Running in Asynchronous mode. Not waiting for scan to finish");
-                // results.put(CxResultsConst.SAST_SUMMARY_RESULTS_LINK, StringUtils.defaultString(projectStateLink));
-                //todo   buildContext.getBuildResult().getCustomBuildData().putAll(results);
+                String summaryStr = shraga.generateHTMLSummary();
+                ret.getSummary().put(HTML_REPORT, summaryStr);
+
                 if (ret.getSastCreateException() != null || ret.getOsaCreateException() != null) {
+                    printBuildFailure(null, ret, log);
                     return taskResultBuilder.failed().build();
                 }
+
                 return taskResultBuilder.success().build();
             }
 
@@ -101,12 +104,6 @@ public class CheckmarxTask implements TaskType {
                 try {
                     SASTResults sastResults = shraga.waitForSASTResults();
                     ret.setSastResults(sastResults);
-                } catch (InterruptedException e) {
-                    if (config.getSynchronous()) {
-                        cancelScan(shraga);
-                    }
-                    throw e;
-
                 } catch (CxClientException | IOException e) {
                     ret.setSastWaitException(e);
                 }
