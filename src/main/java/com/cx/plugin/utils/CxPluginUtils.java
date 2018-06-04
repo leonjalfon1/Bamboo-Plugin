@@ -62,18 +62,11 @@ public abstract class CxPluginUtils {
         log.error(" The Build Failed for the Following Reasons: ");
         log.error("********************************************");
 
-        if (ret.getSastCreateException() != null) {
-            log.error(ret.getSastCreateException().getMessage() + (ret.getSastCreateException().getCause() == null ? "" : ret.getSastCreateException().getCause().getMessage()));
-        }
-        if (ret.getSastWaitException() != null) {
-            log.error(ret.getSastWaitException().getMessage() + (ret.getSastWaitException().getCause() == null ? "" : ret.getSastWaitException().getCause().getMessage()));
-        }
-        if (ret.getOsaCreateException() != null) {
-            log.error(ret.getOsaCreateException().getMessage() + (ret.getOsaCreateException().getCause() == null ? "" : ret.getOsaCreateException().getCause().toString()));
-        }
-        if (ret.getOsaWaitException() != null) {
-            log.error(ret.getOsaWaitException().getMessage() + (ret.getOsaWaitException().getCause() == null ? "" : ret.getOsaWaitException().getCause().getMessage()));
-        }
+        logError(ret.getSastCreateException(), log);
+        logError(ret.getSastWaitException(), log);
+        logError(ret.getOsaCreateException(), log);
+        logError(ret.getOsaWaitException(), log);
+
         if (thDescription != null) {
             String[] lines = thDescription.split("\\n");
             for (String s : lines) {
@@ -81,6 +74,12 @@ public abstract class CxPluginUtils {
             }
             log.error("-----------------------------------------------------------------------------------------\n");
             log.error("");
+        }
+    }
+
+    private static void logError(Exception ex, Logger log){
+        if (ex != null) {
+            log.error(ex.getMessage());
         }
     }
 
@@ -98,7 +97,7 @@ public abstract class CxPluginUtils {
         log.error("|  Please refer to the documentation: https://checkmarx.atlassian.net/wiki/spaces/KC/pages/127859917/Configuring+Remote+Agent+Support   |");
         log.error("*****************************************************************************************************************************************");
         log.error("");
-    }
+    }//todo remove
 
     public static String decrypt(String str) {
         String encStr;
