@@ -67,6 +67,7 @@ public class CheckmarxTask implements TaskType {
                     sastCreated = true;
                 } catch (IOException | CxClientException e) {
                     ret.setSastCreateException(e);
+                    log.error(e.getMessage());
                 }
             }
 
@@ -82,6 +83,7 @@ public class CheckmarxTask implements TaskType {
                     osaCreated = true;
                 } catch (CxClientException | IOException e) {
                     ret.setOsaCreateException(e);
+                    log.error(e.getMessage());
                 } finally {
                     Logger.getRootLogger().removeAppender(appenderName);
                 }
@@ -107,6 +109,7 @@ public class CheckmarxTask implements TaskType {
                     ret.setSastResults(sastResults);
                 } catch (CxClientException | IOException e) {
                     ret.setSastWaitException(e);
+                    log.error(e.getMessage());
                 }
             }
 
@@ -116,6 +119,7 @@ public class CheckmarxTask implements TaskType {
                     ret.setOsaResults(osaResults);
                 } catch (CxClientException | IOException e) {
                     ret.setOsaWaitException(e);
+                    log.error(e.getMessage());
                 }
             }
 
