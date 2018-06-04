@@ -22,11 +22,11 @@
       <plugin>
         <groupId>com.atlassian.maven.plugins</groupId>
         <artifactId>maven-bamboo-plugin</artifactId>
-        <version>${amps.version}</version>
+        <version>6.3.1</version>
         <extensions>true</extensions>
         <configuration>
-          <productVersion>${bamboo.version}</productVersion>
-          <!--  <productDataVersion>${bamboo.data.version}</productDataVersion>-->
+          <productVersion>6.3.3</productVersion>
+          <productDataVersion>5.7.2</productDataVersion>-->
           <enableQuickReload>true</enableQuickReload>
           <allowGoogleTracking>false</allowGoogleTracking>
         </configuration>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>com.checkmarx.client</groupId>
       <artifactId>checkmarx-client</artifactId>
-      <version>8.80.0-20180529.144028-16</version>
+      <version>8.80.0-20180604.103341-21</version>
     </dependency>
     <dependency>
       <groupId>com.atlassian.plugins.rest</groupId>

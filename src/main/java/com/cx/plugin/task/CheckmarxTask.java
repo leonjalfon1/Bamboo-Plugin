@@ -27,7 +27,6 @@ import static com.cx.plugin.utils.CxPluginUtils.printConfiguration;
 
 public class CheckmarxTask implements TaskType {
 
-
     @NotNull
     public TaskResult execute(@NotNull final TaskContext taskContext) throws TaskException {
         CxLoggerAdapter log;
@@ -83,6 +82,8 @@ public class CheckmarxTask implements TaskType {
                     osaCreated = true;
                 } catch (CxClientException | IOException e) {
                     ret.setOsaCreateException(e);
+                } finally {
+                    Logger.getRootLogger().removeAppender(appenderName);
                 }
             }
 

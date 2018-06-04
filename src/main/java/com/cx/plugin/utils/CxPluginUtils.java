@@ -69,7 +69,7 @@ public abstract class CxPluginUtils {
             log.error(ret.getSastWaitException().getMessage() + (ret.getSastWaitException().getCause() == null ? "" : ret.getSastWaitException().getCause().getMessage()));
         }
         if (ret.getOsaCreateException() != null) {
-            log.error(ret.getOsaCreateException().getMessage() + (ret.getOsaCreateException().getCause() == null ? "" : ret.getOsaCreateException().getCause().getMessage()));
+            log.error(ret.getOsaCreateException().getMessage() + (ret.getOsaCreateException().getCause() == null ? "" : ret.getOsaCreateException().getCause().toString()));
         }
         if (ret.getOsaWaitException() != null) {
             log.error(ret.getOsaWaitException().getMessage() + (ret.getOsaWaitException().getCause() == null ? "" : ret.getOsaWaitException().getCause().getMessage()));
