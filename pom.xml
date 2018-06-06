@@ -83,7 +83,7 @@
         <dependency>
             <groupId>com.checkmarx.client</groupId>
             <artifactId>checkmarx-client</artifactId>
-            <version>8.80.0-20180604.103341-21</version>
+            <version>8.80.0-20180606.140307-25</version>
             <exclusions>
                 <exclusion>
                     <groupId>stax</groupId>
