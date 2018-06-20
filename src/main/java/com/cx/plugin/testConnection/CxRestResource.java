@@ -98,9 +98,6 @@ public class CxRestResource {
             return true;
         } catch (Exception CxClientException) {
             result = CxClientException.getMessage();
-            if (result.startsWith("HTTP transport")) {
-                result = "Invalid URL";
-            }
             return false;
         }
     }

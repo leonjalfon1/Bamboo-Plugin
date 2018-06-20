@@ -143,14 +143,7 @@ public class CheckmarxTask implements TaskType {
             }
             throw new TaskException(e.getMessage());
 
-        }/**catch (IllegalArgumentException e) {
-         String errMsg = "";
-         if (e.getMessage().contains("interface com.sun.xml.internal.ws.developer.WSBindingProvider is not visible from class loader")) {
-         printAgentConfigError(log);
-         errMsg = "Agent was not was not configured properly: ";
-         }
-         throw e;
-         } **/ catch (Exception e) {
+        } catch (Exception e) {
             log.error("Unexpected exception: " + e.getMessage(), e);
             throw new TaskException(e.getMessage());
         } finally {

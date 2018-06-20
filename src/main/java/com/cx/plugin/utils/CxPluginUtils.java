@@ -83,22 +83,6 @@ public abstract class CxPluginUtils {
         }
     }
 
-    public static void printAgentConfigError(CxLoggerAdapter log) {
-        log.error("");
-        log.error("*****************************************************************************************************************************************");
-        log.error("|  Please add the system property:                                                                                                      |");
-        log.error("|  -Datlassian.org.osgi.framework.bootdelegation=javax.servlet,javax.servlet.*,sun.*,com.sun.*,org.w3c.dom.*,org.apache.xerces.         |");
-        log.error("|  to the agent run command and restart it.                                                                                             |");
-        log.error("|                                                                                                                                       |");
-        log.error("|  if the agent is run via wrapper, add the property to the the wrapper.conf file:                                                      |");
-        log.error("|  wrapper.java.additional.3=-Datlassian.org.osgi.framework.bootdelegation=javax.servlet,javax.servlet.*,sun.*,com.sun.*,org.w3c.dom.*  |");
-        log.error("|  and restart it                                                                                                                       |");
-        log.error("|                                                                                                                                       |");
-        log.error("|  Please refer to the documentation: https://checkmarx.atlassian.net/wiki/spaces/KC/pages/127859917/Configuring+Remote+Agent+Support   |");
-        log.error("*****************************************************************************************************************************************");
-        log.error("");
-    }//todo remove
-
     public static String decrypt(String str) {
         String encStr;
         if (isEncrypted(str)) {

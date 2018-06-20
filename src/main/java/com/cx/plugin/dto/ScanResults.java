@@ -4,10 +4,9 @@ package com.cx.plugin.dto;
 import com.cx.restclient.osa.dto.OSAResults;
 import com.cx.restclient.sast.dto.SASTResults;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
-public class ScanResults implements Serializable {
+public class ScanResults {
 
     private SASTResults sastResults;
     private OSAResults osaResults;
