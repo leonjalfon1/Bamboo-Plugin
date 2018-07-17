@@ -127,7 +127,7 @@
 
     [/@ui.bambooSection]
 
-    [@ww.textarea labelKey="comment.label"  name="comment" rows="3" description="Free text comment. May reference build parameters like $\{bamboo.variableName}"  cssClass="long-field"/]
+    [@ww.textarea labelKey="comment.label"  name="comment" rows="3" description="comment.description"  cssClass="long-field"/]
 
     [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='true' /]
     [@ui.bambooSection dependsOn="isIncremental" showOn="true"]
