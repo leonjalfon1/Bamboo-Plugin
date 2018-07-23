@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.whitesource</groupId>
             <artifactId>whitesource-fs-agent</artifactId>
-            <version>18.3.1</version>
+            <version>18.3.1.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>stax</groupId>
@@ -133,6 +133,10 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>vertx-core</artifactId>
+                    <groupId>io.vertx</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -141,6 +145,5 @@
             <version>1.2.17</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 </project>

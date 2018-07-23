@@ -41,7 +41,7 @@ public abstract class CxPrintUtils {
         if (config.isOsaEnabled()) {
             buildLoggerAdapter.info("CxOSA filter patterns: " + config.getOsaFilterPattern());
             buildLoggerAdapter.info("CxOSA archive extract patterns: " + config.getOsaArchiveIncludePatterns());
-            buildLoggerAdapter.info("CxOSA install NMP and Bower before scan: " + config.isOsaInstallBeforeScan());
+            buildLoggerAdapter.info("CxOSA install NPM before scan: " + config.isOsaInstallBeforeScan());
 
             buildLoggerAdapter.info("CxOSA thresholds enabled: " + config.isOsaThresholdsEnabled());
             if (config.isOsaThresholdsEnabled()) {
