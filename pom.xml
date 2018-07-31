@@ -27,7 +27,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>6.3.3</productVersion>
-                    <productDataVersion>5.7.2</productDataVersion>-->
+                    <productDataVersion>5.7.2</productDataVersion>
                     <enableQuickReload>true</enableQuickReload>
                     <allowGoogleTracking>false</allowGoogleTracking>
                 </configuration>
