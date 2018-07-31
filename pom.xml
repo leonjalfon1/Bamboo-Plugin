@@ -81,9 +81,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.checkmarx.client</groupId>
-            <artifactId>checkmarx-client</artifactId>
-            <version>8.80.0-20180619.074711-27</version>
+            <groupId>com.checkmarx</groupId>
+            <artifactId>cx-client-common</artifactId>
+            <version>8.80.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>stax</groupId>
@@ -92,6 +92,10 @@
                 <exclusion>
                     <groupId>xpp3</groupId>
                     <artifactId>xpp3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>vertx-core</artifactId>
+                    <groupId>io.vertx</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

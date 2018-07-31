@@ -45,7 +45,7 @@ public abstract class CxPluginUtils {
         if (config.getOsaEnabled()) {
             log.info("CxOSA filter patterns: " + config.getOsaFilterPattern());
             log.info("CxOSA archive extract patterns: " + config.getOsaArchiveIncludePatterns());
-            log.info("CxOSA install NMP and Bower before scan: " + config.getOsaRunInstall());
+            log.info("CxOSA install NPM before scan: " + config.getOsaRunInstall());
 
             log.info("CxOSA thresholds enabled: " + config.getOsaThresholdsEnabled());
             if (config.getOsaThresholdsEnabled()) {
