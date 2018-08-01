@@ -82,7 +82,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         context.put(GENERATE_PDF_REPORT, OPTION_FALSE);
         context.put(OSA_ENABLED, OPTION_FALSE);
         context.put(OSA_FILTER_PATTERNS, "");
-        context.put(OSA_ARCHIVE_INCLUDE_PATTERNS, "*.zip, *.war, *.ear, *.tgz");
+        context.put(OSA_ARCHIVE_INCLUDE_PATTERNS, DEFAULT_OSA_ARCHIVE_INCLUDE_PATTERNS);
     }
 
     private String resolveProjectName(@NotNull Map<String, Object> context) {

@@ -41,6 +41,7 @@ public abstract class CxPluginUtils {
             log.info("CxSAST medium threshold: " + (config.getSastMediumThreshold() == null ? "[No Threshold]" : config.getSastMediumThreshold()));
             log.info("CxSAST low threshold: " + (config.getSastLowThreshold() == null ? "[No Threshold]" : config.getSastLowThreshold()));
         }
+        log.info("Policy violations enabled: " + config.getEnablePolicyViolations());
         log.info("CxOSA enabled: " + config.getOsaEnabled());
         if (config.getOsaEnabled()) {
             log.info("CxOSA filter patterns: " + config.getOsaFilterPattern());
@@ -72,9 +73,14 @@ public abstract class CxPluginUtils {
             for (String s : lines) {
                 log.error(s);
             }
-            log.error("-----------------------------------------------------------------------------------------\n");
-            log.error("");
+
         }
+
+        if (ret.getOsaResults().getOsaViolations().size() > 0){
+            log.error("Project policy status: violated\n");
+        }
+        log.error("-----------------------------------------------------------------------------------------\n");
+        log.error("");
     }
 
     private static void logError(Exception ex, Logger log){

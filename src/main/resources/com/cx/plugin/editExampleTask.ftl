@@ -170,6 +170,9 @@
         [@ww.checkbox labelKey="isSynchronous.label" name="isSynchronous" descriptionKey="isSynchronous.description" toggle='true' /]
 
         [@ui.bambooSection dependsOn='isSynchronous' showOn='true']
+
+            [@ww.checkbox labelKey="enablePolicyViolations.label" name="enablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' /]
+
             [@ww.checkbox labelKey="thresholdsEnabled.label" name="thresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' /]
             [@ui.bambooSection dependsOn='thresholdsEnabled' showOn='true']
 

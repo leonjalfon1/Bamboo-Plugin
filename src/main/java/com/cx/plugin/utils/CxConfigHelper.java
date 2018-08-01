@@ -99,6 +99,7 @@ public class CxConfigHelper {
             }
         }
         scanConfig.setGeneratePDFReport(resolveBool(configMap, GENERATE_PDF_REPORT));
+        scanConfig.setEnablePolicyViolations(resolveBool(configMap, POLICY_VIOLATION_ENABLED));
         scanConfig.setOsaEnabled(resolveBool(configMap, OSA_ENABLED));
         scanConfig.setOsaArchiveIncludePatterns(configMap.get(OSA_ARCHIVE_INCLUDE_PATTERNS));
         scanConfig.setOsaFilterPattern(configMap.get(OSA_FILTER_PATTERNS));
