@@ -102,6 +102,7 @@
         [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' /]
 
         [@ui.bambooSection dependsOn='globalIsSynchronous' showOn='true']
+            [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' /]
             [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' /]
             [@ui.bambooSection dependsOn='globalThresholdsEnabled' showOn='true']
                 [@ww.textfield labelKey="sastHighThreshold.label" name="globalHighThreshold" required='false'/]

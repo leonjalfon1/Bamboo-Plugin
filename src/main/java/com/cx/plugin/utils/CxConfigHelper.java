@@ -118,6 +118,7 @@ public class CxConfigHelper {
         } else {
 
             scanConfig.setSynchronous(resolveGlobalBool(GLOBAL_IS_SYNCHRONOUS));
+            scanConfig.setSynchronous(resolveGlobalBool(GLOBAL_POLICY_VIOLATION_ENABLED));
             scanConfig.setSastThresholdsEnabled(resolveGlobalBool(GLOBAL_THRESHOLDS_ENABLED));
             scanConfig.setSastHighThreshold(resolveInt(getAdminConfig(GLOBAL_HIGH_THRESHOLD), log));
             scanConfig.setSastMediumThreshold(resolveInt(getAdminConfig(GLOBAL_MEDIUM_THRESHOLD), log));

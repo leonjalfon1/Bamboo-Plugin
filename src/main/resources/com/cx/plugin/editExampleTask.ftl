@@ -231,6 +231,12 @@
     [@ui.bambooSection dependsOn='scanControlSection' showOn='globalConfigurationControl']
         [#if context.get("globalIsSynchronous")?has_content]
             [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='true' /]
+            [#if context.get("globalEnablePolicyViolations")?has_content]
+                [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" checked='true' /]
+
+            [#else]
+                [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" /]
+            [/#if]
             [#if context.get("globalThresholdsEnabled")?has_content]
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='true' /]
                 [@ww.label labelKey="sastHighThreshold.label" name="globalHighThreshold" /]
@@ -254,7 +260,6 @@
                 [@ww.label labelKey="osaLowThreshold.label"/]
             [/#if]
         [#else]
-
             [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='false'/]
             [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
         [/#if]

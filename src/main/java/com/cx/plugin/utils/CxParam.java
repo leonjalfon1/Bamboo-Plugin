@@ -38,7 +38,7 @@ public class CxParam {
     public static final String HIGH_THRESHOLD = "highThreshold";
     public static final String MEDIUM_THRESHOLD = "mediumThreshold";
     public static final String LOW_THRESHOLD = "lowThreshold";
-    public static final String POLICY_VIOLATION_ENABLED = "osaEnabled";
+    public static final String POLICY_VIOLATION_ENABLED = "enablePolicyViolations";
     public static final String OSA_ENABLED = "osaEnabled";
     public static final String OSA_FILTER_PATTERNS = "cxOsaFilterPatterns";
     public static final String OSA_ARCHIVE_INCLUDE_PATTERNS = "cxOsaArchiveIncludePatterns";
@@ -86,6 +86,7 @@ public class CxParam {
     public static final String GLOBAL_OSA_MEDIUM_THRESHOLD = "globalOsaMediumThreshold";
     public static final String GLOBAL_OSA_LOW_THRESHOLD = "globalOsaLowThreshold";
     public static final String GLOBAL_DENY_PROJECT = "globalDenyProject";
+    public static final String GLOBAL_POLICY_VIOLATION_ENABLED = "globalEnablePolicyViolations";
     public static final String DEFAULT_FILTER_PATTERNS = "!**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*," +
             "!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,   " +
             "!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u,   !**/*.mid,   !**/*.mp3,  " +
