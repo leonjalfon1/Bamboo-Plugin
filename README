@@ -30,7 +30,3 @@ KNOWN LIMITATIONS
 --------------------------------
 - To handle more than one source repository per Checkmarx Scan Task, all repositories must be checked out in the same Source Code Checkout Task, with the first repository checked out in a root folder and subsequent repositories in subfolders.
 
-
-NOTES:
-------
-- For the plugin to be runnable with agent, the agent must be started with the vm argument  "-Datlassian.org.osgi.framework.bootdelegation=javax.servlet,javax.servlet.*,sun.*,com.sun.*,org.w3c.dom.*,org.apache.xerces.*" (like with the master bamboo instance)

@@ -80,9 +80,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.checkmarx.client</groupId>
-      <artifactId>checkmarx-client</artifactId>
-      <version>8.90.0-20180731.073803-3</version>
+      <groupId>com.checkmarx</groupId>
+      <artifactId>cx-client-common</artifactId>
+      <version>8.90.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>stax</groupId>
