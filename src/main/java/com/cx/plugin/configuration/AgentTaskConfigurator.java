@@ -78,9 +78,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
 
         populateScanControlFields(context, null, true);
 
-        context.put(IS_SYNCHRONOUS, OPTION_TRUE);
         context.put(GENERATE_PDF_REPORT, OPTION_FALSE);
-        context.put(OSA_ENABLED, OPTION_FALSE);
         context.put(OSA_FILTER_PATTERNS, "");
         context.put(OSA_ARCHIVE_INCLUDE_PATTERNS, DEFAULT_OSA_ARCHIVE_INCLUDE_PATTERNS);
     }
@@ -240,6 +238,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         if (forCreate) {
             context.put(SCAN_CONTROL_SECTION, GLOBAL_CONFIGURATION_CONTROL);
             context.put(IS_SYNCHRONOUS, OPTION_TRUE);
+            context.put(POLICY_VIOLATION_ENABLED, OPTION_FALSE);
             context.put(THRESHOLDS_ENABLED, OPTION_FALSE);
             context.put(HIGH_THRESHOLD, "");
             context.put(MEDIUM_THRESHOLD, "");
@@ -251,6 +250,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         } else {
             context.put(SCAN_CONTROL_SECTION, configMap.get(SCAN_CONTROL_SECTION));
             context.put(IS_SYNCHRONOUS, configMap.get(IS_SYNCHRONOUS));
+            context.put(POLICY_VIOLATION_ENABLED, configMap.get(POLICY_VIOLATION_ENABLED));
             context.put(THRESHOLDS_ENABLED, configMap.get(THRESHOLDS_ENABLED));
             context.put(HIGH_THRESHOLD, configMap.get(HIGH_THRESHOLD));
             context.put(MEDIUM_THRESHOLD, configMap.get(MEDIUM_THRESHOLD));
@@ -325,6 +325,7 @@ public class AgentTaskConfigurator extends AbstractTaskConfigurator {
         config.put(OSA_FILTER_PATTERNS, params.getString(OSA_FILTER_PATTERNS));
         config.put(OSA_ARCHIVE_INCLUDE_PATTERNS, params.getString(OSA_ARCHIVE_INCLUDE_PATTERNS));
         config.put(IS_SYNCHRONOUS, params.getString(IS_SYNCHRONOUS));
+        config.put(POLICY_VIOLATION_ENABLED, params.getString(POLICY_VIOLATION_ENABLED));
         config.put(OSA_INSTALL_BEFORE_SCAN, params.getString(OSA_INSTALL_BEFORE_SCAN));
 
         config.put(IS_INCREMENTAL, params.getString(IS_INCREMENTAL));
