@@ -81,8 +81,8 @@
         top: 20%;
     }
 
-    #errorOccurred{
-        display:none;
+    #errorOccurred {
+        display: none;
     }
 
 </style>
@@ -133,10 +133,10 @@
     [@ui.bambooSection dependsOn="isIncremental" showOn="true"]
         [@ww.checkbox labelKey="isIntervals.label" name="isIntervals" descriptionKey="isIntervals.description" toggle="true"/]
         [@ui.bambooSection dependsOn="isIntervals" showOn="true"]
-          [@ww.select labelKey="intervalBegins.label" name="intervalBegins" list="intervalBeginsList" listKey="key" listValue="value" multiple="false"/]
-           [@ww.select labelKey="intervalEnds.label" name="intervalEnds" list="intervalEndsList" listKey="key" listValue="value" multiple="false"/]
-       [/@ui.bambooSection]
- [/@ui.bambooSection]
+            [@ww.select labelKey="intervalBegins.label" name="intervalBegins" list="intervalBeginsList" listKey="key" listValue="value" multiple="false"/]
+            [@ww.select labelKey="intervalEnds.label" name="intervalEnds" list="intervalEndsList" listKey="key" listValue="value" multiple="false"/]
+        [/@ui.bambooSection]
+    [/@ui.bambooSection]
 
 
     [@ww.checkbox labelKey="generatePDFReport.label" name="generatePDFReport" toggle='false' descriptionKey='generatePDFReport.description'/]
@@ -229,15 +229,15 @@
     [/@ui.bambooSection]
 
     [@ui.bambooSection dependsOn='scanControlSection' showOn='globalConfigurationControl']
-        [#if context.get("globalIsSynchronous")?has_content]
+        [#if globalIsSynchronous?has_content]
             [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='true' /]
-            [#if context.get("globalEnablePolicyViolations")?has_content]
+            [#if globalEnablePolicyViolations?has_content]
                 [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" checked='true' /]
 
             [#else]
                 [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" /]
             [/#if]
-            [#if context.get("globalThresholdsEnabled")?has_content]
+            [#if globalThresholdsEnabled?has_content]
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='true' /]
                 [@ww.label labelKey="sastHighThreshold.label" name="globalHighThreshold" /]
                 [@ww.label labelKey="sastMediumThreshold.label" name="globalMediumThreshold" /]
@@ -248,7 +248,7 @@
                 [@ww.label labelKey="sastMediumThreshold.label"/]
                 [@ww.label labelKey="sastLowThreshold.label"/]
             [/#if]
-            [#if context.get("globalOsaThresholdsEnabled")?has_content]
+            [#if globalOsaThresholdsEnabled?has_content]
                 [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='true' /]
                 [@ww.label labelKey="osaHighThreshold.label" name="globalOsaHighThreshold"/]
                 [@ww.label labelKey="osaMediumThreshold.label" name="globalOsaMediumThreshold" /]
@@ -261,7 +261,9 @@
             [/#if]
         [#else]
             [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='false'/]
+            [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" /]
             [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
+            [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
         [/#if]
     [/@ui.bambooSection]
 
