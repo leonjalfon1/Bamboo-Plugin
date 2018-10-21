@@ -123,9 +123,11 @@ public class CheckmarxTask implements TaskType {
                 }
             }
 
-            String summaryStr = shraga.generateHTMLSummary();
-            ret.getSummary().put(HTML_REPORT, summaryStr);
-            buildContext.getBuildResult().getCustomBuildData().putAll(ret.getSummary());
+            if(!config.getHideResults()){
+                String summaryStr = shraga.generateHTMLSummary();
+                ret.getSummary().put(HTML_REPORT, summaryStr);
+                buildContext.getBuildResult().getCustomBuildData().putAll(ret.getSummary());
+            }
             //assert if expected exception is thrown  OR when vulnerabilities under threshold
             ThresholdResult thresholdResult = shraga.getThresholdResult();
             if (thresholdResult.isFail() || ret.getSastWaitException() != null || ret.getSastCreateException() != null ||

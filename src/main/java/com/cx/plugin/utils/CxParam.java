@@ -77,6 +77,7 @@ public class CxParam {
     public static final String GLOBAL_FILTER_PATTERN = "globalFilterPatterns";
     public static final String GLOBAL_SCAN_TIMEOUT_IN_MINUTES = "globalScanTimeoutInMinutes";
     public static final String GLOBAL_IS_SYNCHRONOUS = "globalIsSynchronous";
+    public static final String GLOBAL_HIDE_RESULTS = "globalHideResults";
     public static final String GLOBAL_THRESHOLDS_ENABLED = "globalThresholdsEnabled";
     public static final String GLOBAL_HIGH_THRESHOLD = "globalHighThreshold";
     public static final String GLOBAL_MEDIUM_THRESHOLD = "globalMediumThreshold";

@@ -265,6 +265,11 @@
             [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
             [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
         [/#if]
+        [#if globalHideResults?has_content]
+            [@ww.checkbox labelKey="globalHideResults.label" name="globalHideResults" descriptionKey="globalHideResults.description" toggle='true' disabled="true" checked='true' /]
+        [#else]
+            [@ww.checkbox labelKey="globalHideResults.label" name="globalIsSynchronous" descriptionKey="globalHideResults.description" toggle='true' disabled="true" checked='false'/]
+        [/#if]
     [/@ui.bambooSection]
 
 [/@ui.bambooSection]

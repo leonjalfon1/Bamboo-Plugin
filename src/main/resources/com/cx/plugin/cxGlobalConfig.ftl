@@ -118,6 +118,8 @@
             [/@ui.bambooSection]
         [/@ui.bambooSection]
 
+        [@ww.checkbox labelKey="globalHideResults.label" name="globalHideResults" descriptionKey="globalHideResults.description" toggle='true' /]
+
     [/@ui.bambooSection]
 [/@ww.form]
 

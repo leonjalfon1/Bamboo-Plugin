@@ -30,6 +30,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
     private String globalFilterPatterns = DEFAULT_FILTER_PATTERNS;
     private String globalFolderExclusions;
     private String globalIsSynchronous;
+    private String globalHideResults;
     private String globalEnablePolicyViolations;
     private String globalScanTimeoutInMinutes;
     private String globalThresholdsEnabled;
@@ -58,6 +59,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
 
         globalScanTimeoutInMinutes = adminConfig.getSystemProperty(GLOBAL_SCAN_TIMEOUT_IN_MINUTES);
         globalIsSynchronous = adminConfig.getSystemProperty(GLOBAL_IS_SYNCHRONOUS);
+        globalHideResults = adminConfig.getSystemProperty(GLOBAL_HIDE_RESULTS);
         globalEnablePolicyViolations = adminConfig.getSystemProperty(GLOBAL_POLICY_VIOLATION_ENABLED);
         globalThresholdsEnabled = adminConfig.getSystemProperty(GLOBAL_THRESHOLDS_ENABLED);
         globalHighThreshold = adminConfig.getSystemProperty(GLOBAL_HIGH_THRESHOLD);
@@ -105,6 +107,7 @@ public class CxGlobalConfig extends GlobalAdminAction {
             globalOsaThresholdsEnabled = null;
             globalEnablePolicyViolations = null;
         }
+        adminConfig.setSystemProperty(GLOBAL_HIDE_RESULTS, globalHideResults);
         adminConfig.setSystemProperty(GLOBAL_POLICY_VIOLATION_ENABLED, globalEnablePolicyViolations);
         adminConfig.setSystemProperty(GLOBAL_THRESHOLDS_ENABLED, globalThresholdsEnabled);
         adminConfig.setSystemProperty(GLOBAL_HIGH_THRESHOLD, globalHighThreshold);
@@ -313,5 +316,13 @@ public class CxGlobalConfig extends GlobalAdminAction {
 
     public void setGlobalDenyProject(String globalDenyProject) {
         this.globalDenyProject = globalDenyProject;
+    }
+
+    public String getGlobalHideResults() {
+        return globalHideResults;
+    }
+
+    public void setGlobalHideResults(String globalHideResults) {
+        this.globalHideResults = globalHideResults;
     }
 }
