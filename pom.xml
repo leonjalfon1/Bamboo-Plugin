@@ -22,10 +22,10 @@
       <plugin>
         <groupId>com.atlassian.maven.plugins</groupId>
         <artifactId>maven-bamboo-plugin</artifactId>
-        <version>6.3.1</version>
+        <version>6.2.11</version>
         <extensions>true</extensions>
         <configuration>
-          <productVersion>6.3.3</productVersion>
+          <productVersion>5.14.3</productVersion>
           <productDataVersion>5.7.2</productDataVersion>
           <enableQuickReload>true</enableQuickReload>
           <allowGoogleTracking>false</allowGoogleTracking>
