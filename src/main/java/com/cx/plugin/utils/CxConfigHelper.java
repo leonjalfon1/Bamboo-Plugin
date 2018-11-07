@@ -118,7 +118,6 @@ public class CxConfigHelper {
         } else {
             scanConfig.setSynchronous(resolveGlobalBool(GLOBAL_IS_SYNCHRONOUS));
             scanConfig.setEnablePolicyViolations(resolveGlobalBool(GLOBAL_POLICY_VIOLATION_ENABLED));
-            scanConfig.setHideResults(resolveGlobalBool(GLOBAL_HIDE_RESULTS));
             scanConfig.setSastThresholdsEnabled(resolveGlobalBool(GLOBAL_THRESHOLDS_ENABLED));
             scanConfig.setSastHighThreshold(resolveInt(getAdminConfig(GLOBAL_HIGH_THRESHOLD), log));
             scanConfig.setSastMediumThreshold(resolveInt(getAdminConfig(GLOBAL_MEDIUM_THRESHOLD), log));
@@ -128,7 +127,9 @@ public class CxConfigHelper {
             scanConfig.setOsaMediumThreshold(resolveInt(getAdminConfig(GLOBAL_OSA_MEDIUM_THRESHOLD), log));
             scanConfig.setOsaLowThreshold(resolveInt(getAdminConfig(GLOBAL_OSA_LOW_THRESHOLD), log));
         }
+
         scanConfig.setDenyProject(resolveGlobalBool(GLOBAL_DENY_PROJECT));
+        scanConfig.setHideResults(resolveGlobalBool(GLOBAL_HIDE_RESULTS));
 
         return scanConfig;
     }
