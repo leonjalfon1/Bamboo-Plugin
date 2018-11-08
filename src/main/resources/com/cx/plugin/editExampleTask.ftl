@@ -127,7 +127,7 @@
 
     [/@ui.bambooSection]
 
-    [@ww.textarea labelKey="comment.label"  name="comment" rows="3" description="comment.description"  cssClass="long-field"/]
+    [@ww.textarea labelKey="comment.label"  name="comment" rows="3" descriptionKey="comment.description"  cssClass="long-field"/]
 
     [@ww.checkbox labelKey="isIncremental.label" name="isIncremental" descriptionKey="isIncremental.description" toggle='true' /]
     [@ui.bambooSection dependsOn="isIncremental" showOn="true"]
@@ -229,15 +229,15 @@
     [/@ui.bambooSection]
 
     [@ui.bambooSection dependsOn='scanControlSection' showOn='globalConfigurationControl']
-        [#if globalIsSynchronous?has_content]
+        [#if (globalIsSynchronous.attribute)??]
             [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='true' /]
-            [#if globalEnablePolicyViolations?has_content]
+            [#if (globalEnablePolicyViolations.attribute)??]
                 [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" checked='true' /]
 
             [#else]
                 [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" /]
             [/#if]
-            [#if globalThresholdsEnabled?has_content]
+            [#if (globalThresholdsEnabled.attribute)??]
                 [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='true' /]
                 [@ww.label labelKey="sastHighThreshold.label" name="globalHighThreshold" /]
                 [@ww.label labelKey="sastMediumThreshold.label" name="globalMediumThreshold" /]
@@ -248,7 +248,7 @@
                 [@ww.label labelKey="sastMediumThreshold.label"/]
                 [@ww.label labelKey="sastLowThreshold.label"/]
             [/#if]
-            [#if globalOsaThresholdsEnabled?has_content]
+            [#if (globalOsaThresholdsEnabled.attribute)??]
                 [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalOsaThresholdsEnabled"  descriptionKey="thresholdsEnabled.description"toggle='true' disabled="true" checked='true' /]
                 [@ww.label labelKey="osaHighThreshold.label" name="globalOsaHighThreshold"/]
                 [@ww.label labelKey="osaMediumThreshold.label" name="globalOsaMediumThreshold" /]
@@ -261,7 +261,7 @@
             [/#if]
         [#else]
             [@ww.checkbox labelKey="isSynchronous.label" name="globalIsSynchronous" descriptionKey="isSynchronous.description" toggle='true' disabled="true" checked='false'/]
-            [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" /]
+            [@ww.checkbox labelKey="enablePolicyViolations.label" name="globalEnablePolicyViolations" descriptionKey="enablePolicyViolations.description" toggle='true' disabled="true" checked='false'/]
             [@ww.checkbox labelKey="thresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
             [@ww.checkbox labelKey="osaThresholdsEnabled.label" name="globalThresholdsEnabled" descriptionKey="thresholdsEnabled.description" toggle='true' disabled="true" checked='false'/]
         [/#if]

@@ -94,7 +94,6 @@
         [@ww.textfield labelKey="folderExclusions.label" name="globalFolderExclusions" descriptionKey="folderExclusions.description"  cssClass="long-field"/]
         [@ww.textarea labelKey="filterPatterns.label" name="globalFilterPatterns" rows="4"  cssClass="long-field"/]
         [@ww.textfield labelKey="scanTimeoutInMinutes.label" name="globalScanTimeoutInMinutes" required='false'/]
-        [@ww.checkbox labelKey="globalDenyProject.label" name="globalDenyProject" descriptionKey="globalDenyProject.description" /]
     [/@ui.bambooSection]
 
     [@ui.bambooSection title='Control Checkmarx Scan' cssClass="cx center"]
@@ -117,6 +116,9 @@
                 [@ww.textfield labelKey="osaLowThreshold.label" name="globalOsaLowThreshold" required='false'/]
             [/@ui.bambooSection]
         [/@ui.bambooSection]
+
+        [@ww.checkbox labelKey="globalDenyProject.label" name="globalDenyProject" descriptionKey="globalDenyProject.description" /]
+        [@ww.checkbox labelKey="globalHideResults.label" name="globalHideResults" descriptionKey="globalHideResults.description" toggle='true' /]
 
     [/@ui.bambooSection]
 [/@ww.form]

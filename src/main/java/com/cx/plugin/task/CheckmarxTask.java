@@ -6,12 +6,12 @@ package com.cx.plugin.task;
 
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
+import com.cx.plugin.configuration.dto.BambooScanConfig;
 import com.cx.plugin.dto.ScanResults;
 import com.cx.plugin.utils.CxAppender;
 import com.cx.plugin.utils.CxConfigHelper;
 import com.cx.plugin.utils.CxLoggerAdapter;
 import com.cx.restclient.CxShragaClient;
-import com.cx.restclient.configuration.CxScanConfig;
 import com.cx.restclient.dto.ThresholdResult;
 import com.cx.restclient.exception.CxClientException;
 import com.cx.restclient.osa.dto.OSAResults;
@@ -40,7 +40,7 @@ public class CheckmarxTask implements TaskType {
         try {
             //resolve configuration
             CxConfigHelper configHelper = new CxConfigHelper(log);
-            CxScanConfig config = configHelper.resolveConfigurationMap(taskContext.getConfigurationMap(), taskContext.getWorkingDirectory());
+            BambooScanConfig config = configHelper.resolveConfigurationMap(taskContext.getConfigurationMap(), taskContext.getWorkingDirectory());
 
             //print configuration
             printConfiguration(config, configHelper, log);
@@ -123,9 +123,12 @@ public class CheckmarxTask implements TaskType {
                 }
             }
 
-            String summaryStr = shraga.generateHTMLSummary();
-            ret.getSummary().put(HTML_REPORT, summaryStr);
-            buildContext.getBuildResult().getCustomBuildData().putAll(ret.getSummary());
+            if (!config.getHideResults()) {
+                String summaryStr = shraga.generateHTMLSummary();
+                ret.getSummary().put(HTML_REPORT, summaryStr);
+                buildContext.getBuildResult().getCustomBuildData().putAll(ret.getSummary());
+            }
+
             //assert if expected exception is thrown  OR when vulnerabilities under threshold
             ThresholdResult thresholdResult = shraga.getThresholdResult();
             if (thresholdResult.isFail() || ret.getSastWaitException() != null || ret.getSastCreateException() != null ||

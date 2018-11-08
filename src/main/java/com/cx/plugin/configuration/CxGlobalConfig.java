@@ -41,6 +41,8 @@ public class CxGlobalConfig extends GlobalAdminAction {
     private String globalOsaMediumThreshold;
     private String globalOsaLowThreshold;
     private String globalDenyProject;
+    private String globalHideResults;
+
 
     @Override
     public String execute() {
@@ -68,6 +70,8 @@ public class CxGlobalConfig extends GlobalAdminAction {
         globalOsaMediumThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_MEDIUM_THRESHOLD);
         globalOsaLowThreshold = adminConfig.getSystemProperty(GLOBAL_OSA_LOW_THRESHOLD);
         globalDenyProject = adminConfig.getSystemProperty(GLOBAL_DENY_PROJECT);
+        globalHideResults = adminConfig.getSystemProperty(GLOBAL_HIDE_RESULTS);
+
         return INPUT;
     }
 
@@ -115,6 +119,8 @@ public class CxGlobalConfig extends GlobalAdminAction {
         adminConfig.setSystemProperty(GLOBAL_OSA_MEDIUM_THRESHOLD, globalOsaMediumThreshold);
         adminConfig.setSystemProperty(GLOBAL_OSA_LOW_THRESHOLD, globalOsaLowThreshold);
         adminConfig.setSystemProperty(GLOBAL_DENY_PROJECT, globalDenyProject);
+        adminConfig.setSystemProperty(GLOBAL_HIDE_RESULTS, globalHideResults);
+
         ((AdministrationConfigurationPersister) ContainerManager.getComponent("administrationConfigurationPersister")).saveAdministrationConfiguration(adminConfig);
 
         addActionMessage(getText("cxDefaultConfigSuccess.label"));
@@ -313,5 +319,13 @@ public class CxGlobalConfig extends GlobalAdminAction {
 
     public void setGlobalDenyProject(String globalDenyProject) {
         this.globalDenyProject = globalDenyProject;
+    }
+
+    public String getGlobalHideResults() {
+        return globalHideResults;
+    }
+
+    public void setGlobalHideResults(String globalHideResults) {
+        this.globalHideResults = globalHideResults;
     }
 }

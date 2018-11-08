@@ -4,6 +4,7 @@ import com.atlassian.bamboo.configuration.AdministrationConfiguration;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
 import com.atlassian.bamboo.task.TaskException;
 import com.atlassian.spring.container.ContainerManager;
+import com.cx.plugin.configuration.dto.BambooScanConfig;
 import com.cx.restclient.configuration.CxScanConfig;
 import org.apache.commons.lang.StringUtils;
 
@@ -23,7 +24,7 @@ import static com.cx.plugin.utils.CxPluginUtils.resolveInt;
  * Created by Galn on 25/10/2017.
  */
 public class CxConfigHelper {
-    private CxScanConfig scanConfig;
+    private BambooScanConfig scanConfig;
     private AdministrationConfiguration adminConfig;
     private boolean isIntervals;
     private String intervalBegins;
@@ -34,8 +35,9 @@ public class CxConfigHelper {
         this.log = log;
     }
 
-    public CxScanConfig resolveConfigurationMap(ConfigurationMap configMap, File workDir) throws TaskException {
+    public BambooScanConfig resolveConfigurationMap(ConfigurationMap configMap, File workDir) throws TaskException {
         log.info("Resolving Cx configuration");
+
         Object a = ContainerManager.getComponent("administrationConfigurationAccessor");
         try {
             Method getAdminConfig = a.getClass().getDeclaredMethod("getAdministrationConfiguration");
@@ -44,7 +46,7 @@ public class CxConfigHelper {
             throw new TaskException("Failed to resolve global configuration", e);
         }
 
-        scanConfig = new CxScanConfig();
+        scanConfig = new BambooScanConfig();
         scanConfig.setCxOrigin(CX_ORIGIN);
         scanConfig.setSourceDir(workDir.getAbsolutePath());
         scanConfig.setReportsDir(new File(workDir + CX_REPORT_LOCATION));
@@ -99,7 +101,6 @@ public class CxConfigHelper {
             }
         }
         scanConfig.setGeneratePDFReport(resolveBool(configMap, GENERATE_PDF_REPORT));
-        scanConfig.setEnablePolicyViolations(resolveBool(configMap, POLICY_VIOLATION_ENABLED));
         scanConfig.setOsaEnabled(resolveBool(configMap, OSA_ENABLED));
         scanConfig.setOsaArchiveIncludePatterns(configMap.get(OSA_ARCHIVE_INCLUDE_PATTERNS));
         scanConfig.setOsaFilterPattern(configMap.get(OSA_FILTER_PATTERNS));
@@ -128,8 +129,8 @@ public class CxConfigHelper {
             scanConfig.setOsaMediumThreshold(resolveInt(getAdminConfig(GLOBAL_OSA_MEDIUM_THRESHOLD), log));
             scanConfig.setOsaLowThreshold(resolveInt(getAdminConfig(GLOBAL_OSA_LOW_THRESHOLD), log));
         }
-
         scanConfig.setDenyProject(resolveGlobalBool(GLOBAL_DENY_PROJECT));
+        scanConfig.setHideResults(resolveGlobalBool(GLOBAL_HIDE_RESULTS));
 
         return scanConfig;
     }
@@ -143,7 +144,7 @@ public class CxConfigHelper {
     }
 
 
-    private CxScanConfig resolveIntervalFullScan(CxScanConfig scanConfig) {
+    private BambooScanConfig resolveIntervalFullScan(BambooScanConfig scanConfig) {
 
         try {
             final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");

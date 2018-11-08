@@ -2,9 +2,8 @@ package com.cx.plugin.utils;
 
 import com.atlassian.bamboo.security.EncryptionException;
 import com.atlassian.bamboo.security.EncryptionServiceImpl;
+import com.cx.plugin.configuration.dto.BambooScanConfig;
 import com.cx.plugin.dto.ScanResults;
-import com.cx.restclient.configuration.CxScanConfig;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -14,13 +13,14 @@ import org.slf4j.Logger;
 
 public abstract class CxPluginUtils {
 
-    public static void printConfiguration(CxScanConfig config, CxConfigHelper configBFF, CxLoggerAdapter log) {
+    public static void printConfiguration(BambooScanConfig config, CxConfigHelper configBFF, CxLoggerAdapter log) {
         log.info("---------------------------------------Configurations:------------------------------------");
         log.info("Bamboo plugin version: " + configBFF.getPluginVersion());
         log.info("Username: " + config.getUsername());
         log.info("URL: " + config.getUrl());
         log.info("Project name: " + config.getProjectName());
         log.info("Deny project creation: " + config.getDenyProject());
+        log.info("Hide scan results: " + config.getHideResults());
         log.info("Scan timeout in minutes: " + (config.getSastScanTimeoutInMinutes() <= 0 ? "" : config.getSastScanTimeoutInMinutes()));
         log.info("Full team path: " + config.getTeamPath());
         log.info("Preset: " + config.getPresetName());
