@@ -35,13 +35,13 @@ public abstract class CxPluginUtils {
         log.info("Folder exclusions: " + (config.getSastFolderExclusions()));
         log.info("Is synchronous scan: " + config.getSynchronous());
         log.info("Generate PDF report: " + config.getGeneratePDFReport());
+        log.info("Policy violations enabled: " + config.getEnablePolicyViolations());
         log.info("CxSAST thresholds enabled: " + config.getSastThresholdsEnabled());
         if (config.getSastThresholdsEnabled()) {
             log.info("CxSAST high threshold: " + (config.getSastHighThreshold() == null ? "[No Threshold]" : config.getSastHighThreshold()));
             log.info("CxSAST medium threshold: " + (config.getSastMediumThreshold() == null ? "[No Threshold]" : config.getSastMediumThreshold()));
             log.info("CxSAST low threshold: " + (config.getSastLowThreshold() == null ? "[No Threshold]" : config.getSastLowThreshold()));
         }
-        log.info("Policy violations enabled: " + config.getEnablePolicyViolations());
         log.info("CxOSA enabled: " + config.getOsaEnabled());
         if (config.getOsaEnabled()) {
             log.info("CxOSA filter patterns: " + config.getOsaFilterPattern());
@@ -73,12 +73,8 @@ public abstract class CxPluginUtils {
             for (String s : lines) {
                 log.error(s);
             }
-
         }
 
-        if (ret.getOsaResults().getOsaViolations().size() > 0){
-            log.error("Project policy status: violated\n");
-        }
         log.error("-----------------------------------------------------------------------------------------\n");
         log.error("");
     }
