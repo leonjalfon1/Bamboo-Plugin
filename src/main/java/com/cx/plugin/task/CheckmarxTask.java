@@ -131,7 +131,8 @@ public class CheckmarxTask implements TaskType {
 
             //assert if expected exception is thrown  OR when vulnerabilities under threshold
             ThresholdResult thresholdResult = shraga.getThresholdResult();
-            if (thresholdResult.isFail() || ret.getSastWaitException() != null || ret.getSastCreateException() != null ||
+           boolean policyViolated = config.getEnablePolicyViolations() && ret.getOsaResults() !=null && ret.getOsaResults().getOsaViolations().size() > 0;
+            if (thresholdResult.isFail() || policyViolated || ret.getSastWaitException() != null || ret.getSastCreateException() != null ||
                     ret.getOsaCreateException() != null || ret.getOsaWaitException() != null) {
                 printBuildFailure(thresholdResult.getFailDescription(), ret, log);
                 return taskResultBuilder.failed().build();
