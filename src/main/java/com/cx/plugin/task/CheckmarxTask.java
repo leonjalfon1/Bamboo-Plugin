@@ -11,6 +11,7 @@ import com.cx.plugin.utils.CxAppender;
 import com.cx.plugin.utils.CxConfigHelper;
 import com.cx.plugin.utils.CxLoggerAdapter;
 import com.cx.restclient.CxShragaClient;
+import com.cx.restclient.common.ShragaUtils;
 import com.cx.restclient.configuration.CxScanConfig;
 import com.cx.restclient.exception.CxClientException;
 import com.cx.restclient.osa.dto.OSAResults;
@@ -133,7 +134,7 @@ public class CheckmarxTask implements TaskType {
             }
 
             //assert if expected exception is thrown  OR when vulnerabilities under threshold OR when policy violated
-            String buildFailureResult = shraga.getBuildFailureResult();
+            String buildFailureResult = ShragaUtils.getBuildFailureResult(config,ret.getSastResults(), ret.getOsaResults());
             if (!StringUtils.isEmpty(buildFailureResult) || ret.getSastWaitException() != null || ret.getSastCreateException() != null ||
                     ret.getOsaCreateException() != null || ret.getOsaWaitException() != null)
             {
