@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 public class ScanResults {
 
-    private SASTResults sastResults;
-    private OSAResults osaResults;
+    private SASTResults sastResults = new SASTResults();
+    private OSAResults osaResults= new OSAResults();
 
     private HashMap<String, String> summary = new HashMap<String, String>();
 
