@@ -50,7 +50,7 @@ Else
 	
     stage('Build') {
       steps {
-        bat """mvn clean install -Dorg.apache.maven.user-settings=C:\Jenkins\workspace\settings.xml -Dbuild.number=${BUILD_NUMBER}"""
+        bat """mvn clean install -Dorg.apache.maven.user-settings=C:\\Jenkins\\workspace\\settings.xml -Dbuild.number=${BUILD_NUMBER}"""
       }
     }
 	  
