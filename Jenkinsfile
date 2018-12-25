@@ -29,7 +29,7 @@ If($IsReleaseBuild -eq "true")
     Write-Host "|  SNAPSHOT DISABLED: Removing Snapshot before build  |"
     Write-Host " ----------------------------------------------------- "
 
-    $XmlPath = $RootPath + "\pom.xml"
+    $XmlPath = $RootPath + "\\pom.xml"
 
     If(Test-Path "$XmlPath")
     {  
