@@ -1,7 +1,7 @@
 package com.cx.plugin.testConnection;
 
 
-import com.cx.plugin.dto.TestConnectionResponse;
+import com.cx.plugin.testConnection.dto.TestConnectionResponse;
 import com.cx.restclient.CxShragaClient;
 import com.cx.restclient.dto.Team;
 import com.cx.restclient.sast.dto.Preset;

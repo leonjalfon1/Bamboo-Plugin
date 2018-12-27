@@ -1,4 +1,4 @@
-package com.cx.plugin.dto;
+package com.cx.plugin.testConnection.dto;
 
 import com.cx.restclient.dto.Team;
 import com.cx.restclient.sast.dto.Preset;

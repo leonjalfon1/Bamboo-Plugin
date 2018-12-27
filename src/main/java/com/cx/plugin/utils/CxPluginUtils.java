@@ -21,6 +21,7 @@ public abstract class CxPluginUtils {
         log.info("URL: " + config.getUrl());
         log.info("Project name: " + config.getProjectName());
         log.info("Deny project creation: " + config.getDenyProject());
+        log.info("Hide scan results: " + config.getHideResults());
         log.info("Scan timeout in minutes: " + (config.getSastScanTimeoutInMinutes() <= 0 ? "" : config.getSastScanTimeoutInMinutes()));
         log.info("Full team path: " + config.getTeamPath());
         log.info("Preset: " + config.getPresetName());
@@ -42,6 +43,7 @@ public abstract class CxPluginUtils {
             log.info("CxSAST medium threshold: " + (config.getSastMediumThreshold() == null ? "[No Threshold]" : config.getSastMediumThreshold()));
             log.info("CxSAST low threshold: " + (config.getSastLowThreshold() == null ? "[No Threshold]" : config.getSastLowThreshold()));
         }
+        log.info("Policy violations enabled: " + config.getEnablePolicyViolations());
         log.info("CxOSA enabled: " + config.getOsaEnabled());
         if (config.getOsaEnabled()) {
             log.info("CxOSA filter patterns: " + config.getOsaFilterPattern());
@@ -73,8 +75,12 @@ public abstract class CxPluginUtils {
             for (String s : lines) {
                 log.error(s);
             }
+
         }
 
+        if (ret.getOsaResults()!= null && ret.getOsaResults().getOsaViolations().size() > 0){
+            log.error("Project policy status: violated\n");
+        }
         log.error("-----------------------------------------------------------------------------------------\n");
         log.error("");
     }

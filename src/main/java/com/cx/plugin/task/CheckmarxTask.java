@@ -41,7 +41,7 @@ public class CheckmarxTask implements TaskType {
         try {
             //resolve configuration
             CxConfigHelper configHelper = new CxConfigHelper(log);
-            CxScanConfig config = configHelper.resolveConfigurationMap(taskContext.getConfigurationMap(), taskContext.getWorkingDirectory());
+            BambooScanConfig config = configHelper.resolveConfigurationMap(taskContext.getConfigurationMap(), taskContext.getWorkingDirectory());
 
             //print configuration
             printConfiguration(config, configHelper, log);
