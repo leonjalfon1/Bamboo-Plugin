@@ -2,9 +2,8 @@ package com.cx.plugin.utils;
 
 import com.atlassian.bamboo.security.EncryptionException;
 import com.atlassian.bamboo.security.EncryptionServiceImpl;
+import com.cx.plugin.configuration.dto.BambooScanConfig;
 import com.cx.plugin.dto.ScanResults;
-import com.cx.restclient.configuration.CxScanConfig;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -14,7 +13,7 @@ import org.slf4j.Logger;
 
 public abstract class CxPluginUtils {
 
-    public static void printConfiguration(CxScanConfig config, CxConfigHelper configBFF, CxLoggerAdapter log) {
+    public static void printConfiguration(BambooScanConfig config, CxConfigHelper configBFF, CxLoggerAdapter log) {
         log.info("---------------------------------------Configurations:------------------------------------");
         log.info("Bamboo plugin version: " + configBFF.getPluginVersion());
         log.info("Username: " + config.getUsername());
