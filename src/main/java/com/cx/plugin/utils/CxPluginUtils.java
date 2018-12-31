@@ -76,11 +76,6 @@ public abstract class CxPluginUtils {
             }
 
         }
-
-         if ((ret.getOsaResults()!= null && ret.getOsaResults().getOsaPolicies().size() > 0) ||
-             (ret.getSastResults()!= null && ret.getSastResults().getSastPolicies().size() > 0)){
-            log.error("Project policy status: violated\n");
-        }
         log.error("-----------------------------------------------------------------------------------------\n");
         log.error("");
     }
