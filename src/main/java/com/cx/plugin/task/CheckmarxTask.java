@@ -6,16 +6,17 @@ package com.cx.plugin.task;
 
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
-import com.cx.plugin.configuration.dto.BambooScanConfig;
 import com.cx.plugin.dto.ScanResults;
 import com.cx.plugin.utils.CxAppender;
 import com.cx.plugin.utils.CxConfigHelper;
 import com.cx.plugin.utils.CxLoggerAdapter;
 import com.cx.restclient.CxShragaClient;
-import com.cx.restclient.dto.ThresholdResult;
+import com.cx.restclient.common.ShragaUtils;
+import com.cx.restclient.configuration.CxScanConfig;
 import com.cx.restclient.exception.CxClientException;
 import com.cx.restclient.osa.dto.OSAResults;
 import com.cx.restclient.sast.dto.SASTResults;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +41,7 @@ public class CheckmarxTask implements TaskType {
         try {
             //resolve configuration
             CxConfigHelper configHelper = new CxConfigHelper(log);
-            BambooScanConfig config = configHelper.resolveConfigurationMap(taskContext.getConfigurationMap(), taskContext.getWorkingDirectory());
+            CxScanConfig config = configHelper.resolveConfigurationMap(taskContext.getConfigurationMap(), taskContext.getWorkingDirectory());
 
             //print configuration
             printConfiguration(config, configHelper, log);
@@ -123,18 +124,21 @@ public class CheckmarxTask implements TaskType {
                 }
             }
 
+            if (config.getEnablePolicyViolations()) {
+                shraga.printIsProjectViolated();
+            }
             if (!config.getHideResults()) {
                 String summaryStr = shraga.generateHTMLSummary();
                 ret.getSummary().put(HTML_REPORT, summaryStr);
                 buildContext.getBuildResult().getCustomBuildData().putAll(ret.getSummary());
             }
 
-            //assert if expected exception is thrown  OR when vulnerabilities under threshold
-            ThresholdResult thresholdResult = shraga.getThresholdResult();
-           boolean policyViolated = config.getEnablePolicyViolations() && ret.getOsaResults() !=null && ret.getOsaResults().getOsaViolations().size() > 0;
-            if (thresholdResult.isFail() || policyViolated || ret.getSastWaitException() != null || ret.getSastCreateException() != null ||
-                    ret.getOsaCreateException() != null || ret.getOsaWaitException() != null) {
-                printBuildFailure(thresholdResult.getFailDescription(), ret, log);
+            //assert if expected exception is thrown  OR when vulnerabilities under threshold OR when policy violated
+            String buildFailureResult = ShragaUtils.getBuildFailureResult(config, ret.getSastResults(), ret.getOsaResults());
+            if (!StringUtils.isEmpty(buildFailureResult) || ret.getSastWaitException() != null || ret.getSastCreateException() != null ||
+                    ret.getOsaCreateException() != null || ret.getOsaWaitException() != null)
+            {
+                printBuildFailure(buildFailureResult, ret, log);
                 return taskResultBuilder.failed().build();
             }
             return taskResultBuilder.success().build();

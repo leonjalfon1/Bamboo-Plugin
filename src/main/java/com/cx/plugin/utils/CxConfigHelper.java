@@ -4,7 +4,6 @@ import com.atlassian.bamboo.configuration.AdministrationConfiguration;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
 import com.atlassian.bamboo.task.TaskException;
 import com.atlassian.spring.container.ContainerManager;
-import com.cx.plugin.configuration.dto.BambooScanConfig;
 import com.cx.restclient.configuration.CxScanConfig;
 import org.apache.commons.lang.StringUtils;
 
@@ -24,7 +23,7 @@ import static com.cx.plugin.utils.CxPluginUtils.resolveInt;
  * Created by Galn on 25/10/2017.
  */
 public class CxConfigHelper {
-    private BambooScanConfig scanConfig;
+    private CxScanConfig scanConfig;
     private AdministrationConfiguration adminConfig;
     private boolean isIntervals;
     private String intervalBegins;
@@ -35,7 +34,7 @@ public class CxConfigHelper {
         this.log = log;
     }
 
-    public BambooScanConfig resolveConfigurationMap(ConfigurationMap configMap, File workDir) throws TaskException {
+    public CxScanConfig resolveConfigurationMap(ConfigurationMap configMap, File workDir) throws TaskException {
         log.info("Resolving Cx configuration");
 
         Object a = ContainerManager.getComponent("administrationConfigurationAccessor");
@@ -46,7 +45,7 @@ public class CxConfigHelper {
             throw new TaskException("Failed to resolve global configuration", e);
         }
 
-        scanConfig = new BambooScanConfig();
+        scanConfig = new CxScanConfig();
         scanConfig.setCxOrigin(CX_ORIGIN);
         scanConfig.setSourceDir(workDir.getAbsolutePath());
         scanConfig.setReportsDir(new File(workDir + CX_REPORT_LOCATION));
@@ -144,7 +143,7 @@ public class CxConfigHelper {
     }
 
 
-    private BambooScanConfig resolveIntervalFullScan(BambooScanConfig scanConfig) {
+    private CxScanConfig resolveIntervalFullScan(CxScanConfig scanConfig) {
 
         try {
             final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
